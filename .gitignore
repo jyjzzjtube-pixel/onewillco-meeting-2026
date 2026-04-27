@@ -1,0 +1,8 @@
+build_*.py
+*.docx
+*.xlsx
+*.pptx
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

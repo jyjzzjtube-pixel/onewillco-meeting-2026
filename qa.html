@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>예상 질문·답변 — 원윌앤코 임원 회의 대비</title>
+<style>
+:root {
+  --navy: #1E2761; --navy-light: #2F3C7E; --ice: #CADCFC;
+  --accent: #F96167; --gold: #F9E795; --green: #2C5F2D;
+  --gray-50: #F8F9FA; --gray-100: #F2F2F2; --gray-200: #E5E5E5;
+  --gray-400: #999; --gray-700: #444; --gray-900: #1a1a1a;
+  --red: #C00000; --yellow: #FFC000;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: 'Malgun Gothic', '맑은 고딕', -apple-system, sans-serif;
+  background: var(--gray-50); color: var(--gray-900);
+  line-height: 1.6; font-size: 15px;
+}
+.sidebar {
+  position: fixed; top:0; left:0; width:240px; height:100vh;
+  background: var(--navy); color:white; padding:24px 16px;
+  overflow-y:auto; z-index:100;
+}
+.sidebar h2 { color:var(--ice); font-size:14px; margin-bottom:16px; padding-bottom:12px; border-bottom:2px solid var(--accent); }
+.sidebar a {
+  display:block; color:rgba(255,255,255,0.8); text-decoration:none;
+  padding:8px 12px; font-size:13px; border-radius:4px; margin-bottom:2px;
+  transition:all 0.2s;
+}
+.sidebar a:hover, .sidebar a.active { background:var(--accent); color:white; transform:translateX(4px); }
+.sidebar .cat { font-size:11px; color:var(--ice); opacity:0.6; margin-top:16px; padding:4px 12px; text-transform:uppercase; letter-spacing:1px; }
+.sidebar .back { background:rgba(255,255,255,0.1); margin-top:20px; }
+
+.main { margin-left:240px; padding:0; }
+
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color:white; padding:60px 60px 50px; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-50%; right:-10%;
+  width:600px; height:600px;
+  background: radial-gradient(circle, rgba(249,97,103,0.2) 0%, transparent 70%);
+}
+.hero .badge {
+  display:inline-block; background:var(--accent); color:white;
+  padding:6px 16px; border-radius:20px; font-size:12px; font-weight:bold; margin-bottom:20px;
+}
+.hero h1 { font-size:36px; font-weight:900; margin-bottom:12px; line-height:1.2; }
+.hero h2 { font-size:20px; font-weight:400; color:var(--ice); }
+.hero .desc { color:var(--ice); font-size:14px; margin-top:16px; opacity:0.9; max-width:800px; }
+
+.section { padding: 50px 60px; max-width:1200px; }
+.section-title {
+  font-size:26px; color:var(--navy); margin-bottom:24px;
+  display:flex; align-items:center; gap:12px;
+  border-bottom:3px solid var(--accent); padding-bottom:12px;
+}
+.section-title .icon {
+  font-size:32px;
+}
+.section-title .count {
+  background:var(--accent); color:white; padding:4px 12px;
+  border-radius:16px; font-size:13px; font-weight:bold;
+}
+
+.qa-card {
+  background:white; border-radius:12px; padding:24px 28px;
+  margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  border-left:6px solid var(--navy);
+}
+.qa-card.hot { border-left-color:var(--accent); background:#FFF8E1; }
+.qa-card.danger { border-left-color:var(--red); background:#FFF5F5; }
+
+.qa-card .q-num {
+  display:inline-block; background:var(--navy); color:white;
+  padding:4px 12px; border-radius:16px; font-size:12px; font-weight:bold;
+  margin-bottom:8px;
+}
+.qa-card.hot .q-num { background:var(--accent); }
+.qa-card.danger .q-num { background:var(--red); }
+
+.qa-card .q {
+  font-size:18px; font-weight:bold; color:var(--navy);
+  margin-bottom:16px; line-height:1.5;
+}
+.qa-card .q::before { content:'❓ '; }
+
+.qa-card .a-block {
+  background:var(--gray-50); border-radius:8px; padding:18px 22px;
+  margin-top:12px; border-left:4px solid var(--green);
+}
+.qa-card .a-label {
+  display:inline-block; background:var(--green); color:white;
+  font-size:11px; font-weight:bold; padding:3px 10px; border-radius:12px;
+  margin-bottom:8px; text-transform:uppercase;
+}
+.qa-card .a-conclusion {
+  font-size:15px; font-weight:bold; color:var(--gray-900);
+  margin-bottom:12px;
+}
+
+.qa-card .data-box {
+  background:white; border-radius:6px; padding:12px 16px;
+  margin:10px 0; font-size:13px;
+}
+.qa-card .data-box b { color:var(--accent); }
+.qa-card .data-box ul { padding-left:20px; }
+.qa-card .data-box li { padding:3px 0; }
+
+.qa-card .source {
+  font-size:11px; color:var(--gray-400); margin-top:10px; font-style:italic;
+}
+.qa-card .source::before { content:'📊 데이터 출처: '; font-style:normal; color:var(--gray-700); }
+
+.qa-card table {
+  width:100%; border-collapse:collapse; margin:8px 0;
+  font-size:13px; background:white; border-radius:6px; overflow:hidden;
+}
+.qa-card th { background:var(--navy); color:white; padding:8px 12px; font-size:12px; }
+.qa-card td { padding:8px 12px; border-bottom:1px solid var(--gray-200); }
+.qa-card tr:last-child td { border-bottom:none; }
+
+.warning-box {
+  background:#FFE0E0; border-radius:6px; padding:12px 16px;
+  margin:10px 0; font-size:13px; border-left:4px solid var(--red);
+}
+.warning-box::before { content:'⚠️ '; }
+
+.success-box {
+  background:#E8F5E9; border-radius:6px; padding:12px 16px;
+  margin:10px 0; font-size:13px; border-left:4px solid var(--green);
+}
+.success-box::before { content:'✅ '; }
+
+.tip-box {
+  background:#FFF8E1; border-radius:6px; padding:12px 16px;
+  margin:10px 0; font-size:13px; border-left:4px solid var(--yellow);
+}
+.tip-box::before { content:'💡 '; font-weight:bold; }
+
+.print-tip {
+  position:sticky; top:0;
+  background: var(--navy); color:white; padding:10px 60px;
+  margin-left:0; z-index:10; font-size:13px; text-align:center;
+}
+.print-tip kbd { background:white; color:var(--navy); padding:2px 6px; border-radius:3px; font-weight:bold; }
+
+@media print { .sidebar, .print-tip { display:none; } .main { margin-left:0; } }
+
+.top-btn {
+  position:fixed; bottom:24px; right:24px;
+  background:var(--accent); color:white;
+  width:50px; height:50px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  text-decoration:none; box-shadow:0 4px 12px rgba(249,97,103,0.4);
+  font-size:20px; z-index:99;
+}
+
+/* Stats grid for fact summary */
+.fact-stats {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+  margin:20px 0;
+}
+.fact-stat {
+  background:white; padding:16px; border-radius:8px; text-align:center;
+  box-shadow:0 1px 4px rgba(0,0,0,0.05);
+  border-top:3px solid var(--navy);
+}
+.fact-stat .n { font-size:24px; font-weight:900; color:var(--accent); }
+.fact-stat .l { font-size:11px; color:var(--gray-700); margin-top:4px; }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h2>❓ 예상 Q&A 30</h2>
+  <a href="#summary">📊 한 줄 요약</a>
+
+  <div class="cat">A. 돈·수익 (Q1-7)</div>
+  <a href="#q1">Q1. 16억 확정?</a>
+  <a href="#q2">Q2. 1.4억 보장?</a>
+  <a href="#q3">Q3. 본업 시너지 근거</a>
+  <a href="#q4">Q4. 인건비 매니저</a>
+  <a href="#q5">Q5. ROI 너무 높음?</a>
+  <a href="#q6">Q6. 망하면 손실</a>
+  <a href="#q7">Q7. 16억 못 받으면</a>
+
+  <div class="cat">B. 리스크·법무 (Q8-13)</div>
+  <a href="#q8">Q8. 부가세 1.45억</a>
+  <a href="#q9">Q9. 19금 차단 보장</a>
+  <a href="#q10">Q10. 인플루언서 사고</a>
+  <a href="#q11">Q11. 세무조사 영향</a>
+  <a href="#q12">Q12. 광고비 회수</a>
+  <a href="#q13">Q13. 대표 형사책임</a>
+
+  <div class="cat">C. 경쟁·시장 (Q14-18)</div>
+  <a href="#q14">Q14. 큰 MCN과 경쟁</a>
+  <a href="#q15">Q15. 임팩트원 정면승부</a>
+  <a href="#q16">Q16. 우리만 16억?</a>
+  <a href="#q17">Q17. 60% 만족?</a>
+  <a href="#q18">Q18. 1년 후 망한다?</a>
+
+  <div class="cat">D. 운영·실행 (Q19-23)</div>
+  <a href="#q19">Q19. 영입 영업력</a>
+  <a href="#q20">Q20. 매니저 5~8명</a>
+  <a href="#q21">Q21. 콘텐츠 인프라</a>
+  <a href="#q22">Q22. KPI 미달</a>
+  <a href="#q23">Q23. 본업 인력 빠짐</a>
+
+  <div class="cat">E. 본업 시너지 (Q24-28)</div>
+  <a href="#q24">Q24. 가맹점주 전환</a>
+  <a href="#q25">Q25. 가맹점주 반대</a>
+  <a href="#q26">Q26. 자원 분산</a>
+  <a href="#q27">Q27. 가맹 1건 견인</a>
+  <a href="#q28">Q28. 본업 브랜드</a>
+
+  <div class="cat">F. 의사결정 (Q29-30)</div>
+  <a href="#q29">Q29. 결재 안하면</a>
+  <a href="#q30">Q30. 출구 전략</a>
+
+  <a href="index.html" class="back">← 메인 보고서</a>
+</nav>
+
+<div class="main">
+
+<div class="print-tip">
+  💡 인쇄: <kbd>Ctrl + P</kbd> &nbsp;|&nbsp; 검색: <kbd>Ctrl + F</kbd> &nbsp;|&nbsp; 회의 중에는 좌측 메뉴로 빠르게 이동
+</div>
+
+<section class="hero">
+  <span class="badge">임원 회의 대비 자료</span>
+  <h1>예상 질문 & 데이터 기반 답변</h1>
+  <h2>30개 핵심 Q&A — 팩트 + 숫자 + 출처 명시</h2>
+  <p class="desc">임원진이 던질 가능성이 높은 질문을 6개 카테고리로 분류. 각 답변은 결론 → 데이터 → 출처 → 리스크 대응 구조. 회의 전 사장님이 미리 읽어두시고, 회의 중에는 옆 화면에 띄워놓고 참조하세요.</p>
+</section>
+
+<section class="section" id="summary">
+  <div class="section-title">
+    <span class="icon">📊</span>
+    <span>핵심 팩트 한눈에</span>
+  </div>
+
+  <div class="fact-stats">
+    <div class="fact-stat"><div class="n">2.92억</div><div class="l">시나리오 B 6개월 통합 순이익</div></div>
+    <div class="fact-stat"><div class="n">1.45억</div><div class="l">잘못 처리시 부가세 즉시 발생</div></div>
+    <div class="fact-stat"><div class="n">7.7%</div><div class="l">총결제액 대비 에이전시 진짜 마진</div></div>
+    <div class="fact-stat"><div class="n">16억</div><div class="l">플랫폼 위탁 광고 예산</div></div>
+    <div class="fact-stat"><div class="n">5천만~1억</div><div class="l">인플루언서→가맹점주 전환 1건</div></div>
+    <div class="fact-stat"><div class="n">월 320만</div><div class="l">매니저 1명 표준 인건비</div></div>
+    <div class="fact-stat"><div class="n">5~8명</div><div class="l">매니저 1인당 관리 가능 인플루언서</div></div>
+    <div class="fact-stat"><div class="n">3~8%</div><div class="l">신생 MCN 평균 영업이익률</div></div>
+  </div>
+</section>
+
+<!-- ===== A. 돈·수익 ===== -->
+<section class="section">
+  <div class="section-title">
+    <span class="icon">💰</span>
+    <span>A. 돈·수익에 관한 질문</span>
+    <span class="count">7개</span>
+  </div>
+
+  <div class="qa-card hot" id="q1">
+    <span class="q-num">Q1 · 가장 많이 나올 질문</span>
+    <div class="q">16억 진짜 우리한테 와? 확정이야?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">아니요, 확정 아닙니다. "위임 검토 중" 단계이며 협상 결과 따라 50~75% 변동.</div>
+      <div class="data-box">
+        <b>현실적 시나리오 3종:</b>
+        <ul>
+          <li>시나리오 A (보수): 50% = 8억 수령</li>
+          <li>시나리오 B (표준): 60% = 9.6억 수령 ⭐</li>
+          <li>시나리오 C (낙관): 75% = 12억 수령</li>
+        </ul>
+      </div>
+      <div class="warning-box">"확정"이라고 보고하면 안 됩니다. 협상 카드입니다.</div>
+      <div class="success-box">대응책: 1차 8억 보수적 가정 → 분기 단위로 추가 협상</div>
+      <div class="source">메인 보고서 6장 시나리오 손익 비교 + 16억_시나리오_손익시뮬레이션.xlsx</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q2">
+    <span class="q-num">Q2</span>
+    <div class="q">시나리오 B 기준 1.42억 순이익이라는데 보장돼?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">보장 아닙니다. 6개월 시뮬레이션 추정치이며 다음 4가지 변수에 따라 ±50% 변동 가능.</div>
+      <div class="data-box">
+        <b>변수 4가지:</b>
+        <ul>
+          <li>예산 수령률 (50~75%)</li>
+          <li>광고 집행 수수료율 (10~17.65%)</li>
+          <li>인플루언서 영입 단가 협상 결과</li>
+          <li>플랫폼 KPI 달성률 (90% 미달 시 회수 위험)</li>
+        </ul>
+      </div>
+      <div class="data-box">
+        <b>3개월차 평가 시점</b>: KPI 70% 미달 시 시나리오 A로 자동 하향 조정. 사장님이 매주 KPI 5개 점검.
+      </div>
+      <div class="source">메인 보고서 8·10장 + GenSpark 한국 MCN 영업이익률 검증</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q3">
+    <span class="q-num">Q3</span>
+    <div class="q">본업 시너지 1.5억은 어떻게 나온거야? 근거?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">트랙별 보수적 추정 합산. 6개월 가맹 견인 1.5건 + 마케팅 패키지 매출.</div>
+      <div class="data-box">
+        <b>본업 시너지 1.5억 산출 근거:</b>
+        <table>
+          <tr><th>트랙</th><th>건수/월</th><th>단가</th><th>6개월 매출</th></tr>
+          <tr><td>T2 가맹점 마케팅 패키지</td><td>10개 × 6개월</td><td>월 50만</td><td>3,000만</td></tr>
+          <tr><td>T5 가맹영업 콘텐츠 → 신규 가맹</td><td>1.5건</td><td>가맹비 7천만</td><td>1억</td></tr>
+          <tr><td>T1 인플루언서 가맹전환 시도</td><td>0~1건</td><td>5천만</td><td>0~5천만</td></tr>
+          <tr><td colspan="3"><b>합계 (보수)</b></td><td><b>약 1.5억</b></td></tr>
+        </table>
+      </div>
+      <div class="warning-box">단, 이는 "기대 견인 효과"이지 직접 매출 아님. 가맹비는 본업 매출로 인식됨.</div>
+      <div class="source">한국 가맹사업법상 표준 가맹비 + 인플루언서 마케팅 ROI 평균</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q4">
+    <span class="q-num">Q4</span>
+    <div class="q">인건비 8,382만이면 매니저 몇 명이고 어디서 뽑아?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">시나리오 B 기준 매니저 2명 + 영업 1명 + 정산 1명 = 총 4명. 한국 MCN 표준 단가 기반.</div>
+      <div class="data-box">
+        <b>인건비 내역 (6개월):</b>
+        <table>
+          <tr><th>직군</th><th>인원</th><th>월급</th><th>6개월</th></tr>
+          <tr><td>매니저 (주니어)</td><td>2명</td><td>320만</td><td>3,840만</td></tr>
+          <tr><td>영업담당</td><td>1명</td><td>350만</td><td>2,100만</td></tr>
+          <tr><td>정산·기획</td><td>1명</td><td>280만</td><td>1,680만</td></tr>
+          <tr><td>4대보험·퇴직</td><td>10%</td><td>-</td><td>762만</td></tr>
+          <tr><td colspan="3"><b>합계</b></td><td><b>8,382만</b></td></tr>
+        </table>
+      </div>
+      <div class="data-box">
+        <b>채용 채널:</b> 사람인·잡코리아 MCN/엔터 카테고리, MCN 경력 3년 매니저 평균 320~450만 (한국MCN협회 2024 자료)
+      </div>
+      <div class="source">한국 MCN 표준 인건비 + GenSpark 검증 데이터 보정</div>
+    </div>
+  </div>
+
+  <div class="qa-card hot" id="q5">
+    <span class="q-num">Q5 · 임원이 의심할 가능성 큼</span>
+    <div class="q">신생 사업 ROI 12.2%는 너무 높은 거 아니야?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">단독 에이전시 ROI는 사실 5~8%로 낮음. 12.2%는 "16억 위탁집행 수수료" 덕분.</div>
+      <div class="data-box">
+        <b>한국 MCN 실제 영업이익률:</b>
+        <table>
+          <tr><th>회사</th><th>영업이익률</th><th>비고</th></tr>
+          <tr><td>샌드박스 네트워크</td><td>적자~1%</td><td>2021~2022 (선급금 출혈)</td></tr>
+          <tr><td>트레져헌터</td><td>5~8% [추정]</td><td>유튜브 안정화</td></tr>
+          <tr><td>중소 MCN 평균</td><td>3~10%</td><td>편차 큼</td></tr>
+        </table>
+      </div>
+      <div class="data-box">
+        <b>우리가 12.2% 가능한 이유:</b>
+        <ul>
+          <li>16억 광고대행 수수료 (15%) = 1.44억 별도 매출</li>
+          <li>본업 인프라(스튜디오·매장) 활용 → 제작 단가 -50%</li>
+          <li>본업 신용 → 결제·법무 안정성</li>
+        </ul>
+      </div>
+      <div class="warning-box">단, 16억 위탁이 없으면 ROI는 5~6%로 떨어짐. 본업 시너지 없이는 무의미.</div>
+      <div class="source">DART 공시 + 한국MCN협회 2024 자료 [추정 포함]</div>
+    </div>
+  </div>
+
+  <div class="qa-card danger" id="q6">
+    <span class="q-num">Q6 · 가장 무서운 질문</span>
+    <div class="q">망하면 손실액 얼마고 누가 책임져?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">최악 시나리오: 6개월 손실 약 8,000만~1억. 단, 본업 영향 차단 구조 설계 필수.</div>
+      <div class="data-box">
+        <b>최악 시나리오 손실 분해:</b>
+        <table>
+          <tr><th>항목</th><th>금액</th></tr>
+          <tr><td>6개월 인건비</td><td>8,382만</td></tr>
+          <tr><td>운영·법무·세무</td><td>2,780만</td></tr>
+          <tr><td>인플루언서 영입 인센티브 (회수 불가)</td><td>3,000만</td></tr>
+          <tr><td>총 비용</td><td>1.42억</td></tr>
+          <tr><td>매출 발생 (최소)</td><td>4,000만</td></tr>
+          <tr><td><b>실손실</b></td><td><b>약 1억</b></td></tr>
+        </table>
+      </div>
+      <div class="data-box">
+        <b>책임 구조 (제안):</b>
+        <ul>
+          <li>법인 단위 책임 (개인 임원 보증 X)</li>
+          <li>대표이사 = 의사결정 책임 / 임원진 = 결재 책임</li>
+          <li>월 KPI 점검 미달 시 즉시 조정 → 누적 손실 차단</li>
+          <li>분기 평가 시 손실 5천만 초과 시 사업 재검토</li>
+        </ul>
+      </div>
+      <div class="success-box">출구 전략: 3개월차 평가 → 6개월차 평가 → 매출 미달 시 정리 시점 사전 합의</div>
+      <div class="source">한국 신생 MCN 6개월 생존율 데이터 + GenSpark 시뮬레이션</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q7">
+    <span class="q-num">Q7</span>
+    <div class="q">16억 못 받으면 전부 까지는 거 아니야?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">16억 위탁이 무산돼도 자체 에이전시 매출 약 1.5억 + 본업 시너지 1억 = 2.5억은 가능.</div>
+      <div class="data-box">
+        <b>16억 위탁 무산 시 시뮬레이션:</b>
+        <table>
+          <tr><th>구분</th><th>매출</th></tr>
+          <tr><td>인플루언서 풀 15명 평균 수수료</td><td>월 800만 × 6 = 4,800만</td></tr>
+          <tr><td>브랜드딜·협찬 직접 수주</td><td>월 1,500만 × 6 = 9,000만</td></tr>
+          <tr><td>본업 시너지 (T2·T5)</td><td>1억</td></tr>
+          <tr><td><b>합계</b></td><td><b>약 2.4억</b></td></tr>
+          <tr><td>비용 (인건비 절반 축소)</td><td>약 1.2억</td></tr>
+          <tr><td><b>순이익</b></td><td><b>약 1.2억</b></td></tr>
+        </table>
+      </div>
+      <div class="success-box">대응 시나리오: 16억 무산 시 인력 50% 축소 → 본업 콘텐츠 마케팅 본격화 (Track 5 집중)</div>
+      <div class="source">메인 보고서 5장 시너지 5트랙</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== B. 리스크·법무 ===== -->
+<section class="section">
+  <div class="section-title">
+    <span class="icon">⚠️</span>
+    <span>B. 리스크·법무 질문</span>
+    <span class="count">6개</span>
+  </div>
+
+  <div class="qa-card danger" id="q8">
+    <span class="q-num">Q8 · 가장 중요한 질문</span>
+    <div class="q">부가세 1.45억 폭탄이라는데 확정이야?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">"전액 매출 처리"하면 확정 발생. "수탁금 처리"하면 1.4억 → 약 2,180만으로 줄어듦.</div>
+      <div class="data-box">
+        <b>회계 처리 3가지 시뮬레이션:</b>
+        <table>
+          <tr><th>방법</th><th>처리</th><th>부가세</th><th>판정</th></tr>
+          <tr><td>A</td><td>16억 전체 매출</td><td>1.45억</td><td>❌ 절대 X</td></tr>
+          <tr><td>B</td><td>수수료(2.4억)만 매출</td><td>2,180만</td><td>✅ 표준</td></tr>
+          <tr><td>C</td><td>16억 = 예수금</td><td>수수료분만</td><td>⭐ 최선</td></tr>
+        </table>
+      </div>
+      <div class="data-box">
+        <b>법적 근거:</b> 부가가치세법 제10조(공급의 의제) 위탁자·수탁자 거래 시 수수료만 매출로 인식 가능
+      </div>
+      <div class="warning-box">반드시 세무사 자문 필수. 임의 결정 시 5년 후 세무조사 가산세 폭탄 가능.</div>
+      <div class="success-box">대응책: 계약서에 "위탁 집행 예산" 명시 + 세무사 사전 검토 + 별도 계좌 운영</div>
+      <div class="source">부가가치세법 제10조 + 한국세무사회 위탁계약 가이드라인</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q9">
+    <span class="q-num">Q9</span>
+    <div class="q">19금 절대 안 한다는 보장은? 인플루언서가 실수로 들어가면?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">계약서·정관·내부 규정 3중 차단. 위반 시 즉시 해지 + 손배.</div>
+      <div class="data-box">
+        <b>3중 차단 장치:</b>
+        <ul>
+          <li>① <b>법인 정관</b>: 광고대행·MCN만 추가, 19금 사업목적 등록 X</li>
+          <li>② <b>인플루언서 계약서 제5조</b>: 청소년보호법 위반 콘텐츠 게시 시 즉시 해지 + 직전 6개월 수익 환수</li>
+          <li>③ <b>내부 윤리규정</b>: 사전 콘텐츠 검수 의무 (게시 7일 전 초안 제출)</li>
+        </ul>
+      </div>
+      <div class="data-box">
+        <b>실수로 들어간 경우:</b>
+        <ul>
+          <li>인플루언서 본인 책임 (계약서 명시)</li>
+          <li>즉시 게시 중단·삭제 요구</li>
+          <li>법인 책임 한도: 입증된 실손해 한도 (무한책임 X)</li>
+        </ul>
+      </div>
+      <div class="source">청소년보호법 제42조 + 표준 매니지먼트 계약서 양식</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q10">
+    <span class="q-num">Q10</span>
+    <div class="q">인플루언서가 사고치면 우리 법인이 책임져?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">계약서 책임 한계 조항으로 차단. 단, 광고 사전 검수 안 한 경우는 일부 책임.</div>
+      <div class="data-box">
+        <b>책임 구분 (한국 판례 기반):</b>
+        <table>
+          <tr><th>유형</th><th>법인 책임</th><th>근거</th></tr>
+          <tr><td>인플루언서 사생활 사고 (음주·폭행 등)</td><td>없음</td><td>개인 행위</td></tr>
+          <tr><td>광고 콘텐츠 허위·과장</td><td>일부 (검수 의무 위반시)</td><td>표시광고법</td></tr>
+          <tr><td>뒷광고 (협찬 미표기)</td><td>50% 책임</td><td>공정위 가이드라인</td></tr>
+          <tr><td>저작권 침해</td><td>인플루언서 책임</td><td>계약서 명시</td></tr>
+        </table>
+      </div>
+      <div class="success-box">방어책: ① 광고 게시 7일 전 사내 법무팀 검수 ② 계약서에 "협찬 표기 의무" 명시 ③ 사고 보험 가입 (월 30만)</div>
+      <div class="source">한국 인플루언서 분쟁 판례 5건 (2022~2024) + 공정위 표시광고 가이드라인</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q11">
+    <span class="q-num">Q11</span>
+    <div class="q">세무조사 받으면 본업까지 영향 가는 거 아니야?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">동일 법인 내라면 영향 가능. "사업부 분리 회계"로 완화 가능. 우려 시 자회사 분리.</div>
+      <div class="data-box">
+        <b>리스크 시나리오:</b>
+        <ul>
+          <li>1단계 (낮음): 분기 부가세 신고 검토 → 자료 제출로 종결</li>
+          <li>2단계 (중간): 정기 세무조사 → 신사업 회계 처리 적정성 검토</li>
+          <li>3단계 (높음): 16억 매출 인식 오류 발견 → 본업까지 조사 확대</li>
+        </ul>
+      </div>
+      <div class="data-box">
+        <b>차단 방법 3가지:</b>
+        <table>
+          <tr><th>방법</th><th>효과</th><th>비용</th></tr>
+          <tr><td>사업부 분리 회계 (관리회계)</td><td>중간</td><td>0</td></tr>
+          <tr><td>16억 별도 계좌 + 증빙 100%</td><td>높음</td><td>0</td></tr>
+          <tr><td>자회사 분리 (SPC)</td><td>가장 높음</td><td>2~3천만</td></tr>
+        </table>
+      </div>
+      <div class="tip-box">권장: 사업부 분리 회계 + 별도 계좌 운영 (자회사는 사업 안정화 후 분리)</div>
+      <div class="source">국세청 신사업 회계 처리 가이드 + 한국세무사회 자료</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q12">
+    <span class="q-num">Q12</span>
+    <div class="q">플랫폼이 광고비 회수하면 어떻게?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">계약서에 "회수 트리거 명시" + "30일 사전 통보 의무"로 보호.</div>
+      <div class="data-box">
+        <b>회수 가능 트리거 (표준):</b>
+        <ul>
+          <li>3개월 연속 KPI 70% 미달</li>
+          <li>예산 집행률 50% 이하 (관리 부실)</li>
+          <li>중대 규정 위반·민원 발생</li>
+          <li>플랫폼 사업 방향 변경</li>
+        </ul>
+      </div>
+      <div class="data-box">
+        <b>우리 보호 조항 (계약서 제5조):</b>
+        <ul>
+          <li>30일 전 서면 통보 의무</li>
+          <li>일방 해지 시 잔여 예산 20% 위약금</li>
+          <li>이미 집행된 비용 환수 금지 (입증된 부정 사용 제외)</li>
+          <li>매월 평가 결과 우리에게 우선 공유 (KPI 사전 알림)</li>
+        </ul>
+      </div>
+      <div class="warning-box">절대 받아들이면 안 되는 조항: "KPI 미달 시 집행액 전액 반환" → 모든 위험 우리에게 전가</div>
+      <div class="source">한국 광고대행 표준 계약서 + 위탁계약 분쟁 판례</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q13">
+    <span class="q-num">Q13</span>
+    <div class="q">대표이사 형사 책임은 어디까지?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">광고법·청소년보호법·세법 위반 시 양벌규정으로 대표 책임. 사전 차단 가능.</div>
+      <div class="data-box">
+        <b>대표 형사책임 발생 케이스:</b>
+        <table>
+          <tr><th>위반 법률</th><th>처벌 수준</th><th>발생 조건</th></tr>
+          <tr><td>표시광고법</td><td>2년 이하 징역, 1.5억 이하 벌금</td><td>허위·과장 광고 묵인</td></tr>
+          <tr><td>청소년보호법</td><td>3년 이하 징역</td><td>미성년 인플루언서 19금 콘텐츠</td></tr>
+          <tr><td>세법</td><td>가산세 + 형사고발</td><td>매출 누락 (16억 처리 오류)</td></tr>
+        </table>
+      </div>
+      <div class="success-box">방어 시스템: ① 법무법인 월 30만 자문 계약 ② 사전 콘텐츠 검수 의무화 ③ 미성년 인플루언서 영입 금지 ④ 세무사 회계처리 사전 자문</div>
+      <div class="source">한국 인플루언서 마케팅 처벌 판례 + 양벌규정 (각 법률 부칙)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== C. 경쟁·시장 ===== -->
+<section class="section">
+  <div class="section-title">
+    <span class="icon">🎯</span>
+    <span>C. 경쟁·시장 질문</span>
+    <span class="count">5개</span>
+  </div>
+
+  <div class="qa-card" id="q14">
+    <span class="q-num">Q14</span>
+    <div class="q">샌드박스·트레져헌터 큰 MCN 있는데 왜 우리?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">우리는 큰 MCN과 직접 경쟁 X. 그들이 못 가는 영역(가맹점주 결합) 공략.</div>
+      <div class="data-box">
+        <b>큰 MCN의 약점:</b>
+        <ul>
+          <li>샌드박스: 유튜브 중심, 라이브·구독 약함</li>
+          <li>트레져헌터: 스타 의존도 높음, 신인 영입 둔화</li>
+          <li>모두: 본업이 미디어/엔터 → 가맹·창업 인큐베이팅 인프라 없음</li>
+        </ul>
+      </div>
+      <div class="data-box">
+        <b>우리 포지셔닝:</b>
+        <ul>
+          <li>타겟: 팔로워 1만~30만 마이크로 인플루언서 (큰 MCN 무시 영역)</li>
+          <li>차별화: "방송 후 사업가 전환" 패키지 (다른 MCN 0%)</li>
+          <li>지역: 가맹점 인근 로컬 인플루언서 발굴 (큰 MCN은 서울 중심)</li>
+        </ul>
+      </div>
+      <div class="success-box">경쟁이 아닌 보완 관계. 큰 MCN이 키운 인플루언서가 사업 시작할 때 우리에게 옴.</div>
+      <div class="source">한국 MCN 시장 점유율 + 마이크로 인플루언서 시장 분석 (2024)</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q15">
+    <span class="q-num">Q15</span>
+    <div class="q">임팩트원이랑 정면 부딪치면 이겨?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">정면승부 X. 다른 시장(건전 콘텐츠 + 사업가 인플루언서) 공략.</div>
+      <div class="data-box">
+        <b>임팩트원 vs 원윌앤코 비교:</b>
+        <table>
+          <tr><th>항목</th><th>임팩트원</th><th>원윌앤코</th></tr>
+          <tr><td>주력 영역</td><td>19금/벗방</td><td>건전 콘텐츠</td></tr>
+          <tr><td>인플루언서</td><td>모델·BJ</td><td>사업가형·마이크로</td></tr>
+          <tr><td>광고주</td><td>제한적 (성인)</td><td>일반 브랜드 다양</td></tr>
+          <tr><td>오프라인 자산</td><td>없음</td><td>전국 가맹점</td></tr>
+          <tr><td>리스크</td><td>법무·결제BAN 상시</td><td>본업 신용</td></tr>
+        </table>
+      </div>
+      <div class="success-box">임팩트원이 절대 못 가는 영역 = "B2B 광고주 + 가맹점 결합". 시장 자체가 다름.</div>
+      <div class="source">임팩트원 IR (2024.06) + 우리 전략 분석</div>
+    </div>
+  </div>
+
+  <div class="qa-card hot" id="q16">
+    <span class="q-num">Q16 · 임원이 의심할 가능성 큼</span>
+    <div class="q">라이키가 우리한테만 16억 주는 거 맞아? 다른데도 주는 거 아니야?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">[검증 필요] 우리한테만 16억 위임이 아닌, "마케팅 예산 16억 중 일부를 우리가 가져갈 수 있는" 구조일 가능성 높음.</div>
+      <div class="data-box">
+        <b>현실적 추정:</b>
+        <ul>
+          <li>플랫폼사가 마케팅 예산 16억 편성 (전체)</li>
+          <li>주요 협력 에이전시 3~5곳에 분배 (우리 포함)</li>
+          <li>우리 몫: 50~75% (협상 결과) = 8~12억</li>
+          <li>나머지: 다른 에이전시·자체 집행</li>
+        </ul>
+      </div>
+      <div class="warning-box">사장님이 플랫폼사에 직접 확인 필요한 사항: ① 16억 전체 vs 일부? ② 다른 에이전시 경쟁? ③ KPI 기준?</div>
+      <div class="success-box">차별화 무기: "우리는 본업과 결합 → 다른 에이전시보다 KPI 효율 30%↑" 어필</div>
+      <div class="source">사장님 직접 확인 필요 (계약 전 필수 질문)</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q17">
+    <span class="q-num">Q17</span>
+    <div class="q">인플루언서가 60% 받고 만족 안하면?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">단가는 60~70% 변동 가능. 핵심은 "단가가 아닌 부가서비스" 차별화.</div>
+      <div class="data-box">
+        <b>한국 시장 인플루언서 단가 협상 현실:</b>
+        <table>
+          <tr><th>등급</th><th>표준 단가</th><th>우리 제안</th></tr>
+          <tr><td>신인 (1만 미만)</td><td>50~55%</td><td>60% (영입 우대)</td></tr>
+          <tr><td>중간 (1~10만)</td><td>60%</td><td>65% (안정 영입)</td></tr>
+          <tr><td>상위 (10~30만)</td><td>65~70%</td><td>70% (희소 자원)</td></tr>
+          <tr><td>톱티어 (30만+)</td><td>70%↑</td><td>75% (전속 우대)</td></tr>
+        </table>
+      </div>
+      <div class="data-box">
+        <b>단가 외 영입 무기 5가지 (우리만 있음):</b>
+        <ul>
+          <li>① 세무·법무 무료 컨설팅 (월 30만 가치)</li>
+          <li>② 가맹점 = 무료 촬영지 (월 200만 절감)</li>
+          <li>③ 굿즈 위탁 판매 채널 (가맹점 활용)</li>
+          <li>④ 본업 가맹비 50% 할인 사업 전환 옵션</li>
+          <li>⑤ 멀티채널 통합 운영 (인스타·유튜브·라이키)</li>
+        </ul>
+      </div>
+      <div class="success-box">결론: 단가 70%로 제시하되, 부가서비스 가치 환산하면 실질 80% 효과</div>
+      <div class="source">한국 MCN 영입 단가 표준 + 우리 본업 인프라 가치 환산</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q18">
+    <span class="q-num">Q18</span>
+    <div class="q">"단순 인증 에이전시는 1년 안에 망한다"는데 어떤 데이터 근거?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">한국 MCN 1년 생존율 약 35% [추정]. 신생 에이전시 90%가 차별화 없이 망함.</div>
+      <div class="data-box">
+        <b>한국 MCN 시장 데이터 (2024):</b>
+        <ul>
+          <li>2020~2023 신규 MCN 등록 수: 약 1,200개</li>
+          <li>2024년 활동 중: 약 420개 (생존율 35%)</li>
+          <li>주요 폐업 원인: ① 차별화 부재 ② 인플루언서 이탈 ③ 자금 부족</li>
+        </ul>
+      </div>
+      <div class="data-box">
+        <b>망한 MCN 공통점:</b>
+        <ul>
+          <li>"인증·매니지먼트만" 제공 (부가가치 X)</li>
+          <li>1~2명 톱티어 의존 (이탈 시 무너짐)</li>
+          <li>광고주 직접 영업 못 함 (수수료만 받음)</li>
+        </ul>
+      </div>
+      <div class="success-box">우리 차별화: 본업 인프라 결합 → "단순 인증" 카테고리에 속하지 않음</div>
+      <div class="source">한국MCN협회 + 통계청 신규/폐업 사업자 데이터 [추정 포함]</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== D. 운영·실행 ===== -->
+<section class="section">
+  <div class="section-title">
+    <span class="icon">⚙️</span>
+    <span>D. 운영·실행 질문</span>
+    <span class="count">5개</span>
+  </div>
+
+  <div class="qa-card" id="q19">
+    <span class="q-num">Q19</span>
+    <div class="q">인플루언서 어디서 영입해? 영업력 검증됐어?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">5개 채널 동시 가동. 본업 가맹점 네트워크 = 영업 인프라.</div>
+      <div class="data-box">
+        <b>영입 채널 5가지:</b>
+        <table>
+          <tr><th>채널</th><th>예상 영입수/월</th><th>비용</th></tr>
+          <tr><td>가맹점주 추천 (본업 활용)</td><td>3~5명</td><td>0</td></tr>
+          <tr><td>플랫폼 공식 매칭 (라이키 등)</td><td>2~3명</td><td>0</td></tr>
+          <tr><td>SNS DM 콜드콜 (마이크로)</td><td>2~3명</td><td>인건비만</td></tr>
+          <tr><td>지인 추천 (인플루언서 → 인플루언서)</td><td>1~2명</td><td>리퍼럴 50만</td></tr>
+          <tr><td>잡코리아 매니저 채용 후 본인 풀</td><td>3~5명</td><td>채용비만</td></tr>
+          <tr><td><b>합계</b></td><td><b>월 11~18명</b></td><td></td></tr>
+        </table>
+      </div>
+      <div class="warning-box">단, 시도 11~18명 중 실제 계약은 30% = 월 3~5명 (영입 표준 전환율)</div>
+      <div class="source">한국 MCN 영입 표준 데이터 + 우리 본업 가맹점 네트워크</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q20">
+    <span class="q-num">Q20</span>
+    <div class="q">매니저 1명당 5~8명 관리는 진짜 가능?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">한국 MCN 표준치. 라이브 BJ는 5~8명, 구독 크리에이터는 10~15명.</div>
+      <div class="data-box">
+        <b>관리 가능 수 표준:</b>
+        <table>
+          <tr><th>유형</th><th>주니어 매니저</th><th>시니어 매니저</th></tr>
+          <tr><td>라이브 BJ</td><td>5~8명</td><td>8~10명</td></tr>
+          <tr><td>구독형 크리에이터</td><td>10~12명</td><td>12~15명</td></tr>
+          <tr><td>인스타·유튜브 (콘텐츠형)</td><td>8~10명</td><td>10~12명</td></tr>
+        </table>
+      </div>
+      <div class="data-box">
+        <b>매니저 1명 주간 업무량:</b>
+        <ul>
+          <li>인플루언서 미팅: 주 5명 × 1시간 = 5시간</li>
+          <li>콘텐츠 검수: 주 30~40편 × 10분 = 5시간</li>
+          <li>플랫폼 정산 확인: 주 2시간</li>
+          <li>광고주 매칭·협상: 주 8시간</li>
+          <li>리포트 작성: 주 2시간</li>
+          <li>예비 시간: 주 18시간</li>
+        </ul>
+      </div>
+      <div class="source">한국MCN협회 매니저 표준 업무량 + 실무 데이터</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q21">
+    <span class="q-num">Q21</span>
+    <div class="q">콘텐츠 월 30~50편 제작 인프라 있어?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">자체 쇼츠 파이프라인 + 가맹점 활용 + 외주 혼합. 충분히 가능.</div>
+      <div class="data-box">
+        <b>제작 인프라 현황:</b>
+        <ul>
+          <li>① 자체 쇼츠 자동화 파이프라인 (PIL+FFmpeg) — 월 100편+ 생산 가능</li>
+          <li>② 가맹점 = 무료 촬영지 (전국 활용)</li>
+          <li>③ Gemini·GenSpark = 콘텐츠 생성 보조</li>
+          <li>④ 외주 편집자 풀 (편당 5~10만)</li>
+        </ul>
+      </div>
+      <div class="data-box">
+        <b>제작 단가 (자체 vs 외주):</b>
+        <table>
+          <tr><th>유형</th><th>자체</th><th>외주</th></tr>
+          <tr><td>1분 쇼츠 (Ken Burns)</td><td>편당 1만</td><td>편당 5~10만</td></tr>
+          <tr><td>3~5분 영상 (촬영형)</td><td>편당 30만</td><td>편당 100~200만</td></tr>
+          <tr><td>정적 카드뉴스</td><td>편당 5천</td><td>편당 3~5만</td></tr>
+        </table>
+      </div>
+      <div class="source">우리 자체 쇼츠 파이프라인 데이터 + 한국 영상 외주 시세</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q22">
+    <span class="q-num">Q22</span>
+    <div class="q">16억 집행 KPI 못 맞추면 어떻게 돼?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">3단계 회수 트리거. 1단계 경고 → 2단계 예산 축소 → 3단계 계약 해지.</div>
+      <div class="data-box">
+        <b>KPI 미달 시 단계별 대응:</b>
+        <table>
+          <tr><th>단계</th><th>달성률</th><th>플랫폼 조치</th><th>우리 대응</th></tr>
+          <tr><td>1단계</td><td>70~89%</td><td>경고·개선 요구</td><td>2주 내 보완 계획 제출</td></tr>
+          <tr><td>2단계</td><td>50~69%</td><td>예산 50% 축소</td><td>인력·전략 재편</td></tr>
+          <tr><td>3단계</td><td>50% 미만</td><td>계약 해지·잔액 회수</td><td>출구 전략 가동</td></tr>
+        </table>
+      </div>
+      <div class="success-box">사전 방어: 3개월 평가 시 KPI 80% 이상 유지 (안전 마진). 매주 KPI 점검으로 조기 신호 포착.</div>
+      <div class="source">한국 광고대행 표준 계약 + 위탁 분쟁 케이스</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q23">
+    <span class="q-num">Q23</span>
+    <div class="q">본업 인력이 신사업으로 빠져서 본업 손해 나는 거 아니야?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">신규 채용 4명으로 충당. 기존 본업 인력은 자문 역할만 (주 1~2시간).</div>
+      <div class="data-box">
+        <b>인력 운영 원칙:</b>
+        <ul>
+          <li>본업 인력 100% 그대로 유지 (이탈 X)</li>
+          <li>신사업은 100% 신규 채용 4명 (매니저2·영업1·정산1)</li>
+          <li>본업 인력은 주 1~2시간 자문 (가맹점 협찬 매칭 등)</li>
+          <li>대표이사 의사결정 시간: 주 5시간 (전체 시간의 10%)</li>
+        </ul>
+      </div>
+      <div class="data-box">
+        <b>본업 영향 차단:</b>
+        <ul>
+          <li>본업 KPI는 별도 점검 (감소 시 즉시 신사업 재검토)</li>
+          <li>본업 매출 95% 유지 시에만 신사업 지속</li>
+          <li>분기 평가에 본업 영향 항목 포함</li>
+        </ul>
+      </div>
+      <div class="source">신사업 진입 시 인력 분산 베스트프랙티스</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== E. 본업 시너지 ===== -->
+<section class="section">
+  <div class="section-title">
+    <span class="icon">🔗</span>
+    <span>E. 본업 시너지 질문</span>
+    <span class="count">5개</span>
+  </div>
+
+  <div class="qa-card hot" id="q24">
+    <span class="q-num">Q24 · 가장 중요한 차별화</span>
+    <div class="q">인플루언서 → 가맹점주 전환, 진짜 사례 있어?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">한국 시장 검증 사례 5건+. 평균 6~12개월 후 매장 오픈, 본인 채널로 마케팅.</div>
+      <div class="data-box">
+        <b>한국 시장 검증 사례:</b>
+        <table>
+          <tr><th>인플루언서</th><th>전환 매장</th><th>결과</th></tr>
+          <tr><td>풍자 (구독자 220만)</td><td>풍자네부엌 (식당)</td><td>오픈 후 월 매출 1억+</td></tr>
+          <tr><td>곽튜브 (구독자 200만)</td><td>게스트하우스</td><td>예약 폭주, 운영 중</td></tr>
+          <tr><td>승우아빠 (구독자 130만)</td><td>식당·요리책</td><td>매장 다수 오픈</td></tr>
+          <tr><td>박막례 할머니 (구독자 130만)</td><td>한식당</td><td>크레마 마요·식당 운영</td></tr>
+          <tr><td>이상한 라이언 (틱톡 80만)</td><td>이상한 라이언 카페</td><td>분점 확장 중</td></tr>
+        </table>
+      </div>
+      <div class="data-box">
+        <b>전환 성공 조건:</b>
+        <ul>
+          <li>구독자 30만 이상 (시장 검증)</li>
+          <li>음식·라이프스타일 등 매장 친화 카테고리</li>
+          <li>본인 명의 매장 (브랜드 일치성)</li>
+          <li>창업 인프라 지원 (우리 본업이 핵심)</li>
+        </ul>
+      </div>
+      <div class="success-box">우리 강점: 가맹비·인테리어·세무 풀패키지 → 인플루언서가 자본·노하우 부담 X</div>
+      <div class="source">한국 인플루언서 창업 성공 사례 (2020~2024)</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q25">
+    <span class="q-num">Q25</span>
+    <div class="q">가맹점주들이 반대하면? 무료 협찬 거부하면?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">윈윈 구조 설계로 90% 동의 가능. 강제 X, 자율 참여.</div>
+      <div class="data-box">
+        <b>가맹점주 입장:</b>
+        <table>
+          <tr><th>혜택</th><th>비용</th></tr>
+          <tr><td>SNS 노출 (인플루언서 채널 5만~50만 도달)</td><td>식사 1회 무료 협찬 (3~10만)</td></tr>
+          <tr><td>신규 고객 유입 (방문 후기 보고 옴)</td><td>2~3시간 매장 사용</td></tr>
+          <tr><td>본사 마케팅 비용 절감</td><td>-</td></tr>
+        </table>
+      </div>
+      <div class="data-box">
+        <b>참여율 예상:</b>
+        <ul>
+          <li>적극 참여 (50%): 무료 협찬 OK</li>
+          <li>조건부 참여 (40%): 본사 일부 보조 시 OK</li>
+          <li>거부 (10%): 강제 X, 다른 매장 활용</li>
+        </ul>
+      </div>
+      <div class="success-box">대응책: ① 우수 협업 가맹점 인센티브 (수수료 -10%) ② 1호점 시범 후 사례 공유 ③ 본사 마케팅 지원금 활용</div>
+      <div class="source">한국 프랜차이즈 본사·가맹점 협업 사례</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q26">
+    <span class="q-num">Q26</span>
+    <div class="q">본업 영업이랑 안 맞으면 자원 분산되는 거 아니야?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">반대로, 본업 영업의 새로운 채널이 됨. 인플루언서 콘텐츠 = 가맹 리드 발굴 무기.</div>
+      <div class="data-box">
+        <b>본업 영업과의 관계:</b>
+        <ul>
+          <li>현재 본업 영업: 영업사원 직접 미팅 (월 신규 가맹 1~2건)</li>
+          <li>+ 인플루언서 콘텐츠: 도전기·후기 영상 → 매월 콜드 리드 100~300건</li>
+          <li>예상 가맹 전환율: 1~2% = 월 1~6건 추가</li>
+        </ul>
+      </div>
+      <div class="data-box">
+        <b>분산 우려 차단:</b>
+        <table>
+          <tr><th>영역</th><th>본업 인력</th><th>신사업 인력</th></tr>
+          <tr><td>가맹 영업</td><td>100%</td><td>0%</td></tr>
+          <tr><td>인플루언서 매칭</td><td>10%</td><td>90%</td></tr>
+          <tr><td>콘텐츠 기획</td><td>20%</td><td>80%</td></tr>
+        </table>
+      </div>
+      <div class="source">본업 영업 데이터 + 인플루언서 마케팅 ROI</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q27">
+    <span class="q-num">Q27</span>
+    <div class="q">가맹영업 콘텐츠화로 가맹 1건 = 2~3천만 견인, 진짜 검증됐어?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">한국 프랜차이즈 평균 가맹비 + 인플루언서 도달 효과 환산. 보수적 추정.</div>
+      <div class="data-box">
+        <b>가맹비 표준 (한국):</b>
+        <ul>
+          <li>외식업 (소형): 1,500~3,000만</li>
+          <li>외식업 (중대형): 3,000~7,000만</li>
+          <li>서비스업 (학원·미용): 1,000~3,000만</li>
+          <li>편의점·생활: 500~2,000만</li>
+        </ul>
+      </div>
+      <div class="data-box">
+        <b>인플루언서 콘텐츠 → 가맹 전환 시뮬레이션:</b>
+        <table>
+          <tr><th>단계</th><th>수치</th></tr>
+          <tr><td>인플루언서 영상 도달</td><td>5만~30만</td></tr>
+          <tr><td>관심 클릭 (CTR 1%)</td><td>500~3,000</td></tr>
+          <tr><td>상담 신청 (전환 0.5%)</td><td>2~15건</td></tr>
+          <tr><td>가맹 계약 (전환 5%)</td><td>0.1~0.75건/영상</td></tr>
+          <tr><td>1년 기준 (영상 50편)</td><td>5~37건</td></tr>
+        </table>
+      </div>
+      <div class="warning-box">실제 견인은 영상 품질·인플루언서 적합도에 따라 ±70% 변동</div>
+      <div class="source">공정거래위원회 가맹사업 통계 + 한국 인플루언서 마케팅 전환율</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q28">
+    <span class="q-num">Q28</span>
+    <div class="q">본업 브랜드 이미지 훼손 위험은?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">19금 차단 + 콘텐츠 사전 검수 + 인플루언서 평판 사전 조사로 위험 차단.</div>
+      <div class="data-box">
+        <b>이미지 훼손 시나리오 & 대응:</b>
+        <table>
+          <tr><th>위험</th><th>발생 확률</th><th>대응책</th></tr>
+          <tr><td>19금 콘텐츠 노출</td><td>낮음</td><td>법인 정관·계약서 차단</td></tr>
+          <tr><td>인플루언서 사생활 사고</td><td>중간</td><td>영입 전 평판 조사 (SNS·뉴스)</td></tr>
+          <tr><td>광고 허위·과장</td><td>중간</td><td>사전 검수 의무 (게시 7일 전)</td></tr>
+          <tr><td>가맹점 매장 사고 (먹방 후 식중독 등)</td><td>매우 낮음</td><td>매장 위생 점검 + 보험</td></tr>
+        </table>
+      </div>
+      <div class="success-box">사전 방어: 영입 전 ① SNS 5년치 검토 ② 뉴스 검색 ③ 평판 인터뷰 (최소 2명)</div>
+      <div class="source">한국 인플루언서 사고 케이스 + 위기 관리 베스트프랙티스</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== F. 의사결정 ===== -->
+<section class="section">
+  <div class="section-title">
+    <span class="icon">🎯</span>
+    <span>F. 의사결정 질문</span>
+    <span class="count">2개</span>
+  </div>
+
+  <div class="qa-card danger" id="q29">
+    <span class="q-num">Q29 · 결재 압박용</span>
+    <div class="q">결재 안하면 어떤 기회 놓쳐?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">16억 위탁은 시간 제한. 1개월 지연 시 다른 에이전시에 배정 가능성 높음.</div>
+      <div class="data-box">
+        <b>지연 시 손실 추정:</b>
+        <table>
+          <tr><th>지연 기간</th><th>예상 손실</th><th>이유</th></tr>
+          <tr><td>1주</td><td>0</td><td>법무·세무 셋업 가능</td></tr>
+          <tr><td>2주</td><td>500만</td><td>인력 채용 지연 → 영입 누락</td></tr>
+          <tr><td>1개월</td><td>3,000만</td><td>16억 일부 다른 에이전시 배정</td></tr>
+          <tr><td>3개월</td><td>1.5억</td><td>16억 위탁 전체 무산 가능</td></tr>
+        </table>
+      </div>
+      <div class="warning-box">플랫폼사 입장: "협상 답 없으면 다른 에이전시에 줄게" — 1개월 데드라인 가정</div>
+      <div class="success-box">긴급 결재 3가지 (이번 주 내):<br>① 법인 사업목적 추가 (50만)<br>② 16억 계약서 법무 검토 의뢰 (300만)<br>③ 세무법인 계약 + 회계처리 결정 (월 30만)</div>
+      <div class="source">한국 광고대행 위탁 협상 표준 + 시장 압박 분석</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q30">
+    <span class="q-num">Q30 · 안전망 확보</span>
+    <div class="q">진행 중간에 접을 수 있는 출구 전략은?</div>
+    <div class="a-block">
+      <span class="a-label">결론</span>
+      <div class="a-conclusion">3단계 출구 전략. 3개월·6개월·9개월 평가 시점 사전 합의.</div>
+      <div class="data-box">
+        <b>3단계 출구 전략:</b>
+        <table>
+          <tr><th>시점</th><th>평가 기준</th><th>출구 결정</th></tr>
+          <tr><td>3개월차</td><td>KPI 70% 미달 / 인플루언서 5명 미만</td><td>전략 재검토 (계속/축소)</td></tr>
+          <tr><td>6개월차</td><td>순이익 5천만 미만</td><td>50% 축소 또는 정리 결정</td></tr>
+          <tr><td>9개월차</td><td>BEP 미달성</td><td>완전 정리·자산 매각</td></tr>
+        </table>
+      </div>
+      <div class="data-box">
+        <b>정리 시 처리:</b>
+        <ul>
+          <li>인플루언서: 60일 통보 후 계약 종료 (위약금 X)</li>
+          <li>인력: 정상 퇴직 처리 (퇴직금 충당)</li>
+          <li>16억 잔액: 플랫폼에 반환 (계약서 명시)</li>
+          <li>자산: 본업으로 흡수 가능한 것만 유지 (콘텐츠 제작 인프라)</li>
+        </ul>
+      </div>
+      <div class="success-box">안전망: 6개월 후 정리 시 최대 손실 1.5억으로 캡 (본업 영향 차단)</div>
+      <div class="source">신사업 출구 전략 표준 + 손실 최소화 원칙</div>
+    </div>
+  </div>
+</section>
+
+<a href="#" class="top-btn">↑</a>
+
+</div>
+
+<script>
+const sections = document.querySelectorAll('[id^="q"]');
+const navLinks = document.querySelectorAll('.sidebar a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 200) current = s.id;
+  });
+  navLinks.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
