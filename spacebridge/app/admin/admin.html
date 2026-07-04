@@ -79,6 +79,17 @@ select.status{border:1px solid var(--line);border-radius:8px;padding:4px 8px;fon
 .post-form label{font-size:13px;color:var(--sub);display:flex;align-items:center;gap:6px;}
 /* 툴팁 */
 #tip{position:fixed;background:var(--ink);color:#fff;font-size:12px;border-radius:8px;padding:6px 10px;pointer-events:none;display:none;z-index:99;white-space:nowrap;}
+/* CMS 편집 폼 */
+.cms-grid{display:grid;gap:10px;}
+.cms-grid label{font-size:12px;font-weight:700;color:var(--sub);display:block;margin-bottom:3px;}
+.cms-grid input,.cms-grid textarea,.cms-item input,.cms-item textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13.5px;}
+.cms-grid textarea,.cms-item textarea{resize:vertical;min-height:56px;}
+.cms-item{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;display:grid;gap:8px;background:#FBFAF7;}
+.cms-item .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.cms-item .head-row{display:flex;justify-content:space-between;align-items:center;}
+.cms-item .head-row b{font-size:13px;color:var(--sub);}
+.pf-preview{width:120px;height:74px;border-radius:8px;background:#EFEDE6 center/cover no-repeat;border:1px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);}
+.pf-imgrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
 .empty{color:var(--muted);text-align:center;padding:30px 0;}
 svg text{font-family:inherit;}
 .tbl-scroll{overflow-x:auto;}
@@ -101,6 +112,7 @@ svg text{font-family:inherit;}
     <div class="logo">공간<b>브릿지</b> 관리자</div>
     <nav>
       <button data-page="dash" class="on">대시보드</button>
+      <button data-page="site">사이트 편집</button>
       <button data-page="leads">견적문의 DB</button>
       <button data-page="board">게시판 관리</button>
     </nav>
@@ -149,6 +161,44 @@ svg text{font-family:inherit;}
           <h3>인기 페이지</h3>
           <div class="tbl-scroll"><table id="tblPages"><thead><tr><th>경로</th><th class="num">조회</th></tr></thead><tbody></tbody></table></div>
         </div>
+      </div>
+    </div>
+
+    <!-- ===== 사이트 편집 (CMS) ===== -->
+    <div class="page" id="page-site">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+        <h2 style="margin:0;">사이트 편집</h2>
+        <span style="font-size:12px;color:var(--muted);">저장하면 홈페이지에 즉시 반영됩니다 · <a href="/" target="_blank" style="color:var(--copper);font-weight:700;">홈페이지 새 탭에서 보기 ↗</a></span>
+        <span class="sp" style="flex:1;"></span>
+        <button class="icon-btn primary" id="saveSite" style="padding:10px 26px;font-size:14px;">전체 저장</button>
+        <span id="saveMsg" style="font-size:13px;font-weight:700;"></span>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h3>기본 정보 (연락처·사업자)</h3>
+          <div class="cms-grid" id="siteFields"></div>
+        </div>
+        <div class="card">
+          <h3>메인 화면 문구 (히어로)</h3>
+          <div class="cms-grid" id="heroFields"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <h3>신뢰 숫자 4개 <span class="hint">— 메인 상단 실적 바 (예: 120 / 건 / 누적 시공)</span></h3>
+        <div id="trustFields" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <h3>포트폴리오 <span class="hint">— 사진을 올리면 자리표시가 실사진으로 바뀝니다</span>
+          <button class="icon-btn" id="addPf" style="float:right;">+ 사례 추가</button></h3>
+        <div id="pfFields"></div>
+      </div>
+
+      <div class="card">
+        <h3>고객 후기 <button class="icon-btn" id="addRv" style="float:right;">+ 후기 추가</button></h3>
+        <div id="rvFields"></div>
       </div>
     </div>
 
@@ -230,7 +280,7 @@ $('#loginForm').addEventListener('submit',function(e){
   e.preventDefault();
   fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('#pw').value})})
     .then(function(r){
-      if(r.ok){show(true);loadDash();loadLeads();loadPosts();}
+      if(r.ok){show(true);loadDash();loadLeads();loadPosts();loadContent();}
       else $('#loginErr').style.display='block';
     });
 });
@@ -245,7 +295,7 @@ document.querySelectorAll('.topbar nav button').forEach(function(b){
   });
 });
 /* 세션 확인 */
-api('/api/admin/me').then(function(){show(true);loadDash();loadLeads();loadPosts();}).catch(function(){show(false);});
+api('/api/admin/me').then(function(){show(true);loadDash();loadLeads();loadPosts();loadContent();}).catch(function(){show(false);});
 
 /* 툴팁 */
 var tip=$('#tip');
@@ -360,6 +410,85 @@ function fillTable(sel,rows,emptyMsg){
   if(!rows.length){tb.innerHTML='<tr><td colspan="2" class="empty">'+emptyMsg+'</td></tr>';return;}
   tb.innerHTML=rows.map(function(r){return '<tr><td>'+r[0]+'</td><td class="num">'+r[1]+'</td></tr>';}).join('');
 }
+
+/* ===================== 사이트 편집 (CMS) ===================== */
+var CNT=null;
+var SITE_DEFS=[
+  ['phone','대표 전화 (예: 0507-0000-0000)'],['kakao_url','카카오톡 채널 URL (http://pf.kakao.com/…)'],
+  ['kakao_name','카카오 채널 이름 (예: @공간브릿지)'],['promise','응답 약속 문구 (견적 폼 상단)'],
+  ['ceo','대표자명'],['biz_no','사업자등록번호'],['address','주소'],['email','이메일'],['footer_note','푸터 한 줄 (면허·보증 등)']
+];
+var HERO_DEFS=[['badge','상단 배지 문구'],['t1','제목 1줄'],['t2','제목 2줄'],['t3','제목 3줄 (강조색)'],['sub','부제목']];
+function loadContent(){
+  api('/api/admin/content').then(function(c){CNT=c;renderCms();});
+}
+function renderCms(){
+  $('#siteFields').innerHTML=SITE_DEFS.map(function(d){
+    return '<div><label>'+d[1]+'</label><input data-site="'+d[0]+'" value="'+esc(CNT.site[d[0]]||'')+'"></div>';
+  }).join('');
+  $('#heroFields').innerHTML=HERO_DEFS.map(function(d){
+    return '<div><label>'+d[1]+'</label><input data-hero="'+d[0]+'" value="'+esc(CNT.hero[d[0]]||'')+'"></div>';
+  }).join('');
+  $('#trustFields').innerHTML=CNT.trust.map(function(t,i){
+    return '<div class="cms-item" style="background:#fff;"><b style="font-size:12px;color:var(--muted);">숫자 '+(i+1)+'</b>'
+      +'<div class="row"><div><label>숫자</label><input data-tr="num" data-i="'+i+'" value="'+esc(t.num)+'"></div>'
+      +'<div><label>단위</label><input data-tr="unit" data-i="'+i+'" value="'+esc(t.unit)+'"></div></div>'
+      +'<div><label>설명</label><input data-tr="cap" data-i="'+i+'" value="'+esc(t.cap)+'"></div></div>';
+  }).join('');
+  $('#pfFields').innerHTML=CNT.portfolio.map(function(p,i){
+    return '<div class="cms-item"><div class="head-row"><b>사례 '+(i+1)+'</b><button class="icon-btn danger" data-delpf="'+i+'">삭제</button></div>'
+      +'<div class="pf-imgrow">'
+      +'<div class="pf-preview" style="'+(p.img?"background-image:url('"+esc(p.img)+"');":'')+'">'+(p.img?'':'사진 없음')+'</div>'
+      +'<div><input type="file" accept="image/png,image/jpeg,image/webp" data-upl="'+i+'" style="font-size:12px;">'
+      +'<div style="font-size:11px;color:var(--muted);margin-top:4px;">JPG·PNG·WebP, 6MB 이하 — 완공 사진 권장</div></div></div>'
+      +'<div class="row"><div><label>태그 (예: CAFE · 공사 3주)</label><input data-pf="tag" data-i="'+i+'" value="'+esc(p.tag)+'"></div>'
+      +'<div><label>제목 (예: 성남 12평 카페)</label><input data-pf="title" data-i="'+i+'" value="'+esc(p.title)+'"></div></div>'
+      +'<div class="row"><div><label>총비용 (예: 1,850만원)</label><input data-pf="cost" data-i="'+i+'" value="'+esc(p.cost)+'"></div>'
+      +'<div><label>포함 내역</label><input data-pf="inc" data-i="'+i+'" value="'+esc(p.inc)+'"></div></div></div>';
+  }).join('');
+  $('#rvFields').innerHTML=CNT.reviews.map(function(r,i){
+    return '<div class="cms-item"><div class="head-row"><b>후기 '+(i+1)+'</b><button class="icon-btn danger" data-delrv="'+i+'">삭제</button></div>'
+      +'<div><label>한 줄 인용 (따옴표 없이)</label><input data-rv="quote" data-i="'+i+'" value="'+esc(r.quote)+'"></div>'
+      +'<div><label>본문</label><textarea data-rv="body" data-i="'+i+'">'+esc(r.body)+'</textarea></div>'
+      +'<div class="row"><div><label>이름 (예: 김○○ 사장님)</label><input data-rv="name" data-i="'+i+'" value="'+esc(r.name)+'"></div>'
+      +'<div><label>매장 (예: 성남 12평 카페 · 2026년 7월 오픈)</label><input data-rv="shop" data-i="'+i+'" value="'+esc(r.shop)+'"></div></div></div>';
+  }).join('');
+  /* 삭제/업로드 바인딩 */
+  document.querySelectorAll('[data-delpf]').forEach(function(b){b.addEventListener('click',function(){collectCms();CNT.portfolio.splice(+b.dataset.delpf,1);renderCms();});});
+  document.querySelectorAll('[data-delrv]').forEach(function(b){b.addEventListener('click',function(){collectCms();CNT.reviews.splice(+b.dataset.delrv,1);renderCms();});});
+  document.querySelectorAll('[data-upl]').forEach(function(inp){
+    inp.addEventListener('change',function(){
+      var f=inp.files[0]; if(!f)return;
+      if(f.size>6*1024*1024){alert('6MB 이하 이미지만 가능합니다.');inp.value='';return;}
+      var rd=new FileReader();
+      rd.onload=function(){
+        api('/api/admin/upload',{method:'POST',body:{data:rd.result}}).then(function(r){
+          if(r.url){collectCms();CNT.portfolio[+inp.dataset.upl].img=r.url;renderCms();}
+          else alert(r.error||'업로드 실패');
+        });
+      };
+      rd.readAsDataURL(f);
+    });
+  });
+}
+function collectCms(){
+  document.querySelectorAll('[data-site]').forEach(function(el){CNT.site[el.dataset.site]=el.value;});
+  document.querySelectorAll('[data-hero]').forEach(function(el){CNT.hero[el.dataset.hero]=el.value;});
+  document.querySelectorAll('[data-tr]').forEach(function(el){CNT.trust[+el.dataset.i][el.dataset.tr]=el.value;});
+  document.querySelectorAll('[data-pf]').forEach(function(el){CNT.portfolio[+el.dataset.i][el.dataset.pf]=el.value;});
+  document.querySelectorAll('[data-rv]').forEach(function(el){CNT.reviews[+el.dataset.i][el.dataset.rv]=el.value;});
+}
+$('#addPf').addEventListener('click',function(){collectCms();CNT.portfolio.push({tag:'',title:'',cost:'',inc:'',img:''});renderCms();});
+$('#addRv').addEventListener('click',function(){collectCms();CNT.reviews.push({quote:'',body:'',name:'',shop:''});renderCms();});
+$('#saveSite').addEventListener('click',function(){
+  collectCms();
+  var msg=$('#saveMsg');
+  api('/api/admin/content',{method:'PUT',body:CNT}).then(function(r){
+    msg.style.color=r.ok?'#2E8B57':'#B3261E';
+    msg.textContent=r.ok?'저장 완료 — 홈페이지에 반영되었습니다':'저장 실패';
+    setTimeout(function(){msg.textContent='';},4000);
+  });
+});
 
 /* ===================== 견적문의 DB ===================== */
 var leads=[],leadFilter='전체';

@@ -71,6 +71,104 @@ if (!fs.existsSync(path.join(DATA, 'posts.json'))) {
   ]);
 }
 
+/* 사이트 콘텐츠 시드 (최초 1회) — 관리자 [사이트 편집]에서 수정 */
+const DEFAULT_CONTENT = {
+  site: {
+    phone: '0000-0000', kakao_url: '#', kakao_name: '@공간브릿지',
+    promise: '영업시간 내 3시간 안에 연락드립니다 · 광고 연락 없음',
+    ceo: '○○○', biz_no: '000-00-00000', address: '○○시 ○○구 ○○로 00, 0층',
+    email: 'hello@spacebridge.kr', footer_note: '실내건축공사업 면허 · 시공 보증보험 가입',
+  },
+  hero: {
+    badge: '상가 인테리어 + 포스 · 키오스크 · CCTV · 세무기장 원스톱',
+    t1: '창업 준비, 다섯 군데 알아보지 마세요.',
+    t2: '인테리어부터 포스·CCTV·세무까지,',
+    t3: '공간브릿지 하나면 됩니다.',
+    sub: '임대차 계약하셨나요? 지금부터 오픈까지, 저희가 한 번에 챙깁니다.',
+  },
+  trust: [
+    { num: '○○', unit: '건', cap: '누적 시공' },
+    { num: '○', unit: '종', cap: '대응 업종' },
+    { num: '○', unit: '주', cap: '평균 공사기간' },
+    { num: '○', unit: '년', cap: '시공 후 AS 보증' },
+  ],
+  portfolio: [
+    { tag: 'CAFE · 공사 3주', title: '○○동 12평 카페', cost: '1,850만원', inc: '인테리어 + 포스 + CCTV 포함 · 철거부터 오픈까지', img: '' },
+    { tag: 'RESTAURANT · 공사 4주', title: '○○동 18평 국밥집', cost: '3,200만원', inc: '인테리어 + 주방설비 배관 + 포스·키오스크 포함', img: '' },
+    { tag: 'HAIR SALON · 공사 3주', title: '○○동 10평 미용실', cost: '2,400만원', inc: '인테리어 + CCTV + 세무기장 개시 포함', img: '' },
+  ],
+  reviews: [
+    { quote: '오픈일을 2주 앞당겼어요.', body: '공사 끝나는 주에 포스랑 CCTV가 같이 설치되더라고요. 원래 잡았던 오픈일보다 2주 빨리 열어서, 그만큼 월세를 벌었습니다.', name: '김○○ 사장님', shop: '○○동 12평 카페 · 2026년 ○월 오픈' },
+    { quote: '업체 조율 스트레스가 없었어요.', body: '전에 가게 할 땐 업체 다섯 군데랑 통화하느라 하루가 다 갔는데, 이번엔 담당자 한 분한테만 물어보면 끝. 저는 메뉴 준비에만 집중했습니다.', name: '박○○ 사장님', shop: '○○동 18평 국밥집 · 2026년 ○월 오픈' },
+    { quote: '견적서가 한 장이라 비교가 쉬웠어요.', body: '인테리어, 포스, CCTV, 기장료까지 한 장에 다 적혀 있으니 총비용이 바로 보였어요. 숨은 비용이 없다는 게 제일 컸습니다.', name: '이○○ 사장님', shop: '○○동 10평 미용실 · 2026년 ○월 오픈' },
+  ],
+};
+if (!fs.existsSync(path.join(DATA, 'content.json'))) writeJson('content.json', DEFAULT_CONTENT);
+function getContent() {
+  const c = readJson('content.json', DEFAULT_CONTENT);
+  // 누락 필드는 기본값으로 보강 (구버전 데이터 호환)
+  return {
+    site: Object.assign({}, DEFAULT_CONTENT.site, c.site),
+    hero: Object.assign({}, DEFAULT_CONTENT.hero, c.hero),
+    trust: Array.isArray(c.trust) && c.trust.length ? c.trust : DEFAULT_CONTENT.trust,
+    portfolio: Array.isArray(c.portfolio) ? c.portfolio : DEFAULT_CONTENT.portfolio,
+    reviews: Array.isArray(c.reviews) ? c.reviews : DEFAULT_CONTENT.reviews,
+  };
+}
+
+/* ---------- 홈페이지 렌더링 (CMS 템플릿) ---------- */
+function escHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function escAttr(s) { return escHtml(s); }
+function renderHome() {
+  let html = fs.readFileSync(path.join(PUB, 'index.html'), 'utf8');
+  const c = getContent();
+  const s = c.site, h = c.hero;
+  const trustHtml = c.trust.map(t =>
+    `<div class="t-item"><div class="t-num">${escHtml(t.num)}<span class="u">${escHtml(t.unit)}</span></div><div class="t-cap">${escHtml(t.cap)}</div></div>`
+  ).join('\n    ');
+  const grad = ['t1', 't2', 't3'];
+  const pfHtml = c.portfolio.map((p, i) => {
+    const thumb = p.img
+      ? `<div class="pf-thumb" style="background:url('${escAttr(p.img)}') center/cover no-repeat;">
+          <div class="ba"><span class="before">BEFORE</span><span class="after">AFTER</span></div>
+        </div>`
+      : `<div class="pf-thumb ${grad[i % 3]}">
+          <div class="ba"><span class="before">BEFORE</span><span class="after">AFTER</span></div>
+          <div class="ph-label">시공 사진 준비 중</div>
+        </div>`;
+    return `<article class="pf-card">
+        ${thumb}
+        <div class="pf-body">
+          <div class="pf-tag">${escHtml(p.tag)}</div>
+          <h4>${escHtml(p.title)}</h4>
+          <div class="pf-cost">총 <b>${escHtml(p.cost)}</b></div>
+          <div class="pf-inc">${escHtml(p.inc)}</div>
+        </div>
+      </article>`;
+  }).join('\n      ');
+  const rvHtml = c.reviews.map(r =>
+    `<article class="rv-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">"${escHtml(r.quote)}"</p>
+        <p class="body">${escHtml(r.body)}</p>
+        <div class="who">
+          <span class="avatar">${escHtml((r.name || '고').charAt(0))}</span>
+          <span><span class="nm">${escHtml(r.name)}</span><br><span class="shop">${escHtml(r.shop)}</span></span>
+        </div>
+      </article>`
+  ).join('\n      ');
+  const map = {
+    HERO_BADGE: escHtml(h.badge), HERO_T1: escHtml(h.t1), HERO_T2: escHtml(h.t2), HERO_T3: escHtml(h.t3), HERO_SUB: escHtml(h.sub),
+    TRUST_ITEMS: trustHtml, PORTFOLIO_CARDS: pfHtml, REVIEW_CARDS: rvHtml,
+    PHONE: escHtml(s.phone), PHONE_TEL: String(s.phone || '').replace(/\D/g, ''),
+    KAKAO_URL: s.kakao_url && s.kakao_url !== '#' ? escAttr(s.kakao_url) : '#quote',
+    KAKAO_NAME: escHtml(s.kakao_name), PROMISE: escHtml(s.promise),
+    CEO: escHtml(s.ceo), BIZ_NO: escHtml(s.biz_no), ADDRESS: escHtml(s.address),
+    EMAIL: escHtml(s.email), FOOTER_NOTE: escHtml(s.footer_note),
+  };
+  return html.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in map ? map[k] : m));
+}
+
 /* ---------- 유입 채널·검색어 판별 ---------- */
 function deriveChannel(ref, utm) {
   if (utm && utm.utm_source) {
@@ -127,10 +225,11 @@ function send(res, code, body, headers) {
   res.writeHead(code, h);
   res.end(typeof body === 'string' ? body : JSON.stringify(body));
 }
-function readBody(req) {
+function readBody(req, maxBytes) {
+  const limit = maxBytes || 200000;
   return new Promise((resolve, reject) => {
     let buf = '';
-    req.on('data', c => { buf += c; if (buf.length > 200000) { reject(new Error('too large')); req.destroy(); } });
+    req.on('data', c => { buf += c; if (buf.length > limit) { reject(new Error('too large')); req.destroy(); } });
     req.on('end', () => { try { resolve(buf ? JSON.parse(buf) : {}); } catch (e) { reject(e); } });
   });
 }
@@ -275,6 +374,36 @@ const server = http.createServer(async (req, res) => {
 
       if (req.method === 'GET' && p === '/api/admin/me') return send(res, 200, { ok: true });
 
+      /* 사이트 콘텐츠 (CMS) */
+      if (req.method === 'GET' && p === '/api/admin/content') return send(res, 200, getContent());
+      if (req.method === 'PUT' && p === '/api/admin/content') {
+        const b = await readBody(req);
+        const cur = getContent();
+        const next = {
+          site: Object.assign({}, cur.site, b.site || {}),
+          hero: Object.assign({}, cur.hero, b.hero || {}),
+          trust: Array.isArray(b.trust) && b.trust.length ? b.trust.slice(0, 6) : cur.trust,
+          portfolio: Array.isArray(b.portfolio) ? b.portfolio.slice(0, 12) : cur.portfolio,
+          reviews: Array.isArray(b.reviews) ? b.reviews.slice(0, 12) : cur.reviews,
+        };
+        writeJson('content.json', next);
+        return send(res, 200, { ok: true });
+      }
+      /* 사진 업로드 (base64 dataURL) */
+      if (req.method === 'POST' && p === '/api/admin/upload') {
+        const b = await readBody(req, 9 * 1024 * 1024);
+        const m = /^data:image\/(png|jpeg|jpg|webp);base64,(.+)$/.exec(b.data || '');
+        if (!m) return send(res, 400, { error: 'PNG/JPG/WebP 이미지만 업로드할 수 있습니다.' });
+        const ext = m[1] === 'jpeg' ? 'jpg' : m[1];
+        const buf = Buffer.from(m[2], 'base64');
+        if (buf.length > 6 * 1024 * 1024) return send(res, 400, { error: '6MB 이하 이미지만 가능합니다.' });
+        const updir = path.join(DATA, 'uploads');
+        fs.mkdirSync(updir, { recursive: true });
+        const fname = Date.now() + '-' + crypto.randomBytes(4).toString('hex') + '.' + ext;
+        fs.writeFileSync(path.join(updir, fname), buf);
+        return send(res, 200, { ok: true, url: '/uploads/' + fname });
+      }
+
       if (req.method === 'GET' && p === '/api/admin/stats') {
         const days = Math.min(365, Math.max(1, +(u.searchParams.get('days') || 30)));
         return send(res, 200, buildStats(days));
@@ -346,7 +475,11 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET') {
       if (p === '/admin' || p === '/admin/') return serveFile(res, ADMIN_DIR, 'admin.html');
       if (p.startsWith('/admin/')) return serveFile(res, ADMIN_DIR, p.slice(7));
-      if (p === '/') return serveFile(res, PUB, 'index.html');
+      if (p.startsWith('/uploads/')) return serveFile(res, path.join(DATA, 'uploads'), p.slice(9));
+      if (p === '/' || p === '/index.html') {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+        return res.end(renderHome());
+      }
       return serveFile(res, PUB, p.slice(1));
     }
     return send(res, 405, { error: 'method not allowed' });
