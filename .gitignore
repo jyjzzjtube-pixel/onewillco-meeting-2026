@@ -9,3 +9,4 @@ Thumbs.db
 
 # 공간브릿지 앱 런타임 데이터
 spacebridge/app/data/
+spacebridge/app/backups/

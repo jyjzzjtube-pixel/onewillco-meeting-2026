@@ -63,7 +63,12 @@ CADDY
 sudo systemctl enable caddy >/dev/null 2>&1 || true
 sudo systemctl restart caddy
 
-# ---------- 5. 완료 안내 ----------
+# ---------- 5. 자동 백업 (매일 새벽 4시, 30일 보관) ----------
+chmod +x "$APP_DIR/deploy/backup.sh"
+( crontab -l 2>/dev/null | grep -v 'spacebridge-backup' ; echo "0 4 * * * bash $APP_DIR/deploy/backup.sh >/dev/null 2>&1 # spacebridge-backup" ) | crontab -
+echo "▶ 자동 백업 등록 완료 (매일 04:00, $APP_DIR/backups/, 30일 보관)"
+
+# ---------- 6. 완료 안내 ----------
 IP=$(curl -s --max-time 5 ifconfig.me || hostname -I | awk '{print $1}')
 echo
 echo "============================================================"

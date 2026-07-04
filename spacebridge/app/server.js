@@ -617,6 +617,12 @@ const server = http.createServer(async (req, res) => {
         return html(page);
       }
       if (p === '/calc.html' || p === '/calc') return html(renderTemplate('calc.html', Object.assign(commonMap(req), { CANONICAL: baseUrl(req) + '/calc.html' })));
+      if (p === '/privacy.html' || p === '/privacy') {
+        const s2 = getContent().site;
+        return html(renderTemplate('privacy.html', Object.assign(commonMap(req), {
+          CEO: escHtml(s2.ceo), BIZ_NO: escHtml(s2.biz_no), ADDRESS: escHtml(s2.address), EMAIL: escHtml(s2.email),
+        })));
+      }
       if (p === '/sitemap.xml') { res.writeHead(200, { 'Content-Type': 'application/xml; charset=utf-8' }); return res.end(renderSitemap(req)); }
       if (p === '/rss.xml') { res.writeHead(200, { 'Content-Type': 'application/rss+xml; charset=utf-8' }); return res.end(renderRss(req)); }
       if (p === '/robots.txt') { res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ' + baseUrl(req) + '/sitemap.xml\n'); }
