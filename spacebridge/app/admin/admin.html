@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공간브릿지 관리자</title>
+<style>
+:root{
+  --ink:#2B2A26;--sub:#75716A;--muted:#9B968C;--bg:#F7F5F1;--card:#fff;
+  --green:#1E3A2F;--copper:#B85C38;--line:#E5E1D8;
+  /* 차트 팔레트 (검증 통과: 라이트/다크) */
+  --c1:#2E8B57;--c2:#C05B2E;--c3:#3E7BC4;--c4:#9C4A8B;--c5:#A3811F;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;}
+button,input,select,textarea{font-family:inherit;font-size:14px;}
+/* 로그인 */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.login-box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:40px;width:360px;max-width:92vw;}
+.login-box h1{font-size:22px;font-weight:800;color:var(--green);margin-bottom:4px;}
+.login-box h1 b{color:var(--copper);}
+.login-box p{color:var(--sub);font-size:13px;margin-bottom:20px;}
+.login-box input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
+.login-box button{width:100%;background:var(--green);color:#fff;border:0;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;}
+.login-box .err{color:#B3261E;font-size:13px;margin-top:10px;display:none;}
+/* 레이아웃 */
+#app{display:none;}
+.topbar{background:var(--green);color:#fff;padding:0 24px;display:flex;align-items:center;gap:24px;position:sticky;top:0;z-index:20;}
+.topbar .logo{font-size:17px;font-weight:800;padding:14px 0;}
+.topbar .logo b{color:#D9825B;}
+.topbar nav{display:flex;gap:4px;flex:1;}
+.topbar nav button{background:none;border:0;color:rgba(255,255,255,.75);font-weight:700;padding:16px 14px;cursor:pointer;border-bottom:3px solid transparent;}
+.topbar nav button.on{color:#fff;border-bottom-color:var(--copper);}
+.topbar .out{background:rgba(255,255,255,.12);border:0;color:#fff;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px;}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 20px 60px;}
+.page{display:none;}
+.page.on{display:block;}
+h2{font-size:19px;font-weight:800;color:var(--green);margin:6px 0 14px;letter-spacing:-.3px;}
+/* 필터 */
+.filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.filters button{border:1px solid var(--line);background:#fff;border-radius:18px;padding:6px 15px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;}
+.filters button.on{background:var(--green);border-color:var(--green);color:#fff;}
+.filters .sp{flex:1;}
+.filters a{font-size:13px;font-weight:700;color:var(--copper);text-decoration:none;border:1px solid var(--copper);border-radius:18px;padding:6px 15px;}
+/* 스탯 타일 */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px;}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;}
+.tile .l{font-size:12px;color:var(--sub);font-weight:700;}
+.tile .v{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.5px;margin-top:2px;}
+.tile .s{font-size:12px;color:var(--muted);}
+/* 카드/그리드 */
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-bottom:14px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr;}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;}
+.card h3{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:12px;}
+.card h3 .hint{font-weight:400;color:var(--muted);font-size:12px;}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--sub);margin-bottom:8px;flex-wrap:wrap;}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+/* 표 */
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{color:var(--sub);font-weight:700;text-align:left;padding:8px 10px;border-bottom:2px solid var(--line);white-space:nowrap;}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+tr:hover td{background:#FBFAF7;}
+.num{text-align:right;font-variant-numeric:tabular-nums;}
+.badge{display:inline-block;font-size:11px;font-weight:800;border-radius:9px;padding:2px 9px;background:#EEF3EF;color:var(--green);margin:1px 2px 1px 0;white-space:nowrap;}
+.badge.ch{background:#F1EDE4;color:#6B5B2E;}
+select.status{border:1px solid var(--line);border-radius:8px;padding:4px 8px;font-size:12px;font-weight:700;}
+.st-신규{color:var(--c3);} .st-연락중{color:var(--c5);} .st-상담완료{color:var(--c4);} .st-계약{color:var(--c1);} .st-보류{color:var(--muted);}
+.icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--sub);margin:1px;}
+.icon-btn.danger{color:#B3261E;border-color:#EAC7C4;}
+.icon-btn.primary{background:var(--green);color:#fff;border-color:var(--green);font-weight:700;}
+/* 게시판 폼 */
+.post-form{display:grid;gap:10px;margin-bottom:20px;}
+.post-form .row{display:flex;gap:10px;flex-wrap:wrap;}
+.post-form input[type=text]{flex:1;min-width:220px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+.post-form select{border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+.post-form textarea{border:1px solid var(--line);border-radius:10px;padding:12px;min-height:150px;resize:vertical;}
+.post-form label{font-size:13px;color:var(--sub);display:flex;align-items:center;gap:6px;}
+/* 툴팁 */
+#tip{position:fixed;background:var(--ink);color:#fff;font-size:12px;border-radius:8px;padding:6px 10px;pointer-events:none;display:none;z-index:99;white-space:nowrap;}
+.empty{color:var(--muted);text-align:center;padding:30px 0;}
+svg text{font-family:inherit;}
+.tbl-scroll{overflow-x:auto;}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <form class="login-box" id="loginForm">
+    <h1>공간<b>브릿지</b> 관리자</h1>
+    <p>대시보드 · 견적문의 DB · 게시판 관리</p>
+    <input type="password" id="pw" placeholder="관리자 비밀번호" autocomplete="current-password">
+    <button type="submit">로그인</button>
+    <div class="err" id="loginErr">비밀번호가 올바르지 않습니다.</div>
+  </form>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="logo">공간<b>브릿지</b> 관리자</div>
+    <nav>
+      <button data-page="dash" class="on">대시보드</button>
+      <button data-page="leads">견적문의 DB</button>
+      <button data-page="board">게시판 관리</button>
+    </nav>
+    <button class="out" id="logout">로그아웃</button>
+  </div>
+
+  <div class="wrap">
+    <!-- ===== 대시보드 ===== -->
+    <div class="page on" id="page-dash">
+      <div class="filters" id="rangeBtns">
+        <button data-d="7">7일</button>
+        <button data-d="14">14일</button>
+        <button data-d="30" class="on">30일</button>
+        <button data-d="90">90일</button>
+        <span class="sp"></span>
+        <a href="/api/admin/leads.csv">리드 CSV 다운로드</a>
+      </div>
+      <div class="tiles" id="tiles"></div>
+      <div class="grid2">
+        <div class="card">
+          <h3>일별 방문 · 견적문의 <span class="hint">— 방문은 페이지뷰 기준</span></h3>
+          <div class="legend"><span><i style="background:var(--c1)"></i>방문</span><span><i style="background:var(--c2)"></i>견적문의</span></div>
+          <div id="chartDaily"></div>
+        </div>
+        <div class="card">
+          <h3>문의 카테고리 <span class="hint">— 어떤 서비스를 원하나</span></h3>
+          <div id="chartCats"></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>유입 채널 <span class="hint">— 방문수 기준, 괄호는 문의수</span></h3>
+          <div id="chartChannels"></div>
+        </div>
+        <div class="card">
+          <h3>검색어 TOP <span class="hint">— 검색엔진이 넘겨준 키워드</span></h3>
+          <div class="tbl-scroll"><table id="tblKw"><thead><tr><th>검색어</th><th class="num">유입</th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>유입 경로 (도메인)</h3>
+          <div class="tbl-scroll"><table id="tblRef"><thead><tr><th>도메인</th><th class="num">유입</th></tr></thead><tbody></tbody></table></div>
+        </div>
+        <div class="card">
+          <h3>인기 페이지</h3>
+          <div class="tbl-scroll"><table id="tblPages"><thead><tr><th>경로</th><th class="num">조회</th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 견적문의 DB ===== -->
+    <div class="page" id="page-leads">
+      <h2>견적문의 DB</h2>
+      <div class="filters" id="leadFilters">
+        <button data-f="전체" class="on">전체</button>
+        <button data-f="신규">신규</button>
+        <button data-f="연락중">연락중</button>
+        <button data-f="상담완료">상담완료</button>
+        <button data-f="계약">계약</button>
+        <button data-f="보류">보류</button>
+        <span class="sp"></span>
+        <a href="/api/admin/leads.csv">CSV 다운로드</a>
+      </div>
+      <div class="card tbl-scroll">
+        <table id="tblLeads">
+          <thead><tr>
+            <th>#</th><th>접수일시</th><th>연락처</th><th>지역/평수</th><th>업종</th>
+            <th>관심 서비스</th><th>유입 출처</th><th>상태</th><th>메모</th><th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== 게시판 관리 ===== -->
+    <div class="page" id="page-board">
+      <h2 id="boardFormTitle">새 글 쓰기</h2>
+      <form class="post-form card" id="postForm">
+        <div class="row">
+          <select id="p-cat">
+            <option>공지</option><option>창업 가이드</option><option>비용 가이드</option>
+            <option>설비·장비</option><option>세무 기초</option>
+          </select>
+          <input type="text" id="p-title" placeholder="제목 (검색어를 제목 앞에 — 예: 10평 카페 인테리어 비용…)">
+        </div>
+        <textarea id="p-body" placeholder="내용 — 첫 문단에 결론(비용·기간)부터. 글 끝 CTA는 자동으로 붙습니다."></textarea>
+        <div class="row" style="align-items:center;">
+          <label><input type="checkbox" id="p-pub" checked> 공개</label>
+          <span class="sp" style="flex:1"></span>
+          <button type="button" class="icon-btn" id="p-cancel" style="display:none;">수정 취소</button>
+          <button type="submit" class="icon-btn primary" style="padding:9px 22px;">등록</button>
+        </div>
+      </form>
+      <h2>글 목록</h2>
+      <div class="card tbl-scroll">
+        <table id="tblPosts">
+          <thead><tr><th>#</th><th>분류</th><th>제목</th><th>상태</th><th class="num">조회</th><th>작성일</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tip"></div>
+
+<script>
+/* ===================== 공통 ===================== */
+var PAL=['#2E8B57','#C05B2E','#3E7BC4','#9C4A8B','#A3811F']; /* 검증 통과 팔레트 */
+function $(s){return document.querySelector(s);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function api(url,opt){
+  opt=opt||{};
+  if(opt.body){opt.headers={'Content-Type':'application/json'};opt.body=JSON.stringify(opt.body);}
+  return fetch(url,opt).then(function(r){
+    if(r.status===401){show(false);throw new Error('unauthorized');}
+    return r.json().catch(function(){return {};});
+  });
+}
+function show(loggedIn){
+  $('#login').style.display=loggedIn?'none':'flex';
+  $('#app').style.display=loggedIn?'block':'none';
+}
+/* 로그인 */
+$('#loginForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('#pw').value})})
+    .then(function(r){
+      if(r.ok){show(true);loadDash();loadLeads();loadPosts();}
+      else $('#loginErr').style.display='block';
+    });
+});
+$('#logout').addEventListener('click',function(){api('/api/admin/logout',{method:'POST'}).then(function(){location.reload();});});
+/* 탭 */
+document.querySelectorAll('.topbar nav button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.topbar nav button').forEach(function(x){x.classList.remove('on');});
+    document.querySelectorAll('.page').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    $('#page-'+b.dataset.page).classList.add('on');
+  });
+});
+/* 세션 확인 */
+api('/api/admin/me').then(function(){show(true);loadDash();loadLeads();loadPosts();}).catch(function(){show(false);});
+
+/* 툴팁 */
+var tip=$('#tip');
+function tipShow(html,x,y){tip.innerHTML=html;tip.style.display='block';tipMove(x,y);}
+function tipMove(x,y){tip.style.left=(x+14)+'px';tip.style.top=(y-14)+'px';}
+function tipHide(){tip.style.display='none';}
+
+/* ===================== 대시보드 ===================== */
+var curDays=30;
+document.querySelectorAll('#rangeBtns button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#rangeBtns button').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');curDays=+b.dataset.d;loadDash();
+  });
+});
+function loadDash(){
+  api('/api/admin/stats?days='+curDays).then(function(s){
+    renderTiles(s);renderDaily(s);renderCats(s);renderChannels(s);
+    fillTable('#tblKw',s.keywords.map(function(k){return [esc(k.kw),k.n];}),'아직 수집된 검색어가 없습니다');
+    fillTable('#tblRef',s.referrers.map(function(k){return [esc(k.ref),k.n];}),'외부 유입이 아직 없습니다');
+    fillTable('#tblPages',s.pages.map(function(k){return [esc(k.path),k.n];}),'데이터 없음');
+  });
+}
+function renderTiles(s){
+  var t=s.totals;
+  $('#tiles').innerHTML=[
+    ['오늘 방문',t.todayVisits,'페이지뷰'],
+    ['기간 방문',t.visits,curDays+'일 누적'],
+    ['순방문자',t.uniq,'기기 기준'],
+    ['견적문의',t.leads,'오늘 '+t.todayLeads+'건'],
+    ['전환율',t.conv+'%','문의 ÷ 방문'],
+  ].map(function(x){return '<div class="tile"><div class="l">'+x[0]+'</div><div class="v">'+x[1]+'</div><div class="s">'+x[2]+'</div></div>';}).join('');
+}
+/* 라인 차트 — 일별 방문/문의 (한 축, 2시리즈) */
+function renderDaily(s){
+  var W=640,H=230,P={t:14,r:12,b:26,l:36};
+  var data=s.daily,n=data.length;
+  var max=Math.max(4,Math.max.apply(null,data.map(function(d){return Math.max(d.visits,d.leads);})));
+  var x=function(i){return P.l+(W-P.l-P.r)*(n<2?0.5:i/(n-1));};
+  var y=function(v){return P.t+(H-P.t-P.b)*(1-v/max);};
+  var grid='',labels='';
+  for(var g=0;g<=3;g++){
+    var gv=Math.round(max*g/3),gy=y(gv);
+    grid+='<line x1="'+P.l+'" y1="'+gy+'" x2="'+(W-P.r)+'" y2="'+gy+'" stroke="#EDEAE2"/>';
+    labels+='<text x="'+(P.l-7)+'" y="'+(gy+4)+'" font-size="10" fill="#9B968C" text-anchor="end">'+gv+'</text>';
+  }
+  var step=Math.max(1,Math.ceil(n/8));
+  for(var i=0;i<n;i+=step){labels+='<text x="'+x(i)+'" y="'+(H-8)+'" font-size="10" fill="#9B968C" text-anchor="middle">'+data[i].d+'</text>';}
+  function line(key,color){
+    var pts=data.map(function(d,i){return x(i)+','+y(d[key]);}).join(' ');
+    var dots=data.map(function(d,i){return '<circle cx="'+x(i)+'" cy="'+y(d[key])+'" r="8" fill="transparent" data-i="'+i+'" data-k="'+key+'"/><circle cx="'+x(i)+'" cy="'+y(d[key])+'" r="2.5" fill="'+color+'" pointer-events="none"/>';}).join('');
+    return '<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>'+dots;
+  }
+  var el=$('#chartDaily');
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;">'+grid+labels+line('visits',PAL[0])+line('leads',PAL[1])+'</svg>';
+  el.querySelectorAll('circle[data-i]').forEach(function(c){
+    c.addEventListener('mousemove',function(ev){
+      var d=data[+c.dataset.i];
+      tipShow(d.d+' · '+(c.dataset.k==='visits'?'방문 '+d.visits+' (순방문 '+d.uniq+')':'견적문의 '+d.leads+'건'),ev.clientX,ev.clientY);
+    });
+    c.addEventListener('mouseleave',tipHide);
+  });
+}
+/* 도넛 — 문의 카테고리 */
+function renderCats(s){
+  var el=$('#chartCats');
+  var cats=s.leadCats;
+  if(!cats.length){el.innerHTML='<div class="empty">아직 문의 데이터가 없습니다</div>';return;}
+  var main=cats.slice(0,4), rest=cats.slice(4);
+  if(rest.length)main.push({cat:'기타',n:rest.reduce(function(a,b){return a+b.n;},0)});
+  var total=main.reduce(function(a,b){return a+b.n;},0);
+  var cx=80,cy=80,r=58,sw=26,C=2*Math.PI*r,off=0,segs='';
+  main.forEach(function(c,i){
+    var frac=c.n/total,len=frac*C;
+    segs+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+PAL[i]+'" stroke-width="'+sw+'" stroke-dasharray="'+Math.max(0,len-2)+' '+(C-len+2)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 '+cx+' '+cy+')" data-i="'+i+'"/>';
+    off+=len;
+  });
+  var legend=main.map(function(c,i){
+    return '<tr><td><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:'+PAL[i]+';margin-right:7px;"></i>'+esc(c.cat)+'</td><td class="num">'+c.n+'건</td><td class="num" style="color:#9B968C;">'+Math.round(c.n/total*100)+'%</td></tr>';
+  }).join('');
+  el.innerHTML='<div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;">'
+    +'<svg viewBox="0 0 160 160" style="width:150px;height:150px;flex-shrink:0;">'+segs
+    +'<text x="80" y="76" text-anchor="middle" font-size="22" font-weight="800" fill="#2B2A26">'+total+'</text>'
+    +'<text x="80" y="94" text-anchor="middle" font-size="10" fill="#9B968C">총 문의</text></svg>'
+    +'<table style="flex:1;min-width:180px;">'+legend+'</table></div>';
+  el.querySelectorAll('circle[data-i]').forEach(function(c){
+    c.addEventListener('mousemove',function(ev){var d=main[+c.dataset.i];tipShow(esc(d.cat)+' '+d.n+'건 ('+Math.round(d.n/total*100)+'%)',ev.clientX,ev.clientY);});
+    c.addEventListener('mouseleave',tipHide);
+  });
+}
+/* 가로 바 — 유입 채널 */
+function renderChannels(s){
+  var el=$('#chartChannels');
+  var ch=s.channels;
+  if(!ch.length){el.innerHTML='<div class="empty">아직 방문 데이터가 없습니다</div>';return;}
+  var max=Math.max.apply(null,ch.map(function(c){return c.visits;}));
+  el.innerHTML=ch.map(function(c,i){
+    var w=Math.max(2,c.visits/max*100);
+    return '<div style="display:flex;align-items:center;gap:10px;margin:7px 0;" data-i="'+i+'" class="ch-row">'
+      +'<div style="width:110px;font-size:12px;font-weight:700;color:#5A564E;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(c.name)+'</div>'
+      +'<div style="flex:1;background:#F1EFE9;border-radius:5px;height:18px;position:relative;">'
+      +'<div style="width:'+w+'%;height:100%;background:'+PAL[0]+';border-radius:4px;"></div></div>'
+      +'<div style="width:76px;font-size:12px;color:#5A564E;font-variant-numeric:tabular-nums;">'+c.visits+' <span style="color:'+PAL[1]+';font-weight:700;">('+c.leads+')</span></div></div>';
+  }).join('');
+  el.querySelectorAll('.ch-row').forEach(function(row){
+    row.addEventListener('mousemove',function(ev){var c=ch[+row.dataset.i];tipShow(esc(c.name)+' — 방문 '+c.visits+' · 문의 '+c.leads+'건',ev.clientX,ev.clientY);});
+    row.addEventListener('mouseleave',tipHide);
+  });
+}
+function fillTable(sel,rows,emptyMsg){
+  var tb=document.querySelector(sel+' tbody');
+  if(!rows.length){tb.innerHTML='<tr><td colspan="2" class="empty">'+emptyMsg+'</td></tr>';return;}
+  tb.innerHTML=rows.map(function(r){return '<tr><td>'+r[0]+'</td><td class="num">'+r[1]+'</td></tr>';}).join('');
+}
+
+/* ===================== 견적문의 DB ===================== */
+var leads=[],leadFilter='전체';
+var STATUSES=['신규','연락중','상담완료','계약','보류'];
+document.querySelectorAll('#leadFilters button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#leadFilters button').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');leadFilter=b.dataset.f;renderLeads();
+  });
+});
+function loadLeads(){api('/api/admin/leads').then(function(d){leads=d;renderLeads();});}
+function renderLeads(){
+  var tb=document.querySelector('#tblLeads tbody');
+  var rows=leads.filter(function(l){return leadFilter==='전체'||l.status===leadFilter;});
+  if(!rows.length){tb.innerHTML='<tr><td colspan="10" class="empty">해당하는 문의가 없습니다</td></tr>';return;}
+  tb.innerHTML=rows.map(function(l){
+    var d=new Date(l.t);
+    var when=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    var src=l.first&&l.first.ch?esc(l.first.ch):'-';
+    if(l.first&&l.first.kw)src+='<br><span style="color:#9B968C;font-size:11px;">"'+esc(l.first.kw)+'"</span>';
+    var opts=STATUSES.map(function(st){return '<option'+(st===l.status?' selected':'')+'>'+st+'</option>';}).join('');
+    return '<tr>'
+      +'<td>'+l.id+'</td><td style="white-space:nowrap;">'+when+'</td>'
+      +'<td style="white-space:nowrap;font-weight:700;">'+esc(l.phone)+'</td>'
+      +'<td>'+esc(l.region)+(l.size?' · '+esc(l.size):'')+'</td>'
+      +'<td>'+esc(l.biz)+'</td>'
+      +'<td>'+(l.cats||[]).map(function(c){return '<span class="badge">'+esc(c)+'</span>';}).join('')+'</td>'
+      +'<td><span class="badge ch">'+src+'</span></td>'
+      +'<td><select class="status st-'+l.status+'" data-id="'+l.id+'">'+opts+'</select></td>'
+      +'<td><span class="memo" data-id="'+l.id+'" style="cursor:pointer;color:'+(l.memo?'#2B2A26':'#B7B2A8')+';">'+(l.memo?esc(l.memo):'메모 추가')+'</span></td>'
+      +'<td><button class="icon-btn danger del" data-id="'+l.id+'">삭제</button></td></tr>';
+  }).join('');
+  tb.querySelectorAll('select.status').forEach(function(sl){
+    sl.addEventListener('change',function(){
+      api('/api/admin/leads/'+sl.dataset.id,{method:'PATCH',body:{status:sl.value}}).then(function(){
+        var l=leads.find(function(x){return x.id==sl.dataset.id;});if(l)l.status=sl.value;renderLeads();loadDash();
+      });
+    });
+  });
+  tb.querySelectorAll('.memo').forEach(function(m){
+    m.addEventListener('click',function(){
+      var l=leads.find(function(x){return x.id==m.dataset.id;});
+      var v=prompt('상담 메모',l&&l.memo||'');
+      if(v===null)return;
+      api('/api/admin/leads/'+m.dataset.id,{method:'PATCH',body:{memo:v}}).then(function(){if(l)l.memo=v;renderLeads();});
+    });
+  });
+  tb.querySelectorAll('.del').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(!confirm('이 문의를 삭제할까요? 되돌릴 수 없습니다.'))return;
+      api('/api/admin/leads/'+b.dataset.id,{method:'DELETE'}).then(function(){loadLeads();loadDash();});
+    });
+  });
+}
+
+/* ===================== 게시판 관리 ===================== */
+var posts=[],editId=null;
+function loadPosts(){api('/api/admin/posts').then(function(d){posts=d;renderPosts();});}
+function renderPosts(){
+  var tb=document.querySelector('#tblPosts tbody');
+  if(!posts.length){tb.innerHTML='<tr><td colspan="7" class="empty">글이 없습니다</td></tr>';return;}
+  tb.innerHTML=posts.map(function(p){
+    var d=new Date(p.created);
+    return '<tr><td>'+p.id+'</td><td><span class="badge">'+esc(p.cat)+'</span></td>'
+      +'<td>'+esc(p.title)+'</td>'
+      +'<td>'+(p.published?'<span style="color:'+PAL[0]+';font-weight:700;">공개</span>':'<span style="color:#9B968C;">비공개</span>')+'</td>'
+      +'<td class="num">'+(p.views||0)+'</td>'
+      +'<td style="white-space:nowrap;">'+d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate()+'</td>'
+      +'<td style="white-space:nowrap;">'
+      +'<button class="icon-btn edit" data-id="'+p.id+'">수정</button>'
+      +'<button class="icon-btn toggle" data-id="'+p.id+'">'+(p.published?'숨김':'공개')+'</button>'
+      +'<button class="icon-btn danger delp" data-id="'+p.id+'">삭제</button></td></tr>';
+  }).join('');
+  tb.querySelectorAll('.edit').forEach(function(b){
+    b.addEventListener('click',function(){
+      var p=posts.find(function(x){return x.id==b.dataset.id;});
+      editId=p.id;
+      $('#boardFormTitle').textContent='글 수정 #'+p.id;
+      $('#p-cat').value=p.cat;$('#p-title').value=p.title;$('#p-body').value=p.body;$('#p-pub').checked=p.published;
+      $('#p-cancel').style.display='inline-block';
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+  tb.querySelectorAll('.toggle').forEach(function(b){
+    b.addEventListener('click',function(){
+      var p=posts.find(function(x){return x.id==b.dataset.id;});
+      api('/api/admin/posts/'+p.id,{method:'PUT',body:{published:!p.published}}).then(loadPosts);
+    });
+  });
+  tb.querySelectorAll('.delp').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(!confirm('글을 삭제할까요? 되돌릴 수 없습니다.'))return;
+      api('/api/admin/posts/'+b.dataset.id,{method:'DELETE'}).then(loadPosts);
+    });
+  });
+}
+function resetPostForm(){
+  editId=null;$('#boardFormTitle').textContent='새 글 쓰기';
+  $('#p-title').value='';$('#p-body').value='';$('#p-pub').checked=true;$('#p-cancel').style.display='none';
+}
+$('#p-cancel').addEventListener('click',resetPostForm);
+$('#postForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var body={cat:$('#p-cat').value,title:$('#p-title').value.trim(),body:$('#p-body').value,published:$('#p-pub').checked};
+  if(!body.title){alert('제목을 입력하세요.');return;}
+  var req=editId?api('/api/admin/posts/'+editId,{method:'PUT',body:body}):api('/api/admin/posts',{method:'POST',body:body});
+  req.then(function(){resetPostForm();loadPosts();});
+});
+</script>
+</body>
+</html>
