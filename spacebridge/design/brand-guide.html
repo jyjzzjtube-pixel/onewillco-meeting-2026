@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공간브릿지 브랜드 디자인 가이드 v1.0</title>
+<style>
+/* ============================================================
+   공간브릿지 브랜드 토큰 — homepage-draft.html 과 동일 시스템
+   ============================================================ */
+:root {
+  /* 60% — 베이스 (웜 아이보리 & 딥 차콜) */
+  --sb-ivory:        #F7F5F1;
+  --sb-white:        #FFFFFF;
+  --sb-warmgray:     #E9E4DC;
+  --sb-charcoal:     #2B2A26;
+  --sb-charcoal-90:  #201F1C;
+
+  /* 30% — 브랜드 메인 (딥 그린) */
+  --sb-green:        #1E3A2F;
+  --sb-green-hover:  #2C5243;
+  --sb-green-tint:   #E7EEE9;
+
+  /* 10% — 포인트 (테라코타 코퍼) */
+  --sb-copper:       #B85C38;
+  --sb-copper-hover: #9C4A2B;
+  --sb-copper-tint:  #F5E7DE;
+
+  /* 보조 */
+  --sb-gray-500:     #75716A;
+  --sb-line:         #DDD8CF;
+  --sb-kakao:        #FEE500;
+
+  /* 타이포 */
+  --font-kr: 'Pretendard Variable', Pretendard, 'Malgun Gothic', '맑은 고딕',
+             'Apple SD Gothic Neo', -apple-system, 'Segoe UI', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: var(--font-kr);
+  background: var(--sb-ivory);
+  color: var(--sb-charcoal);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- 문서 레이아웃 ---- */
+.doc-header {
+  background: var(--sb-green);
+  color: #fff;
+  padding: 64px 32px 56px;
+}
+.doc-header .inner, .sec .inner { max-width: 1040px; margin: 0 auto; }
+.doc-header .doc-badge {
+  display:inline-block; background: var(--sb-copper); color:#fff;
+  font-size:12px; font-weight:700; letter-spacing:.12em;
+  padding:6px 14px; border-radius:999px; margin-bottom:20px;
+}
+.doc-header h1 { font-size: clamp(28px, 4vw, 40px); font-weight:800; line-height:1.3; letter-spacing:-.02em; }
+.doc-header p { margin-top:12px; color:#CFDDD4; font-size:15px; }
+.doc-header .meta { margin-top:24px; display:flex; gap:24px; flex-wrap:wrap; font-size:13px; color:#A9C0B4; }
+
+.sec { padding: 64px 32px; }
+.sec.alt { background: var(--sb-white); border-top:1px solid var(--sb-line); border-bottom:1px solid var(--sb-line); }
+.sec h2 {
+  font-size: 26px; font-weight:800; letter-spacing:-.02em;
+  color: var(--sb-green); margin-bottom: 8px;
+  display:flex; align-items:center; gap:12px;
+}
+.sec h2 .no {
+  width:34px; height:34px; border-radius:8px; background: var(--sb-green);
+  color:#fff; font-size:15px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.sec .lead { color: var(--sb-gray-500); margin-bottom: 32px; max-width: 720px; }
+.sec h3 { font-size:18px; font-weight:700; color: var(--sb-charcoal); margin: 36px 0 14px; }
+
+/* ---- 컬러 스와치 ---- */
+.palette { display:grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap:16px; }
+.swatch {
+  background:#fff; border:1px solid var(--sb-line); border-radius:14px; overflow:hidden;
+  box-shadow: 0 1px 3px rgba(43,42,38,.06);
+}
+.swatch .chip { height: 96px; display:flex; align-items:flex-end; padding:12px 16px; font-weight:800; font-size:15px; letter-spacing:.02em; }
+.swatch .info { padding: 14px 16px 16px; font-size:13px; }
+.swatch .info .hex { font-weight:800; font-size:15px; letter-spacing:.03em; }
+.swatch .info .role { color: var(--sb-gray-500); margin-top:4px; line-height:1.55; }
+.swatch .info .ratio {
+  display:inline-block; margin-top:8px; background: var(--sb-green-tint); color: var(--sb-green);
+  font-size:11px; font-weight:700; padding:2px 10px; border-radius:999px;
+}
+.swatch .info .ratio.pt { background: var(--sb-copper-tint); color: var(--sb-copper-hover); }
+
+table.spec { width:100%; border-collapse:collapse; background:#fff; font-size:14px; border:1px solid var(--sb-line); border-radius:12px; overflow:hidden; }
+table.spec th { background: var(--sb-green); color:#fff; text-align:left; padding:10px 16px; font-size:13px; font-weight:700; }
+table.spec td { padding:11px 16px; border-bottom:1px solid var(--sb-line); vertical-align:top; }
+table.spec tr:last-child td { border-bottom:none; }
+table.spec td .ok { color: var(--sb-green); font-weight:700; }
+.note {
+  background: var(--sb-copper-tint); border-left: 4px solid var(--sb-copper);
+  border-radius: 0 10px 10px 0; padding: 16px 20px; margin: 24px 0; font-size:14px;
+}
+.note strong { color: var(--sb-copper-hover); }
+.note.green { background: var(--sb-green-tint); border-left-color: var(--sb-green); }
+.note.green strong { color: var(--sb-green); }
+
+/* ---- 타이포 샘플 ---- */
+.type-sample { background:#fff; border:1px solid var(--sb-line); border-radius:14px; padding: 8px 28px; }
+.type-row { display:flex; align-items:baseline; gap:24px; padding: 18px 0; border-bottom:1px dashed var(--sb-line); flex-wrap:wrap; }
+.type-row:last-child { border-bottom:none; }
+.type-row .tag { flex: 0 0 150px; font-size:12px; color: var(--sb-gray-500); font-weight:600; letter-spacing:.04em; }
+.t-h1 { font-size:44px; font-weight:800; letter-spacing:-.025em; line-height:1.25; }
+.t-h2 { font-size:32px; font-weight:800; letter-spacing:-.02em;  line-height:1.3; }
+.t-h3 { font-size:24px; font-weight:700; letter-spacing:-.015em; line-height:1.35; }
+.t-h4 { font-size:19px; font-weight:700; line-height:1.4; }
+.t-body { font-size:16px; font-weight:400; line-height:1.7; }
+.t-small { font-size:14px; font-weight:400; line-height:1.6; color:var(--sb-gray-500); }
+.t-cap { font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--sb-copper); }
+
+/* ---- 로고 시안 ---- */
+.logo-card { background:#fff; border:1px solid var(--sb-line); border-radius:14px; padding: 28px; margin-bottom:20px; }
+.logo-card .concept-title { font-weight:800; font-size:16px; color: var(--sb-green); margin-bottom:4px; }
+.logo-card .concept-desc { font-size:13.5px; color: var(--sb-gray-500); margin-bottom:22px; max-width:680px; }
+.logo-stage { display:flex; gap:20px; flex-wrap:wrap; align-items:stretch; }
+.logo-box {
+  flex:1 1 300px; border:1px dashed var(--sb-line); border-radius:12px;
+  display:flex; align-items:center; justify-content:center; padding: 32px 20px; min-height:140px;
+}
+.logo-box.dark { background: var(--sb-charcoal-90); border-style:solid; border-color:var(--sb-charcoal-90); }
+.logo-box svg { max-width:100%; height:auto; }
+
+/* ---- UI 컴포넌트 샘플 ---- */
+.ui-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px; }
+.ui-cell { background:#fff; border:1px solid var(--sb-line); border-radius:14px; padding:24px; }
+.ui-cell h4 { font-size:14px; font-weight:700; color:var(--sb-gray-500); letter-spacing:.06em; margin-bottom:18px; text-transform:uppercase; }
+
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:var(--font-kr); font-size:16px; font-weight:700;
+  padding: 14px 28px; border-radius: 10px; border:none; cursor:pointer;
+  text-decoration:none; transition: all .18s ease; line-height:1.2;
+}
+.btn-primary { background: var(--sb-copper); color:#fff; }
+.btn-primary:hover { background: var(--sb-copper-hover); transform: translateY(-1px); box-shadow:0 6px 16px rgba(184,92,56,.3); }
+.btn-secondary { background: transparent; color: var(--sb-green); border:2px solid var(--sb-green); padding:12px 26px; }
+.btn-secondary:hover { background: var(--sb-green); color:#fff; }
+.btn-kakao { background: var(--sb-kakao); color:#191919; }
+.btn-kakao:hover { filter:brightness(.96); }
+.btn-sm { font-size:14px; padding:9px 18px; border-radius:8px; }
+
+.badge-sb {
+  display:inline-block; font-size:12px; font-weight:700; letter-spacing:.04em;
+  padding: 4px 12px; border-radius: 999px; margin-right:6px;
+}
+.badge-green  { background: var(--sb-green-tint); color: var(--sb-green); }
+.badge-copper { background: var(--sb-copper-tint); color: var(--sb-copper-hover); }
+.badge-solid  { background: var(--sb-copper); color:#fff; }
+
+.sample-card {
+  background:#fff; border:1px solid var(--sb-line); border-radius:14px; overflow:hidden;
+  box-shadow: 0 2px 8px rgba(43,42,38,.07); max-width:340px;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.sample-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(43,42,38,.12); }
+.sample-card .thumb {
+  height:130px;
+  background: linear-gradient(135deg, #3A5A4B 0%, #1E3A2F 55%, #16281F 100%);
+  display:flex; align-items:center; justify-content:center; color:#BFD3C7; font-size:13px; letter-spacing:.06em;
+}
+.sample-card .body { padding: 18px 20px 20px; }
+.sample-card .body .cap { font-size:12px; font-weight:700; color:var(--sb-copper); letter-spacing:.06em; margin-bottom:6px; }
+.sample-card .body h5 { font-size:17px; font-weight:700; margin-bottom:6px; }
+.sample-card .body p { font-size:13.5px; color:var(--sb-gray-500); }
+
+.field label { display:block; font-size:13px; font-weight:700; margin-bottom:6px; color:var(--sb-charcoal); }
+.field input {
+  width:100%; font-family:var(--font-kr); font-size:15px;
+  padding: 12px 14px; border-radius:10px; border:1.5px solid var(--sb-line);
+  background: var(--sb-ivory); color:var(--sb-charcoal); outline:none; transition: border-color .15s, box-shadow .15s;
+}
+.field input:focus { border-color: var(--sb-green); background:#fff; box-shadow: 0 0 0 3px rgba(30,58,47,.12); }
+.field + .field { margin-top:14px; }
+
+/* ---- 사진 가이드 ---- */
+.photo-rules { display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px; }
+.photo-rules .rule { background:#fff; border:1px solid var(--sb-line); border-radius:14px; padding:20px 22px; }
+.photo-rules .rule .r-no { font-size:12px; font-weight:800; color:var(--sb-copper); letter-spacing:.08em; }
+.photo-rules .rule h5 { font-size:16px; font-weight:700; margin:6px 0 8px; }
+.photo-rules .rule p { font-size:13.5px; color:var(--sb-gray-500); }
+
+.doc-footer { padding: 36px 32px 48px; text-align:center; font-size:12.5px; color: var(--sb-gray-500); }
+
+@media (max-width: 640px) {
+  .sec { padding: 44px 20px; }
+  .doc-header { padding: 48px 20px 40px; }
+  .type-row .tag { flex-basis:100%; }
+  .t-h1 { font-size:32px; }
+  .t-h2 { font-size:26px; }
+}
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="inner">
+    <span class="doc-badge">BRAND GUIDELINE · v1.0</span>
+    <h1>공간브릿지 브랜드 디자인 가이드</h1>
+    <p>"공간을 짓고, 운영을 잇다" — 상가 인테리어에서 포스·키오스크·CCTV·세무기장까지, 창업 원스톱 플랫폼의 시각 언어를 정의합니다.</p>
+    <div class="meta">
+      <span>작성일: 2026. 7. 4.</span>
+      <span>적용 범위: 홈페이지 · 인스타그램 · 블로그 · 견적서 · 현장 사인</span>
+      <span>연계 문서: homepage-draft.html (메인 페이지 시안)</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 1. 컬러 ============ -->
+<section class="sec">
+  <div class="inner">
+    <h2><span class="no">1</span>컬러 팔레트</h2>
+    <p class="lead">
+      인테리어 회사의 컬러는 곧 "이 회사가 만들 공간의 예고편"입니다.
+      웜 아이보리·딥 차콜의 소재 감성 위에, 신뢰를 만드는 딥 그린을 세우고, 테라코타 코퍼 한 색만 포인트로 씁니다.
+      <strong>60(베이스) : 30(브랜드 그린) : 10(코퍼 포인트)</strong> 비율을 모든 지면에서 유지합니다.
+    </p>
+
+    <div class="palette">
+      <div class="swatch">
+        <div class="chip" style="background:#F7F5F1; color:#2B2A26; border-bottom:1px solid #DDD8CF;">Warm Ivory</div>
+        <div class="info">
+          <div class="hex">#F7F5F1</div>
+          <div class="role">기본 배경. 종이·회벽·미장 질감의 톤. 순백(#FFF)은 카드·폼 표면에만.</div>
+          <span class="ratio">BASE · 60%</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background:#2B2A26; color:#F7F5F1;">Deep Charcoal</div>
+        <div class="info">
+          <div class="hex">#2B2A26</div>
+          <div class="role">본문 텍스트, 다크 섹션 배경(#201F1C 변형). 검정 대신 웜 차콜 — 목탄·무쇠 프레임의 톤.</div>
+          <span class="ratio">BASE · 60%</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background:#1E3A2F; color:#fff;">Bridge Green</div>
+        <div class="info">
+          <div class="hex">#1E3A2F</div>
+          <div class="role">브랜드 메인. 헤더·푸터·제목·보조 버튼 테두리. "믿고 맡긴다"의 색. 호버 #2C5243, 틴트 #E7EEE9.</div>
+          <span class="ratio">BRAND · 30%</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background:#B85C38; color:#fff;">Terracotta Copper</div>
+        <div class="info">
+          <div class="hex">#B85C38</div>
+          <div class="role">유일한 포인트. 주 CTA 버튼, 강조 숫자, 라벨. 벽돌·동 파이프·오크 마감의 온기. 호버 #9C4A2B, 틴트 #F5E7DE.</div>
+          <span class="ratio pt">POINT · 10%</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background:#E9E4DC; color:#2B2A26;">Warm Gray</div>
+        <div class="info">
+          <div class="hex">#E9E4DC</div>
+          <div class="role">구분선(#DDD8CF)·비활성 표면. 보조 텍스트는 #75716A.</div>
+          <span class="ratio">BASE 보조</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background:#FEE500; color:#191919;">Kakao Yellow</div>
+        <div class="info">
+          <div class="hex">#FEE500</div>
+          <div class="role">카카오톡 채널 버튼 전용 — 카카오 브랜드 규정색. 다른 용도로 절대 사용 금지.</div>
+          <span class="ratio pt">기능색 (예외)</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>접근성 — 텍스트 대비 검증 (WCAG 2.1)</h3>
+    <table class="spec">
+      <tr><th>조합</th><th>대비율</th><th>판정</th><th>사용 규칙</th></tr>
+      <tr><td>Deep Charcoal #2B2A26 / Warm Ivory #F7F5F1</td><td>12.9 : 1</td><td><span class="ok">AAA</span></td><td>모든 본문 기본 조합</td></tr>
+      <tr><td>White #FFFFFF / Bridge Green #1E3A2F</td><td>10.9 : 1</td><td><span class="ok">AAA</span></td><td>헤더·푸터·다크 섹션 텍스트</td></tr>
+      <tr><td>White #FFFFFF / Terracotta #B85C38</td><td>4.6 : 1</td><td><span class="ok">AA</span></td><td>CTA 버튼 텍스트 (16px 이상 + Bold 권장)</td></tr>
+      <tr><td>Terracotta #B85C38 / Warm Ivory #F7F5F1</td><td>4.2 : 1</td><td><span class="ok">AA (Large)</span></td><td>18px Bold 이상의 강조 숫자·라벨만. 본문 크기 금지 — 본문 강조는 #9C4A2B 사용 (5.9:1, AA)</td></tr>
+      <tr><td>Gray #75716A / Warm Ivory #F7F5F1</td><td>4.6 : 1</td><td><span class="ok">AA</span></td><td>보조 설명·캡션</td></tr>
+    </table>
+    <div class="note"><strong>규칙:</strong> 코퍼 위에 그린, 그린 위에 코퍼를 겹치지 않습니다. 두 유채색은 항상 아이보리·차콜·화이트를 사이에 두고 만납니다.</div>
+  </div>
+</section>
+
+<!-- ============ 2. 타이포그래피 ============ -->
+<section class="sec alt">
+  <div class="inner">
+    <h2><span class="no">2</span>타이포그래피</h2>
+    <p class="lead">
+      서체는 <strong>Pretendard</strong> 한 가족만 씁니다. 자체 호스팅(woff2 서브셋)을 원칙으로 하되,
+      로드 실패 시에도 무너지지 않도록 시스템 폴백 체계를 고정합니다. 두 가지 굵기 축(800/700 제목 · 400 본문)만 사용해 위계를 만듭니다.
+    </p>
+
+    <table class="spec">
+      <tr><th>항목</th><th>정의</th></tr>
+      <tr><td><strong>폰트 스택 (CSS 고정값)</strong></td><td><code>font-family: 'Pretendard Variable', Pretendard, 'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', -apple-system, 'Segoe UI', sans-serif;</code></td></tr>
+      <tr><td><strong>운용 원칙</strong></td><td>Pretendard woff2를 서버에 자체 호스팅 (CDN 의존 금지 · <code>font-display: swap</code>). 미로드 시 Windows는 맑은 고딕, macOS/iOS는 Apple SD 고딕으로 자연 폴백.</td></tr>
+      <tr><td><strong>굵기 규칙</strong></td><td>800 (ExtraBold) = H1·핵심 숫자 / 700 (Bold) = H2~H4·버튼·라벨 / 400 (Regular) = 본문·캡션. <strong>이 3단계 외의 굵기 사용 금지.</strong> 500·600 남발은 위계를 흐립니다.</td></tr>
+      <tr><td><strong>자간·행간</strong></td><td>제목 letter-spacing -0.02em (한글 헤드라인 밀도 확보), 본문 0 / 행간: 제목 1.25~1.35, 본문 1.7</td></tr>
+      <tr><td><strong>숫자 표기</strong></td><td>비용·기간 등 핵심 숫자는 항상 800 굵기 + 코퍼(#B85C38 또는 #9C4A2B). "1,850만원"처럼 천 단위 쉼표 필수.</td></tr>
+    </table>
+
+    <h3>크기 스케일 (데스크톱 기준 · 모바일은 clamp()로 축소)</h3>
+    <div class="type-sample">
+      <div class="type-row"><span class="tag">H1 · 44px · 800</span><span class="t-h1">공간을 짓고, 운영을 잇다</span></div>
+      <div class="type-row"><span class="tag">H2 · 32px · 800</span><span class="t-h2">따로 하면 비쌉니다. 함께 하면 아낍니다.</span></div>
+      <div class="type-row"><span class="tag">H3 · 24px · 700</span><span class="t-h3">프로세스 6단계 — 이 순서대로 하면 됩니다</span></div>
+      <div class="type-row"><span class="tag">H4 · 19px · 700</span><span class="t-h4">○○동 12평 카페 · 공사 3주 · 총 1,850만원</span></div>
+      <div class="type-row"><span class="tag">Body · 16px · 400</span><span class="t-body">임대차 계약하셨나요? 지금부터 오픈까지, 저희가 한 번에 챙깁니다.</span></div>
+      <div class="type-row"><span class="tag">Small · 14px · 400</span><span class="t-small">보통 ○시간 내 연락드립니다. 영업 목적의 광고 연락은 하지 않습니다.</span></div>
+      <div class="type-row"><span class="tag">Caption · 12px · 600</span><span class="t-cap">ONE-STOP PACKAGE</span></div>
+    </div>
+    <div class="note green"><strong>모바일 규칙:</strong> H1은 <code>clamp(26px, 6vw, 44px)</code>, H2는 <code>clamp(22px, 5vw, 32px)</code>. 본문 16px과 버튼 텍스트 16px은 모바일에서도 줄이지 않습니다 (가독성 = 전환율).</div>
+  </div>
+</section>
+
+<!-- ============ 3. 로고 ============ -->
+<section class="sec">
+  <div class="inner">
+    <h2><span class="no">3</span>로고 방향성 — "다리" 모티프 워드마크 3안</h2>
+    <p class="lead">
+      로고는 브랜드 에센스 "공간과 운영을 잇는 다리"를 그대로 그립니다.
+      두 기둥(= 공간 / 운영)과 그것을 잇는 구조물(아치·상판·현수선)이 공통 문법입니다. 3안 모두 그린+코퍼 2도, 단색(먹1도) 변환 가능하게 설계했습니다.
+    </p>
+
+    <!-- A안 -->
+    <div class="logo-card">
+      <div class="concept-title">A안 — 아치 브릿지 심볼 + 워드마크 (권장안)</div>
+      <div class="concept-desc">
+        두 기둥 사이를 코퍼 아치가 잇는 구조. 아치 아래 상판이 "공사가 끝난 안정된 바닥"을 상징.
+        심볼 단독으로 파비콘·프로필·현장 사인에 쓰기 가장 좋습니다.
+      </div>
+      <div class="logo-stage">
+        <div class="logo-box">
+          <svg width="320" height="72" viewBox="0 0 320 72" role="img" aria-label="공간브릿지 로고 A안">
+            <!-- 심볼: 두 기둥 + 코퍼 아치 + 상판 -->
+            <g>
+              <rect x="10" y="26" width="9" height="30" rx="1.5" fill="#1E3A2F"/>
+              <rect x="53" y="26" width="9" height="30" rx="1.5" fill="#1E3A2F"/>
+              <path d="M10 30 Q36 2 62 30" fill="none" stroke="#B85C38" stroke-width="5" stroke-linecap="round"/>
+              <rect x="6" y="54" width="60" height="5" rx="2.5" fill="#1E3A2F"/>
+            </g>
+            <text x="84" y="47" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="30" font-weight="800" letter-spacing="-0.5" fill="#1E3A2F">공간<tspan fill="#B85C38">브릿지</tspan></text>
+            <text x="85" y="64" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="10" font-weight="600" letter-spacing="3.5" fill="#75716A">SPACE BRIDGE</text>
+          </svg>
+        </div>
+        <div class="logo-box dark">
+          <svg width="320" height="72" viewBox="0 0 320 72" role="img" aria-label="공간브릿지 로고 A안 다크 배경">
+            <g>
+              <rect x="10" y="26" width="9" height="30" rx="1.5" fill="#F7F5F1"/>
+              <rect x="53" y="26" width="9" height="30" rx="1.5" fill="#F7F5F1"/>
+              <path d="M10 30 Q36 2 62 30" fill="none" stroke="#D9825B" stroke-width="5" stroke-linecap="round"/>
+              <rect x="6" y="54" width="60" height="5" rx="2.5" fill="#F7F5F1"/>
+            </g>
+            <text x="84" y="47" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="30" font-weight="800" letter-spacing="-0.5" fill="#F7F5F1">공간<tspan fill="#D9825B">브릿지</tspan></text>
+            <text x="85" y="64" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="10" font-weight="600" letter-spacing="3.5" fill="#9BA79F">SPACE BRIDGE</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- B안 -->
+    <div class="logo-card">
+      <div class="concept-title">B안 — 글자 사이를 잇는 현수선 워드마크</div>
+      <div class="concept-desc">
+        심볼 없이 타이포만으로 승부하는 안. "공간"과 "브릿지" 사이의 간격을 코퍼 현수선(케이블)이 물리적으로 연결 —
+        이름 자체가 로고가 됩니다. 명함·문서 헤더처럼 가로로 긴 지면에 유리합니다.
+      </div>
+      <div class="logo-stage">
+        <div class="logo-box">
+          <svg width="340" height="64" viewBox="0 0 340 64" role="img" aria-label="공간브릿지 로고 B안">
+            <text x="8" y="44" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="34" font-weight="800" letter-spacing="-0.5" fill="#2B2A26">공간</text>
+            <!-- 현수선: 두 글자군을 잇는 케이블 + 주탑 2개 -->
+            <g>
+              <rect x="86" y="16" width="4" height="34" rx="2" fill="#1E3A2F"/>
+              <rect x="136" y="16" width="4" height="34" rx="2" fill="#1E3A2F"/>
+              <path d="M88 20 Q113 46 138 20" fill="none" stroke="#B85C38" stroke-width="4" stroke-linecap="round"/>
+              <rect x="80" y="48" width="66" height="4" rx="2" fill="#B85C38"/>
+            </g>
+            <text x="154" y="44" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="34" font-weight="800" letter-spacing="-0.5" fill="#1E3A2F">브릿지</text>
+          </svg>
+        </div>
+        <div class="logo-box dark">
+          <svg width="340" height="64" viewBox="0 0 340 64" role="img" aria-label="공간브릿지 로고 B안 다크 배경">
+            <text x="8" y="44" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="34" font-weight="800" letter-spacing="-0.5" fill="#F7F5F1">공간</text>
+            <g>
+              <rect x="86" y="16" width="4" height="34" rx="2" fill="#F7F5F1"/>
+              <rect x="136" y="16" width="4" height="34" rx="2" fill="#F7F5F1"/>
+              <path d="M88 20 Q113 46 138 20" fill="none" stroke="#D9825B" stroke-width="4" stroke-linecap="round"/>
+              <rect x="80" y="48" width="66" height="4" rx="2" fill="#D9825B"/>
+            </g>
+            <text x="154" y="44" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="34" font-weight="800" letter-spacing="-0.5" fill="#F7F5F1">브릿지</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- C안 -->
+    <div class="logo-card">
+      <div class="concept-title">C안 — 스퀘어 엠블럼 (앱 아이콘·스탬프형)</div>
+      <div class="concept-desc">
+        그린 스퀘어 안에 트러스 교량 글리프를 새긴 엠블럼. 시공 사진 워터마크, 인스타 프로필,
+        현장 가림막 스탬프처럼 "찍는" 용도에 최적. 우측에 2행 텍스트 락업.
+      </div>
+      <div class="logo-stage">
+        <div class="logo-box">
+          <svg width="300" height="80" viewBox="0 0 300 80" role="img" aria-label="공간브릿지 로고 C안">
+            <rect x="4" y="4" width="72" height="72" rx="16" fill="#1E3A2F"/>
+            <!-- 교량 글리프: 상판 + 트러스 아치 + 교각 -->
+            <path d="M16 42 Q40 18 64 42" fill="none" stroke="#D9825B" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="27" y1="33.5" x2="27" y2="46" stroke="#D9825B" stroke-width="3" stroke-linecap="round"/>
+            <line x1="40" y1="28.5" x2="40" y2="46" stroke="#D9825B" stroke-width="3" stroke-linecap="round"/>
+            <line x1="53" y1="33.5" x2="53" y2="46" stroke="#D9825B" stroke-width="3" stroke-linecap="round"/>
+            <rect x="14" y="46" width="52" height="4.5" rx="2.25" fill="#F7F5F1"/>
+            <rect x="20" y="50.5" width="6" height="12" fill="#F7F5F1"/>
+            <rect x="54" y="50.5" width="6" height="12" fill="#F7F5F1"/>
+            <text x="92" y="40" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="26" font-weight="800" letter-spacing="-0.5" fill="#2B2A26">공간브릿지</text>
+            <text x="93" y="60" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="11" font-weight="600" letter-spacing="1" fill="#75716A">인테리어에서 오픈까지, 원스톱</text>
+          </svg>
+        </div>
+        <div class="logo-box dark">
+          <svg width="300" height="80" viewBox="0 0 300 80" role="img" aria-label="공간브릿지 로고 C안 다크 배경">
+            <rect x="4" y="4" width="72" height="72" rx="16" fill="#F7F5F1"/>
+            <path d="M16 42 Q40 18 64 42" fill="none" stroke="#B85C38" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="27" y1="33.5" x2="27" y2="46" stroke="#B85C38" stroke-width="3" stroke-linecap="round"/>
+            <line x1="40" y1="28.5" x2="40" y2="46" stroke="#B85C38" stroke-width="3" stroke-linecap="round"/>
+            <line x1="53" y1="33.5" x2="53" y2="46" stroke="#B85C38" stroke-width="3" stroke-linecap="round"/>
+            <rect x="14" y="46" width="52" height="4.5" rx="2.25" fill="#1E3A2F"/>
+            <rect x="20" y="50.5" width="6" height="12" fill="#1E3A2F"/>
+            <rect x="54" y="50.5" width="6" height="12" fill="#1E3A2F"/>
+            <text x="92" y="40" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="26" font-weight="800" letter-spacing="-0.5" fill="#F7F5F1">공간브릿지</text>
+            <text x="93" y="60" font-family="'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif"
+                  font-size="11" font-weight="600" letter-spacing="1" fill="#9BA79F">인테리어에서 오픈까지, 원스톱</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="note"><strong>운용 규칙:</strong> 최소 여백 = 심볼 높이의 1/2. 최소 크기 = 가로 120px (워드마크) / 24px (심볼 단독). 그라디언트·그림자·외곽선 변형 금지. 단색 지면에서는 전체 먹1도(#2B2A26) 또는 백1도로만.</div>
+  </div>
+</section>
+
+<!-- ============ 4. UI 컴포넌트 ============ -->
+<section class="sec alt">
+  <div class="inner">
+    <h2><span class="no">4</span>UI 컴포넌트</h2>
+    <p class="lead">홈페이지·랜딩 전 지면에서 재사용하는 기본 부품입니다. 모서리 반경은 버튼·입력 10px, 카드 14px로 고정합니다.</p>
+
+    <div class="ui-grid">
+      <div class="ui-cell">
+        <h4>Buttons</h4>
+        <p style="margin-bottom:12px;"><a class="btn btn-primary" href="#">무료 견적 받기</a></p>
+        <p style="margin-bottom:12px;"><a class="btn btn-secondary" href="#">포트폴리오 전체 보기</a></p>
+        <p style="margin-bottom:12px;"><a class="btn btn-kakao" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="#191919"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.84 1.87 5.33 4.68 6.75l-.95 3.53c-.08.3.26.54.52.37l4.18-2.76c.51.06 1.03.11 1.57.11 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>카카오톡 상담</a></p>
+        <p><a class="btn btn-primary btn-sm" href="#">이 구성으로 견적 받기</a> <span style="font-size:12px;color:var(--sb-gray-500);">← Small</span></p>
+        <p style="font-size:12.5px; color:var(--sb-gray-500); margin-top:14px;">주 버튼 = 코퍼 1면당 1~2개 이내. 카카오 버튼은 항상 규정 옐로 + 먹 텍스트.</p>
+      </div>
+
+      <div class="ui-cell">
+        <h4>Badges</h4>
+        <p style="margin-bottom:10px;"><span class="badge-sb badge-solid">BEST</span><span class="badge-sb badge-copper">패키지 혜택</span><span class="badge-sb badge-green">시공 사례</span></p>
+        <p style="margin-bottom:10px;"><span class="badge-sb badge-green">카페</span><span class="badge-sb badge-green">식당</span><span class="badge-sb badge-green">미용실</span><span class="badge-sb badge-green">소매점</span></p>
+        <p style="font-size:12.5px; color:var(--sb-gray-500); margin-top:14px;">솔리드 코퍼 뱃지는 1화면 1개(최상위 강조)만. 업종 태그는 그린 틴트로 통일.</p>
+        <h4 style="margin-top:24px;">Form Input</h4>
+        <div class="field">
+          <label for="g-phone">연락처</label>
+          <input id="g-phone" type="tel" placeholder="010-0000-0000">
+        </div>
+        <div class="field">
+          <label for="g-area">지역</label>
+          <input id="g-area" type="text" placeholder="예: 성남시 분당구" style="border-color:#1E3A2F; background:#fff; box-shadow:0 0 0 3px rgba(30,58,47,.12);">
+        </div>
+        <p style="font-size:12.5px; color:var(--sb-gray-500); margin-top:10px;">포커스 = 그린 보더 + 12% 그린 글로우. 에러는 코퍼가 아닌 #C0392B 별도 사용(포인트색 보호).</p>
+      </div>
+
+      <div class="ui-cell">
+        <h4>Card</h4>
+        <div class="sample-card">
+          <div class="thumb">시공 사진 영역 (비포/애프터)</div>
+          <div class="body">
+            <div class="cap">CAFE · 3주 시공</div>
+            <h5>○○동 12평 카페</h5>
+            <p>총 1,850만원 — 인테리어 + 포스 + CCTV 포함. 철거부터 오픈까지 실비용 공개.</p>
+            <p style="margin-top:12px;"><span class="badge-sb badge-copper">실비용 공개</span></p>
+          </div>
+        </div>
+        <p style="font-size:12.5px; color:var(--sb-gray-500); margin-top:14px;">호버 시 3px 부상 + 그림자 확장. 이미지 비율 16:9 고정.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. 사진 톤 가이드 ============ -->
+<section class="sec">
+  <div class="inner">
+    <h2><span class="no">5</span>사진 톤 가이드 — 시공 사진 촬영·보정 기준</h2>
+    <p class="lead">
+      공간브릿지의 사진은 "실제로 이렇게 지어드립니다"의 증거물입니다. 스톡 이미지 사용 금지.
+      과장 없는 실사 톤을 유지하되, 아래 6가지 기준으로 품질을 통일합니다.
+    </p>
+    <div class="photo-rules">
+      <div class="rule"><div class="r-no">RULE 01</div><h5>수평·수직 사수</h5><p>바닥선·천장선·문틀이 기울면 시공 품질까지 의심받습니다. 촬영 시 그리드 켜고, 보정 단계에서 수직 왜곡(키스톤) 반드시 교정.</p></div>
+      <div class="rule"><div class="r-no">RULE 02</div><h5>광각 왜곡 주의</h5><p>넓어 보이게 하려고 초광각(16mm 이하)으로 당기지 않습니다. 24~28mm 화각 기준 — 방문 상담 때 "사진과 다르다"는 말이 나오면 신뢰가 무너집니다.</p></div>
+      <div class="rule"><div class="r-no">RULE 03</div><h5>밝기 — 자연광 우선, +0.3EV</h5><p>주광 시간대(오전 10시~오후 3시) 촬영. 노출은 실제보다 살짝 밝은 +0.3EV까지만. 하이라이트 날림·HDR 과보정 금지.</p></div>
+      <div class="rule"><div class="r-no">RULE 04</div><h5>색온도 4800~5500K</h5><p>웜톤 조명 매장도 화이트밸런스는 중립 기준. 브랜드의 웜 아이보리·코퍼 톤과 충돌하는 형광 청색·과채도 원색 보정 금지.</p></div>
+      <div class="rule"><div class="r-no">RULE 05</div><h5>비포/애프터 동일 프레임</h5><p>착공 전 촬영 위치를 바닥에 마킹하고, 완공 컷을 같은 자리·같은 화각으로. 릴스·카드뉴스의 핵심 소재가 됩니다.</p></div>
+      <div class="rule"><div class="r-no">RULE 06</div><h5>현장 10컷 체크리스트</h5><p>①착공 전 전경 ②철거 ③골조 ④마감 ⑤설비 세팅(포스·CCTV 설치 장면) ⑥완공 정면 ⑦완공 대각 ⑧디테일 2컷 ⑨간판 ⑩오픈 당일. 파일명에 지역·업종 포함.</p></div>
+    </div>
+    <div class="note green"><strong>한 줄 원칙:</strong> "예쁘게"보다 "정확하게". 고객이 매장에 들어섰을 때 사진 그대로여야, 사진이 영업사원이 됩니다.</div>
+  </div>
+</section>
+
+<footer class="doc-footer">
+  공간브릿지 브랜드 디자인 가이드 v1.0 · 2026. 7. 4. · 본 가이드의 토큰은 homepage-draft.html에 동일 적용되어 있습니다.
+</footer>
+
+</body>
+</html>
