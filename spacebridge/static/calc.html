@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>무료 계산기 — 창업 비용·테이블 좌석수·주거 인테리어 견적 | 공간브릿지</title>
+<title>무료 계산기 — 창업 비용·테이블 좌석수·주거 인테리어 견적 | 공간브릿지</title><script>window.SB_STATIC=true</script>
 <meta name="description" content="창업 비용 계산기, 평수 대비 테이블·좌석수 계산기(주방 권장 평수·화장실 포함), 아파트·빌라 주거 인테리어 견적까지 — 30초 무료 자동계산.">
-<link rel="canonical" href="{{CANONICAL}}">
+<link rel="canonical" href="https://gongganbridge.com/calc.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="무료 계산기 3종 — 창업 비용·좌석수·주거 인테리어">
 <meta property="og:description" content="업종·평수만 넣으면 창업 비용, 테이블·좌석 배치, 주거 인테리어 견적이 30초 만에 나옵니다.">
-<meta property="og:url" content="{{CANONICAL}}">
+<meta property="og:url" content="https://gongganbridge.com/calc.html">
 <style>
 :root{--ink:#2B2A26;--sub:#75716A;--bg:#F7F5F1;--green:#1E3A2F;--green-tint:#E7EEE9;--copper:#B85C38;--line:#E5E1D8;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -323,10 +323,25 @@ h1{font-size:clamp(24px,4vw,32px);font-weight:800;color:var(--green);letter-spac
       <button id="calcSubmit">무료 실측 신청</button>
     </div>
     <p class="msg" id="calcMsg"></p>
-    <p class="agree">신청 시 <a href="/privacy.html" style="color:inherit;text-decoration:underline;">개인정보 수집·이용</a>(상담 목적)에 동의하는 것으로 간주됩니다. · 전화가 편하시면 <a href="tel:{{PHONE_TEL}}" style="color:var(--copper);font-weight:700;">{{PHONE}}</a></p>
+    <p class="agree">신청 시 <a href="/privacy.html" style="color:inherit;text-decoration:underline;">개인정보 수집·이용</a>(상담 목적)에 동의하는 것으로 간주됩니다. · 전화가 편하시면 <a href="tel:01084434756" style="color:var(--copper);font-weight:700;">010-8443-4756</a></p>
   </div>
 </div>
-{{STICKY_CTA}}
+<div class="sb-sticky">
+      <a href="tel:01084434756"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>전화</a>
+      <a href="/#quote"  class="kko"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.84 1.87 5.33 4.68 6.75l-.95 3.53c-.08.3.26.54.52.37l4.18-2.76c.51.06 1.03.11 1.57.11 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>카톡 상담</a>
+      <a href="/#quote" class="cta">무료 견적</a>
+    </div>
+    <style>
+    .sb-sticky{display:none;}
+    @media(max-width:700px){
+      .sb-sticky{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:90;background:#fff;border-top:1px solid #DDD8CF;box-shadow:0 -4px 16px rgba(0,0,0,.08);}
+      .sb-sticky a{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 4px;font-size:14px;font-weight:800;text-decoration:none;color:#1E3A2F;}
+      .sb-sticky a.kko{background:#FEE500;color:#191919;}
+      .sb-sticky a.cta{background:#B85C38;color:#fff;}
+      body{padding-bottom:50px;}
+      .kakao-float{display:none !important;}
+    }
+    </style>
 <script src="/track.js"></script>
 <script>
 (function(){
