@@ -88,22 +88,19 @@ const DEFAULT_CONTENT = {
     t3: '공간브릿지 하나면 됩니다.',
     sub: '임대차 계약하셨나요? 지금부터 오픈까지, 저희가 한 번에 챙깁니다.',
   },
+  /* 실적 숫자가 생기기 전까지는 "약속"을 겁니다 — 없는 실적을 ○○로 가리지 않음 (전략팀 결정) */
   trust: [
-    { num: '○○', unit: '건', cap: '누적 시공' },
-    { num: '○', unit: '종', cap: '대응 업종' },
-    { num: '○', unit: '주', cap: '평균 공사기간' },
-    { num: '○', unit: '년', cap: '시공 후 AS 보증' },
+    { num: '1', unit: '곳', cap: '창구 하나로 창업 준비 끝' },
+    { num: '1', unit: '장', cap: '인테리어+장비+세무 통합 견적서' },
+    { num: '0', unit: '원', cap: '실측·견적 비용' },
+    { num: '3', unit: '시간', cap: '영업시간 내 회신 약속' },
   ],
   portfolio: [
-    { tag: 'CAFE · 공사 3주', title: '○○동 12평 카페', cost: '1,850만원', inc: '인테리어 + 포스 + CCTV 포함 · 철거부터 오픈까지', img: '' },
-    { tag: 'RESTAURANT · 공사 4주', title: '○○동 18평 국밥집', cost: '3,200만원', inc: '인테리어 + 주방설비 배관 + 포스·키오스크 포함', img: '' },
-    { tag: 'HAIR SALON · 공사 3주', title: '○○동 10평 미용실', cost: '2,400만원', inc: '인테리어 + CCTV + 세무기장 개시 포함', img: '' },
+    { tag: 'CAFE · 표준 설계', title: '12평 카페 표준 플랜', cost: '1,850만원', inc: '인테리어 + 포스 + CCTV 기준 구성 · 철거부터 오픈까지', img: '' },
+    { tag: 'RESTAURANT · 표준 설계', title: '18평 식당 표준 플랜', cost: '3,200만원', inc: '인테리어 + 주방 배관 + 포스·키오스크 기준 구성', img: '' },
+    { tag: 'HAIR SALON · 표준 설계', title: '10평 미용실 표준 플랜', cost: '2,400만원', inc: '인테리어 + CCTV + 세무기장 개시 기준 구성', img: '' },
   ],
-  reviews: [
-    { quote: '오픈일을 2주 앞당겼어요.', body: '공사 끝나는 주에 포스랑 CCTV가 같이 설치되더라고요. 원래 잡았던 오픈일보다 2주 빨리 열어서, 그만큼 월세를 벌었습니다.', name: '김○○ 사장님', shop: '○○동 12평 카페 · 2026년 ○월 오픈' },
-    { quote: '업체 조율 스트레스가 없었어요.', body: '전에 가게 할 땐 업체 다섯 군데랑 통화하느라 하루가 다 갔는데, 이번엔 담당자 한 분한테만 물어보면 끝. 저는 메뉴 준비에만 집중했습니다.', name: '박○○ 사장님', shop: '○○동 18평 국밥집 · 2026년 ○월 오픈' },
-    { quote: '견적서가 한 장이라 비교가 쉬웠어요.', body: '인테리어, 포스, CCTV, 기장료까지 한 장에 다 적혀 있으니 총비용이 바로 보였어요. 숨은 비용이 없다는 게 제일 컸습니다.', name: '이○○ 사장님', shop: '○○동 10평 미용실 · 2026년 ○월 오픈' },
-  ],
+  reviews: [], // 실후기 확보 전까지 비움 → 홈에 "1호점 혜택" 블록이 대신 노출됨
 };
 if (!fs.existsSync(path.join(DATA, 'content.json'))) writeJson('content.json', DEFAULT_CONTENT);
 function getContent() {
@@ -130,13 +127,15 @@ function baseUrl(req) {
 function commonMap(req) {
   const s = getContent().site;
   const phoneTel = String(s.phone || '').replace(/\D/g, '');
-  const kakao = s.kakao_url && s.kakao_url !== '#' ? escAttr(s.kakao_url) : '/#quote';
+  /* 카톡 채널이 아직 없으면 가짜 링크 대신 문자(SMS)로 연결 (전략팀 지적: 죽은 CTA 제거) */
+  const kakaoReal = s.kakao_url && /^https?:\/\//.test(s.kakao_url);
+  const kakao = kakaoReal ? escAttr(s.kakao_url) : (phoneTel ? 'sms:' + phoneTel : '/#quote');
   return {
     PHONE: escHtml(s.phone), PHONE_TEL: phoneTel, KAKAO_URL: kakao, KAKAO_NAME: escHtml(s.kakao_name),
     BASE: baseUrl(req),
     STICKY_CTA: `<div class="sb-sticky">
       <a href="tel:${phoneTel}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>전화</a>
-      <a href="${kakao}" ${kakao.startsWith('http') ? 'target="_blank" rel="noopener"' : ''} class="kko"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.84 1.87 5.33 4.68 6.75l-.95 3.53c-.08.3.26.54.52.37l4.18-2.76c.51.06 1.03.11 1.57.11 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>카톡 상담</a>
+      <a href="${kakao}" ${kakao.startsWith('http') ? 'target="_blank" rel="noopener"' : ''} class="kko"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.84 1.87 5.33 4.68 6.75l-.95 3.53c-.08.3.26.54.52.37l4.18-2.76c.51.06 1.03.11 1.57.11 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>${kakaoReal ? '카톡 상담' : '문자 상담'}</a>
       <a href="/#quote" class="cta">무료 견적</a>
     </div>
     <style>
@@ -165,13 +164,13 @@ function renderHome(req) {
   ).join('\n    ');
   const grad = ['t1', 't2', 't3'];
   const pfHtml = c.portfolio.map((p, i) => {
+    /* UX팀 지적: 사진 없는데 BEFORE/AFTER 배지 달면 역효과 — 실사진일 때만 배지 */
     const thumb = p.img
       ? `<div class="pf-thumb" style="background:url('${escAttr(p.img)}') center/cover no-repeat;">
           <div class="ba"><span class="before">BEFORE</span><span class="after">AFTER</span></div>
         </div>`
       : `<div class="pf-thumb ${grad[i % 3]}">
-          <div class="ba"><span class="before">BEFORE</span><span class="after">AFTER</span></div>
-          <div class="ph-label">시공 사진 준비 중</div>
+          <div class="ph-label">완공 사진 등록 예정 · 표준 구성 기준가</div>
         </div>`;
     return `<article class="pf-card">
         ${thumb}
@@ -183,8 +182,12 @@ function renderHome(req) {
         </div>
       </article>`;
   }).join('\n      ');
-  const rvHtml = c.reviews.map(r =>
-    `<article class="rv-card">
+  /* 실후기 없으면 "1호점 사장님 혜택" 블록으로 대체 — 신생을 숨기지 않고 무기로 (전략팀 결정) */
+  let rvHtml, rvSub;
+  if (c.reviews.length) {
+    rvSub = '실명·매장명 공개에 동의해 주신 후기만 게재합니다.';
+    rvHtml = c.reviews.map(r =>
+      `<article class="rv-card">
         <div class="stars">★★★★★</div>
         <p class="quote">"${escHtml(r.quote)}"</p>
         <p class="body">${escHtml(r.body)}</p>
@@ -193,17 +196,35 @@ function renderHome(req) {
           <span><span class="nm">${escHtml(r.name)}</span><br><span class="shop">${escHtml(r.shop)}</span></span>
         </div>
       </article>`
-  ).join('\n      ');
-  /* 검색엔진 구조화 데이터: 지역 업체 + FAQ */
+    ).join('\n      ');
+  } else {
+    rvSub = '이제 막 문을 연 저희의 첫 고객이 되어주시는 사장님들께, 후기 대신 조건으로 보답합니다.';
+    rvHtml = [
+      ['1호점 특가', '초기 고객 확보 기간에는 마진을 최소화한 특별 견적으로 진행합니다. 같은 자재, 같은 공정 기준으로 어디와 비교하셔도 좋습니다.'],
+      ['전 과정 기록 제공', '철거부터 완공까지 모든 공정을 사진·일지로 기록해 드립니다. 공사가 어떻게 진행됐는지 사장님이 직접 확인할 수 있습니다.'],
+      ['후기 작성 시 추가 혜택', '완공 후 실명 후기를 남겨주시면 CCTV 무상 점검 또는 세무기장 첫 달 혜택을 드립니다.'],
+    ].map(x =>
+      `<article class="rv-card">
+        <div class="stars" style="letter-spacing:0;">FIRST</div>
+        <p class="quote">"${x[0]}"</p>
+        <p class="body">${x[1]}</p>
+        <div class="who"><span class="avatar">브</span><span><span class="nm">공간브릿지 1호점 혜택</span><br><span class="shop">견적 문의 시 자동 적용</span></span></div>
+      </article>`
+    ).join('\n      ');
+  }
+  /* 검색엔진 구조화 데이터: 지역 업체 + FAQ.
+     주소가 미확정(자리표시)이면 항목 자체를 생략 — 가짜 구조화데이터는 스팸 판정 위험 (SEO팀) */
   const base = baseUrl(req);
+  const isPlaceholder = v => !v || /○|000-00-00000/.test(String(v));
+  const biz = {
+    '@context': 'https://schema.org', '@type': 'HomeAndConstructionBusiness',
+    name: '공간브릿지', url: base, telephone: s.phone, email: s.email,
+    description: '상가·매장 인테리어부터 포스·키오스크·CCTV·세무기장까지 창업 준비 원스톱 플랫폼',
+    priceRange: '₩₩',
+  };
+  if (!isPlaceholder(s.address)) biz.address = { '@type': 'PostalAddress', streetAddress: s.address, addressCountry: 'KR' };
   const jsonld = [
-    {
-      '@context': 'https://schema.org', '@type': 'HomeAndConstructionBusiness',
-      name: '공간브릿지', url: base, telephone: s.phone, email: s.email,
-      address: { '@type': 'PostalAddress', streetAddress: s.address, addressCountry: 'KR' },
-      description: '상가·매장 인테리어부터 포스·키오스크·CCTV·세무기장까지 창업 준비 원스톱 플랫폼',
-      priceRange: '₩₩',
-    },
+    biz,
     {
       '@context': 'https://schema.org', '@type': 'FAQPage',
       mainEntity: [
@@ -218,7 +239,17 @@ function renderHome(req) {
   ];
   const map = Object.assign(commonMap(req), {
     HERO_BADGE: escHtml(h.badge), HERO_T1: escHtml(h.t1), HERO_T2: escHtml(h.t2), HERO_T3: escHtml(h.t3), HERO_SUB: escHtml(h.sub),
-    TRUST_ITEMS: trustHtml, PORTFOLIO_CARDS: pfHtml, REVIEW_CARDS: rvHtml,
+    TRUST_ITEMS: trustHtml, PORTFOLIO_CARDS: pfHtml, REVIEW_CARDS: rvHtml, REVIEWS_SUB: rvSub,
+    /* 사업자정보 미확정 시 빈칸 노출 대신 확정 항목만 표기 */
+    BIZ_LINE: [
+      '공간브릿지',
+      !isPlaceholder(s.ceo) ? '대표: ' + escHtml(s.ceo) : null,
+      !isPlaceholder(s.biz_no) ? '사업자등록번호: ' + escHtml(s.biz_no) : null,
+    ].filter(Boolean).join(' | ') + '<br>' + [
+      !isPlaceholder(s.address) ? '주소: ' + escHtml(s.address) : null,
+      '이메일: ' + escHtml(s.email),
+      '전화: ' + escHtml(s.phone),
+    ].filter(Boolean).join(' | '),
     PROMISE: escHtml(s.promise),
     CEO: escHtml(s.ceo), BIZ_NO: escHtml(s.biz_no), ADDRESS: escHtml(s.address),
     EMAIL: escHtml(s.email), FOOTER_NOTE: escHtml(s.footer_note),
@@ -258,7 +289,13 @@ function renderPost(req, id) {
   post.views = (post.views || 0) + 1;
   writeJson('posts.json', posts);
   const d = new Date(post.created);
-  const desc = String(post.body || '').replace(/\s+/g, ' ').slice(0, 140);
+  /* SEO팀 지적: 문장 중간 절단 방지 — 어절 경계에서 자름. '## ' 소제목 마커 제거 */
+  const flat = String(post.body || '').replace(/^## .*$/gm, '').replace(/\s+/g, ' ').trim();
+  let desc = flat.slice(0, 140);
+  if (flat.length > 140) desc = desc.slice(0, desc.lastIndexOf(' ') > 60 ? desc.lastIndexOf(' ') : 140) + '…';
+  /* '## 소제목' 줄을 h2로 변환 (에디터·SEO팀: 구조화) */
+  const bodyHtml = escHtml(post.body).split('\n')
+    .map(l => l.startsWith('## ') ? '<h2>' + l.slice(3) + '</h2>' : l).join('\n');
   const jsonld = {
     '@context': 'https://schema.org', '@type': 'Article',
     headline: post.title, datePublished: new Date(post.created).toISOString(),
@@ -270,7 +307,7 @@ function renderPost(req, id) {
   return renderTemplate('post.html', Object.assign(commonMap(req), {
     POST_TITLE: escHtml(post.title), POST_CAT: escHtml(post.cat),
     POST_META: `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}. · 조회 ${post.views}`,
-    POST_BODY: escHtml(post.body),
+    POST_BODY: bodyHtml,
     POST_DESC: escAttr(desc),
     CANONICAL: baseUrl(req) + '/post.html?id=' + post.id,
     JSONLD_POST: '<script type="application/ld+json">' + JSON.stringify(jsonld) + '</script>',
@@ -619,8 +656,14 @@ const server = http.createServer(async (req, res) => {
       if (p === '/calc.html' || p === '/calc') return html(renderTemplate('calc.html', Object.assign(commonMap(req), { CANONICAL: baseUrl(req) + '/calc.html' })));
       if (p === '/privacy.html' || p === '/privacy') {
         const s2 = getContent().site;
+        const ph = v => !v || /○|000-00-00000/.test(String(v));
+        const bizParts = [
+          !ph(s2.biz_no) ? '사업자등록번호 ' + escHtml(s2.biz_no) : null,
+          !ph(s2.address) ? '주소 ' + escHtml(s2.address) : null,
+        ].filter(Boolean);
         return html(renderTemplate('privacy.html', Object.assign(commonMap(req), {
-          CEO: escHtml(s2.ceo), BIZ_NO: escHtml(s2.biz_no), ADDRESS: escHtml(s2.address), EMAIL: escHtml(s2.email),
+          EMAIL: escHtml(s2.email),
+          PRIVACY_BIZ: bizParts.length ? '<br>상호: 공간브릿지 · ' + bizParts.join(' · ') : '',
         })));
       }
       if (p === '/sitemap.xml') { res.writeHead(200, { 'Content-Type': 'application/xml; charset=utf-8' }); return res.end(renderSitemap(req)); }
