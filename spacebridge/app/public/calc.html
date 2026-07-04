@@ -92,6 +92,9 @@ h1{font-size:clamp(24px,4vw,32px);font-weight:800;color:var(--green);letter-spac
     <button data-tool="cost" class="on">창업 비용<small>인테리어+장비+세무 총비용</small></button>
     <button data-tool="seat">테이블·좌석수<small>주방 권장 평수 · 좌석 배치</small></button>
     <button data-tool="home">주거 인테리어<small>아파트 · 빌라 · 오피스텔</small></button>
+    <button data-tool="dday">오픈 D-Day 일정표<small>오픈일 역산 체크리스트</small></button>
+    <button data-tool="check">견적서 진단<small>받은 견적, 적정한가?</small></button>
+    <button data-tool="rent">월세 → 목표 매출<small>계약 전 수익성 체크</small></button>
   </div>
 
   <!-- ============ 도구 1: 창업 비용 ============ -->
@@ -212,6 +215,102 @@ h1{font-size:clamp(24px,4vw,32px);font-weight:800;color:var(--green);letter-spac
       <div class="res-total" id="homeTotal"></div>
       <div class="res-rows" id="homeRows"></div>
       <p class="res-note">※ 2026년 시장 평균 단가 기준 추정 범위입니다. 자재 등급(기본/고급), 확장 여부, 구조 변경, 건물 연식에 따라 달라지며 <b>무료 실측 후 확정 견적</b>으로 안내드립니다.</p>
+    </div>
+  </div>
+
+  <!-- ============ 도구 4: 오픈 D-Day 일정표 ============ -->
+  <div class="tool" id="tool-dday">
+    <div class="card">
+      <h2><span class="step-num">1</span>오픈 목표일</h2>
+      <div class="size-row">
+        <input type="date" id="ddayDate" style="border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;">
+        <div class="size-val" style="min-width:auto;padding:8px 16px;"><span id="ddayLeft">—</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="step-num">2</span>업종</h2>
+      <div class="chip-grid" id="ddayBiz">
+        <button data-biz="음식점" class="on">음식점</button>
+        <button data-biz="카페">카페</button>
+        <button data-biz="기타 매장">기타 매장</button>
+      </div>
+    </div>
+    <div class="result">
+      <h2>오픈일 역산 일정표</h2>
+      <div class="res-total" id="ddayTotal" style="font-size:clamp(18px,3.4vw,24px);"></div>
+      <div class="res-rows" id="ddayRows"></div>
+      <p class="res-note">※ 소형 매장(10~20평) 표준 일정 기준입니다. 철거 범위·인허가·건물 사정에 따라 달라지며, 공간브릿지와 진행 시 <b>이 일정표 그대로 담당자가 전 과정을 관리</b>합니다.</p>
+    </div>
+  </div>
+
+  <!-- ============ 도구 5: 견적서 진단 ============ -->
+  <div class="tool" id="tool-check">
+    <div class="card">
+      <h2><span class="step-num">1</span>받으신 견적 정보</h2>
+      <div class="size-row" style="margin-bottom:14px;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:4px;">견적 총액 (만원)</div>
+          <input type="number" id="checkAmt" value="3000" min="100" step="50" style="width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;">
+        </div>
+        <div style="flex:1;min-width:160px;">
+          <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:4px;">평수</div>
+          <input type="number" id="checkSize" value="15" min="3" max="200" style="width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;">
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:6px;">업종</div>
+      <div class="chip-grid" id="checkBiz">
+        <button data-biz="한식당" class="on">한식당</button>
+        <button data-biz="중식당">중식당</button>
+        <button data-biz="일식·돈까스">일식·돈까스</button>
+        <button data-biz="분식">분식</button>
+        <button data-biz="카페 · 디저트">카페·디저트</button>
+        <button data-biz="미용실 · 뷰티">미용실</button>
+        <button data-biz="소매점 · 편의점">소매점</button>
+        <button data-biz="사무실 · 기타">사무실·기타</button>
+      </div>
+    </div>
+    <div class="result">
+      <h2>진단 결과</h2>
+      <div class="res-total" id="checkVerdict"></div>
+      <div style="margin-top:16px;">
+        <div style="position:relative;height:14px;border-radius:7px;background:linear-gradient(90deg,#5B8DC9 0%,#5B8DC9 30%,#3E9B63 30%,#3E9B63 70%,#C97B5B 70%,#C97B5B 100%);">
+          <div id="checkMarker" style="position:absolute;top:-5px;width:4px;height:24px;background:#fff;border-radius:2px;box-shadow:0 0 6px rgba(0,0,0,.4);left:50%;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#A8BFB0;margin-top:6px;"><span>평균보다 낮음</span><span>적정 범위</span><span>평균보다 높음</span></div>
+      </div>
+      <div class="res-rows" id="checkRows"></div>
+      <p class="res-note">※ 시장 평균 단가 대비 위치입니다. 견적이 낮다고 무조건 좋은 게 아닙니다 — <b>빠진 항목(철거·전기증설·설비)</b>이 있으면 공사 중 추가금이 붙습니다. 견적서 사진을 보내주시면 항목 단위로 무료 검토해 드립니다.</p>
+    </div>
+  </div>
+
+  <!-- ============ 도구 6: 월세 → 목표 매출 ============ -->
+  <div class="tool" id="tool-rent">
+    <div class="card">
+      <h2><span class="step-num">1</span>계약 조건</h2>
+      <div class="size-row">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:4px;">월세 (만원, 관리비 포함)</div>
+          <input type="number" id="rentAmt" value="200" min="10" step="10" style="width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="step-num">2</span>업종</h2>
+      <div class="chip-grid" id="rentBiz">
+        <button data-biz="음식점" class="on">음식점</button>
+        <button data-biz="카페">카페</button>
+        <button data-biz="소매·서비스">소매·서비스</button>
+      </div>
+    </div>
+    <div class="result">
+      <h2>이 월세로 버티려면</h2>
+      <div class="seat-grid">
+        <div class="seat-box"><div class="v" id="rentMonthly"></div><div class="l">권장 월 매출 (월세 10% 룰)</div></div>
+        <div class="seat-box"><div class="v" id="rentDaily"></div><div class="l">하루 목표 매출</div></div>
+        <div class="seat-box"><div class="v" id="rentBE"></div><div class="l">월세만 커버하는 손익분기</div></div>
+      </div>
+      <div class="res-rows" id="rentRows"></div>
+      <p class="res-note">※ "월세는 매출의 10% 이하" 자영업 표준 룰과 업종 평균 마진율 가정 기반입니다. 인건비·재료비 구조에 따라 달라지며, 계약 전 상권·수익성 상담은 무료입니다.</p>
     </div>
   </div>
 
@@ -338,11 +437,102 @@ h1{font-size:clamp(24px,4vw,32px);font-weight:800;color:var(--green);letter-spac
   document.querySelectorAll('input[name="homeScope"]').forEach(function(rd){rd.addEventListener('change',calcHome);});
   document.querySelectorAll('#homeParts input').forEach(function(c){c.addEventListener('change',calcHome);});
 
+  /* ---------- 도구 4: 오픈 D-Day 일정표 ---------- */
+  var ddayBiz='음식점';
+  var DDAY_PHASES=[
+    [42,36,'실측 · 설계 · 통합 견적 확정','업체 비교는 이 주에 끝내야 뒤가 여유롭습니다'],
+    [35,29,'계약 · 도면 확정 · 철거 시작','소방·전기 증설·정화조 등 인허가 요건 확인'],
+    [28,15,'인테리어 본 시공','포스·키오스크·CCTV 배선을 도면에 반영 (재공사 방지)'],
+    [14,8,'마감 공사 · 주방기기·가구 반입','사업자등록 신청 {위생}'],
+    [7,4,'포스·키오스크·CCTV·인터넷 설치','영업신고증 수령 · 결제 시운전'],
+    [3,1,'직원 교육 · 가오픈 리허설','지인 초청으로 동선·주문 흐름 점검'],
+    [0,0,'🎉 오픈','네이버 플레이스 등록 · 오픈 소식 발행'],
+  ];
+  function calcDday(){
+    var el=document.getElementById('ddayDate');
+    if(!el.value){
+      var d=new Date(); d.setDate(d.getDate()+49);
+      el.value=d.toISOString().slice(0,10);
+    }
+    var open=new Date(el.value+'T00:00:00');
+    var today=new Date(); today.setHours(0,0,0,0);
+    var left=Math.round((open-today)/86400000);
+    document.getElementById('ddayLeft').textContent='D-'+(left>0?left:0);
+    var wk=['일','월','화','수','목','금','토'];
+    function fd(days){ var d=new Date(open); d.setDate(d.getDate()-days); return (d.getMonth()+1)+'/'+d.getDate()+'('+wk[d.getDay()]+')'; }
+    var warn = left<42 ? '<small style="display:block;font-size:13px;color:#F3C9B3;margin-top:6px;">⚠ 표준 6주보다 빠듯합니다 ('+left+'일). 단축 가능 여부는 실측 후 바로 답드릴 수 있습니다.</small>' : '';
+    document.getElementById('ddayTotal').innerHTML=fd(0).replace(/\(.\)$/,'')+' 오픈 기준 역산 일정'+warn;
+    var vio = ddayBiz==='기타 매장' ? '' : ' · 위생교육·보건증('+ddayBiz+')';
+    document.getElementById('ddayRows').innerHTML=DDAY_PHASES.map(function(p){
+      var when = p[0]===0 ? fd(0) : fd(p[0])+' ~ '+fd(p[1]);
+      return '<div class="r"><span><b style="color:#F3C9B3;">'+(p[0]===0?'D-DAY':'D-'+p[0]+'~D-'+p[1])+'</b> '+p[2]+'<br><small style="color:#A8BFB0;">'+p[3].replace('{위생}',vio||'')+'</small></span><b>'+when+'</b></div>';
+    }).join('');
+    return { biz:ddayBiz, size:'', cats:['오픈일정표','인테리어'],
+      summary:'[D-Day일정표] '+ddayBiz+' · 오픈 목표 '+el.value+' (D-'+left+')' };
+  }
+  chipify(['ddayBiz'],function(b){ddayBiz=b.dataset.biz;calcDday();});
+  document.getElementById('ddayDate').addEventListener('change',calcDday);
+
+  /* ---------- 도구 5: 견적서 진단 ---------- */
+  var checkBiz='한식당';
+  function calcCheck(){
+    var amt=+document.getElementById('checkAmt').value||0;
+    var size=+document.getElementById('checkSize').value||1;
+    var r=COST_RATE[checkBiz], per=amt/size;
+    var lo=r[0], hi=r[1];
+    /* 게이지: lo*0.7 ~ hi*1.3 스케일에 매핑 (30% 지점=lo, 70% 지점=hi) */
+    var pct;
+    if(per<=lo) pct=Math.max(2,(per-lo*0.7)/(lo*0.3)*30);
+    else if(per>=hi) pct=Math.min(98,70+(per-hi)/(hi*0.3)*30);
+    else pct=30+(per-lo)/(hi-lo)*40;
+    document.getElementById('checkMarker').style.left=pct+'%';
+    var verdict, note;
+    if(per<lo*0.85){ verdict='평균보다 낮습니다'; note='좋아 보여도 철거·전기·설비 항목이 빠졌을 수 있습니다 — 추가금 위험 구간'; }
+    else if(per<=hi*1.1){ verdict='적정 범위입니다'; note='시장 평균 안입니다. 항목 구성(자재 등급·포함 범위)까지 보면 더 정확합니다'; }
+    else { verdict='평균보다 높습니다'; note='자재 고급화나 특수 공사가 아니라면 조정 여지가 있습니다'; }
+    document.getElementById('checkVerdict').textContent=verdict;
+    document.getElementById('checkRows').innerHTML=[
+      ['받으신 견적', fmt(amt)+'원 ('+size+'평)'],
+      ['평당 환산', Math.round(per)+'만원/평'],
+      [checkBiz+' 시장 평균', lo+'~'+hi+'만원/평'],
+      ['진단 참고', note],
+    ].map(function(x){return '<div class="r"><span>'+x[0]+'</span><b style="max-width:60%;white-space:normal;">'+x[1]+'</b></div>';}).join('');
+    return { biz:checkBiz, size:size+'평', cats:['견적진단','인테리어'],
+      summary:'[견적진단] '+checkBiz+' '+size+'평 · 받은 견적 '+fmt(amt)+'원 (평당 '+Math.round(per)+'만) · 평균 '+lo+'~'+hi+'만/평 → '+verdict };
+  }
+  chipify(['checkBiz'],function(b){checkBiz=b.dataset.biz;calcCheck();});
+  document.getElementById('checkAmt').addEventListener('input',calcCheck);
+  document.getElementById('checkSize').addEventListener('input',calcCheck);
+
+  /* ---------- 도구 6: 월세 → 목표 매출 ---------- */
+  var RENT_MARGIN={ '음식점':[0.30,'재료 35% + 인건비 25% + 기타 10% 가정'], '카페':[0.35,'재료 30% + 인건비 25% + 기타 10% 가정'], '소매·서비스':[0.25,'원가·인건비 구조 평균 가정'] };
+  var rentBiz='음식점';
+  function calcRent(){
+    var rent=+document.getElementById('rentAmt').value||0;
+    var m=RENT_MARGIN[rentBiz];
+    var monthly=rent*10, daily=monthly/30, be=rent/m[0];
+    document.getElementById('rentMonthly').innerHTML=fmt(monthly)+'<small>원</small>';
+    document.getElementById('rentDaily').innerHTML=fmt(Math.round(daily*10)/10)+'<small>원</small>';
+    document.getElementById('rentBE').innerHTML=fmt(Math.round(be))+'<small>원</small>';
+    document.getElementById('rentRows').innerHTML=[
+      ['기준 룰','월세는 매출의 10% 이하 (자영업 표준)'],
+      [rentBiz+' 평균 마진율 가정', Math.round(m[0]*100)+'% ('+m[1]+')'],
+      ['월세 '+rent+'만원의 의미','한 달에 '+fmt(be)+'원을 팔아야 월세"만" 커버됩니다'],
+    ].map(function(x){return '<div class="r"><span>'+x[0]+'</span><b style="max-width:60%;white-space:normal;">'+x[1]+'</b></div>';}).join('');
+    return { biz:rentBiz, size:'', cats:['매출계산','인테리어'],
+      summary:'[월세→매출] '+rentBiz+' · 월세 '+rent+'만원 → 권장 월매출 '+fmt(monthly)+'원 (일 '+fmt(Math.round(daily))+'원)' };
+  }
+  chipify(['rentBiz'],function(b){rentBiz=b.dataset.biz;calcRent();});
+  document.getElementById('rentAmt').addEventListener('input',calcRent);
+
   /* ---------- 탭 전환 ---------- */
   var LEAD_COPY={
     cost:['이 계산 결과, 실제 견적으로 확인해 보세요','연락처만 남기시면 위 조건 그대로 담당자가 <b>무료 실측 일정</b>을 잡아드립니다. 광고 연락은 하지 않습니다.'],
     seat:['이 배치, 실제 도면으로 그려드립니다','연락처만 남기시면 <b>무료 실측 후 테이블 배치도</b>까지 그려서 보내드립니다. 광고 연락은 하지 않습니다.'],
-    home:['우리 집 조건으로 정확한 견적 받아보기','연락처만 남기시면 위 조건 그대로 담당자가 <b>무료 방문 실측</b> 일정을 잡아드립니다. 광고 연락은 하지 않습니다.']
+    home:['우리 집 조건으로 정확한 견적 받아보기','연락처만 남기시면 위 조건 그대로 담당자가 <b>무료 방문 실측</b> 일정을 잡아드립니다. 광고 연락은 하지 않습니다.'],
+    dday:['이 일정표, 저희가 그대로 관리해 드립니다','연락처만 남기시면 오픈일 기준 <b>맞춤 일정표와 무료 실측</b>을 잡아드립니다. 광고 연락은 하지 않습니다.'],
+    check:['받으신 견적서, 항목 단위로 무료 검토해 드립니다','연락처만 남기시면 같은 조건으로 <b>무료 재견적</b>을 드립니다. 어디가 비싸고 뭐가 빠졌는지 알려드립니다.'],
+    rent:['계약 전, 이 상가 조건 무료로 봐드립니다','연락처만 남기시면 월세·상권 대비 <b>수익성과 인테리어 예산</b>을 계약 전에 상담해 드립니다.']
   };
   document.querySelectorAll('.tool-tabs button').forEach(function(b){
     b.addEventListener('click',function(){
@@ -355,7 +545,11 @@ h1{font-size:clamp(24px,4vw,32px);font-weight:800;color:var(--green);letter-spac
     });
   });
 
-  calcCost(); calcSeat(); calcHome();
+  calcCost(); calcSeat(); calcHome(); calcDday(); calcCheck(); calcRent();
+
+  /* 딥링크: /calc.html?tool=seat 형태로 특정 도구 바로 열기 */
+  var want=new URLSearchParams(location.search).get('tool');
+  if(want){ var tb=document.querySelector('.tool-tabs button[data-tool="'+want+'"]'); if(tb) tb.click(); }
 
   /* ---------- 공통 리드 전송 ---------- */
   var ph=document.getElementById('calcPhone');
@@ -366,7 +560,7 @@ h1{font-size:clamp(24px,4vw,32px);font-weight:800;color:var(--green);letter-spac
   document.getElementById('calcSubmit').addEventListener('click',function(){
     var msg=document.getElementById('calcMsg');
     if(ph.value.replace(/\D/g,'').length<9){ msg.className='msg fail'; msg.textContent='연락처를 확인해 주세요.'; return; }
-    var st = activeTool==='cost'?calcCost() : activeTool==='seat'?calcSeat() : calcHome();
+    var st = activeTool==='cost'?calcCost() : activeTool==='seat'?calcSeat() : activeTool==='home'?calcHome() : activeTool==='dday'?calcDday() : activeTool==='check'?calcCheck() : calcRent();
     fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
       phone:ph.value, region:'', size:st.size, biz:st.biz, cats:st.cats, msg:st.summary,
       first:(window.SB&&SB.first)||{}

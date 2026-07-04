@@ -772,6 +772,75 @@ table.pkg tfoot td.num.hi { font-size: 17px; }
   </div>
 </section>
 
+<!-- ================= ⑧.5 무료 도구 (유입 엔진) ================= -->
+<section class="freetools" id="tools">
+  <style>
+  .freetools { background: var(--sb-green); padding: 84px 0; }
+  .freetools .inner { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+  .freetools .head { text-align: center; margin-bottom: 40px; }
+  .freetools .sec-label { color: var(--sb-copper-lt); }
+  .freetools h2 { color: #fff; font-size: clamp(24px, 3.6vw, 34px); font-weight: 800; letter-spacing: -.02em; margin-top: 10px; }
+  .freetools p.sub { color: #BFD3C7; margin-top: 12px; font-size: 15.5px; }
+  .ft-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 860px) { .ft-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .ft-grid { grid-template-columns: 1fr; } }
+  .ft-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: 14px; padding: 22px; text-decoration: none; transition: all .15s; display: block; }
+  .ft-card:hover { background: rgba(255,255,255,.12); transform: translateY(-2px); }
+  .ft-card .ico { font-size: 26px; }
+  .ft-card h4 { color: #fff; font-size: 16.5px; font-weight: 800; margin: 10px 0 6px; letter-spacing: -.01em; }
+  .ft-card p { color: #A8BFB0; font-size: 13px; line-height: 1.6; }
+  .ft-card .go { display: inline-block; margin-top: 12px; color: var(--sb-copper-lt); font-size: 13px; font-weight: 800; }
+  .freetools .free-note { text-align: center; margin-top: 28px; color: #BFD3C7; font-size: 13.5px; }
+  .freetools .free-note b { color: #fff; }
+  </style>
+  <div class="inner">
+    <div class="head">
+      <span class="sec-label">FREE TOOLS — 회원가입 없음</span>
+      <h2>계약 전에, 공사 전에, 무료로 계산해 보세요</h2>
+      <p class="sub">창업 준비의 모든 숫자를 30초 안에 — 전부 무료입니다.</p>
+    </div>
+    <div class="ft-grid">
+      <a class="ft-card" href="/calc.html?tool=cost">
+        <span class="ico">🧮</span>
+        <h4>창업 비용 계산기</h4>
+        <p>업종·평수만 넣으면 인테리어+포스+CCTV+세무까지 총비용이 나옵니다.</p>
+        <span class="go">계산해 보기 →</span>
+      </a>
+      <a class="ft-card" href="/calc.html?tool=seat">
+        <span class="ico">🪑</span>
+        <h4>테이블·좌석수 계산기</h4>
+        <p>내 평수에 테이블 몇 개? 주방 권장 평수와 좌석 배치를 계산합니다.</p>
+        <span class="go">계산해 보기 →</span>
+      </a>
+      <a class="ft-card" href="/calc.html?tool=rent">
+        <span class="ico">📊</span>
+        <h4>월세 → 목표 매출</h4>
+        <p>이 월세면 하루 얼마를 팔아야 남을까? 계약 전 수익성 체크.</p>
+        <span class="go">계산해 보기 →</span>
+      </a>
+      <a class="ft-card" href="/calc.html?tool=check">
+        <span class="ico">🔍</span>
+        <h4>견적서 적정가 진단</h4>
+        <p>다른 곳에서 받은 견적, 시장 평균 대비 적정한지 바로 진단합니다.</p>
+        <span class="go">진단해 보기 →</span>
+      </a>
+      <a class="ft-card" href="/calc.html?tool=dday">
+        <span class="ico">📅</span>
+        <h4>오픈 D-Day 일정표</h4>
+        <p>오픈 목표일을 넣으면 철거부터 오픈까지 주차별 일정이 나옵니다.</p>
+        <span class="go">만들어 보기 →</span>
+      </a>
+      <a class="ft-card" href="/calc.html?tool=home">
+        <span class="ico">🏠</span>
+        <h4>주거 인테리어 견적</h4>
+        <p>아파트·빌라 전체 리모델링부터 도배·욕실·샷시 부분 공사까지.</p>
+        <span class="go">계산해 보기 →</span>
+      </a>
+    </div>
+    <p class="free-note"><b>전부 무료, 회원가입 없음.</b> 계산 결과가 마음에 들면 그때 실측을 신청하세요 — 실측도 무료입니다.</p>
+  </div>
+</section>
+
 <!-- ================= ⑨ FAQ ================= -->
 <section class="faq" id="faq">
   <div class="inner">
