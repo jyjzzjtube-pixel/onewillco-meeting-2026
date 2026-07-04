@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>창업가이드 | 공간브릿지</title>
+<title>{{POST_TITLE}} | 공간브릿지 창업가이드</title>
+<meta name="description" content="{{POST_DESC}}">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{POST_TITLE}}">
+<meta property="og:description" content="{{POST_DESC}}">
+<meta property="og:url" content="{{CANONICAL}}">
+{{JSONLD_POST}}
 <style>
 :root{--ink:#2B2A26;--sub:#75716A;--bg:#F7F5F1;--green:#1E3A2F;--copper:#B85C38;--line:#E5E1D8;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -20,7 +27,8 @@ h1{font-size:26px;font-weight:800;color:var(--green);letter-spacing:-.5px;margin
 .body{background:#fff;border:1px solid var(--line);border-radius:14px;padding:30px;font-size:15.5px;white-space:pre-wrap;word-break:break-word;}
 .cta-band{margin-top:34px;background:var(--green);border-radius:14px;padding:26px;color:#fff;text-align:center;}
 .cta-band p{margin-bottom:14px;font-weight:700;font-size:16px;}
-.cta-band a{background:var(--copper);color:#fff;text-decoration:none;font-weight:800;border-radius:10px;padding:12px 24px;font-size:14px;display:inline-block;}
+.cta-band a{background:var(--copper);color:#fff;text-decoration:none;font-weight:800;border-radius:10px;padding:12px 24px;font-size:14px;display:inline-block;margin:0 4px;}
+.cta-band a.ghost{background:transparent;border:1.5px solid rgba(255,255,255,.5);}
 </style>
 </head>
 <body>
@@ -31,31 +39,17 @@ h1{font-size:26px;font-weight:800;color:var(--green);letter-spacing:-.5px;margin
   </div>
 </header>
 <div class="wrap">
-  <span class="cat" id="cat"></span>
-  <h1 id="title">불러오는 중…</h1>
-  <div class="meta" id="meta"></div>
-  <div class="body" id="body"></div>
+  <span class="cat">{{POST_CAT}}</span>
+  <h1>{{POST_TITLE}}</h1>
+  <div class="meta">{{POST_META}}</div>
+  <div class="body">{{POST_BODY}}</div>
   <div class="cta-band">
     <p>상가 계약하셨나요? 인테리어부터 포스·CCTV·세무까지 통합 견적은 무료입니다.</p>
     <a href="/#quote">무료 견적 신청 →</a>
+    <a class="ghost" href="/calc.html">창업 비용 계산기</a>
   </div>
 </div>
+{{STICKY_CTA}}
 <script src="/track.js"></script>
-<script>
-(function(){
-  var id=new URLSearchParams(location.search).get('id');
-  fetch('/api/posts/'+id).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(p){
-    document.title=p.title+' | 공간브릿지 창업가이드';
-    document.getElementById('cat').textContent=p.cat;
-    document.getElementById('title').textContent=p.title;
-    var d=new Date(p.created);
-    document.getElementById('meta').textContent=d.getFullYear()+'. '+(d.getMonth()+1)+'. '+d.getDate()+'. · 조회 '+(p.views||0);
-    document.getElementById('body').textContent=p.body;
-  }).catch(function(){
-    document.getElementById('title').textContent='글을 찾을 수 없습니다';
-    document.getElementById('body').textContent='삭제되었거나 주소가 잘못되었습니다.';
-  });
-})();
-</script>
 </body>
 </html>

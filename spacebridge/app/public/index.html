@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>상가·매장 인테리어와 창업 준비 원스톱 | 공간브릿지</title>
 <meta name="description" content="인테리어부터 포스·키오스크·CCTV·세무기장까지, 창업 준비를 한 번에. 공간브릿지 원스톱 패키지.">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="상가·매장 인테리어와 창업 준비 원스톱 | 공간브릿지">
+<meta property="og:description" content="인테리어부터 포스·키오스크·CCTV·세무기장까지, 창업 준비를 한 번에.">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta property="og:site_name" content="공간브릿지">
+<link rel="alternate" type="application/rss+xml" title="공간브릿지 창업가이드" href="/rss.xml">
+{{JSONLD_HOME}}
 <style>
 /* ============================================================
    공간브릿지 디자인 토큰 — brand-guide.html 과 동일 시스템
@@ -400,6 +408,7 @@ table.pkg tfoot td.num.hi { font-size: 17px; }
       <a href="#solution">서비스</a>
       <a href="#package">패키지</a>
       <a href="#portfolio">포트폴리오</a>
+      <a href="/calc.html">비용계산기</a>
       <a href="/guide.html">창업가이드</a>
       <a href="#faq">자주 묻는 질문</a>
       <a class="gnb-cta" href="#quote">견적문의</a>
@@ -928,6 +937,12 @@ table.pkg tfoot td.num.hi { font-size: 17px; }
 (function () {
   var form = document.getElementById('quoteForm');
   if (!form) return;
+  /* 전화번호 자동 하이픈 (고객 편의) */
+  var phEl = document.getElementById('f-phone');
+  phEl.addEventListener('input', function () {
+    var d = phEl.value.replace(/\D/g, '').slice(0, 11);
+    phEl.value = d.length > 7 ? d.replace(/(\d{3})(\d{3,4})(\d{0,4})/, function (m, a, b, c) { return c ? a + '-' + b + '-' + c : a + '-' + b; }) : d;
+  });
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var msg = document.getElementById('quoteMsg');
@@ -968,6 +983,8 @@ table.pkg tfoot td.num.hi { font-size: 17px; }
   });
 })();
 </script>
+
+{{STICKY_CTA}}
 
 </body>
 </html>

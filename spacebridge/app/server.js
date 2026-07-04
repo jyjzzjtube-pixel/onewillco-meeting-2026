@@ -74,6 +74,7 @@ if (!fs.existsSync(path.join(DATA, 'posts.json'))) {
 /* 사이트 콘텐츠 시드 (최초 1회) — 관리자 [사이트 편집]에서 수정 */
 const DEFAULT_CONTENT = {
   site: {
+    domain: '', // 예: https://spacebridge.co.kr — 사이트맵·OG·RSS 절대주소에 사용
     phone: '0000-0000', kakao_url: '#', kakao_name: '@공간브릿지',
     promise: '영업시간 내 3시간 안에 연락드립니다 · 광고 연락 없음',
     ceo: '○○○', biz_no: '000-00-00000', address: '○○시 ○○구 ○○로 00, 0층',
@@ -119,7 +120,42 @@ function getContent() {
 /* ---------- 홈페이지 렌더링 (CMS 템플릿) ---------- */
 function escHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function escAttr(s) { return escHtml(s); }
-function renderHome() {
+function baseUrl(req) {
+  const c = getContent();
+  if (c.site.domain && /^https?:\/\//.test(c.site.domain)) return c.site.domain.replace(/\/$/, '');
+  return 'http://' + (req && req.headers.host ? req.headers.host : 'localhost:' + PORT);
+}
+/* 공통 토큰 + 모바일 하단 고정 CTA 바 (전 페이지) */
+function commonMap(req) {
+  const s = getContent().site;
+  const phoneTel = String(s.phone || '').replace(/\D/g, '');
+  const kakao = s.kakao_url && s.kakao_url !== '#' ? escAttr(s.kakao_url) : '/#quote';
+  return {
+    PHONE: escHtml(s.phone), PHONE_TEL: phoneTel, KAKAO_URL: kakao, KAKAO_NAME: escHtml(s.kakao_name),
+    BASE: baseUrl(req),
+    STICKY_CTA: `<div class="sb-sticky">
+      <a href="tel:${phoneTel}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>전화</a>
+      <a href="${kakao}" ${kakao.startsWith('http') ? 'target="_blank" rel="noopener"' : ''} class="kko"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.84 1.87 5.33 4.68 6.75l-.95 3.53c-.08.3.26.54.52.37l4.18-2.76c.51.06 1.03.11 1.57.11 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>카톡 상담</a>
+      <a href="/#quote" class="cta">무료 견적</a>
+    </div>
+    <style>
+    .sb-sticky{display:none;}
+    @media(max-width:700px){
+      .sb-sticky{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:90;background:#fff;border-top:1px solid #DDD8CF;box-shadow:0 -4px 16px rgba(0,0,0,.08);}
+      .sb-sticky a{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 4px;font-size:14px;font-weight:800;text-decoration:none;color:#1E3A2F;}
+      .sb-sticky a.kko{background:#FEE500;color:#191919;}
+      .sb-sticky a.cta{background:#B85C38;color:#fff;}
+      body{padding-bottom:50px;}
+      .kakao-float{display:none !important;}
+    }
+    </style>`,
+  };
+}
+function renderTemplate(file, map) {
+  let html = fs.readFileSync(path.join(PUB, file), 'utf8');
+  return html.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in map ? map[k] : m));
+}
+function renderHome(req) {
   let html = fs.readFileSync(path.join(PUB, 'index.html'), 'utf8');
   const c = getContent();
   const s = c.site, h = c.hero;
@@ -157,16 +193,108 @@ function renderHome() {
         </div>
       </article>`
   ).join('\n      ');
-  const map = {
+  /* 검색엔진 구조화 데이터: 지역 업체 + FAQ */
+  const base = baseUrl(req);
+  const jsonld = [
+    {
+      '@context': 'https://schema.org', '@type': 'HomeAndConstructionBusiness',
+      name: '공간브릿지', url: base, telephone: s.phone, email: s.email,
+      address: { '@type': 'PostalAddress', streetAddress: s.address, addressCountry: 'KR' },
+      description: '상가·매장 인테리어부터 포스·키오스크·CCTV·세무기장까지 창업 준비 원스톱 플랫폼',
+      priceRange: '₩₩',
+    },
+    {
+      '@context': 'https://schema.org', '@type': 'FAQPage',
+      mainEntity: [
+        ['견적 상담에 비용이 드나요?', '아니요. 실측과 통합 견적은 무료입니다. 견적서를 받아보신 뒤 계약 여부를 결정하시면 됩니다.'],
+        ['공사 기간은 보통 얼마나 걸리나요?', '규모와 업종에 따라 다르지만 소형 매장 기준 평균 3~4주입니다. 계약 시 오픈일 역산 일정표를 함께 드립니다.'],
+        ['수도권이 아닌 지방도 시공이 되나요?', '가능합니다. 지역에 따라 일정 조율이 필요할 수 있으니 견적 문의 시 지역을 남겨주세요.'],
+        ['인테리어만 따로 맡겨도 되나요?', '네, 가능합니다. 인테리어 단독 시공도 진행하며, 포스·CCTV·세무는 필요하실 때 추가하시면 됩니다.'],
+        ['시공 후 AS 기간은 어떻게 되나요?', '시공 하자에 대해 무상 AS를 보증하며, 보증 범위와 기간은 계약서에 명시합니다.'],
+        ['세무기장만 따로 맡길 수도 있나요?', '네, 가능합니다. 이미 운영 중인 매장의 기장 이관도 받고 있습니다.'],
+      ].map(q => ({ '@type': 'Question', name: q[0], acceptedAnswer: { '@type': 'Answer', text: q[1] } })),
+    },
+  ];
+  const map = Object.assign(commonMap(req), {
     HERO_BADGE: escHtml(h.badge), HERO_T1: escHtml(h.t1), HERO_T2: escHtml(h.t2), HERO_T3: escHtml(h.t3), HERO_SUB: escHtml(h.sub),
     TRUST_ITEMS: trustHtml, PORTFOLIO_CARDS: pfHtml, REVIEW_CARDS: rvHtml,
-    PHONE: escHtml(s.phone), PHONE_TEL: String(s.phone || '').replace(/\D/g, ''),
-    KAKAO_URL: s.kakao_url && s.kakao_url !== '#' ? escAttr(s.kakao_url) : '#quote',
-    KAKAO_NAME: escHtml(s.kakao_name), PROMISE: escHtml(s.promise),
+    PROMISE: escHtml(s.promise),
     CEO: escHtml(s.ceo), BIZ_NO: escHtml(s.biz_no), ADDRESS: escHtml(s.address),
     EMAIL: escHtml(s.email), FOOTER_NOTE: escHtml(s.footer_note),
-  };
+    CANONICAL: base + '/',
+    JSONLD_HOME: '<script type="application/ld+json">' + JSON.stringify(jsonld) + '</script>',
+  });
   return html.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in map ? map[k] : m));
+}
+
+/* ---------- SSR: 창업가이드 목록/본문 (검색엔진이 글을 읽도록 서버에서 렌더) ---------- */
+const GUIDE_CATS = ['전체', '공지', '창업 가이드', '비용 가이드', '설비·장비', '세무 기초'];
+function renderGuide(req, cat) {
+  const cur = GUIDE_CATS.includes(cat) ? cat : '전체';
+  const posts = readJson('posts.json', []).filter(x => x.published)
+    .filter(x => cur === '전체' || x.cat === cur)
+    .sort((a, b) => b.created - a.created);
+  const tabs = GUIDE_CATS.map(c =>
+    `<a class="tab${c === cur ? ' on' : ''}" href="/guide.html${c === '전체' ? '' : '?cat=' + encodeURIComponent(c)}">${escHtml(c)}</a>`
+  ).join('');
+  const items = posts.length ? posts.map(p => {
+    const d = new Date(p.created);
+    return `<a class="item" href="/post.html?id=${p.id}">
+      <span class="cat">${escHtml(p.cat)}</span>
+      <h2>${escHtml(p.title)}</h2>
+      <div class="meta">${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}. · 조회 ${p.views || 0}</div></a>`;
+  }).join('') : '<div class="empty">아직 글이 없습니다.</div>';
+  return renderTemplate('guide.html', Object.assign(commonMap(req), {
+    GUIDE_TABS: tabs, GUIDE_ITEMS: items, CANONICAL: baseUrl(req) + '/guide.html',
+  }));
+}
+function renderPost(req, id) {
+  const posts = readJson('posts.json', []);
+  const post = posts.find(x => x.id === id && x.published);
+  if (!post) return null;
+  post.views = (post.views || 0) + 1;
+  writeJson('posts.json', posts);
+  const d = new Date(post.created);
+  const desc = String(post.body || '').replace(/\s+/g, ' ').slice(0, 140);
+  const jsonld = {
+    '@context': 'https://schema.org', '@type': 'Article',
+    headline: post.title, datePublished: new Date(post.created).toISOString(),
+    dateModified: new Date(post.updated || post.created).toISOString(),
+    author: { '@type': 'Organization', name: '공간브릿지' },
+    publisher: { '@type': 'Organization', name: '공간브릿지' },
+    description: desc,
+  };
+  return renderTemplate('post.html', Object.assign(commonMap(req), {
+    POST_TITLE: escHtml(post.title), POST_CAT: escHtml(post.cat),
+    POST_META: `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}. · 조회 ${post.views}`,
+    POST_BODY: escHtml(post.body),
+    POST_DESC: escAttr(desc),
+    CANONICAL: baseUrl(req) + '/post.html?id=' + post.id,
+    JSONLD_POST: '<script type="application/ld+json">' + JSON.stringify(jsonld) + '</script>',
+  }));
+}
+
+/* ---------- 검색엔진 파일: sitemap / robots / RSS ---------- */
+function xmlEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function renderSitemap(req) {
+  const base = baseUrl(req);
+  const posts = readJson('posts.json', []).filter(x => x.published);
+  const urls = [
+    { loc: base + '/', pri: '1.0' },
+    { loc: base + '/calc.html', pri: '0.9' },
+    { loc: base + '/guide.html', pri: '0.8' },
+  ].concat(posts.map(p => ({ loc: base + '/post.html?id=' + p.id, mod: new Date(p.updated || p.created).toISOString().slice(0, 10), pri: '0.7' })));
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + urls.map(u => `<url><loc>${xmlEsc(u.loc)}</loc>${u.mod ? '<lastmod>' + u.mod + '</lastmod>' : ''}<priority>${u.pri}</priority></url>`).join('\n')
+    + '\n</urlset>';
+}
+function renderRss(req) {
+  const base = baseUrl(req);
+  const posts = readJson('posts.json', []).filter(x => x.published).sort((a, b) => b.created - a.created).slice(0, 20);
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>'
+    + `<title>공간브릿지 창업가이드</title><link>${xmlEsc(base)}/guide.html</link><description>상가 인테리어·창업 준비 정보</description>`
+    + posts.map(p => `<item><title>${xmlEsc(p.title)}</title><link>${xmlEsc(base)}/post.html?id=${p.id}</link><pubDate>${new Date(p.created).toUTCString()}</pubDate><description>${xmlEsc(String(p.body || '').slice(0, 200))}</description></item>`).join('')
+    + '</channel></rss>';
 }
 
 /* ---------- 유입 채널·검색어 판별 ---------- */
@@ -471,15 +599,24 @@ const server = http.createServer(async (req, res) => {
       return send(res, 404, { error: 'not found' });
     }
 
-    /* --- 정적 파일 --- */
+    /* --- 서버 렌더링 페이지 + 검색엔진 파일 --- */
     if (req.method === 'GET') {
       if (p === '/admin' || p === '/admin/') return serveFile(res, ADMIN_DIR, 'admin.html');
       if (p.startsWith('/admin/')) return serveFile(res, ADMIN_DIR, p.slice(7));
       if (p.startsWith('/uploads/')) return serveFile(res, path.join(DATA, 'uploads'), p.slice(9));
-      if (p === '/' || p === '/index.html') {
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
-        return res.end(renderHome());
+      const html = (body) => { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(body); };
+      if (p === '/' || p === '/index.html') return html(renderHome(req));
+      if (p === '/guide.html' || p === '/guide') return html(renderGuide(req, u.searchParams.get('cat')));
+      if (p === '/post.html' || /^\/post\/\d+$/.test(p)) {
+        const id = p.startsWith('/post/') ? +p.split('/').pop() : +(u.searchParams.get('id') || 0);
+        const page = renderPost(req, id);
+        if (!page) return send(res, 404, '<h1>글을 찾을 수 없습니다</h1><a href="/guide.html">목록으로</a>', { 'Content-Type': 'text/html; charset=utf-8' });
+        return html(page);
       }
+      if (p === '/calc.html' || p === '/calc') return html(renderTemplate('calc.html', Object.assign(commonMap(req), { CANONICAL: baseUrl(req) + '/calc.html' })));
+      if (p === '/sitemap.xml') { res.writeHead(200, { 'Content-Type': 'application/xml; charset=utf-8' }); return res.end(renderSitemap(req)); }
+      if (p === '/rss.xml') { res.writeHead(200, { 'Content-Type': 'application/rss+xml; charset=utf-8' }); return res.end(renderRss(req)); }
+      if (p === '/robots.txt') { res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ' + baseUrl(req) + '/sitemap.xml\n'); }
       return serveFile(res, PUB, p.slice(1));
     }
     return send(res, 405, { error: 'method not allowed' });
