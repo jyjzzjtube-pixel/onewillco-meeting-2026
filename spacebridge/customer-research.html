@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공간브릿지 — 고객 유입·검색 경로 연구 보고서</title>
+<style>
+:root {
+  --navy: #1E2761;
+  --navy-light: #2F3C7E;
+  --ice: #CADCFC;
+  --accent: #F96167;
+  --gold: #F9E795;
+  --green: #2C5F2D;
+  --moss: #97BC62;
+  --gray-50: #F8F9FA;
+  --gray-100: #F2F2F2;
+  --gray-200: #E5E5E5;
+  --gray-400: #999;
+  --gray-700: #444;
+  --gray-900: #1a1a1a;
+  --red: #C00000;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: 'Malgun Gothic', '맑은 고딕', -apple-system, sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  line-height: 1.7;
+  font-size: 15px;
+}
+.sidebar {
+  position: fixed; top:0; left:0;
+  width: 240px; height:100vh;
+  background: var(--navy); color:white;
+  padding: 24px 16px; overflow-y:auto; z-index:100;
+}
+.sidebar h2 { color:var(--ice); font-size:14px; margin-bottom:16px; padding-bottom:12px; border-bottom:2px solid var(--accent); }
+.sidebar a { display:block; color:rgba(255,255,255,0.8); text-decoration:none; padding:8px 12px; font-size:13px; border-radius:4px; margin-bottom:2px; transition:all .2s; }
+.sidebar a:hover { background:var(--accent); color:white; transform:translateX(4px); }
+.main { margin-left:240px; }
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color:white; padding: 70px 60px; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-50%; right:-10%;
+  width:600px; height:600px;
+  background: radial-gradient(circle, rgba(249,97,103,0.2) 0%, transparent 70%);
+}
+.hero .badge { display:inline-block; background:var(--accent); color:white; padding:6px 16px; border-radius:20px; font-size:12px; font-weight:bold; margin-bottom:24px; }
+.hero h1 { font-size:38px; font-weight:900; margin-bottom:12px; line-height:1.25; }
+.hero p.sub { font-size:18px; color:var(--ice); }
+.hero .meta { display:flex; gap:32px; margin-top:28px; font-size:13px; color:var(--ice); }
+.section { padding: 50px 60px; max-width: 1080px; }
+.section h2 { font-size:26px; color:var(--navy); margin-bottom:20px; display:flex; align-items:center; gap:12px; }
+.section h2 .num { background:var(--navy); color:white; width:36px; height:36px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.section h3 { font-size:18px; color:var(--navy-light); margin:28px 0 12px; }
+.section p { margin-bottom:12px; color:var(--gray-700); }
+.card {
+  background:white; border:1px solid var(--gray-200); border-radius:12px;
+  padding:24px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.05);
+}
+.card h4 { color:var(--navy); font-size:16px; margin-bottom:8px; }
+.callout {
+  background:#FFF8E7; border-left:4px solid var(--gold);
+  padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;
+}
+.callout.red { background:#FDECEC; border-left-color:var(--accent); }
+.callout.green { background:#EFF5EC; border-left-color:var(--moss); }
+.callout strong { color:var(--navy); }
+table { width:100%; border-collapse:collapse; margin:16px 0; background:white; font-size:14px; }
+th { background:var(--navy); color:white; padding:10px 14px; text-align:left; font-size:13px; }
+td { padding:10px 14px; border-bottom:1px solid var(--gray-200); vertical-align:top; }
+tr:nth-child(even) td { background:var(--gray-50); }
+.journey { display:flex; gap:8px; flex-wrap:wrap; margin:20px 0; }
+.journey .step {
+  flex:1; min-width:150px; background:white; border:2px solid var(--gray-200);
+  border-radius:10px; padding:14px; text-align:center; position:relative;
+}
+.journey .step.hot { border-color:var(--accent); background:#FFF5F5; }
+.journey .step .stage { font-size:11px; color:var(--gray-400); text-transform:uppercase; letter-spacing:1px; }
+.journey .step .name { font-weight:bold; color:var(--navy); font-size:14px; margin:4px 0; }
+.journey .step .desc { font-size:12px; color:var(--gray-700); }
+.tag { display:inline-block; background:var(--ice); color:var(--navy); font-size:11px; font-weight:bold; padding:2px 10px; border-radius:10px; margin-right:4px; }
+.tag.hot { background:var(--accent); color:white; }
+.checklist li { list-style:none; padding:8px 0 8px 30px; position:relative; border-bottom:1px dashed var(--gray-200); color:var(--gray-700); }
+.checklist li::before { content:'✓'; position:absolute; left:4px; color:var(--moss); font-weight:bold; }
+.footer { padding:30px 60px; color:var(--gray-400); font-size:12px; border-top:1px solid var(--gray-200); }
+@media (max-width: 900px) {
+  .sidebar { display:none; }
+  .main { margin-left:0; }
+  .hero, .section, .footer { padding-left:24px; padding-right:24px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h2>공간브릿지<br>고객 유입 연구</h2>
+  <a href="#summary">핵심 요약</a>
+  <a href="#model">1. 사업 구조와 유입의 원리</a>
+  <a href="#journey">2. 창업자 고객 여정</a>
+  <a href="#channels">3. 유입 채널별 전략</a>
+  <a href="#homepage">4. 홈페이지 전환 체크리스트</a>
+  <a href="#roadmap">5. 단계별 실행 로드맵</a>
+  <a href="#kpi">6. 성과 측정 지표</a>
+</nav>
+
+<div class="main">
+
+<div class="hero">
+  <span class="badge">시장 조사 보고서</span>
+  <h1>공간브릿지 고객 유입·검색 경로 연구</h1>
+  <p class="sub">인테리어 중심 + 포스·키오스크·CCTV·세무기장 연결 플랫폼 — 고객이 어떻게 찾아오게 만들 것인가</p>
+  <div class="meta">
+    <div>작성일: 2026. 7. 4.</div>
+    <div>대상: 공간브릿지 (창업 공간 원스톱 플랫폼)</div>
+  </div>
+</div>
+
+<div class="section" id="summary">
+  <h2><span class="num">★</span>핵심 요약</h2>
+  <div class="callout red">
+    <strong>가장 시급한 문제:</strong> 현재 "공간브릿지"는 네이버·구글 어디에서도 검색되지 않습니다. 홈페이지가 아무리 잘 만들어져 있어도 검색엔진에 등록되지 않으면 고객은 존재 자체를 알 수 없습니다. <strong>네이버 서치어드바이저 + 스마트플레이스 등록이 오늘 해야 할 1순위 작업</strong>입니다.
+  </div>
+  <div class="card">
+    <h4>3줄 결론</h4>
+    <p>① 창업자의 여정에서 <strong>인테리어는 가장 먼저, 가장 큰 돈을 쓰는 단계</strong>입니다. 인테리어 문의 하나를 잡으면 포스·키오스크·CCTV·세무는 자연스럽게 따라오는 구조이므로, 마케팅 화력은 "상가/매장 인테리어" 키워드에 집중해야 합니다.</p>
+    <p>② 한국 자영업자의 검색은 <strong>네이버에서 시작</strong>됩니다(검색 점유율 약 63%). 스마트플레이스(지역 검색) + 블로그 시공일지(검색 유입, 전환율이 SNS의 3배) + 창업 커뮤니티(아프니까 사장이다 60만 회원)가 3대 축입니다.</p>
+    <p>③ 온라인보다 빠른 지름길은 <strong>제휴 리퍼럴</strong>입니다. 상가 전문 부동산 중개사무소는 "임대차 계약 직후"라는 완벽한 타이밍에 고객을 소개할 수 있는 유일한 접점입니다.</p>
+  </div>
+</div>
+
+<div class="section" id="model">
+  <h2><span class="num">1</span>사업 구조와 유입의 원리</h2>
+  <p>공간브릿지의 모델은 <strong>고단가 일회성 매출(인테리어)</strong>을 미끼(앵커)로 삼아 <strong>반복·수수료형 매출(포스, 키오스크, CCTV, 세무기장)</strong>을 붙이는 구조입니다. 이 구조에서 유입 전략의 결론은 명확합니다.</p>
+  <table>
+    <tr><th>서비스</th><th>역할</th><th>고객이 검색하는 시점</th><th>마케팅 우선순위</th></tr>
+    <tr><td><strong>인테리어</strong></td><td>앵커 상품 (건당 500만~2,000만원, 상업공간 평균 시공가 약 1,400만원)</td><td>임대차 계약 직후 — 가장 먼저 검색</td><td><span class="tag hot">최우선</span> 모든 광고·콘텐츠의 입구</td></tr>
+    <tr><td>포스·키오스크</td><td>크로스셀 (밴사 수수료·렌탈)</td><td>오픈 2~4주 전</td><td>인테리어 계약 시 패키지로 제안</td></tr>
+    <tr><td>CCTV·인터넷</td><td>크로스셀 (설치·요금제)</td><td>공사 마무리 시점</td><td>공사 일정에 끼워 자동 제안</td></tr>
+    <tr><td>세무기장</td><td>반복 매출 (월 기장료)</td><td>사업자등록 전후</td><td>오픈 후 첫 부가세 신고 시즌에 제안</td></tr>
+  </table>
+  <div class="callout">
+    <strong>원리:</strong> 포스·CCTV 시장은 21POS, 한울정보통신, KT소상공인 패키지, 사장마켓("포스기·CCTV 무료") 등 저가·무료 경쟁이 치열해 이 키워드로 정면승부하면 이길 수 없습니다. 반면 <strong>"인테리어 하는 김에 나머지를 한 번에"</strong>라는 원스톱 포지션은 경쟁이 훨씬 적습니다. 광고비는 인테리어 키워드에, 나머지는 계약 테이블 위에서 파는 것이 정석입니다.
+  </div>
+</div>
+
+<div class="section" id="journey">
+  <h2><span class="num">2</span>창업자 고객 여정 — 어디에서 잡을 것인가</h2>
+  <p>예비 창업자(카페·식당·매장)의 실제 준비 순서입니다. 붉은 단계가 공간브릿지가 고객을 만나야 하는 골든타임입니다.</p>
+  <div class="journey">
+    <div class="step"><div class="stage">STEP 1</div><div class="name">업종·상권 결정</div><div class="desc">창업 카페·유튜브에서 정보 수집</div></div>
+    <div class="step"><div class="stage">STEP 2</div><div class="name">상가 임대차 계약</div><div class="desc">부동산 중개사무소 접점</div></div>
+    <div class="step hot"><div class="stage">STEP 3 ⚡</div><div class="name">인테리어 견적</div><div class="desc">"OO동 상가 인테리어" 검색, 숨고·큐플레이스 비교견적</div></div>
+    <div class="step hot"><div class="stage">STEP 4 ⚡</div><div class="name">설비·집기</div><div class="desc">포스·키오스크·CCTV·인터넷 알아봄</div></div>
+    <div class="step"><div class="stage">STEP 5</div><div class="name">사업자등록·오픈</div><div class="desc">세무사 탐색, 홍보 시작</div></div>
+  </div>
+  <p>핵심 통찰: <strong>STEP 2(임대차 계약)와 STEP 3(인테리어 검색) 사이의 간격은 보통 며칠에 불과</strong>합니다. 계약서에 도장 찍는 순간 "월세가 나가기 시작"하므로 창업자는 급해집니다. 이 시점에 공간브릿지를 만나게 하는 방법이 두 가지뿐입니다:</p>
+  <div class="card">
+    <h4>① 검색에서 발견되기 (온라인)</h4>
+    <p>"지역명 + 상가 인테리어", "카페 인테리어 비용", "10평 매장 인테리어" 같은 검색어에서 네이버 플레이스·블로그·광고로 노출.</p>
+  </div>
+  <div class="card">
+    <h4>② 사람을 통해 소개받기 (오프라인 리퍼럴)</h4>
+    <p>상가 계약을 성사시킨 부동산 중개인, 프랜차이즈 본사 담당자, 기존 시공 고객의 소개. 검증된 소개는 전환율이 검색 유입보다 압도적으로 높음.</p>
+  </div>
+</div>
+
+<div class="section" id="channels">
+  <h2><span class="num">3</span>유입 채널별 전략</h2>
+
+  <h3>A. 네이버 — 반드시 이겨야 하는 본진 <span class="tag hot">1순위</span></h3>
+  <p>국내 검색 점유율은 네이버 약 63%, 구글 약 30%로, 자영업·인테리어 검색은 압도적으로 네이버에서 일어납니다.</p>
+  <table>
+    <tr><th>수단</th><th>실행 방법</th><th>비용</th></tr>
+    <tr><td><strong>스마트플레이스</strong></td><td>사업자 인증, 정보 100% 입력, 시공 사진 5장 이상, "지역명+상가인테리어" 대표 키워드 설정. 적합도·인기도·신뢰도 3요소가 순위 결정 — 주 1회 이상 소식·사진 업데이트로 지속 관리.</td><td>무료</td></tr>
+    <tr><td><strong>블로그 시공일지</strong></td><td>시공 1건 = 콘텐츠 1개 원칙. "OO동 15평 카페 인테리어 비용 공개 (철거부터 오픈까지)" 형식. 네이버 검색 사용자의 78%가 블로그 리뷰를 참고하고, 블로그 유입의 전환율(평균 4.2%)은 SNS 대비 3배 이상.</td><td>무료 (시간 투자)</td></tr>
+    <tr><td><strong>지식iN·카페</strong></td><td>"아프니까 사장이다"(회원 60만, 국내 최대 자영업 커뮤니티) 등에서 인테리어·창업 비용 질문에 실명 전문가로 답변. 직접 광고는 제재되므로 신뢰 축적용.</td><td>무료</td></tr>
+    <tr><td><strong>검색광고 (파워링크·플레이스광고)</strong></td><td>"지역명+상가인테리어", "업종+인테리어 비용" 등 구매의도 명확한 키워드만 소액으로 시작. 광고는 블로그·플레이스가 갖춰진 뒤에 트는 것 (눌러도 믿을 근거가 없으면 이탈).</td><td>월 30~100만원부터</td></tr>
+  </table>
+
+  <h3>B. 견적 비교 플랫폼 — 지금 당장 고객이 모여 있는 곳 <span class="tag hot">1순위</span></h3>
+  <table>
+    <tr><th>플랫폼</th><th>특징</th><th>활용법</th></tr>
+    <tr><td><strong>숨고</strong></td><td>상업공간 인테리어 평균 시공가 약 1,410만원(500만~2,000만원). 견적 요청이 실시간으로 올라옴.</td><td>고수 등록 후 응답 속도·후기 관리. 초기 실적 쌓기에 가장 빠름.</td></tr>
+    <tr><td><strong>큐플레이스</strong></td><td>상업공간 인테리어 특화 비교견적. 6,000개 이상 상가 포트폴리오 노출.</td><td>업종별(카페·식당·미용실) 포트폴리오 등록 — 공간브릿지 타깃과 정확히 일치.</td></tr>
+    <tr><td><strong>오늘의집 시공</strong></td><td>제휴 시공사 형태, 주거 중심이지만 트래픽 최대.</td><td>주거 겸업 시에만. 상가 전문이면 우선순위 낮음.</td></tr>
+  </table>
+  <div class="callout green">
+    <strong>플랫폼의 진짜 용도:</strong> 수수료를 내더라도 초기 시공 실적과 후기를 확보하는 채널로 쓰고, 후기·포트폴리오가 쌓이면 자체 홈페이지·플레이스 유입으로 무게중심을 옮기는 것이 정석 수순입니다.
+  </div>
+
+  <h3>C. 인스타그램·유튜브 — 신뢰 증폭기 <span class="tag">2순위</span></h3>
+  <p>인테리어는 시각 상품이라 SNS 궁합이 좋지만, 역할은 "발견"보다 <strong>"검증"</strong>입니다. 창업자는 네이버에서 업체를 찾은 뒤 인스타그램을 열어 실력을 확인합니다.</p>
+  <ul class="checklist">
+    <li>비포/애프터 릴스, 공사 타임랩스 — 제작비 거의 없이 도달 확보</li>
+    <li>"10평 카페 인테리어에 실제로 든 돈" 류의 비용 공개 콘텐츠 — 창업 준비생이 가장 갈증을 느끼는 정보</li>
+    <li>포스·키오스크·CCTV 세팅 장면을 함께 노출해 "여기는 한 번에 다 해주네"를 시각적으로 각인</li>
+  </ul>
+
+  <h3>D. 오프라인 제휴 리퍼럴 — 가장 빠른 지름길 <span class="tag hot">1순위</span></h3>
+  <table>
+    <tr><th>제휴처</th><th>왜 강력한가</th><th>제안 방식</th></tr>
+    <tr><td><strong>상가 전문 부동산</strong></td><td>임대차 계약 직후 = 인테리어 검색 직전. 타이밍이 완벽한 유일한 접점.</td><td>계약 성사 고객 소개 시 소개비 또는 성약 수수료. 명함·안내물 비치.</td></tr>
+    <tr><td>프랜차이즈 본사 (소형 브랜드)</td><td>가맹점 오픈마다 인테리어+설비 일괄 수요 발생. 1개 제휴 = 반복 수주.</td><td>표준 시공 단가표로 지정 시공사 제안.</td></tr>
+    <tr><td>세무사·노무사 사무소</td><td>세무기장을 자체 소화하지 않는다면 역제휴 — 세무사는 신규 사업자를, 공간브릿지는 기장 고객을 서로 소개.</td><td>상호 리퍼럴 협약.</td></tr>
+    <tr><td>간판·철거·주방설비 업체</td><td>같은 고객을 다른 시점에 만나는 이웃 업종.</td><td>상호 소개 네트워크 구축.</td></tr>
+  </table>
+
+  <h3>E. 기존 고객 — 최저 비용 채널 <span class="tag">상시</span></h3>
+  <ul class="checklist">
+    <li>시공 완료 매장에 "인테리어 by 공간브릿지" QR 스티커 부착 — 매장 자체가 광고판</li>
+    <li>오픈 후 1개월 시점 만족도 확인 전화 + 소개 인센티브(소개 성약 시 사례비 또는 CCTV 무상 점검 등)</li>
+    <li>네이버 플레이스·블로그 후기 작성 요청을 계약서 프로세스에 포함</li>
+  </ul>
+</div>
+
+<div class="section" id="homepage">
+  <h2><span class="num">4</span>홈페이지 전환 체크리스트</h2>
+  <p>유입 채널이 아무리 좋아도 홈페이지에서 "견적 문의"로 이어지지 않으면 소용없습니다. 창업자가 업체를 고를 때 확인하는 것은 <strong>포트폴리오와 실제 후기</strong> 두 가지입니다. 아래 순서대로 점검하세요.</p>
+  <div class="card">
+    <h4>검색 노출 기본기 (현재 미검색 상태 — 최우선)</h4>
+    <ul class="checklist">
+      <li>네이버 서치어드바이저에 사이트 등록 + 사이트맵 제출</li>
+      <li>구글 서치콘솔 등록</li>
+      <li>페이지 title·meta description에 "상가 인테리어", "매장 인테리어", 주력 지역명 포함 (브랜드명만으로는 아무도 검색하지 않음)</li>
+      <li>네이버 스마트플레이스 개설 후 홈페이지 링크 연결</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>전환 요소</h4>
+    <ul class="checklist">
+      <li>첫 화면에 한 문장 가치 제안: "인테리어부터 포스·CCTV·세무까지, 창업 준비를 한 번에" + [무료 견적 받기] 버튼</li>
+      <li>카카오톡 채널 상담 버튼 상시 노출 (자영업자는 전화보다 카톡 문의 선호, 야간 문의 다수)</li>
+      <li>포트폴리오: 업종별(카페/식당/미용실/사무실) 분류 + 평수·공사기간·실비용 공개 — 비용을 공개하는 업체가 드물어 그 자체가 차별화</li>
+      <li>패키지 가격표: "인테리어 계약 시 포스+CCTV 설치비 지원" 등 묶음 혜택 명시 — 원스톱의 이유를 돈으로 증명</li>
+      <li>고객 후기 (실명·매장명·사진 포함일수록 강력)</li>
+      <li>견적 문의 폼은 3칸 이내(연락처·지역·업종) — 칸이 늘수록 이탈 증가</li>
+      <li>대표 이력·사업자등록번호·시공 보증 안내로 신뢰 보강</li>
+    </ul>
+  </div>
+  <div class="callout">
+    <strong>참고:</strong> 이번 조사에서 공간브릿지 홈페이지 실물을 확인하지 못해(저장소·검색 미노출) 위 체크리스트는 표준 기준입니다. 홈페이지 주소를 공유해 주시면 페이지 단위 상세 진단을 추가로 진행할 수 있습니다.
+  </div>
+</div>
+
+<div class="section" id="roadmap">
+  <h2><span class="num">5</span>단계별 실행 로드맵</h2>
+  <table>
+    <tr><th>시기</th><th>할 일</th><th>목표</th></tr>
+    <tr>
+      <td><strong>지금~1개월</strong><br>(비용 거의 0원)</td>
+      <td>네이버 서치어드바이저·서치콘솔 등록 / 스마트플레이스 개설·정보 100% / 블로그 개설 후 기존 시공 사례 5건 포스팅 / 숨고·큐플레이스 입점 / 카카오톡 채널 개설</td>
+      <td>검색하면 나오는 상태 만들기</td>
+    </tr>
+    <tr>
+      <td><strong>1~3개월</strong></td>
+      <td>시공 1건 = 블로그 1건 + 릴스 1건 루틴화 / 상가 전문 부동산 5곳·소형 프랜차이즈 1곳 제휴 / 시공 고객 후기·QR 스티커 프로세스 시작 / 아프니까 사장이다 활동</td>
+      <td>월 문의 10건, 제휴 리퍼럴 첫 수주</td>
+    </tr>
+    <tr>
+      <td><strong>3~6개월</strong></td>
+      <td>후기·포트폴리오 축적 후 네이버 검색광고 소액 개시 / 지역별 랜딩페이지 확장 / "창업 비용 계산기" 등 리드 확보 콘텐츠 / 세무사 상호 리퍼럴 체계화</td>
+      <td>플랫폼 의존도 축소, 자체 유입 50% 이상</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section" id="kpi">
+  <h2><span class="num">6</span>성과 측정 지표</h2>
+  <table>
+    <tr><th>지표</th><th>측정 방법</th><th>초기 목표</th></tr>
+    <tr><td>월 견적 문의 수</td><td>폼 + 카톡 + 전화 (유입 경로를 반드시 물어서 기록)</td><td>1개월차 5건 → 3개월차 15건</td></tr>
+    <tr><td>문의 → 계약 전환율</td><td>계약 건수 ÷ 문의 건수</td><td>15~25%</td></tr>
+    <tr><td>크로스셀 부착률</td><td>인테리어 계약 중 포스·CCTV·세무 동반 계약 비율</td><td>50% 이상 (플랫폼 모델의 성패 지표)</td></tr>
+    <tr><td>플레이스 노출·클릭</td><td>스마트플레이스 통계</td><td>주력 지역 키워드 5위 이내</td></tr>
+    <tr><td>블로그 유입</td><td>네이버 블로그 통계 (검색 유입 키워드 확인)</td><td>월 검색 유입 1,000회</td></tr>
+  </table>
+  <div class="callout green">
+    <strong>가장 중요한 습관:</strong> 모든 문의 고객에게 "저희를 어떻게 알게 되셨어요?"를 묻고 기록하는 것. 3개월치만 쌓여도 어느 채널에 시간과 돈을 더 쓸지 데이터가 답을 줍니다.
+  </div>
+</div>
+
+<div class="footer">
+  본 보고서는 2026년 7월 4일 기준 공개 자료 조사를 바탕으로 작성되었습니다. 주요 참고: 네이버/구글 검색 점유율 통계, 숨고 상업공간 인테리어 시세, 큐플레이스 창업 가이드, 토스플레이스 카페 창업 가이드, 네이버 스마트플레이스 노출 가이드, 아프니까 사장이다 커뮤니티 현황.
+</div>
+
+</div>
+</body>
+</html>
