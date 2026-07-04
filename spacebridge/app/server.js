@@ -79,6 +79,7 @@ const DEFAULT_CONTENT = {
     promise: '영업시간 내 3시간 안에 연락드립니다 · 광고 연락 없음',
     ceo: '○○○', biz_no: '000-00-00000', address: '○○시 ○○구 ○○로 00, 0층',
     email: 'hello@spacebridge.kr', footer_note: '실내건축공사업 면허 · 시공 보증보험 가입',
+    naver_verify: '', google_verify: '', // 서치어드바이저/서치콘솔 소유확인 코드
   },
   hero: {
     badge: '상가 인테리어 + 포스 · 키오스크 · CCTV · 세무기장 원스톱',
@@ -223,6 +224,8 @@ function renderHome(req) {
     EMAIL: escHtml(s.email), FOOTER_NOTE: escHtml(s.footer_note),
     CANONICAL: base + '/',
     JSONLD_HOME: '<script type="application/ld+json">' + JSON.stringify(jsonld) + '</script>',
+    META_VERIFY: (s.naver_verify ? `<meta name="naver-site-verification" content="${escAttr(s.naver_verify)}">\n` : '')
+      + (s.google_verify ? `<meta name="google-site-verification" content="${escAttr(s.google_verify)}">` : ''),
   });
   return html.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in map ? map[k] : m));
 }
