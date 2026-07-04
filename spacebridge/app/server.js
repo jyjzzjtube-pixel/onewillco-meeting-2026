@@ -306,7 +306,7 @@ function renderPost(req, id) {
   };
   return renderTemplate('post.html', Object.assign(commonMap(req), {
     POST_TITLE: escHtml(post.title), POST_CAT: escHtml(post.cat),
-    POST_META: `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}. · 조회 ${post.views}`,
+    POST_META: `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}. · 공간브릿지 창업가이드`,
     POST_BODY: bodyHtml,
     POST_DESC: escAttr(desc),
     CANONICAL: baseUrl(req) + '/post.html?id=' + post.id,
