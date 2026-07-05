@@ -96,9 +96,9 @@ const DEFAULT_CONTENT = {
     { num: '3', unit: '시간', cap: '영업시간 내 회신 약속' },
   ],
   portfolio: [
-    { tag: 'CAFE · 표준 설계', title: '12평 카페 표준 플랜', cost: '1,850만원', inc: '인테리어 + 포스 + CCTV 기준 구성 · 철거부터 오픈까지', img: '/img/concept-cafe.png' },
-    { tag: 'RESTAURANT · 표준 설계', title: '18평 식당 표준 플랜', cost: '3,200만원', inc: '인테리어 + 주방 배관 + 포스·키오스크 기준 구성', img: '/img/concept-restaurant.png' },
-    { tag: 'HAIR SALON · 표준 설계', title: '10평 미용실 표준 플랜', cost: '2,400만원', inc: '인테리어 + CCTV + 세무기장 개시 기준 구성', img: '/img/concept-salon.png' },
+    { tag: 'CAFE · 표준 설계', title: '12평 카페 표준 플랜', cost: '1,850만원', inc: '인테리어 + 포스 + CCTV 기준 구성 · 철거부터 오픈까지', img: '/img/photo-cafe.jpg' },
+    { tag: 'RESTAURANT · 표준 설계', title: '18평 식당 표준 플랜', cost: '3,200만원', inc: '인테리어 + 주방 배관 + 포스·키오스크 기준 구성', img: '/img/photo-restaurant.jpg' },
+    { tag: 'HAIR SALON · 표준 설계', title: '10평 미용실 표준 플랜', cost: '2,400만원', inc: '인테리어 + CCTV + 세무기장 개시 기준 구성', img: '/img/photo-salon.jpg' },
   ],
   reviews: [], // 실후기 확보 전까지 비움 → 홈에 "1호점 혜택" 블록이 대신 노출됨
 };
