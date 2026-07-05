@@ -96,9 +96,9 @@ const DEFAULT_CONTENT = {
     { num: '3', unit: '시간', cap: '영업시간 내 회신 약속' },
   ],
   portfolio: [
-    { tag: 'CAFE · 표준 설계', title: '12평 카페 표준 플랜', cost: '1,850만원', inc: '인테리어 + 포스 + CCTV 기준 구성 · 철거부터 오픈까지', img: '' },
-    { tag: 'RESTAURANT · 표준 설계', title: '18평 식당 표준 플랜', cost: '3,200만원', inc: '인테리어 + 주방 배관 + 포스·키오스크 기준 구성', img: '' },
-    { tag: 'HAIR SALON · 표준 설계', title: '10평 미용실 표준 플랜', cost: '2,400만원', inc: '인테리어 + CCTV + 세무기장 개시 기준 구성', img: '' },
+    { tag: 'CAFE · 표준 설계', title: '12평 카페 표준 플랜', cost: '1,850만원', inc: '인테리어 + 포스 + CCTV 기준 구성 · 철거부터 오픈까지', img: '/img/concept-cafe.png' },
+    { tag: 'RESTAURANT · 표준 설계', title: '18평 식당 표준 플랜', cost: '3,200만원', inc: '인테리어 + 주방 배관 + 포스·키오스크 기준 구성', img: '/img/concept-restaurant.png' },
+    { tag: 'HAIR SALON · 표준 설계', title: '10평 미용실 표준 플랜', cost: '2,400만원', inc: '인테리어 + CCTV + 세무기장 개시 기준 구성', img: '/img/concept-salon.png' },
   ],
   reviews: [], // 실후기 확보 전까지 비움 → 홈에 "1호점 혜택" 블록이 대신 노출됨
 };
@@ -164,11 +164,10 @@ function renderHome(req) {
   ).join('\n    ');
   const grad = ['t1', 't2', 't3'];
   const pfHtml = c.portfolio.map((p, i) => {
-    /* UX팀 지적: 사진 없는데 BEFORE/AFTER 배지 달면 역효과 — 실사진일 때만 배지 */
+    /* UX팀 지적 반영: BEFORE/AFTER 배지는 실제 비포/애프터 사진이 생기면 재도입.
+       현재 이미지는 컨셉 일러스트라 배지 없이 노출 (허위 시공사진 오인 방지) */
     const thumb = p.img
-      ? `<div class="pf-thumb" style="background:url('${escAttr(p.img)}') center/cover no-repeat;">
-          <div class="ba"><span class="before">BEFORE</span><span class="after">AFTER</span></div>
-        </div>`
+      ? `<div class="pf-thumb" style="background:url('${escAttr(p.img)}') center/cover no-repeat;"></div>`
       : `<div class="pf-thumb ${grad[i % 3]}">
           <div class="ph-label">완공 사진 등록 예정 · 표준 구성 기준가</div>
         </div>`;
