@@ -299,9 +299,11 @@ function renderPost(req, id) {
   /* 카테고리별 대표 이미지 — SEO팀 지적 '이미지 0개' 해소 + 글별 공유카드 */
   const CAT_IMG = {
     '비용 가이드': '/img/photo-cafe.jpg', '창업 가이드': '/img/photo-restaurant.jpg',
-    '설비·장비': '/img/photo-salon.jpg', '세무 기초': '/img/photo-home.jpg', '공지': '/img/photo-cafe.jpg',
+    '설비·장비': '/img/photo-salon.jpg', '세무 기초': '/img/photo-home.jpg', '공지': '/img/photo-home.jpg',
   };
-  const postImg = CAT_IMG[post.cat] || '/img/photo-cafe.jpg';
+  /* 글별 고유 이미지 우선 (공유카드 중복 방지) — post.img 필드 → 카테고리 기본값 순 */
+  const ID_IMG = { 2: '/img/photo-salon.jpg' };
+  const postImg = post.img || ID_IMG[post.id] || CAT_IMG[post.cat] || '/img/photo-cafe.jpg';
   const jsonld = {
     '@context': 'https://schema.org', '@type': 'Article',
     headline: post.title, datePublished: new Date(post.created).toISOString(),
