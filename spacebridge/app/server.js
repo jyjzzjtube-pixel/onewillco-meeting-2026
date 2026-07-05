@@ -253,6 +253,7 @@ function renderHome(req) {
     CEO: escHtml(s.ceo), BIZ_NO: escHtml(s.biz_no), ADDRESS: escHtml(s.address),
     EMAIL: escHtml(s.email), FOOTER_NOTE: escHtml(s.footer_note),
     CANONICAL: base + '/',
+    HERO_STYLE: "background:linear-gradient(160deg,rgba(16,28,22,.92) 0%,rgba(30,58,47,.86) 55%,rgba(30,58,47,.78) 100%),url('/img/photo-cafe.jpg') center/cover no-repeat;",
     JSONLD_HOME: '<script type="application/ld+json">' + JSON.stringify(jsonld) + '</script>',
     META_VERIFY: (s.naver_verify ? `<meta name="naver-site-verification" content="${escAttr(s.naver_verify)}">\n` : '')
       + (s.google_verify ? `<meta name="google-site-verification" content="${escAttr(s.google_verify)}">` : ''),
@@ -295,12 +296,19 @@ function renderPost(req, id) {
   /* '## 소제목' 줄을 h2로 변환 (에디터·SEO팀: 구조화) */
   const bodyHtml = escHtml(post.body).split('\n')
     .map(l => l.startsWith('## ') ? '<h2>' + l.slice(3) + '</h2>' : l).join('\n');
+  /* 카테고리별 대표 이미지 — SEO팀 지적 '이미지 0개' 해소 + 글별 공유카드 */
+  const CAT_IMG = {
+    '비용 가이드': '/img/photo-cafe.jpg', '창업 가이드': '/img/photo-restaurant.jpg',
+    '설비·장비': '/img/photo-salon.jpg', '세무 기초': '/img/photo-home.jpg', '공지': '/img/photo-cafe.jpg',
+  };
+  const postImg = CAT_IMG[post.cat] || '/img/photo-cafe.jpg';
   const jsonld = {
     '@context': 'https://schema.org', '@type': 'Article',
     headline: post.title, datePublished: new Date(post.created).toISOString(),
     dateModified: new Date(post.updated || post.created).toISOString(),
     author: { '@type': 'Organization', name: '공간브릿지' },
     publisher: { '@type': 'Organization', name: '공간브릿지' },
+    image: baseUrl(req) + postImg,
     description: desc,
   };
   return renderTemplate('post.html', Object.assign(commonMap(req), {
@@ -308,6 +316,8 @@ function renderPost(req, id) {
     POST_META: `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}. · 공간브릿지 창업가이드`,
     POST_BODY: bodyHtml,
     POST_DESC: escAttr(desc),
+    POST_IMG: `<img class="post-hero" src="${postImg}" alt="${escAttr(post.title)}" loading="lazy">`,
+    POST_OG: baseUrl(req) + postImg,
     CANONICAL: baseUrl(req) + '/post.html?id=' + post.id,
     JSONLD_POST: '<script type="application/ld+json">' + JSON.stringify(jsonld) + '</script>',
   }));
