@@ -28,6 +28,14 @@ function checkSub(list, kind, ownerId) {
   });
 }
 
+function checkChecks(list, ownerId) {
+  (list || []).forEach((c, i) => {
+    if (!isStr(c.id) || !c.id) errors.push(`${ownerId} checks[${i}]: id 필요`);
+    if (!isStr(c.label) || !c.label) errors.push(`${ownerId} checks[${i}]: label 필요`);
+    if (typeof c.done !== 'boolean') errors.push(`${ownerId} checks[${i}]: done은 true/false`);
+  });
+}
+
 if (!Array.isArray(seed.brands)) errors.push('brands는 배열이어야 함');
 if (!Array.isArray(seed.listings)) errors.push('listings는 배열이어야 함');
 
@@ -44,6 +52,7 @@ const ids = new Set();
   if (b.status && !['검토중', '협상중', '실사중', '인수완료', '보류'].includes(b.status)) errors.push(`${tag}: status 값 확인`);
   checkSub(b.comments, 'comments', tag);
   checkSub(b.docs, 'docs', tag);
+  checkChecks(b.checks, tag);
 });
 (seed.listings || []).forEach((l, i) => {
   const tag = `listings[${i}](${l.id || '?'})`;
@@ -57,6 +66,7 @@ const ids = new Set();
   if (l.brandId && !(seed.brands || []).some(b => b.id === l.brandId)) errors.push(`${tag}: brandId '${l.brandId}'에 해당하는 브랜드 없음`);
   checkSub(l.comments, 'comments', tag);
   checkSub(l.docs, 'docs', tag);
+  checkChecks(l.checks, tag);
 });
 
 if (errors.length) {

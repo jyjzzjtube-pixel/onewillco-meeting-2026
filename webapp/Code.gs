@@ -133,6 +133,21 @@ function applyOp_(d, op) {
       if (of_) of_.docs = (of_.docs || []).filter(function (x2) { return x2.id !== op.docId; });
       break;
     }
+    case 'setCheck': {
+      var og = coll_(d, op.kind).filter(function (x) { return x.id === op.id; })[0];
+      if (og) {
+        og.checks = og.checks || [];
+        var exk = og.checks.filter(function (x) { return x.id === op.check.id; })[0];
+        if (exk) { for (var k4 in op.check) exk[k4] = op.check[k4]; }
+        else og.checks.push(op.check);
+      }
+      break;
+    }
+    case 'delCheck': {
+      var oh = coll_(d, op.kind).filter(function (x) { return x.id === op.id; })[0];
+      if (oh) oh.checks = (oh.checks || []).filter(function (x) { return x.id !== op.checkId; });
+      break;
+    }
     case 'replaceAll':
       if (op.db && Array.isArray(op.db.brands) && Array.isArray(op.db.listings)) {
         d.brands = op.db.brands;

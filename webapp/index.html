@@ -321,6 +321,30 @@ textarea.io:focus { border-color: var(--primary); outline: none; }
 }
 #toast.show { opacity:1; transform: translateY(0); }
 
+/* ===== Kanban (파이프라인) ===== */
+.kanban { display:grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap:10px; }
+.k-col { background: var(--muted); border-radius: var(--radius); padding: 10px; min-height: 90px; }
+.k-col h5 { font-size: 12px; color: var(--muted-fg); font-weight: 700; margin-bottom: 8px; display:flex; justify-content:space-between; }
+.k-col h5 .n { background:#fff; border-radius: 999px; padding: 0 8px; }
+.k-card { background: var(--card); border:1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px; cursor:pointer; font-size: 12.5px; }
+.k-card:hover { border-color: #c9c5ee; box-shadow: 0 3px 10px rgba(94,86,210,.10); }
+.k-card .t { font-weight: 700; font-size: 13px; }
+.k-card .m { color: var(--muted-fg); font-variant-numeric: tabular-nums; }
+.k-move { display:flex; gap:4px; margin-top: 7px; }
+.k-move button { flex:1; border:1px solid var(--border); background:#fff; border-radius: 6px; font-size: 11px; padding: 2px 0; color: var(--muted-fg); }
+.k-move button:hover { color: var(--primary); border-color: var(--primary); }
+.k-empty { font-size: 12px; color: var(--muted-fg); text-align:center; padding: 12px 0; }
+
+/* ===== 실사 체크리스트 ===== */
+.check-prog { height: 6px; background: #fff; border: 1px solid var(--border); border-radius: 999px; overflow:hidden; margin: 4px 0 10px; }
+.check-prog i { display:block; height:100%; background: var(--primary); }
+.check-row { display:flex; gap:9px; align-items:center; padding: 6px 0; border-bottom:1px solid var(--muted); font-size: 13.5px; }
+.check-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--primary); flex-shrink:0; }
+.check-row.done .lbl { color: var(--muted-fg); text-decoration: line-through; }
+.check-row .by { margin-left:auto; font-size: 11px; color: var(--muted-fg); white-space:nowrap; }
+.check-row .del { background:none; border:none; color: var(--muted-fg); font-size: 11px; }
+.check-row .del:hover { color: var(--destructive); }
+
 /* ===== Mobile ===== */
 @media (max-width: 860px) {
   .sidebar { width: 100%; height:auto; position: static; padding: 12px 14px; border-right: none; border-bottom: 1px solid var(--border); }
@@ -360,6 +384,7 @@ textarea.io:focus { border-color: var(--primary); outline: none; }
   <div class="logo-sub">브랜드 M&A 플랫폼</div>
   <div class="nav-wrap">
     <button class="nav-item active" data-page="dash" onclick="go('dash')">📊 대시보드</button>
+    <button class="nav-item" data-page="pipeline" onclick="go('pipeline')">📌 파이프라인</button>
     <button class="nav-item" data-page="brands" onclick="go('brands')">🏢 브랜드 M&A 목록 <span class="cnt" id="navBrandCnt">0</span></button>
     <button class="nav-item" data-page="listings" onclick="go('listings')">🏪 양도양수 매물 <span class="cnt" id="navListingCnt">0</span></button>
     <button class="nav-item" data-page="data" onclick="go('data')">💾 데이터 관리</button>
@@ -398,6 +423,14 @@ textarea.io:focus { border-color: var(--primary); outline: none; }
         <h3>최근 질문·댓글</h3>
         <div id="dashRecentComments"></div>
       </div>
+    </section>
+
+    <!-- ============ 파이프라인 ============ -->
+    <section class="page" id="page-pipeline">
+      <div class="page-title">딜 파이프라인</div>
+      <div class="page-desc">브랜드·매물이 어느 단계에 있는지 한눈에 봅니다. ◀ ▶ 버튼으로 단계를 옮기고, 카드를 클릭하면 상세가 열립니다.</div>
+      <div class="panel"><h3>🏢 브랜드 딜</h3><div class="kanban" id="kanbanBrands"></div></div>
+      <div class="panel"><h3>🏪 매물 딜</h3><div class="kanban" id="kanbanListings"></div></div>
     </section>
 
     <!-- ============ 브랜드 목록 ============ -->
@@ -591,6 +624,7 @@ function sendOp(op) {
 }
 function rerenderAll() {
   renderBrands(); renderListings(); renderDash(); refreshCounts();
+  if (document.getElementById('page-pipeline').classList.contains('active')) renderPipeline();
   if (currentDetail && document.getElementById('detailModal').classList.contains('open')) {
     // 채팅 입력 중이던 내용은 보존하고 다시 그린다
     const ta = document.getElementById('chatText');
@@ -726,8 +760,10 @@ async function loadSeed() {
       seedArr.forEach(se => {
         const ex = local.find(x => x.id === se.id);
         if (!ex) { local.push(JSON.parse(JSON.stringify(se))); changed = true; return; }
-        const { comments: sc = [], docs: sd = [], ...fields } = se;
+        const { comments: sc = [], docs: sd = [], checks: sk = [], ...fields } = se;
         Object.assign(ex, fields);
+        ex.checks = ex.checks || [];
+        sk.forEach(k => { const exk = ex.checks.find(x => x.id === k.id); if (exk) Object.assign(exk, k); else { ex.checks.push(k); changed = true; } });
         ex.comments = ex.comments || [];
         sc.forEach(c => { if (!ex.comments.some(x => x.id === c.id)) { ex.comments.push(c); changed = true; } });
         ex.comments.sort((a, b) => (a.ts || 0) - (b.ts || 0));
@@ -744,13 +780,14 @@ async function loadSeed() {
 }
 
 /* ---------- 네비게이션 ---------- */
-const PAGE_TITLES = { dash: '대시보드', brands: '브랜드 M&A 목록', listings: '양도양수 매물', data: '데이터 관리' };
+const PAGE_TITLES = { dash: '대시보드', pipeline: '딜 파이프라인', brands: '브랜드 M&A 목록', listings: '양도양수 매물', data: '데이터 관리' };
 function go(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
   document.getElementById('topTitle').textContent = PAGE_TITLES[page];
   if (page === 'dash') renderDash();
+  if (page === 'pipeline') renderPipeline();
   window.scrollTo({ top: 0 });
 }
 function onGlobalSearch() {
@@ -785,6 +822,7 @@ const BRAND_COLS = [
   { key: 'profit', label: '영업이익', num: true },
   { key: 'margin', label: '이익률', num: true, virtual: true },
   { key: 'askPrice', label: '희망양도가', num: true },
+  { key: 'multiple', label: '배수', num: true, virtual: true },
   { key: 'status', label: '상태' },
   { key: 'manager', label: '담당' },
   { key: '_act', label: '', nosort: true },
@@ -795,6 +833,25 @@ function brandMargin(b) {
   const r = Number(b.revenue), p = Number(b.profit);
   if (!r || isNaN(r) || isNaN(p) || b.revenue === '' || b.profit === '' || b.revenue == null || b.profit == null) return null;
   return p / r * 100;
+}
+function brandMultiple(b) {
+  const a = Number(b.askPrice), p = Number(b.profit);
+  if (!a || !p || p <= 0) return null;
+  return a / p; // 희망양도가 / 연영업이익 (배)
+}
+function payback(l) {
+  const p = Number(l.price), m = Number(l.mProfit);
+  if (!p || !m || m <= 0) return null;
+  return p / m; // 개월
+}
+function yieldPct(l) {
+  const m = Number(l.mProfit), inv = (Number(l.price) || 0) + (Number(l.deposit) || 0);
+  if (!m || !inv) return null;
+  return m * 12 / inv * 100; // 투자금(양도가+보증금) 대비 연수익률
+}
+function fmtMonths(m) {
+  if (m == null) return '-';
+  return m < 12 ? Math.round(m) + '개월' : (m / 12).toFixed(1) + '년';
 }
 function statusBadgeBrand(s) {
   const map = { '검토중':'b-review', '협상중':'b-nego', '실사중':'b-dd', '인수완료':'b-done', '보류':'b-hold' };
@@ -827,8 +884,9 @@ function renderBrands() {
   const { key, dir } = brandSort;
   const col = BRAND_COLS.find(c => c.key === key) || {};
   rows.sort((a, b) => {
-    let va = key === 'margin' ? brandMargin(a) : a[key];
-    let vb = key === 'margin' ? brandMargin(b) : b[key];
+    const virt = k2 => x => k2 === 'margin' ? brandMargin(x) : k2 === 'multiple' ? brandMultiple(x) : x[k2];
+    let va = virt(key)(a);
+    let vb = virt(key)(b);
     if (col.num) { va = va == null || va === '' ? -Infinity : Number(va); vb = vb == null || vb === '' ? -Infinity : Number(vb); return (va - vb) * dir; }
     return String(va || '').localeCompare(String(vb || ''), 'ko') * dir;
   });
@@ -850,6 +908,7 @@ function renderBrands() {
       <td class="num ${Number(b.profit) < 0 ? 'profit-neg' : ''}">${fmtMoney(b.profit)}</td>
       <td class="num ${mCls}">${m == null ? '-' : m.toFixed(1) + '%'}</td>
       <td class="num">${fmtMoney(b.askPrice)}</td>
+      <td class="num">${brandMultiple(b) == null ? '-' : brandMultiple(b).toFixed(1) + '배'}</td>
       <td>${statusBadgeBrand(b.status)}</td>
       <td>${esc(b.manager) || '-'}</td>
       <td onclick="event.stopPropagation()">
@@ -949,6 +1008,7 @@ function renderBrandDetail(id) {
       <div class="cell"><div class="k">연매출</div><div class="v">${fmtMoney(b.revenue)}</div></div>
       <div class="cell"><div class="k">영업이익</div><div class="v ${Number(b.profit) < 0 ? 'profit-neg' : ''}">${fmtMoney(b.profit)}</div></div>
       <div class="cell"><div class="k">이익률</div><div class="v ${m == null ? '' : (m >= 0 ? 'profit-pos' : 'profit-neg')}">${m == null ? '-' : m.toFixed(1) + '%'}</div></div>
+      <div class="cell"><div class="k">인수 배수</div><div class="v">${brandMultiple(b) == null ? '-' : brandMultiple(b).toFixed(1) + '배'}</div></div>
     </div>
     ${b.memo ? `<div class="detail-desc">${esc(b.memo)}</div>` : ''}
     ${linked.length ? `<div class="detail-brand-link">🏪 연결 매물 ${linked.length}건: ${linked.map(l =>
@@ -1005,10 +1065,13 @@ function renderListings() {
         <span class="k">권리금</span><span class="v">${fmtMoney(l.premium)}</span>
         <span class="k">월매출</span><span class="v">${fmtMoney(l.mRevenue)}</span>
         <span class="k">월수익</span><span class="v ${Number(l.mProfit) < 0 ? 'profit-neg' : ''}">${fmtMoney(l.mProfit)}</span>
+        <span class="k">회수기간</span><span class="v">${fmtMonths(payback(l))}</span>
+        <span class="k">연수익률</span><span class="v ${yieldPct(l) != null && yieldPct(l) >= 30 ? 'profit-pos' : ''}">${yieldPct(l) == null ? '-' : yieldPct(l).toFixed(1) + '%'}</span>
       </div>
       <div class="foot">
         ${brand ? `🏢 ${esc(brand.tradeName)}` : ''}
         ${l.size ? `<span>${esc(String(l.size))}평${l.floor ? ' · ' + esc(l.floor) : ''}</span>` : (l.floor ? `<span>${esc(l.floor)}</span>` : '')}
+        ${(l.checks?.length || 0) ? `<span class="cmt">✅ ${l.checks.filter(c => c.done).length}/${l.checks.length}</span>` : ''}
         ${(l.docs?.length || 0) ? `<span class="cmt">📎 ${l.docs.length}</span>` : ''}
         <span class="cmt ${cn ? 'hot' : ''}">💬 ${cn}</span>
       </div>
@@ -1111,6 +1174,8 @@ function renderDetail(id) {
       <div class="cell"><div class="k">월매출</div><div class="v">${fmtMoney(l.mRevenue)}</div></div>
       <div class="cell"><div class="k">월수익</div><div class="v ${Number(l.mProfit) < 0 ? 'profit-neg' : ''}">${fmtMoney(l.mProfit)}</div></div>
       <div class="cell"><div class="k">전용면적</div><div class="v">${l.size ? esc(String(l.size)) + '평' : '-'}</div></div>
+      <div class="cell"><div class="k">회수기간</div><div class="v">${fmtMonths(payback(l))}</div></div>
+      <div class="cell"><div class="k">연수익률</div><div class="v ${yieldPct(l) != null && yieldPct(l) >= 30 ? 'profit-pos' : ''}">${yieldPct(l) == null ? '-' : yieldPct(l).toFixed(1) + '%'}</div></div>
     </div>
     ${l.desc ? `<div class="detail-desc">${esc(l.desc)}</div>` : ''}
     ${l.link ? `<div style="margin-bottom:14px;font-size:13px">🔗 <a href="${esc(l.link)}" target="_blank" rel="noopener" style="color:var(--blue)">원본 매물 링크 열기</a></div>` : ''}
@@ -1121,11 +1186,122 @@ function renderDetail(id) {
     ${docsChatHTML('listing', l)}`;
 }
 
+/* ---------- 실사 체크리스트 (브랜드·매물 공용) ---------- */
+const DD_TEMPLATE = ['재무제표 3개년', '부가세 신고서 3개년', '임대차계약서·권리금 내역', '가맹계약서·정보공개서', '4대보험·인건비 내역', '포스 매출 원데이터', '시설·인테리어 투자 내역', '상권·경쟁점 분석'];
+function checksHTML(kind, e) {
+  const checks = e.checks || [];
+  const done = checks.filter(c => c.done).length;
+  const pct = checks.length ? Math.round(done / checks.length * 100) : 0;
+  return `
+    <div class="docs-box">
+      <h4>✅ 실사 체크리스트 ${checks.length ? `<span style="font-weight:normal;font-size:11.5px;color:var(--muted-fg)">${done}/${checks.length} 완료 (${pct}%)</span>` : ''}</h4>
+      ${checks.length ? `<div class="check-prog"><i style="width:${pct}%"></i></div>` : ''}
+      ${checks.map(c => `
+        <div class="check-row ${c.done ? 'done' : ''}">
+          <input type="checkbox" ${c.done ? 'checked' : ''} onchange="toggleCheck('${kind}','${e.id}','${c.id}')">
+          <span class="lbl">${esc(c.label)}</span>
+          ${c.done && c.by ? `<span class="by">${esc(c.by)} · ${timeAgo(c.ts)}</span>` : '<span class="by"></span>'}
+          <button class="del" onclick="delCheck('${kind}','${e.id}','${c.id}')">삭제</button>
+        </div>`).join('') || `<div style="font-size:12.5px;color:var(--muted-fg);padding:2px 0 6px">실사에서 확인할 자료·항목을 등록하세요.</div>`}
+      <div class="doc-add">
+        <input id="checkLabel" placeholder="항목 직접 추가 (예: 임대인 인터뷰)" onkeydown="if(event.key==='Enter')addCheck('${kind}','${e.id}')">
+        <button class="btn sm" style="padding:8px 14px" onclick="addCheck('${kind}','${e.id}')">＋ 추가</button>
+        ${!checks.length ? `<button class="btn ghost sm" style="padding:8px 14px" onclick="fillChecklist('${kind}','${e.id}')">기본 실사 템플릿 채우기</button>` : ''}
+      </div>
+    </div>`;
+}
+function fillChecklist(kind, id) {
+  const o = ent(kind, id);
+  if (!o) return;
+  o.checks = o.checks || [];
+  DD_TEMPLATE.forEach(label => {
+    const c = { id: uid(), label, done: false, by: '', ts: 0 };
+    o.checks.push(c);
+    sendOp({ type: 'setCheck', kind, id, check: c });
+  });
+  save(); renderDetailByKind(kind, id); renderDash();
+  toast('기본 실사 템플릿 ' + DD_TEMPLATE.length + '개 항목 추가');
+}
+function addCheck(kind, id) {
+  const el = document.getElementById('checkLabel');
+  const label = el.value.trim();
+  if (!label) { toast('항목 이름을 입력하세요.'); return; }
+  const o = ent(kind, id);
+  if (!o) return;
+  o.checks = o.checks || [];
+  const c = { id: uid(), label, done: false, by: '', ts: 0 };
+  o.checks.push(c);
+  sendOp({ type: 'setCheck', kind, id, check: c });
+  save(); renderDetailByKind(kind, id);
+}
+function toggleCheck(kind, id, checkId) {
+  const o = ent(kind, id);
+  const c = (o?.checks || []).find(x => x.id === checkId);
+  if (!c) return;
+  c.done = !c.done;
+  c.by = c.done ? myName() : '';
+  c.ts = c.done ? Date.now() : 0;
+  sendOp({ type: 'setCheck', kind, id, check: c });
+  save(); renderDetailByKind(kind, id); renderListings(); renderDash();
+}
+function delCheck(kind, id, checkId) {
+  if (!confirm('이 항목을 삭제할까요?')) return;
+  const o = ent(kind, id);
+  if (!o) return;
+  o.checks = (o.checks || []).filter(x => x.id !== checkId);
+  sendOp({ type: 'delCheck', kind, id, checkId });
+  save(); renderDetailByKind(kind, id); renderListings(); renderDash();
+}
+
+/* ---------- 딜 파이프라인 (칸반) ---------- */
+const BRAND_STAGES = ['검토중', '협상중', '실사중', '인수완료', '보류'];
+const LISTING_STAGES = ['판매중', '협상중', '계약진행', '거래완료'];
+function moveStage(kind, id, dir) {
+  const stages = kind === 'brand' ? BRAND_STAGES : LISTING_STAGES;
+  const o = ent(kind, id);
+  if (!o) return;
+  const cur = Math.max(0, stages.indexOf(o.status));
+  const ni = Math.min(stages.length - 1, Math.max(0, cur + dir));
+  if (ni === cur) return;
+  o.status = stages[ni];
+  if (kind === 'brand') sendOp({ type: 'upsertBrand', brand: { id, status: o.status } });
+  else sendOp({ type: 'upsertListing', listing: { id, status: o.status } });
+  save(); renderPipeline(); renderBrands(); renderListings(); renderDash();
+  toast(`'${kind === 'brand' ? o.tradeName : o.title}' → ${o.status}`);
+}
+function renderPipeline() {
+  const kCol = (stage, items, kind) => `
+    <div class="k-col">
+      <h5>${esc(stage)} <span class="n">${items.length}</span></h5>
+      ${items.map(o => {
+        const isB = kind === 'brand';
+        const open = isB ? `openBrandDetail('${o.id}')` : `openDetail('${o.id}')`;
+        const metric = isB
+          ? `${fmtMoney(o.askPrice)}${brandMultiple(o) != null ? ' · ' + brandMultiple(o).toFixed(1) + '배' : ''}`
+          : `${fmtMoney(o.price)}${payback(o) != null ? ' · 회수 ' + fmtMonths(payback(o)) : ''}`;
+        const checks = o.checks || [];
+        return `<div class="k-card" onclick="${open}">
+          <div class="t">${esc(isB ? o.tradeName : o.title)}</div>
+          <div class="m">${metric}</div>
+          ${checks.length ? `<div class="m">✅ ${checks.filter(c => c.done).length}/${checks.length}</div>` : ''}
+          <div class="k-move" onclick="event.stopPropagation()">
+            <button onclick="moveStage('${kind}','${o.id}',-1)">◀</button>
+            <button onclick="moveStage('${kind}','${o.id}',1)">▶</button>
+          </div>
+        </div>`;
+      }).join('') || `<div class="k-empty">없음</div>`}
+    </div>`;
+  document.getElementById('kanbanBrands').innerHTML =
+    BRAND_STAGES.map(st => kCol(st, DB.brands.filter(b => (b.status || '검토중') === st), 'brand')).join('');
+  document.getElementById('kanbanListings').innerHTML =
+    LISTING_STAGES.map(st => kCol(st, DB.listings.filter(l => (l.status || '판매중') === st), 'listing')).join('');
+}
+
 /* ---------- 공유 자료 + 채팅 (브랜드·매물 공용) ---------- */
 function docsChatHTML(kind, e) {
   const me = myName();
   const comments = e.comments || [];
-  return `
+  return checksHTML(kind, e) + `
     <div class="docs-box">
       <h4>📎 공유 자료 <span style="font-weight:normal;font-size:11.5px;color:var(--gray-400)">재무제표·매출자료·계약서 등 링크로 첨부 (구글드라이브·스프레드시트 URL 권장)</span></h4>
       ${(e.docs || []).map(d => `
@@ -1224,11 +1400,19 @@ function renderDash() {
   const totalRevenue = DB.brands.reduce((s, b) => s + (Number(b.revenue) || 0), 0);
   const totalComments = DB.listings.reduce((s, l) => s + (l.comments?.length || 0), 0);
   const onSale = DB.listings.filter(l => l.status === '판매중' || l.status === '협상중' || l.status === '계약진행').length;
+  const activeBrandValue = DB.brands.filter(b => ['검토중', '협상중', '실사중'].includes(b.status || '검토중')).reduce((s, b) => s + (Number(b.askPrice) || 0), 0);
+  const activeListingValue = DB.listings.filter(l => l.status !== '거래완료').reduce((s, l) => s + (Number(l.price) || 0), 0);
+  const paybacks = DB.listings.map(payback).filter(v => v != null);
+  const avgPayback = paybacks.length ? paybacks.reduce((a, b) => a + b, 0) / paybacks.length : null;
+  const allChecks = [...DB.brands, ...DB.listings].flatMap(o => o.checks || []);
+  const ddPct = allChecks.length ? Math.round(allChecks.filter(c => c.done).length / allChecks.length * 100) : null;
   document.getElementById('dashStats').innerHTML = `
+    <div class="stat-card accent"><div class="label">진행 중 딜 가치 (브랜드+매물)</div><div class="value">${fmtMoney(activeBrandValue + activeListingValue)}<small> 원</small></div></div>
     <div class="stat-card"><div class="label">검토 중 브랜드</div><div class="value">${DB.brands.length}<small> 개</small></div></div>
-    <div class="stat-card green"><div class="label">브랜드 합산 연매출</div><div class="value">${fmtMoney(totalRevenue)}<small> 원</small></div></div>
     <div class="stat-card"><div class="label">진행 중 매물</div><div class="value">${onSale}<small> / ${DB.listings.length}건</small></div></div>
-    <div class="stat-card accent"><div class="label">누적 질문·댓글</div><div class="value">${totalComments}<small> 개</small></div></div>`;
+    <div class="stat-card green"><div class="label">평균 회수기간 (매물)</div><div class="value">${avgPayback == null ? '-' : fmtMonths(avgPayback)}</div></div>
+    <div class="stat-card"><div class="label">실사 체크 진행률</div><div class="value">${ddPct == null ? '-' : ddPct + '%'}</div></div>
+    <div class="stat-card"><div class="label">누적 질문·댓글</div><div class="value">${totalComments}<small> 개</small></div></div>`;
 
   // 차트
   const canvas = document.getElementById('dashChart');

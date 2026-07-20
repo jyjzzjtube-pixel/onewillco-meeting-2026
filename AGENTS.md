@@ -45,6 +45,9 @@ main에 머지되면 약 1분 내에 위 주소의 모든 접속자 화면에 �
       ],
       "docs": [
         { "id": "seed-d-001", "name": "2025 재무제표", "url": "https://drive.google.com/...", "author": "AI비서", "ts": 1784000000000 }
+      ],
+      "checks": [
+        { "id": "seed-k-001", "label": "재무제표 3개년", "done": false, "by": "", "ts": 0 }
       ]
     }
   ],
@@ -90,4 +93,10 @@ curl -sL -X POST '<웹앱 /exec 주소>' -H 'Content-Type: application/json' -d 
 }'
 ```
 
-op 종류: `upsertBrand {brand}` · `upsertListing {listing}` · `addComment {kind:'brand'|'listing', id, comment}` · `addDoc {kind, id, doc}` (전체 목록은 `webapp/Code.gs`의 `applyOp_` 참고)
+op 종류: `upsertBrand {brand}` · `upsertListing {listing}` · `addComment {kind:'brand'|'listing', id, comment}` · `addDoc {kind, id, doc}` · `setCheck {kind, id, check}` (전체 목록은 `webapp/Code.gs`의 `applyOp_` 참고)
+
+## 자동 계산 필드 (기입하지 말 것)
+
+회수기간(양도가÷월수익), 연수익률(월수익×12÷(양도가+보증금)), 이익률, 인수 배수(희망가÷영업이익)는
+화면에서 자동 계산된다. 원천 숫자(price·mProfit·deposit·revenue·profit·askPrice)만 정확히 기입하면 된다.
+`checks`(실사 체크리스트)는 수집한 자료가 있으면 해당 항목을 `done: true`로 바꾸고 `by: "AI비서"`, `ts`를 채운다.
