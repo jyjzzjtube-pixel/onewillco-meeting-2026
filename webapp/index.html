@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>원윌앤코 브랜드 M&A 플랫폼</title>
+<title>원윌앤코x구름랩스 브랜드 M&A 플랫폼</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -341,18 +341,14 @@ textarea.io:focus { border-color: var(--primary); outline: none; }
 <!-- ===== 로그인 게이트 (포카드 ERP 방식) ===== -->
 <div id="gate">
   <div class="gate-card">
-    <h1>원윌앤코 <b>M&A</b></h1>
-    <div class="sub">발급받은 이름으로 로그인하세요</div>
-    <label>소속</label>
-    <select id="gateOrg">
-      <option>원윌앤코</option>
-      <option>회계법인</option>
-      <option>기타</option>
-    </select>
-    <label>이름</label>
-    <input id="gateName" placeholder="이름 또는 직함 (예: 진지윤, 회계사)" onkeydown="if(event.key==='Enter')gateEnter()">
+    <h1>원윌앤코<b>x구름랩스</b></h1>
+    <div class="sub">발급받은 계정으로 로그인하세요</div>
+    <label>아이디</label>
+    <input id="gateId" placeholder="아이디" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('gatePw').focus()">
+    <label>비밀번호</label>
+    <input id="gatePw" type="password" placeholder="비밀번호" autocomplete="current-password" onkeydown="if(event.key==='Enter')gateEnter()">
     <div class="row">
-      <label><input type="checkbox" id="gateRemember" checked> 이름 저장</label>
+      <label><input type="checkbox" id="gateRemember" checked> 로그인 유지</label>
     </div>
     <button class="enter" onclick="gateEnter()">로그인</button>
     <div class="foot-note">브랜드 M&A 목록 · 양도양수 매물 · 질문답변 공유 플랫폼</div>
@@ -360,7 +356,7 @@ textarea.io:focus { border-color: var(--primary); outline: none; }
 </div>
 
 <aside class="sidebar">
-  <div class="logo">원윌앤코 <b>M&A</b></div>
+  <div class="logo">원윌앤코<b>x구름랩스</b></div>
   <div class="logo-sub">브랜드 M&A 플랫폼</div>
   <div class="nav-wrap">
     <button class="nav-item active" data-page="dash" onclick="go('dash')">📊 대시보드</button>
@@ -684,30 +680,34 @@ function saveMyName() {
   toast('이름 저장: ' + myName());
 }
 
-/* ---------- 로그인 게이트 ---------- */
-const LS_ORG = 'onewillco_mna_org';
+/* ---------- 로그인 게이트 (발급 계정) ---------- */
+const ACCOUNTS = {
+  'admin': { pw: '123123', name: '관리자' },
+  '구름': { pw: '12341234', name: '구름' },
+};
+const LS_USER = 'onewillco_mna_user';
 function gateEnter() {
-  const name = document.getElementById('gateName').value.trim();
-  if (!name) { toast('이름을 입력하세요.'); return; }
-  const org = document.getElementById('gateOrg').value;
-  document.getElementById('myName').value = name;
+  const id = document.getElementById('gateId').value.trim();
+  const pw = document.getElementById('gatePw').value;
+  const acc = ACCOUNTS[id];
+  if (!acc || acc.pw !== pw) { toast('아이디 또는 비밀번호가 올바르지 않습니다.'); return; }
+  document.getElementById('myName').value = acc.name;
   if (document.getElementById('gateRemember').checked) {
-    store.setItem(LS_NAME, name);
-    store.setItem(LS_ORG, org);
+    store.setItem(LS_USER, id);
+    store.setItem(LS_NAME, acc.name);
   }
-  updateWhoChip(org);
+  updateWhoChip();
   document.getElementById('gate').classList.add('hidden');
-  toast(name + '님, 어서오세요!');
+  toast(acc.name + '님, 어서오세요!');
 }
 function gateLogout() {
+  store.removeItem(LS_USER);
   store.removeItem(LS_NAME);
-  store.removeItem(LS_ORG);
-  document.getElementById('gateName').value = '';
+  document.getElementById('gatePw').value = '';
   document.getElementById('gate').classList.remove('hidden');
 }
-function updateWhoChip(orgOverride) {
-  const org = orgOverride || store.getItem(LS_ORG) || '';
-  document.getElementById('whoChip').textContent = (org ? org + ' · ' : '') + myName();
+function updateWhoChip() {
+  document.getElementById('whoChip').textContent = myName();
 }
 
 /* ---------- 네비게이션 ---------- */
@@ -1355,12 +1355,14 @@ function loadSample() {
    ============================================================= */
 load();
 {
-  const savedName = store.getItem(LS_NAME);
-  document.getElementById('myName').value = savedName || '관리자';
-  if (savedName) {
+  const savedUser = store.getItem(LS_USER);
+  const acc = savedUser && ACCOUNTS[savedUser];
+  if (acc) {
+    document.getElementById('myName').value = acc.name;
     document.getElementById('gate').classList.add('hidden');
   } else {
-    document.getElementById('gateName').value = '';
+    document.getElementById('myName').value = store.getItem(LS_NAME) || '관리자';
+    if (savedUser) document.getElementById('gateId').value = savedUser;
   }
   updateWhoChip();
 }
