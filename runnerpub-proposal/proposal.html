@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RUNNER PUB 가맹영업 파트너십 제안서 (1차)</title>
+<style>
+:root{
+  --violet:#5B3DF5; --violet-deep:#2A1B6E; --violet-mid:#4630B8;
+  --lavender:#F3F0FF; --gold:#F5B93D;
+  --ink:#1a1a2e; --ink-2:#4a4a63; --ink-3:#8a8aa0;
+  --line:#E5E1F5; --surface:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Malgun Gothic','맑은 고딕',-apple-system,sans-serif;color:var(--ink);background:#EDEAF7;line-height:1.65;font-size:15px}
+.slide{max-width:1200px;margin:28px auto;background:var(--surface);border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(42,27,110,.10);padding:56px 64px;position:relative}
+.slide.cover{background:linear-gradient(135deg,var(--violet) 0%,var(--violet-deep) 100%);color:#fff;padding:72px 64px;min-height:560px}
+.kicker{display:inline-block;font-size:12px;letter-spacing:2.5px;font-weight:700;color:var(--violet);background:var(--lavender);padding:6px 14px;border-radius:20px;margin-bottom:14px}
+.cover .kicker{color:#fff;background:rgba(255,255,255,.14)}
+h1{font-size:40px;line-height:1.3;margin:8px 0 18px}
+h2{font-size:26px;color:var(--violet-deep);margin-bottom:6px}
+.sub{color:var(--ink-3);margin-bottom:28px;font-size:14px}
+.cover .sub{color:rgba(255,255,255,.75)}
+.cover img.logo{width:300px;margin-bottom:36px}
+.cover .meta{margin-top:48px;padding-top:20px;border-top:1px solid rgba(255,255,255,.25);display:flex;gap:48px;font-size:14px}
+.cover .meta b{display:block;font-size:12px;color:rgba(255,255,255,.6);font-weight:400;margin-bottom:2px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:26px 0}
+.tile{background:var(--lavender);border-radius:12px;padding:22px 24px;border-top:4px solid var(--violet)}
+.tile .num{font-size:30px;font-weight:800;color:var(--violet-deep);letter-spacing:-.5px}
+.tile .num small{font-size:15px;font-weight:700;color:var(--violet)}
+.tile .cap{font-size:13px;color:var(--ink-2);margin-top:4px}
+.tile.gold{border-top-color:var(--gold)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.card{border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+.card h3{font-size:16px;color:var(--violet-mid);margin-bottom:8px}
+.card p,.card li{font-size:14px;color:var(--ink-2)}
+.card ul{padding-left:18px}
+.quote{background:var(--lavender);border-left:4px solid var(--violet);border-radius:0 10px 10px 0;padding:16px 22px;margin:18px 0;font-size:15px;color:var(--violet-deep);font-weight:600}
+table{width:100%;border-collapse:collapse;margin-top:18px;font-size:14px}
+th{background:var(--violet-deep);color:#fff;padding:11px 14px;text-align:left;font-weight:600}
+td{padding:11px 14px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+tr td:first-child{font-weight:600;color:var(--ink)}
+.steps{display:flex;gap:0;margin:26px 0;counter-reset:step}
+.step{flex:1;text-align:center;position:relative;padding:0 8px}
+.step::before{counter-increment:step;content:counter(step,decimal-leading-zero);display:block;width:44px;height:44px;line-height:44px;margin:0 auto 10px;border-radius:50%;background:var(--violet);color:#fff;font-weight:800}
+.step:not(:last-child)::after{content:'';position:absolute;top:22px;left:calc(50% + 30px);width:calc(100% - 60px);height:2px;background:var(--line)}
+.step b{display:block;font-size:14px;color:var(--violet-deep)}
+.step span{font-size:12px;color:var(--ink-3)}
+.fee{background:linear-gradient(135deg,var(--violet) 0%,var(--violet-deep) 100%);color:#fff;border-radius:14px;padding:34px 40px;display:flex;align-items:center;gap:40px;margin:24px 0}
+.fee .big{font-size:46px;font-weight:800;white-space:nowrap}
+.fee .big small{font-size:18px;font-weight:600;color:var(--gold)}
+.fee p{font-size:14px;color:rgba(255,255,255,.85)}
+.foot{font-size:12px;color:var(--ink-3);margin-top:26px;padding-top:14px;border-top:1px solid var(--line)}
+.imgbox{border-radius:12px;overflow:hidden;background:#111;text-align:center}
+.imgbox img{max-width:100%;display:block;margin:0 auto}
+.two{display:grid;grid-template-columns:1.15fr .85fr;gap:32px;align-items:center}
+@media print{body{background:#fff}.slide{box-shadow:none;margin:0 auto;page-break-after:always;border-radius:0}}
+@media (max-width:800px){.tiles,.cards,.two{grid-template-columns:1fr}.steps{flex-direction:column;gap:18px}.step:not(:last-child)::after{display:none}.slide{padding:32px 24px}}
+</style>
+</head>
+<body>
+
+<!-- 1. COVER -->
+<section class="slide cover">
+  <img class="logo" src="assets/logo.png" alt="RUNNER PUB HOLDEM LOUNGE">
+  <div class="kicker">FRANCHISE SALES PARTNERSHIP · 1차 제안</div>
+  <h1>러너펍 가맹점 확장을 위한<br>영업 파트너십 제안서</h1>
+  <p class="sub">성과가 없으면 비용도 없습니다 — 가맹계약 성사 기준 100% 성공보수형 제안</p>
+  <div class="meta">
+    <div><b>수신</b>러너스튜디오(주) 귀중</div>
+    <div><b>제안</b>원윌앤코 <!-- TODO: 회사명/담당자 확정 --></div>
+    <div><b>일자</b>2026. 07. 21</div>
+  </div>
+</section>
+
+<!-- 2. EXECUTIVE SUMMARY -->
+<section class="slide">
+  <div class="kicker">EXECUTIVE SUMMARY</div>
+  <h2>제안 요약</h2>
+  <p class="sub">러너펍의 가맹 확장 속도를 높이는 외부 영업 조직을 제안합니다.</p>
+  <div class="tiles">
+    <div class="tile gold"><div class="num">1,000<small>만원 / 건</small></div><div class="cap">가맹계약 성사 시 성공보수 (VAT 별도)</div></div>
+    <div class="tile"><div class="num">0<small>원</small></div><div class="cap">착수금·고정비·광고비 청구 없음</div></div>
+    <div class="tile"><div class="num">100<small>%</small></div><div class="cap">계약 체결 완료 기준으로만 과금</div></div>
+  </div>
+  <div class="quote">본사는 브랜드·운영·플랫폼에 집중하고, 저희는 가맹 리드 발굴부터 계약 클로징까지 영업 전 과정을 책임집니다.</div>
+</section>
+
+<!-- 3. 브랜드 이해 -->
+<section class="slide">
+  <div class="kicker">BRAND UNDERSTANDING</div>
+  <h2>저희가 이해한 러너펍</h2>
+  <p class="sub">"플랫폼이 만드는 홀덤펍의 새로운 기준" — 러너펍의 경쟁력을 정확히 알고 영업합니다.</p>
+  <div class="two">
+    <div class="cards" style="grid-template-columns:1fr;margin-top:0">
+      <div class="card"><h3>① 플랫폼 1위 앱 '러너러너'</h3><p>위치기반 홀덤펍 검색·예약·토너먼트·구인구직. 리뉴얼 후 플랫폼 이용자 1.5배 증가. 예약·회원관리·정산·포스터 생성까지 매장 운영 자동화.</p></div>
+      <div class="card"><h3>② 준법 운영 체계</h3><p>현금 환전 등 불법 요소를 배제하는 운영 기준과 본사 협업 리스크 대응 — 업종 최대 리스크를 시스템으로 관리하는 유일한 소구점.</p></div>
+      <div class="card"><h3>③ 콘텐츠 기반 재방문 설계</h3><p>공식 엠버서더, 시즌 랭킹전, 래빗 페스티벌, 매장 간 콜라보·합동 토너먼트로 '다음 방문 이유'를 만드는 브랜드.</p></div>
+      <div class="card"><h3>④ 창업 문턱이 낮은 시점</h3><p>기본비용 1,600만원 전액 할인 프로모션, 계약 후 4~6주 오픈, 본사 검증 점포 추천 — 지금이 영업 전환율이 가장 높은 타이밍입니다.</p></div>
+    </div>
+    <div class="imgbox"><img src="assets/ranking.png" alt="러너러너 앱"></div>
+  </div>
+</section>
+
+<!-- 4. 제안 내용 -->
+<section class="slide">
+  <div class="kicker">PROPOSAL</div>
+  <h2>제안 내용 — 가맹영업 전담 대행</h2>
+  <p class="sub">신규 창업 + 기존 홀덤펍 리브랜딩, 2개 트랙으로 리드를 발굴합니다.</p>
+  <div class="cards">
+    <div class="card"><h3>Track A. 신규 창업자</h3><ul><li>창업 커뮤니티·플랫폼 기반 예비창업자 DB 발굴</li><li>1:1 상담 → 본사 미팅 연결 → 계약 클로징 지원</li></ul></div>
+    <div class="card"><h3>Track B. 기존 홀덤펍 리브랜딩</h3><ul><li>개인 운영 홀덤펍 대상 러너펍 전환 제안</li><li>러너러너 플랫폼 입점 효과를 핵심 소구점으로 활용</li></ul></div>
+  </div>
+  <table>
+    <tr><th>구분</th><th>업무 범위</th><th>담당</th></tr>
+    <tr><td>리드 발굴</td><td>타깃 DB 수집, 콜드콜/미팅 제안, 창업설명회 연계</td><td>영업사</td></tr>
+    <tr><td>상담·미팅</td><td>브랜드 소개, 창업비용·수익구조 안내, 본사 미팅 주선</td><td>영업사 + 본사</td></tr>
+    <tr><td>계약 클로징</td><td>조건 협의 지원, 계약 체결까지 팔로업</td><td>본사 (영업사 지원)</td></tr>
+    <tr><td>리포트</td><td>주간 리드 현황·상담 진행 리포트 제출</td><td>영업사</td></tr>
+  </table>
+</section>
+
+<!-- 5. 수수료 구조 -->
+<section class="slide">
+  <div class="kicker">FEE STRUCTURE</div>
+  <h2>수수료 구조 — 100% 성공보수</h2>
+  <div class="fee">
+    <div class="big">1,000만원<small> / 계약 1건 · VAT 별도</small></div>
+    <p>가맹계약 체결 및 가맹비 입금 완료 시점에만 청구합니다.<br>착수금, 월 고정비, 광고비 등 그 외 일체의 비용을 청구하지 않습니다.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><b>리드 발굴·상담</b><span>비용 없음</span></div>
+    <div class="step"><b>본사 미팅·계약 협의</b><span>비용 없음</span></div>
+    <div class="step"><b>가맹계약 체결</b><span>성공보수 1,000만원 (VAT 별도)</span></div>
+  </div>
+  <div class="quote">본사 리스크 0원 — 성과가 발생한 계약 건에 대해서만 정산하는 구조입니다.</div>
+  <p class="foot">※ 세부 지급 시점(계약 체결 시 / 가맹비 입금 시 / 분할 등)과 리드 인정 기준(중복 리드 처리 등)은 협의 후 계약서에 명기합니다.</p>
+</section>
+
+<!-- 6. 협업 프로세스 -->
+<section class="slide">
+  <div class="kicker">PROCESS</div>
+  <h2>협업 프로세스</h2>
+  <div class="steps" style="margin-top:34px">
+    <div class="step"><b>파트너십 계약</b><span>업무 범위·수수료 확정</span></div>
+    <div class="step"><b>영업 교육</b><span>본사 브랜드·상품 교육 이수</span></div>
+    <div class="step"><b>리드 등록</b><span>중복 방지 리드 등록 체계</span></div>
+    <div class="step"><b>상담 → 계약</b><span>본사 동석 미팅·클로징</span></div>
+    <div class="step"><b>정산</b><span>계약 완료 건 월 단위 정산</span></div>
+  </div>
+  <div class="cards">
+    <div class="card"><h3>본사에 드리는 것</h3><ul><li>추가 고정비 없는 전국 단위 영업망</li><li>주간 리드·상담 리포트로 투명한 진행 공유</li><li>브랜드 가이드 준수 영업 (승인된 자료만 사용)</li></ul></div>
+    <div class="card"><h3>본사에 요청드리는 것</h3><ul><li>공식 소개자료·창업비용 자료 공유</li><li>상담 고객 본사 미팅 시 담당자 배정</li><li>리드 등록·계약 확인 절차 협의</li></ul></div>
+  </div>
+</section>
+
+<!-- 7. NEXT STEP -->
+<section class="slide">
+  <div class="kicker">NEXT STEP</div>
+  <h2>다음 단계</h2>
+  <div class="tiles">
+    <div class="tile"><div class="num">1차</div><div class="cap">본 제안 검토 · 조건 협의 (금주)</div></div>
+    <div class="tile"><div class="num">2차</div><div class="cap">파트너십 계약 체결 · 영업 교육</div></div>
+    <div class="tile gold"><div class="num">3차</div><div class="cap">영업 개시 — 첫 달 내 첫 계약 목표</div></div>
+  </div>
+  <div class="quote">검토 감사합니다. 조건은 유연하게 협의 가능합니다 — 러너펍의 전국 확장을 함께 만들겠습니다.</div>
+  <p class="foot">제안: 원윌앤코 · 담당 지윤진 <!-- TODO: 연락처 입력 --> | 본 제안서의 브랜드 정보는 러너펍 공식 홈페이지(runnerpub.com) 공개 자료 기준입니다.</p>
+</section>
+
+</body>
+</html>
