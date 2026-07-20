@@ -472,6 +472,23 @@ textarea.io { width:100%; height: 160px; margin-top: 12px; padding: 12px; border
 const LS_KEY = 'onewillco_mna_v1';
 const LS_NAME = 'onewillco_mna_username';
 
+// localStorage가 차단된 환경(일부 임베드 뷰어)에서도 동작하도록 안전 래퍼
+const store = (() => {
+  try {
+    const t = '__mna_test__';
+    localStorage.setItem(t, '1'); localStorage.removeItem(t);
+    return localStorage;
+  } catch (e) {
+    const mem = {};
+    setTimeout(() => toast('⚠ 이 화면에서는 브라우저 저장이 차단되어, 새로고침하면 입력이 사라집니다. JSON 내보내기로 백업하세요.'), 800);
+    return {
+      getItem: k => (k in mem ? mem[k] : null),
+      setItem: (k, v) => { mem[k] = String(v); },
+      removeItem: k => { delete mem[k]; },
+    };
+  }
+})();
+
 let DB = { brands: [], listings: [] };
 let dashChart = null;
 let currentDetail = null; // { kind: 'brand' | 'listing', id }
@@ -486,7 +503,7 @@ function renderDetailByKind(kind, id) {
 /* ---------- 저장/로드 ---------- */
 function load() {
   try {
-    const raw = localStorage.getItem(LS_KEY);
+    const raw = store.getItem(LS_KEY);
     if (raw) {
       const d = JSON.parse(raw);
       if (d && Array.isArray(d.brands) && Array.isArray(d.listings)) DB = d;
@@ -494,7 +511,7 @@ function load() {
   } catch (e) { console.warn('load fail', e); }
 }
 function save() {
-  localStorage.setItem(LS_KEY, JSON.stringify(DB));
+  store.setItem(LS_KEY, JSON.stringify(DB));
   refreshCounts();
 }
 function uid() { return 'id' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
@@ -548,7 +565,7 @@ function myName() {
   return (document.getElementById('myName').value || '').trim() || '관리자';
 }
 function saveMyName() {
-  localStorage.setItem(LS_NAME, myName());
+  store.setItem(LS_NAME, myName());
   toast('이름 저장: ' + myName());
 }
 
@@ -1179,7 +1196,7 @@ function loadSample() {
    초기화
    ============================================================= */
 load();
-document.getElementById('myName').value = localStorage.getItem(LS_NAME) || '관리자';
+document.getElementById('myName').value = store.getItem(LS_NAME) || '관리자';
 renderBrands();
 renderListings();
 renderDash();
