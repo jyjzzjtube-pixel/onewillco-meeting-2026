@@ -11,7 +11,7 @@ var DB_FILE_NAME = 'onewillco_mna_db.json';
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('index')
-    .setTitle('원윌앤코 브랜드 M&A 플랫폼')
+    .setTitle('원윌앤코x구름랩스 브랜드 M&A 플랫폼')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
