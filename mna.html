@@ -474,7 +474,14 @@ const LS_NAME = 'onewillco_mna_username';
 
 let DB = { brands: [], listings: [] };
 let dashChart = null;
-let currentDetailId = null;
+let currentDetail = null; // { kind: 'brand' | 'listing', id }
+
+function ent(kind, id) {
+  return (kind === 'brand' ? DB.brands : DB.listings).find(x => x.id === id);
+}
+function renderDetailByKind(kind, id) {
+  if (kind === 'brand') renderBrandDetail(id); else renderDetail(id);
+}
 
 /* ---------- 저장/로드 ---------- */
 function load() {
@@ -640,8 +647,10 @@ function renderBrands() {
     const m = brandMargin(b);
     const mCls = m == null ? '' : (m >= 0 ? 'profit-pos' : 'profit-neg');
     const linked = DB.listings.filter(l => l.brandId === b.id).length;
-    return `<tr>
-      <td><b>${esc(b.corpName)}</b>${b.memo ? `<div class="sub" title="${esc(b.memo)}">📝 ${esc(b.memo.length > 18 ? b.memo.slice(0, 18) + '…' : b.memo)}</div>` : ''}</td>
+    const cn = b.comments?.length || 0;
+    const dn = b.docs?.length || 0;
+    return `<tr onclick="openBrandDetail('${b.id}')" style="cursor:pointer" title="클릭하면 상세·질문답변 창이 열립니다">
+      <td><b>${esc(b.corpName)}</b> ${cn ? `<span class="badge b-hold" style="background:#FFF0F0;color:var(--accent)">💬 ${cn}</span>` : ''}${dn ? ` <span class="badge b-review">📎 ${dn}</span>` : ''}${b.memo ? `<div class="sub" title="${esc(b.memo)}">📝 ${esc(b.memo.length > 18 ? b.memo.slice(0, 18) + '…' : b.memo)}</div>` : ''}</td>
       <td>${esc(b.tradeName)}${linked ? `<div class="sub">🏪 매물 ${linked}건</div>` : ''}</td>
       <td>${esc(b.industry) || '-'}</td>
       <td>${fmtDate(b.openDate)}<div class="sub">${yearsSince(b.openDate)}</div></td>
@@ -652,7 +661,7 @@ function renderBrands() {
       <td class="num">${fmtMoney(b.askPrice)}</td>
       <td>${statusBadgeBrand(b.status)}</td>
       <td>${esc(b.manager) || '-'}</td>
-      <td>
+      <td onclick="event.stopPropagation()">
         <button class="btn ghost sm" onclick="openBrandForm('${b.id}')">수정</button>
         <button class="btn danger sm" onclick="deleteBrand('${b.id}')">삭제</button>
       </td>
@@ -702,6 +711,7 @@ function saveBrand() {
     toast('브랜드 등록 완료');
   }
   save(); closeModal('brandModal'); renderBrands(); renderDash();
+  if (id && currentDetail?.kind === 'brand' && currentDetail.id === id && document.getElementById('detailModal').classList.contains('open')) renderBrandDetail(id);
 }
 function deleteBrand(id) {
   const b = DB.brands.find(x => x.id === id);
@@ -709,8 +719,50 @@ function deleteBrand(id) {
   if (!confirm(`'${b.corpName} (${b.tradeName})' 브랜드를 삭제할까요?\n연결된 매물은 삭제되지 않고 연결만 해제됩니다.`)) return;
   DB.brands = DB.brands.filter(x => x.id !== id);
   DB.listings.forEach(l => { if (l.brandId === id) l.brandId = ''; });
+  if (currentDetail?.kind === 'brand' && currentDetail.id === id) closeModal('detailModal');
   save(); renderBrands(); renderListings(); renderDash();
   toast('브랜드 삭제 완료');
+}
+
+/* ---------- 브랜드 상세 + 채팅 ---------- */
+function openBrandDetail(id) {
+  currentDetail = { kind: 'brand', id };
+  renderBrandDetail(id);
+  openModal('detailModal');
+  setTimeout(() => {
+    const list = document.getElementById('chatList');
+    if (list) list.scrollTop = list.scrollHeight;
+  }, 50);
+}
+function renderBrandDetail(id) {
+  const b = DB.brands.find(x => x.id === id);
+  if (!b) return;
+  const m = brandMargin(b);
+  const linked = DB.listings.filter(l => l.brandId === id);
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-top">
+      <div style="flex:1">
+        <h2>${esc(b.corpName)}</h2>
+        <div class="detail-region">🏢 ${esc(b.tradeName)} ${b.industry ? '· ' + esc(b.industry) : ''} ${b.manager ? '· 담당 ' + esc(b.manager) : ''}</div>
+      </div>
+      ${statusBadgeBrand(b.status)}
+    </div>
+    <div class="detail-price">${fmtMoney(b.askPrice)} <small>희망 양도가</small></div>
+    <div class="detail-grid">
+      <div class="cell"><div class="k">개업일</div><div class="v">${fmtDate(b.openDate)}${yearsSince(b.openDate) ? ' <small style="font-size:11px;color:var(--gray-400)">' + yearsSince(b.openDate) + '</small>' : ''}</div></div>
+      <div class="cell"><div class="k">지점수</div><div class="v">${fmtNum(b.branches)}${b.branches != null ? '개' : ''}</div></div>
+      <div class="cell"><div class="k">연매출</div><div class="v">${fmtMoney(b.revenue)}</div></div>
+      <div class="cell"><div class="k">영업이익</div><div class="v ${Number(b.profit) < 0 ? 'profit-neg' : ''}">${fmtMoney(b.profit)}</div></div>
+      <div class="cell"><div class="k">이익률</div><div class="v ${m == null ? '' : (m >= 0 ? 'profit-pos' : 'profit-neg')}">${m == null ? '-' : m.toFixed(1) + '%'}</div></div>
+    </div>
+    ${b.memo ? `<div class="detail-desc">${esc(b.memo)}</div>` : ''}
+    ${linked.length ? `<div class="detail-brand-link">🏪 연결 매물 ${linked.length}건: ${linked.map(l =>
+      `<a href="javascript:void(0)" onclick="openDetail('${l.id}')" style="color:var(--blue)">${esc(l.title)}</a>`).join(' · ')}</div>` : ''}
+    <div style="display:flex;gap:8px;margin-bottom:18px">
+      <button class="btn ghost sm" onclick="openBrandForm('${b.id}')">✏ 브랜드 수정</button>
+      <button class="btn danger sm" onclick="deleteBrand('${b.id}')">🗑 브랜드 삭제</button>
+    </div>
+    ${docsChatHTML('brand', b)}`;
 }
 
 /* =============================================================
@@ -818,7 +870,7 @@ function saveListing() {
     toast('매물 등록 완료');
   }
   save(); closeModal('listingModal'); renderListings(); renderDash();
-  if (id && currentDetailId === id && document.getElementById('detailModal').classList.contains('open')) renderDetail(id);
+  if (id && currentDetail?.kind === 'listing' && currentDetail.id === id && document.getElementById('detailModal').classList.contains('open')) renderDetail(id);
 }
 function deleteListing(id) {
   const l = DB.listings.find(x => x.id === id);
@@ -831,7 +883,7 @@ function deleteListing(id) {
 
 /* ---------- 매물 상세 + 채팅 ---------- */
 function openDetail(id) {
-  currentDetailId = id;
+  currentDetail = { kind: 'listing', id };
   renderDetail(id);
   openModal('detailModal');
   setTimeout(() => {
@@ -843,8 +895,6 @@ function renderDetail(id) {
   const l = DB.listings.find(x => x.id === id);
   if (!l) return;
   const brand = DB.brands.find(b => b.id === l.brandId);
-  const me = myName();
-  const comments = l.comments || [];
   document.getElementById('detailBody').innerHTML = `
     <div class="detail-top">
       <div style="flex:1">
@@ -869,19 +919,27 @@ function renderDetail(id) {
       <button class="btn ghost sm" onclick="openListingForm('${l.id}')">✏ 매물 수정</button>
       <button class="btn danger sm" onclick="deleteListing('${l.id}')">🗑 매물 삭제</button>
     </div>
+    ${docsChatHTML('listing', l)}`;
+}
+
+/* ---------- 공유 자료 + 채팅 (브랜드·매물 공용) ---------- */
+function docsChatHTML(kind, e) {
+  const me = myName();
+  const comments = e.comments || [];
+  return `
     <div class="docs-box">
       <h4>📎 공유 자료 <span style="font-weight:normal;font-size:11.5px;color:var(--gray-400)">재무제표·매출자료·계약서 등 링크로 첨부 (구글드라이브·스프레드시트 URL 권장)</span></h4>
-      ${(l.docs || []).map(d => `
+      ${(e.docs || []).map(d => `
         <div class="doc-row">
           <span>📄</span>
           <a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name)}</a>
           <span class="by">${esc(d.author)} · ${timeAgo(d.ts)}</span>
-          <button class="del" onclick="deleteDoc('${l.id}','${d.id}')">삭제</button>
+          <button class="del" onclick="deleteDoc('${kind}','${e.id}','${d.id}')">삭제</button>
         </div>`).join('') || `<div style="font-size:12.5px;color:var(--gray-400);padding:4px 0">아직 공유된 자료가 없습니다.</div>`}
       <div class="doc-add">
         <input id="docName" placeholder="자료명 (예: 2025 재무제표)">
         <input id="docUrl" placeholder="링크 URL (https://…)">
-        <button class="btn sm" style="padding:8px 14px" onclick="addDoc('${l.id}')">＋ 추가</button>
+        <button class="btn sm" style="padding:8px 14px" onclick="addDoc('${kind}','${e.id}')">＋ 추가</button>
       </div>
     </div>
     <div class="chat-box">
@@ -892,62 +950,66 @@ function renderDetail(id) {
             <div class="meta">
               <span class="who">${esc(c.author)}</span>
               <span>${timeAgo(c.ts)}</span>
-              <button class="del" onclick="deleteComment('${l.id}','${c.id}')">삭제</button>
+              <button class="del" onclick="deleteComment('${kind}','${e.id}','${c.id}')">삭제</button>
             </div>
             <div class="bubble">${esc(c.text)}</div>
           </div>`).join('')
         : `<div class="chat-empty">아직 질문이 없습니다. 첫 질문을 남겨보세요!</div>`}
       </div>
       <div class="chat-input">
-        <textarea id="chatText" placeholder="질문이나 의견을 입력하세요 (Enter 전송 · Shift+Enter 줄바꿈)" onkeydown="chatKey(event,'${l.id}')"></textarea>
-        <button class="btn" onclick="sendComment('${l.id}')">전송</button>
+        <textarea id="chatText" placeholder="질문이나 의견을 입력하세요 (Enter 전송 · Shift+Enter 줄바꿈)" onkeydown="chatKey(event,'${kind}','${e.id}')"></textarea>
+        <button class="btn" onclick="sendComment('${kind}','${e.id}')">전송</button>
       </div>
     </div>`;
 }
-function chatKey(e, id) {
+function refreshAfterChat(kind) {
+  if (kind === 'brand') renderBrands(); else renderListings();
+  renderDash();
+}
+function chatKey(e, kind, id) {
   if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
     e.preventDefault();
-    sendComment(id);
+    sendComment(kind, id);
   }
 }
-function sendComment(id) {
+function sendComment(kind, id) {
   const ta = document.getElementById('chatText');
   const text = ta.value.trim();
   if (!text) return;
-  const l = DB.listings.find(x => x.id === id);
-  if (!l) return;
-  if (!l.comments) l.comments = [];
-  l.comments.push({ id: uid(), author: myName(), text, ts: Date.now() });
-  save(); renderDetail(id); renderListings(); renderDash();
+  const o = ent(kind, id);
+  if (!o) return;
+  if (!o.comments) o.comments = [];
+  o.comments.push({ id: uid(), author: myName(), text, ts: Date.now() });
+  save(); renderDetailByKind(kind, id); refreshAfterChat(kind);
   const list = document.getElementById('chatList');
   if (list) list.scrollTop = list.scrollHeight;
   document.getElementById('chatText').focus();
 }
-function addDoc(id) {
+function addDoc(kind, id) {
   const name = document.getElementById('docName').value.trim();
   let url = document.getElementById('docUrl').value.trim();
   if (!name || !url) { toast('자료명과 링크를 모두 입력하세요.'); return; }
   if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-  const l = DB.listings.find(x => x.id === id);
-  if (!l) return;
-  if (!l.docs) l.docs = [];
-  l.docs.push({ id: uid(), name, url, author: myName(), ts: Date.now() });
-  save(); renderDetail(id); renderListings();
+  const o = ent(kind, id);
+  if (!o) return;
+  if (!o.docs) o.docs = [];
+  o.docs.push({ id: uid(), name, url, author: myName(), ts: Date.now() });
+  save(); renderDetailByKind(kind, id); refreshAfterChat(kind);
   toast('자료 링크 추가 완료');
 }
-function deleteDoc(listingId, docId) {
-  const l = DB.listings.find(x => x.id === listingId);
-  if (!l) return;
+function deleteDoc(kind, id, docId) {
+  const o = ent(kind, id);
+  if (!o) return;
   if (!confirm('이 자료 링크를 삭제할까요?')) return;
-  l.docs = (l.docs || []).filter(d => d.id !== docId);
-  save(); renderDetail(listingId); renderListings();
+  o.docs = (o.docs || []).filter(d => d.id !== docId);
+  save(); renderDetailByKind(kind, id); refreshAfterChat(kind);
 }
-function deleteComment(listingId, commentId) {
-  const l = DB.listings.find(x => x.id === listingId);
-  if (!l) return;
+function deleteComment(kind, id, commentId) {
+  const o = ent(kind, id);
+  if (!o) return;
   if (!confirm('이 댓글을 삭제할까요?')) return;
-  l.comments = (l.comments || []).filter(c => c.id !== commentId);
-  save(); renderDetail(listingId); renderListings(); renderDash();
+  o.comments = (o.comments || []).filter(c => c.id !== commentId);
+  save(); renderDetailByKind(kind, id); refreshAfterChat(kind);
 }
 
 /* =============================================================
@@ -996,19 +1058,20 @@ function renderDash() {
     });
   }
 
-  // 최근 댓글
+  // 최근 댓글 (매물 + 브랜드)
   const all = [];
-  DB.listings.forEach(l => (l.comments || []).forEach(c => all.push({ ...c, listing: l })));
+  DB.listings.forEach(l => (l.comments || []).forEach(c => all.push({ ...c, label: '🏪 ' + l.title, open: `go('listings');openDetail('${l.id}')` })));
+  DB.brands.forEach(b => (b.comments || []).forEach(c => all.push({ ...c, label: '🏢 ' + b.tradeName, open: `go('brands');openBrandDetail('${b.id}')` })));
   all.sort((a, b) => b.ts - a.ts);
   const recent = all.slice(0, 6);
   document.getElementById('dashRecentComments').innerHTML = recent.length
     ? recent.map(c => `
-      <div style="display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--gray-100);font-size:13.5px;cursor:pointer" onclick="go('listings');openDetail('${c.listing.id}')">
+      <div style="display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--gray-100);font-size:13.5px;cursor:pointer" onclick="${c.open}">
         <b style="color:var(--navy);white-space:nowrap">${esc(c.author)}</b>
         <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.text)}</span>
-        <span style="color:var(--gray-400);font-size:11.5px;white-space:nowrap">${esc(c.listing.title)} · ${timeAgo(c.ts)}</span>
+        <span style="color:var(--gray-400);font-size:11.5px;white-space:nowrap">${esc(c.label)} · ${timeAgo(c.ts)}</span>
       </div>`).join('')
-    : `<div class="empty-note">매물 카드에서 질문·댓글을 남기면 여기에 표시됩니다.</div>`;
+    : `<div class="empty-note">브랜드 목록이나 매물 카드에서 질문·댓글을 남기면 여기에 표시됩니다.</div>`;
 }
 
 /* =============================================================
@@ -1081,7 +1144,14 @@ function loadSample() {
   const now = Date.now();
   const b1 = uid(), b2 = uid(), b3 = uid();
   DB.brands.push(
-    { id: b1, createdAt: now, corpName: '(주)에이스에프앤비', tradeName: '포카드홀덤펍', industry: '홀덤펍', openDate: '2021-03-15', branches: 14, revenue: 320000, profit: 41000, askPrice: 180000, status: '협상중', manager: '진지윤', memo: '직영 3 + 가맹 11. 가맹계약서 검토 중.' },
+    { id: b1, createdAt: now, corpName: '(주)에이스에프앤비', tradeName: '포카드홀덤펍', industry: '홀덤펍', openDate: '2021-03-15', branches: 14, revenue: 320000, profit: 41000, askPrice: 180000, status: '협상중', manager: '진지윤', memo: '직영 3 + 가맹 11. 가맹계약서 검토 중.',
+      comments: [
+        { id: uid(), author: '회계사', text: '연매출 32억 중 가맹 로열티 비중이 얼마나 되나요? 직영 매출과 분리된 손익계산서가 필요합니다.', ts: now - 3600e3 * 8 },
+        { id: uid(), author: '관리자', text: '가맹본부 손익 분리자료 요청해 두었습니다. 받는 대로 공유 자료에 올리겠습니다.', ts: now - 3600e3 * 6 },
+      ],
+      docs: [
+        { id: uid(), name: '법인등기부등본 (예시 링크)', url: 'https://drive.google.com', author: '관리자', ts: now - 3600e3 * 7 },
+      ] },
     { id: b2, createdAt: now, corpName: '(주)브루잉랩', tradeName: '카페 브루다', industry: '카페', openDate: '2019-07-01', branches: 27, revenue: 450000, profit: 28000, askPrice: 220000, status: '검토중', manager: '', memo: '지점수 대비 이익률 낮음. 원가 구조 확인 필요.' },
     { id: b3, createdAt: now, corpName: '(주)한입푸드', tradeName: '치킨한입', industry: '치킨 프랜차이즈', openDate: '2016-11-20', branches: 52, revenue: 890000, profit: -12000, askPrice: 95000, status: '보류', manager: '', memo: '최근 2년 연속 영업적자. 물류센터 자산가치는 별도 평가 필요.' },
   );
