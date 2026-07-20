@@ -15,6 +15,33 @@ function doGet() {
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
+/**
+ * 자동화 API (클로드코드·코덱스·curl용)
+ * - 스크립트 속성에 API_TOKEN을 설정해야 작동 (프로젝트 설정 → 스크립트 속성)
+ * - POST <웹앱 /exec 주소>  body: {"token":"...","action":"getAll"}
+ *   또는 {"token":"...","action":"applyOp","op":{...}}  (op 형식은 applyOp_ 참고)
+ */
+function doPost(e) {
+  var out;
+  try {
+    var body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    var token = PropertiesService.getScriptProperties().getProperty('API_TOKEN');
+    if (!token || body.token !== token) {
+      out = { error: 'unauthorized: API_TOKEN 불일치 (스크립트 속성에 API_TOKEN 설정 필요)' };
+    } else if (body.action === 'getAll') {
+      out = apiGetAll();
+    } else if (body.action === 'applyOp' && body.op) {
+      out = apiApplyOp(body.op);
+    } else {
+      out = { error: 'unknown action: getAll | applyOp 중 하나를 보내세요' };
+    }
+  } catch (err) {
+    out = { error: String(err) };
+  }
+  return ContentService.createTextOutput(JSON.stringify(out))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 function getDbFile_() {
   var props = PropertiesService.getScriptProperties();
   var id = props.getProperty('DB_FILE_ID');
