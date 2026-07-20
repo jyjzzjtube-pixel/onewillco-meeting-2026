@@ -1,0 +1,19 @@
+name: validate-seed
+on:
+  push:
+    branches: ['**']
+    paths: ['data/seed.json', 'tools/validate-seed.mjs']
+  pull_request:
+    paths: ['data/seed.json', 'tools/validate-seed.mjs']
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: git fetch origin main --quiet || true
+      - run: node tools/validate-seed.mjs
