@@ -710,6 +710,39 @@ function updateWhoChip() {
   document.getElementById('whoChip').textContent = myName();
 }
 
+/* ---------- 공식 데이터(seed) 로드 ----------
+   저장소의 data/seed.json = 공식 공유 데이터.
+   클로드코드·코덱스가 git으로 기입하면 이 화면에 자동 반영된다.
+   병합 규칙: 항목 필드는 seed 우선, 댓글·자료는 id 기준 합집합(로컬 대화 보존). */
+async function loadSeed() {
+  if (REMOTE) return; // 배포 웹앱은 서버 DB가 기준 (자동화는 doPost API 사용)
+  try {
+    const res = await fetch('data/seed.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const seed = await res.json();
+    if (!seed || !Array.isArray(seed.brands) || !Array.isArray(seed.listings)) return;
+    const mergeColl = (local, seedArr) => {
+      let changed = false;
+      seedArr.forEach(se => {
+        const ex = local.find(x => x.id === se.id);
+        if (!ex) { local.push(JSON.parse(JSON.stringify(se))); changed = true; return; }
+        const { comments: sc = [], docs: sd = [], ...fields } = se;
+        Object.assign(ex, fields);
+        ex.comments = ex.comments || [];
+        sc.forEach(c => { if (!ex.comments.some(x => x.id === c.id)) { ex.comments.push(c); changed = true; } });
+        ex.comments.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+        ex.docs = ex.docs || [];
+        sd.forEach(d0 => { if (!ex.docs.some(x => x.id === d0.id)) { ex.docs.push(d0); changed = true; } });
+        changed = true;
+      });
+      return changed;
+    };
+    const c1 = mergeColl(DB.brands, seed.brands);
+    const c2 = mergeColl(DB.listings, seed.listings);
+    if (c1 || c2) { save(); rerenderAll(); }
+  } catch (e) { /* 오프라인/로컬 파일 실행 시 조용히 무시 */ }
+}
+
 /* ---------- 네비게이션 ---------- */
 const PAGE_TITLES = { dash: '대시보드', brands: '브랜드 M&A 목록', listings: '양도양수 매물', data: '데이터 관리' };
 function go(page) {
@@ -1370,6 +1403,7 @@ renderBrands();
 renderListings();
 renderDash();
 refreshCounts();
+loadSeed();
 
 if (REMOTE) {
   document.querySelector('.sidebar .foot').innerHTML =

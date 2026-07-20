@@ -36,6 +36,17 @@ clasp deploy --description "v1"
 기존 `/exec` 주소가 그대로 유지됩니다. "새 배포"를 새로 만들면 주소가 달라지니 주의.
 (clasp는 `clasp push` 후 `clasp deploy -i <기존 배포 ID>`)
 
+## 자동화 API 켜기 (선택 — 클로드코드·코덱스가 직접 기입)
+
+1. Apps Script 편집기 → ⚙ **프로젝트 설정** → **스크립트 속성** → 속성 추가
+   - 속성: `API_TOKEN` / 값: 아무 긴 문자열 (예: 무작위 32자)
+2. 이후 에이전트가 아래처럼 기입 가능 (자세한 op 형식은 저장소 `AGENTS.md`):
+
+```bash
+curl -sL -X POST '<웹앱 /exec 주소>' -H 'Content-Type: application/json' \
+  -d '{"token":"<API_TOKEN>","action":"getAll"}'
+```
+
 ## 파일 안내
 
 - `Code.gs` — 서버: 화면 서비스 + 공유 DB(드라이브의 `onewillco_mna_db.json`) 읽기/쓰기, 동시 편집 잠금 처리
