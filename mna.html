@@ -376,6 +376,25 @@ table.cmp-table td.best { background: var(--green-bg); color: var(--green-fg); f
 .onboard h3 { font-size: 17px; color: var(--navy); margin-bottom: 6px; }
 .onboard p { color: var(--muted-fg); font-size: 13.5px; margin-bottom: 16px; }
 .onboard .btn { display:inline-flex; }
+/* 손익 입력표 (원윌앤코) */
+.pnl-head { display:flex; align-items:center; gap:10px; margin:8px 0 6px; }
+.pnl-head .u { margin-left:auto; }
+.pnl-head select { height:30px; border:1px solid var(--border); border-radius:8px; padding:0 8px; outline:none; }
+.pnl-wrap { overflow-x:auto; }
+table.pnl { width:100%; border-collapse:collapse; font-size:13px; min-width:420px; }
+table.pnl th { text-align:left; font-size:11px; color:var(--muted-fg); font-weight:700; padding:4px 6px; }
+table.pnl td { padding:3px 6px; border-bottom:1px solid var(--muted); vertical-align:middle; }
+.pnl-lbl { width:100%; min-width:70px; border:none; background:none; font-weight:600; outline:none; padding:5px 4px; color:var(--fg); font-size:13px; }
+.pnl-lbl:focus { background:var(--muted); border-radius:6px; }
+.pnl-amt { width:124px; text-align:right; border:1px solid var(--border); border-radius:6px; padding:6px 8px; outline:none; font-variant-numeric:tabular-nums; font-size:13px; }
+.pnl-amt:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-20); }
+.pnl-cap { font-size:11px; color:var(--muted-fg); white-space:nowrap; }
+.pnl-pct { width:58px; text-align:right; border:1px solid var(--border); border-radius:6px; padding:6px 6px; outline:none; font-size:13px; }
+.pnl-pct:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-20); }
+.pnl-del { background:none; border:none; color:var(--muted-fg); cursor:pointer; font-size:12px; padding:4px; }
+.pnl-del:hover { color:var(--destructive); }
+.pnl-foot-line { margin-top:8px; background:var(--primary-10); border-radius:8px; padding:9px 12px; font-size:13px; font-weight:600; }
+.pnl-add { margin-top:8px; }
 /* 폼 섹션 구분 */
 .form-section { grid-column:1/-1; font-size:12.5px; font-weight:800; color:var(--primary); margin:10px 0 -2px; padding-top:10px; border-top:1px solid var(--border); letter-spacing:.01em; }
 /* 회계사 검토란 */
@@ -1113,6 +1132,100 @@ function fundNeededOf(l) {
   if (a.fundNeeded != null && a.fundNeeded !== '') return Number(a.fundNeeded);
   return (Number(l.price) || 0) + (Number(l.premium) || 0) + (Number(l.deposit) || 0);
 }
+/* ---------- 손익 입력표 (원윌앤코) ---------- */
+const PNL_DEFAULTS = [
+  { label: '총매출', base: true, isCost: false },
+  { label: '평균매출', isCost: false },
+  { label: '임대료', isCost: true },
+  { label: '관리비', isCost: true },
+  { label: '재료비', isCost: true },
+  { label: '인건비', isCost: true },
+  { label: '공과금', isCost: true },
+  { label: '기타잡비', isCost: true },
+];
+function ensurePnl(l) {
+  if (!l.pnl || !Array.isArray(l.pnl.items)) {
+    l.pnl = { unit: '만원', items: PNL_DEFAULTS.map(d => ({ id: uid(), label: d.label, man: null, isCost: !!d.isCost, base: !!d.base })) };
+  }
+  return l.pnl;
+}
+function pnlHasData(l) { return !!(l.pnl && l.pnl.items && l.pnl.items.some(x => x.man != null && x.man !== '')); }
+function pnlBaseMan(pnl) { const b = pnl.items.find(x => x.base); return b && b.man != null && b.man !== '' ? Number(b.man) : 0; }
+function fmtWon(man) { if (man == null || man === '' || isNaN(man)) return '-'; return Math.round(Number(man) * 10000).toLocaleString() + '원'; }
+function pnlDisp(man, unit) { if (man == null || man === '' || isNaN(man)) return ''; return unit === '원' ? Math.round(Number(man) * 10000) : Number(man); }
+function persistPnl(id) { const l = ent('listing', id); if (!l) return; save(); sendOp({ type: 'upsertListing', listing: { id, pnl: l.pnl } }); renderListings(); }
+function pnlStart(id) { const l = ent('listing', id); if (!l) return; ensurePnl(l); persistPnl(id); renderDetail(id); }
+function pnlUnit(id, u) { const l = ent('listing', id); if (!l || !l.pnl) return; l.pnl.unit = u; persistPnl(id); renderDetail(id); }
+function pnlLabel(id, rid, v) { const l = ent('listing', id); const it = l?.pnl?.items.find(x => x.id === rid); if (it) { it.label = v; persistPnl(id); } }
+function pnlAmt(id, rid, v) {
+  const l = ent('listing', id); if (!l || !l.pnl) return;
+  const it = l.pnl.items.find(x => x.id === rid); if (!it) return;
+  const num = (v === '' || v == null) ? null : Number(v);
+  it.man = (num == null || isNaN(num)) ? null : (l.pnl.unit === '원' ? num / 10000 : num);
+  persistPnl(id); pnlSyncDom(id);
+}
+function pnlPct(id, rid, v) {
+  const l = ent('listing', id); if (!l || !l.pnl) return;
+  const it = l.pnl.items.find(x => x.id === rid); if (!it || it.base) return;
+  const base = pnlBaseMan(l.pnl);
+  if (v === '' || v == null) it.man = null;
+  else if (base > 0) it.man = base * Number(v) / 100;
+  persistPnl(id); pnlSyncDom(id);
+}
+function pnlAddRow(id) { const l = ent('listing', id); if (!l) { return; } ensurePnl(l); l.pnl.items.push({ id: uid(), label: '새 항목', man: null, isCost: true }); persistPnl(id); renderDetail(id); }
+function pnlDelRow(id, rid) { const l = ent('listing', id); if (!l || !l.pnl) return; l.pnl.items = l.pnl.items.filter(x => x.id !== rid); persistPnl(id); renderDetail(id); }
+function pnlSyncDom(id) {
+  const l = ent('listing', id); if (!l || !l.pnl) return;
+  const pnl = l.pnl, base = pnlBaseMan(pnl);
+  pnl.items.forEach(it => {
+    const cap = document.getElementById('pcap-' + it.id); if (cap) cap.textContent = (it.man != null && it.man !== '') ? fmtWon(it.man) : '';
+    const amt = document.getElementById('pamt-' + it.id); if (amt && document.activeElement !== amt) amt.value = pnlDisp(it.man, pnl.unit);
+    const pct = document.getElementById('ppct-' + it.id);
+    if (pct && document.activeElement !== pct) { const p = (base > 0 && it.man != null && it.man !== '') ? (Number(it.man) / base * 100) : null; pct.value = p != null ? p.toFixed(1) : ''; }
+  });
+  const tf = document.getElementById('pnlfoot-' + id);
+  if (tf) {
+    const cost = pnl.items.filter(x => x.isCost && !x.base).reduce((sm, x) => sm + (Number(x.man) || 0), 0);
+    const profit = base - cost;
+    tf.innerHTML = base > 0
+      ? `총비용 ${fmtMoney(Math.round(cost))} · 영업이익 <b class="${profit >= 0 ? 'profit-pos' : 'profit-neg'}">${fmtMoney(Math.round(profit))}</b> (${fmtWon(profit)}) · 이익률 ${(profit / base * 100).toFixed(1)}%`
+      : '총매출을 입력하면 비용 비율·영업이익이 자동 계산됩니다.';
+  }
+}
+function pnlDetailHTML(l) {
+  if (!l.pnl || !pnlHasData(l) && !(l.pnl && l.pnl.items)) {
+    return `<details class="fold"><summary>💹 손익 입력표 · 원윌앤코 <b>미작성</b></summary>
+      <div style="padding:8px 0"><button class="btn ghost sm" onclick="pnlStart('${l.id}')">＋ 손익 입력표 시작 (총매출·임대료·재료비·인건비 등 기본 항목)</button></div></details>`;
+  }
+  const pnl = l.pnl, base = pnlBaseMan(pnl);
+  const rows = pnl.items.map(it => {
+    const pct = (base > 0 && it.man != null && it.man !== '') ? (Number(it.man) / base * 100) : null;
+    return `<tr>
+      <td><input class="pnl-lbl" value="${esc(it.label)}" ${it.base ? 'readonly' : ''} onchange="pnlLabel('${l.id}','${it.id}',this.value)"></td>
+      <td style="text-align:right"><input class="pnl-amt" id="pamt-${it.id}" type="number" step="any" inputmode="numeric" value="${pnlDisp(it.man, pnl.unit)}" oninput="pnlAmt('${l.id}','${it.id}',this.value)"></td>
+      <td class="pnl-cap" id="pcap-${it.id}">${(it.man != null && it.man !== '') ? fmtWon(it.man) : ''}</td>
+      <td style="text-align:right;white-space:nowrap">${it.base ? '<span class="pnl-cap">기준 100%</span>' : `<input class="pnl-pct" id="ppct-${it.id}" type="number" step="any" value="${pct != null ? pct.toFixed(1) : ''}" oninput="pnlPct('${l.id}','${it.id}',this.value)"><span class="pnl-cap"> %</span>`}</td>
+      <td>${it.base ? '' : `<button class="pnl-del" title="항목 삭제" onclick="pnlDelRow('${l.id}','${it.id}')">✕</button>`}</td>
+    </tr>`;
+  }).join('');
+  return `<details class="fold" open>
+    <summary>💹 손익 입력표 · 원윌앤코 <b>${pnlHasData(l) ? '작성중' : ''}</b></summary>
+    <div class="pnl-head">
+      <span class="pnl-cap">금액을 넣으면 % 자동 · %를 넣으면 금액 자동 (총매출 대비)</span>
+      <span class="u">단위 <select onchange="pnlUnit('${l.id}',this.value)">
+        <option ${pnl.unit === '만원' ? 'selected' : ''}>만원</option>
+        <option ${pnl.unit === '원' ? 'selected' : ''}>원</option>
+      </select></span>
+    </div>
+    <div class="pnl-wrap"><table class="pnl">
+      <thead><tr><th>항목</th><th style="text-align:right">금액(${esc(pnl.unit)})</th><th>환산</th><th style="text-align:right">매출대비</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <div class="pnl-add"><button class="btn ghost sm" onclick="pnlAddRow('${l.id}')">＋ 항목 추가</button></div>
+    <div class="pnl-foot-line" id="pnlfoot-${l.id}"></div>
+  </details>`;
+}
+
 function acctDetailHTML(l) {
   const a = l.acct || {};
   const n = acctFilled(l);
@@ -1482,6 +1595,7 @@ function renderListings() {
         ${(l.checks?.length || 0) ? `<span class="cmt">✅ ${l.checks.filter(c => c.done).length}/${l.checks.length}</span>` : ''}
         ${(l.docs?.length || 0) ? `<span class="cmt">📎 ${l.docs.length}</span>` : ''}
         ${(l.files?.length || 0) ? `<span class="cmt">🖼 ${l.files.length}</span>` : ''}
+        ${pnlHasData(l) ? `<span class="cmt" style="background:var(--primary-10);color:var(--primary)">💹</span>` : ''}
         ${acctFilled(l) ? `<span class="cmt" style="background:var(--green-bg);color:var(--green-fg)">🧮 ${acctFilled(l)}</span>` : ''}
         <span class="cmt ${cn ? 'hot' : ''}">💬 ${cn}</span>
       </div>
@@ -1674,6 +1788,7 @@ function renderDetail(id) {
     ${anomalyBoxHTML('listing', l)}
     ${nextActionHTML(l)}
     ${l.desc ? `<div class="detail-desc">${esc(l.desc)}</div>` : ''}
+    ${pnlDetailHTML(l)}
     ${acctDetailHTML(l)}
     ${l.link ? `<div style="margin-bottom:14px;font-size:13px">🔗 <a href="${esc(l.link)}" target="_blank" rel="noopener" style="color:var(--blue)">원본 매물 링크 열기</a></div>` : ''}
     <div style="display:flex;gap:8px;margin-bottom:18px">
@@ -1884,6 +1999,7 @@ let _thumbUrls = [];
 function afterDetailRender(kind, id) {
   const o = ent(kind, id);
   if (!o) return;
+  if (kind === 'listing' && o.pnl) pnlSyncDom(id);
   // 이미지 썸네일 로드
   _thumbUrls.forEach(u => URL.revokeObjectURL(u)); _thumbUrls = [];
   (o.files || []).forEach(f => {

@@ -26,6 +26,7 @@ main에 머지되면 약 1분 내에 위 주소의 모든 접속자 화면에 �
 - 선택 필드: `trust`(숫자 신뢰도: `주장`|`자료확인`|`실사검증` — AI가 공식 자료로 대조 확인한 경우에만 `자료확인`),
   `nextAction`(다음 액션 텍스트), `nextDue`(기한 YYYY-MM-DD), `ownerSalary`(매물 점주 월 인건비 만원 — 넣으면 실사장 회수기간·신호등이 이를 반영). 확실치 않으면 생략(주장으로 표시됨).
 - 선택 필드 `acct`(회계사 검토란 객체 — 모객·브리핑용): `taxSales`(부가세 신고 연매출 만원), `hasFin`(재무제표: 있음|없음|미확인), `insuredCount`(4대보험 인원), `expectedTax`(예상세금 만원), `dealType`(자산양수도|지분양수도), `debtAssume`, `premiumTax`, `fundNeeded`·`loanAvail`·`equity`(만원), `downPayment`(계약금 만원), `balanceDate`(잔금일 YYYY-MM-DD), `license`, `staffTransfer`, `leaseRemain`. 회계사가 확인한 값만 넣고 모르면 생략.
+- 선택 필드 `pnl`(원윌앤코 손익 입력표): `{ "unit": "만원", "items": [ { "id": "...", "label": "총매출", "man": 5200, "base": true }, { "id":"...", "label":"임대료", "man": 380, "isCost": true } ] }`. `man`은 항상 **만원 기준 숫자**(화면에서 만원/원 단위 토글로 표시). base 항목(총매출) 대비 %는 화면에서 자동 계산.
 - **파일·사진 첨부(`files`)는 기입하지 말 것.** 사용자가 화면에서 직접 올리는 로컬 전용 필드다. AI는 공유가 필요한 자료를 `docs`(링크)로 넣는다.
 
 ## 스키마 + 예시

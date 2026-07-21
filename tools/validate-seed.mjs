@@ -75,6 +75,16 @@ function checkExtras(o, tag) {
   if (o.nextAction != null && !isStr(o.nextAction)) errors.push(`${tag}: nextAction은 문자열`);
   if (o.nextDue != null && o.nextDue !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(o.nextDue)) errors.push(`${tag}: nextDue는 YYYY-MM-DD`);
 }
+function checkPnl(p, tag) {
+  if (p == null) return;
+  if (typeof p !== 'object' || !Array.isArray(p.items)) { errors.push(`${tag}: pnl는 {unit, items[]} 객체`); return; }
+  if (p.unit && !['만원', '원'].includes(p.unit)) errors.push(`${tag}: pnl.unit은 만원|원`);
+  p.items.forEach((it, i) => {
+    if (!isStr(it.id) || !it.id) errors.push(`${tag}: pnl.items[${i}].id 필요`);
+    if (!isStr(it.label)) errors.push(`${tag}: pnl.items[${i}].label 필요`);
+    if (it.man != null && (typeof it.man !== 'number' || Number.isNaN(it.man))) errors.push(`${tag}: pnl.items[${i}].man은 숫자(만원 기준)`);
+  });
+}
 function checkAcct(a, tag) {
   if (a == null) return;
   if (typeof a !== 'object' || Array.isArray(a)) { errors.push(`${tag}: acct는 객체`); return; }
@@ -135,6 +145,7 @@ const ids = new Set();
   checkExtras(l, tag);
   checkFilesMeta(l.files, tag);
   checkAcct(l.acct, tag);
+  checkPnl(l.pnl, tag);
   const sub = new Set();
   checkSub(l.comments, 'comments', tag, sub);
   checkSub(l.docs, 'docs', tag, sub);
