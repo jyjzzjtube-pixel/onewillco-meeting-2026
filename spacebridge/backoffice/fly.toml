@@ -1,0 +1,25 @@
+# Fly.io 배포 설정 — 상시 켜짐 + SQLite 영구 볼륨
+app = "gongganbridge-backoffice"
+primary_region = "nrt"   # 도쿄(한국에서 가장 가까움)
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  SB_DB = "/data/data.sqlite"
+
+# SQLite 파일을 영구 저장 (재배포해도 데이터 유지)
+[mounts]
+  source = "sb_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false   # 상시 켜짐(상담 접수 놓치지 않게)
+  min_machines_running = 1
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"
