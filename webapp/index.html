@@ -433,21 +433,21 @@ table.cmp-table td.best { background: var(--green-bg); color: var(--green-fg); f
 .ctr-card .cd { font-size:12px; color:var(--muted-fg); }
 .ctr-card .cgo { font-size:12px; color:var(--primary); font-weight:700; margin-top:2px; }
 /* A4 문서 미리보기 */
-.c-paper { background:#fff; color:#1a1a1a; border:1px solid var(--border); border-radius:6px; padding:40px 46px; max-width:820px; margin:0 auto; font-family:'바탕','Batang','맑은 고딕',serif; line-height:1.75; font-size:14px; }
-.c-paper .c-title { text-align:center; font-size:22px; font-weight:800; letter-spacing:.08em; margin:0 0 22px; }
-.c-paper .c-pre { margin:0 0 18px; text-align:justify; }
-.c-paper .c-art { margin:0 0 12px; }
-.c-paper .c-art h3 { font-size:14.5px; font-weight:700; margin:0 0 4px; }
-.c-paper .c-art p { margin:0 0 4px; text-align:justify; }
-.c-paper .c-num { margin:2px 0 2px 4px; }
-.c-paper .c-sub { margin:2px 0 2px 16px; }
-.c-paper .c-date { text-align:center; margin:26px 0 18px; letter-spacing:.05em; }
-.c-paper table.c-sign { width:100%; border-collapse:collapse; margin-top:8px; }
-.c-paper table.c-sign td { border:1px solid #bbb; padding:12px 14px; vertical-align:top; font-size:13px; }
-.c-paper table.c-sign td.c-role { width:130px; font-weight:700; background:#f5f5f7; white-space:nowrap; }
+.c-paper { background:#fff; color:#111418; border:1px solid var(--border); border-radius:6px; padding:52px 56px; max-width:820px; margin:0 auto; font-family:'바탕','Batang','RIDIBatang',serif; line-height:1.85; font-size:14px; letter-spacing:.01em; }
+.c-paper .c-title { text-align:center; font-size:23px; font-weight:700; letter-spacing:.2em; margin:0 0 24px; padding-bottom:16px; border-bottom:1.5px solid #111418; }
+.c-paper .c-pre { margin:0 0 20px; text-align:justify; color:#20242b; }
+.c-paper .c-art { margin:0 0 15px; }
+.c-paper .c-art h3 { font-size:15px; font-weight:700; margin:0 0 5px; color:#111418; letter-spacing:.02em; }
+.c-paper .c-art p { margin:0 0 5px; text-align:justify; color:#20242b; }
+.c-paper .c-num { margin:3px 0 3px 2px; }
+.c-paper .c-sub { margin:3px 0 3px 18px; }
+.c-paper .c-date { text-align:center; margin:36px 0 22px; letter-spacing:.14em; font-size:15px; }
+.c-paper table.c-sign { width:100%; border-collapse:collapse; margin-top:10px; }
+.c-paper table.c-sign td { border:1px solid #2b2f36; padding:14px 16px; vertical-align:top; font-size:13.5px; line-height:1.7; }
+.c-paper table.c-sign td.c-role { width:132px; font-weight:700; background:#f3f4f6; white-space:nowrap; text-align:center; }
 .c-paper .c-notice { margin-top:20px; padding-top:10px; border-top:1px solid #ddd; color:#b45; font-size:11.5px; }
 .c-paper .c-blank { color:#a9adbb; letter-spacing:1px; }
-.c-paper .c-val { font-weight:700; color:#1b1c27; background:linear-gradient(transparent 60%, #fff2b8 60%); padding:0 1px; }
+.c-paper .c-val { font-weight:700; color:#111418; background:linear-gradient(transparent 62%, #fff2b8 62%); padding:0 1px; }
 .ctr-form { border:1px solid var(--border); background:var(--muted); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
 .ctr-form .cf-head { font-weight:700; font-size:14px; margin-bottom:10px; }
 .ctr-form .cf-head span { font-weight:400; font-size:12px; color:var(--muted-fg); }
@@ -460,10 +460,12 @@ table.cmp-table td.best { background: var(--green-bg); color: var(--green-fg); f
 @media print {
   body > *:not(#printArea) { display:none !important; }
   #printArea { display:block !important; }
-  #printArea .c-paper { border:none; padding:0; max-width:none; margin:0; }
-  #printArea .c-val { background:none !important; padding:0; }
+  #printArea .c-paper { border:none; border-radius:0; max-width:none; margin:0; padding:15mm 16mm; font-size:13px; }
+  #printArea .c-val { background:none !important; padding:0; color:#000; font-weight:700; }
   #printArea .c-blank { color:#000; }
-  @page { margin:18mm 16mm; }
+  /* 여백을 0으로 두면 브라우저가 자동으로 넣는 머리글(날짜·제목)·바닥글(URL·페이지번호)이 사라진다.
+     실제 문서 여백은 위 .c-paper padding으로 준다. */
+  @page { size:A4; margin:0; }
 }
 /* 손익 입력표 (원윌앤코) */
 .pnl-head { display:flex; align-items:center; gap:10px; margin:8px 0 6px; }
@@ -3223,11 +3225,15 @@ function openContract(id) {
 }
 function printContract() {
   if (!_curContract) return;
+  const c = CONTRACTS.find(x => x.id === _curContract);
+  const prevTitle = document.title;
+  // 브라우저 머리글에 노출될 수 있는 문서 제목을 계약서명으로 잠깐 바꾼다(플랫폼 제목·주소 노출 방지)
+  if (c) document.title = c.title;
   const area = document.createElement('div');
   area.id = 'printArea';
   area.innerHTML = '<div class="c-paper">' + contractHTML(_curContract) + '</div>';
   document.body.appendChild(area);
-  const cleanup = () => { if (area.parentNode) area.remove(); window.removeEventListener('afterprint', cleanup); };
+  const cleanup = () => { document.title = prevTitle; if (area.parentNode) area.remove(); window.removeEventListener('afterprint', cleanup); };
   window.addEventListener('afterprint', cleanup);
   window.print();
   setTimeout(cleanup, 2000);
@@ -3235,7 +3241,7 @@ function printContract() {
 function downloadContract(fmt) {
   if (!_curContract) return;
   const c = CONTRACTS.find(x => x.id === _curContract);
-  const st = "body{font-family:'바탕','Batang',serif;line-height:1.8;font-size:14px;padding:34px} .c-title{text-align:center;font-size:22px;font-weight:bold;letter-spacing:.08em;margin-bottom:22px} .c-pre{margin-bottom:16px;text-align:justify} .c-art{margin-bottom:12px} .c-art h3{font-size:14px;margin:0 0 4px} .c-art p{margin:0 0 4px;text-align:justify} .c-num{margin-left:4px} .c-sub{margin-left:16px} .c-date{text-align:center;margin:24px 0} table.c-sign{width:100%;border-collapse:collapse;margin-top:6px} table.c-sign td{border:1px solid #999;padding:12px} td.c-role{width:130px;font-weight:bold;background:#f5f5f7} .c-blank{color:#555;letter-spacing:1px} .c-val{font-weight:bold}";
+  const st = "@page{size:A4;margin:20mm 18mm} body{font-family:'바탕','Batang',serif;color:#111418;line-height:1.85;font-size:11pt;margin:0} .c-title{text-align:center;font-size:17pt;font-weight:bold;letter-spacing:3px;margin:0 0 20px;padding-bottom:12px;border-bottom:1.5px solid #111418} .c-pre{margin:0 0 16px;text-align:justify} .c-art{margin:0 0 12px} .c-art h3{font-size:11.5pt;font-weight:bold;margin:0 0 4px} .c-art p{margin:0 0 4px;text-align:justify} .c-num{margin-left:2px} .c-sub{margin-left:18px} .c-date{text-align:center;margin:26px 0 18px;letter-spacing:2px;font-size:11.5pt} table.c-sign{width:100%;border-collapse:collapse;margin-top:8px} table.c-sign td{border:1px solid #2b2f36;padding:11px 14px;vertical-align:top;font-size:10.5pt;line-height:1.6} td.c-role{width:120px;font-weight:bold;background:#f3f4f6;text-align:center} .c-blank{color:#555;letter-spacing:1px} .c-val{font-weight:bold}";
   const html = '<html><head><meta charset="utf-8"><style>' + st + '</style></head><body>' + contractHTML(_curContract) + '</body></html>';
   const ext = fmt === 'hwp' ? '.doc' : '.doc';
   downloadBlob(html, 'application/msword;charset=utf-8', c.title + ext);
