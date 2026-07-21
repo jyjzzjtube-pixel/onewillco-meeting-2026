@@ -331,6 +331,17 @@ textarea.io:focus { border-color: var(--primary); outline: none; }
 .sig-yellow { background: var(--amber-bg); color: var(--amber-fg); }
 .sig-red { background: var(--red-bg); color: var(--destructive); }
 .sig-new { background: var(--primary); color: #fff; }
+.trust-claim { background: var(--muted); color: var(--muted-fg); }
+.trust-doc { background: var(--primary-10); color: var(--primary); }
+.trust-dd { background: var(--green-bg); color: var(--green-fg); }
+.l-card .cmp { display:flex; align-items:center; gap: 4px; font-size: 11px; color: var(--muted-fg); cursor: pointer; }
+.l-card .cmp input { width: 14px; height: 14px; accent-color: var(--primary); }
+table.cmp-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.cmp-table th { padding: 10px; border-bottom: 2px solid var(--primary); font-size: 13px; text-align: right; cursor: pointer; color: var(--primary); }
+table.cmp-table th:first-child { text-align: left; color: var(--muted-fg); cursor: default; }
+table.cmp-table td { padding: 9px 10px; border-bottom: 1px solid var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+table.cmp-table td:first-child { text-align: left; color: var(--muted-fg); font-size: 12.5px; }
+table.cmp-table td.best { background: var(--green-bg); color: var(--green-fg); font-weight: 700; }
 .anom-box { border: 1px solid #f0d9a8; background: #fffaf0; border-radius: var(--radius); padding: 10px 14px; margin-bottom: 14px; font-size: 13px; display:flex; flex-direction:column; gap: 4px; }
 .anom-box .error { color: var(--destructive); font-weight: 700; }
 .anom-box .warn { color: var(--amber-fg); }
@@ -500,6 +511,7 @@ details.fold summary b { color: var(--primary); }
           <option value="cmtDesc">댓글 많은순</option>
         </select>
         <div class="spacer"></div>
+        <button class="btn ghost" id="compareBtn" style="display:none" onclick="openCompare()">⚖ 비교하기 <b id="compareCnt"></b></button>
         <button class="btn" onclick="openListingForm()">＋ 매물 등록</button>
       </div>
       <div class="card-grid" id="listingGrid"></div>
@@ -553,6 +565,12 @@ details.fold summary b { color: var(--primary); }
         <select id="bf_status"><option>검토중</option><option>협상중</option><option>실사중</option><option>인수완료</option><option>보류</option></select>
       </div>
       <div class="f-group"><label>담당자</label><input id="bf_manager" placeholder="예: 진지윤"></div>
+      <div class="f-group"><label>숫자 신뢰도</label>
+        <select id="bf_trust"><option>주장</option><option>자료확인</option><option>실사검증</option></select>
+        <div class="hint">주장=매도자 말 · 자료확인=재무제표 등 대조 · 실사검증=회계사 검증</div>
+      </div>
+      <div class="f-group"><label>다음 액션</label><input id="bf_nextAction" placeholder="예: 가맹 손익 분리자료 수령"></div>
+      <div class="f-group"><label>액션 기한</label><input id="bf_nextDue" type="date"></div>
       <div class="f-group full"><label>메모</label><textarea id="bf_memo" rows="3" placeholder="가맹 구조, 리스크, 특이사항 등"></textarea></div>
     </div>
     <div class="modal-actions actions">
@@ -584,6 +602,12 @@ details.fold summary b { color: var(--primary); }
         <select id="lf_status"><option>판매중</option><option>협상중</option><option>계약진행</option><option>거래완료</option></select>
       </div>
       <div class="f-group"><label>원본 링크</label><input id="lf_link" placeholder="네이버·매물 사이트 URL (선택)"></div>
+      <div class="f-group"><label>숫자 신뢰도</label>
+        <select id="lf_trust"><option>주장</option><option>자료확인</option><option>실사검증</option></select>
+        <div class="hint">주장=매도자 말 · 자료확인=포스·신고서 대조 · 실사검증=회계사 검증</div>
+      </div>
+      <div class="f-group"><label>다음 액션</label><input id="lf_nextAction" placeholder="예: 부가세 신고서 수령"></div>
+      <div class="f-group"><label>액션 기한</label><input id="lf_nextDue" type="date"></div>
       <div class="f-group full"><label>상세 설명</label><textarea id="lf_desc" rows="3" placeholder="양도 사유, 시설 상태, 인수 조건 등"></textarea></div>
     </div>
     <div class="modal-actions actions">
@@ -952,6 +976,19 @@ function lastActivity(o) {
 }
 function isNew(o) { return lastActivity(o) > (readMap()[o.id] || 0); }
 function newBadge(o) { return isNew(o) ? ' <span class="sig sig-new">NEW</span>' : ''; }
+function trustBadge(o) {
+  const t = o.trust || '주장';
+  const cls = t === '실사검증' ? 'trust-dd' : t === '자료확인' ? 'trust-doc' : 'trust-claim';
+  return `<span class="sig ${cls}" title="숫자 신뢰도 — 주장: 매도자 말뿐 / 자료확인: 재무제표·포스 대조 / 실사검증: 회계사 검증 완료">${t}</span>`;
+}
+function isOverdue(o) {
+  return !!(o.nextDue && o.nextDue < new Date().toISOString().slice(0, 10) && !['인수완료', '보류', '거래완료'].includes(o.status));
+}
+function nextActionHTML(o) {
+  if (!o.nextAction) return '';
+  const od = isOverdue(o);
+  return `<div class="detail-desc" style="background:var(--primary-10);color:var(--secondary-fg)">▸ 다음 액션: <b>${esc(o.nextAction)}</b>${o.nextDue ? ` <span class="${od ? 'profit-neg' : ''}">(기한 ${esc(o.nextDue)}${od ? ' — 지남 ⏰' : ''})</span>` : ''}</div>`;
+}
 
 function statusBadgeBrand(s) {
   const map = { '검토중':'b-review', '협상중':'b-nego', '실사중':'b-dd', '인수완료':'b-done', '보류':'b-hold' };
@@ -999,7 +1036,7 @@ function renderBrands() {
     const cn = b.comments?.length || 0;
     const dn = b.docs?.length || 0;
     return `<tr onclick="openBrandDetail('${b.id}')" style="cursor:pointer" title="클릭하면 상세·질문답변 창이 열립니다">
-      <td><b>${esc(b.corpName)}</b> ${sigBadge('brand', b)}${newBadge(b)} ${cn ? `<span class="badge b-dd">💬 ${cn}</span>` : ''}${dn ? ` <span class="badge b-review">📎 ${dn}</span>` : ''}${b.memo ? `<div class="sub" title="${esc(b.memo)}">📝 ${esc(b.memo.length > 18 ? b.memo.slice(0, 18) + '…' : b.memo)}</div>` : ''}</td>
+      <td><b>${esc(b.corpName)}</b> ${sigBadge('brand', b)} ${trustBadge(b)}${newBadge(b)} ${cn ? `<span class="badge b-dd">💬 ${cn}</span>` : ''}${dn ? ` <span class="badge b-review">📎 ${dn}</span>` : ''}${b.memo ? `<div class="sub" title="${esc(b.memo)}">📝 ${esc(b.memo.length > 18 ? b.memo.slice(0, 18) + '…' : b.memo)}</div>` : ''}</td>
       <td>${esc(b.tradeName)}${linked ? `<div class="sub">🏪 매물 ${linked}건</div>` : ''}</td>
       <td>${esc(b.industry) || '-'}</td>
       <td>${fmtDate(b.openDate)}<div class="sub">${yearsSince(b.openDate)}</div></td>
@@ -1033,6 +1070,9 @@ function openBrandForm(id) {
   bf_askPrice.value = b?.askPrice ?? '';
   bf_status.value = b?.status || '검토중';
   bf_manager.value = b?.manager || '';
+  bf_trust.value = b?.trust || '주장';
+  bf_nextAction.value = b?.nextAction || '';
+  bf_nextDue.value = b?.nextDue || '';
   bf_memo.value = b?.memo || '';
   openModal('brandModal');
 }
@@ -1050,6 +1090,9 @@ function saveBrand() {
     askPrice: bf_askPrice.value === '' ? null : Number(bf_askPrice.value),
     status: bf_status.value,
     manager: bf_manager.value.trim(),
+    trust: bf_trust.value,
+    nextAction: bf_nextAction.value.trim(),
+    nextDue: bf_nextDue.value,
     memo: bf_memo.value.trim(),
   };
   const bErrs = anomalies('brand', { ...(id ? DB.brands.find(x => x.id === id) : {}), ...data }).filter(a => a.level === 'error');
@@ -1103,7 +1146,7 @@ function renderBrandDetail(id) {
         <h2>${esc(b.corpName)}</h2>
         <div class="detail-region">🏢 ${esc(b.tradeName)} ${b.industry ? '· ' + esc(b.industry) : ''} ${b.manager ? '· 담당 ' + esc(b.manager) : ''}</div>
       </div>
-      <div style="display:flex;gap:6px">${sigBadge('brand', b)} ${statusBadgeBrand(b.status)}</div>
+      <div style="display:flex;gap:6px">${sigBadge('brand', b)} ${trustBadge(b)} ${statusBadgeBrand(b.status)}</div>
     </div>
     <div class="detail-price">${fmtMoney(b.askPrice)} <small>희망 양도가</small></div>
     <div class="detail-grid">
@@ -1115,6 +1158,7 @@ function renderBrandDetail(id) {
       <div class="cell" title="인수 배수 = 희망양도가 ÷ 연영업이익"><div class="k">인수 배수 ⓘ</div><div class="v">${brandMultiple(b) == null ? '-' : brandMultiple(b).toFixed(1) + '배'}</div></div>
     </div>
     ${anomalyBoxHTML('brand', b)}
+    ${nextActionHTML(b)}
     ${b.memo ? `<div class="detail-desc">${esc(b.memo)}</div>` : ''}
     ${linked.length ? `<div class="detail-brand-link">🏪 연결 매물 ${linked.length}건: ${linked.map(l =>
       `<a href="javascript:void(0)" onclick="openDetail('${l.id}')" style="color:var(--blue)">${esc(l.title)}</a>`).join(' · ')}</div>` : ''}
@@ -1162,7 +1206,9 @@ function renderListings() {
           <div class="title">${esc(l.title)}${newBadge(l)}</div>
           <div class="region">📍 ${esc(l.region) || '-'} ${l.industry ? '· ' + esc(l.industry) : ''}</div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">${sigBadge('listing', l)} ${statusBadgeListing(l.status)}</div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">${sigBadge('listing', l)} ${statusBadgeListing(l.status)}
+          <label class="cmp" onclick="event.stopPropagation()"><input type="checkbox" ${compareSel.has(l.id) ? 'checked' : ''} onchange="toggleCompare('${l.id}')"> 비교</label>
+        </div>
       </div>
       <div class="price">${fmtMoney(l.price)} <small>양도가</small></div>
       <div class="nums">
@@ -1183,6 +1229,59 @@ function renderListings() {
     </div>`;
   }).join('');
   refreshCounts();
+  const cb = document.getElementById('compareBtn');
+  if (cb) { cb.style.display = compareSel.size >= 2 ? 'inline-flex' : 'none'; document.getElementById('compareCnt').textContent = compareSel.size; }
+}
+const compareSel = new Set();
+function toggleCompare(id) {
+  if (compareSel.has(id)) compareSel.delete(id);
+  else {
+    if (compareSel.size >= 4) { toast('비교는 최대 4개까지 선택할 수 있습니다.'); renderListings(); return; }
+    compareSel.add(id);
+  }
+  renderListings();
+}
+function openCompare() {
+  const items = DB.listings.filter(l => compareSel.has(l.id));
+  if (items.length < 2) { toast('카드에서 [비교]를 체크해 2개 이상 선택하세요.'); return; }
+  currentDetail = null;
+  const inv = l => (Number(l.price) || 0) + (Number(l.premium) || 0) + (Number(l.deposit) || 0);
+  const rows = [
+    ['신호등', l => sigBadge('listing', l)],
+    ['상태', l => statusBadgeListing(l.status)],
+    ['양도가', l => fmtMoney(l.price)],
+    ['권리금', l => fmtMoney(l.premium)],
+    ['보증금', l => fmtMoney(l.deposit)],
+    ['월세', l => fmtMoney(l.rent)],
+    ['월매출', l => fmtMoney(l.mRevenue)],
+    ['월수익', l => fmtMoney(l.mProfit), 'max', l => Number(l.mProfit) || null],
+    ['총 투자금', l => fmtMoney(inv(l)), 'min', l => inv(l) || null],
+    ['회수기간', l => fmtMonths(payback(l)), 'min', l => payback(l)],
+    ['연수익률', l => yieldPct(l) == null ? '-' : yieldPct(l).toFixed(1) + '%', 'max', l => yieldPct(l)],
+    ['전용면적', l => l.size ? esc(String(l.size)) + '평' : '-'],
+    ['신뢰도', l => trustBadge(l)],
+  ];
+  const bestIdx = row => {
+    if (!row[2]) return -1;
+    const vals = items.map(row[3]);
+    let bi = -1, bv = null;
+    vals.forEach((v, i) => {
+      if (v == null) return;
+      if (bv == null || (row[2] === 'min' ? v < bv : v > bv)) { bv = v; bi = i; }
+    });
+    return vals.filter(v => v != null).length > 1 ? bi : -1;
+  };
+  document.getElementById('detailBody').innerHTML = `
+    <h2>⚖ 매물 비교 (${items.length})</h2>
+    <div class="table-wrap"><table class="cmp-table">
+      <thead><tr><th>항목</th>${items.map(l => `<th onclick="openDetail('${l.id}')" title="클릭하면 상세로 이동">${esc(l.title)}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(row => {
+        const bi = bestIdx(row);
+        return `<tr><td>${row[0]}</td>${items.map((l, i) => `<td class="${i === bi ? 'best' : ''}">${row[1](l)}</td>`).join('')}</tr>`;
+      }).join('')}</tbody>
+    </table></div>
+    <div style="font-size:12px;color:var(--muted-fg);margin-top:10px">초록 칸 = 항목별 최우수. 열 제목을 클릭하면 해당 매물 상세로 이동합니다.</div>`;
+  openModal('detailModal');
 }
 function brandOptions(selected) {
   return `<option value="">(연결 안함)</option>` + DB.brands.map(b =>
@@ -1206,6 +1305,9 @@ function openListingForm(id) {
   lf_floor.value = l?.floor || '';
   lf_status.value = l?.status || '판매중';
   lf_link.value = l?.link || '';
+  lf_trust.value = l?.trust || '주장';
+  lf_nextAction.value = l?.nextAction || '';
+  lf_nextDue.value = l?.nextDue || '';
   lf_desc.value = l?.desc || '';
   openModal('listingModal');
 }
@@ -1223,6 +1325,7 @@ function saveListing() {
     mRevenue: numOr(lf_mRevenue.value), mProfit: numOr(lf_mProfit.value),
     size: numOr(lf_size.value), floor: lf_floor.value.trim(),
     status: lf_status.value, link: lf_link.value.trim(), desc: lf_desc.value.trim(),
+    trust: lf_trust.value, nextAction: lf_nextAction.value.trim(), nextDue: lf_nextDue.value,
   };
   const lErrs = anomalies('listing', { ...(id ? DB.listings.find(x => x.id === id) : {}), ...data }).filter(a => a.level === 'error');
   if (lErrs.length && !confirm('⛔ 숫자 이상 감지:\n- ' + lErrs.map(a => a.msg).join('\n- ') + '\n\n그래도 저장할까요?')) return;
@@ -1272,7 +1375,7 @@ function renderDetail(id) {
         <h2>${esc(l.title)}</h2>
         <div class="detail-region">📍 ${esc(l.region) || '-'} ${l.industry ? '· ' + esc(l.industry) : ''} ${l.floor ? '· ' + esc(l.floor) : ''}</div>
       </div>
-      <div style="display:flex;gap:6px">${sigBadge('listing', l)} ${statusBadgeListing(l.status)}</div>
+      <div style="display:flex;gap:6px">${sigBadge('listing', l)} ${trustBadge(l)} ${statusBadgeListing(l.status)}</div>
     </div>
     <div class="detail-price">${fmtMoney(l.price)} <small>양도 희망가</small></div>
     ${brand ? `<div class="detail-brand-link">🏢 연결 브랜드: <b>${esc(brand.tradeName)}</b> (${esc(brand.corpName)}) — 지점 ${fmtNum(brand.branches)}개 · 연매출 ${fmtMoney(brand.revenue)} · 영업이익 ${fmtMoney(brand.profit)}</div>` : ''}
@@ -1287,6 +1390,7 @@ function renderDetail(id) {
       <div class="cell" title="연수익률 = 월수익×12 ÷ (양도가+권리금+보증금)"><div class="k">연수익률 ⓘ</div><div class="v ${yieldPct(l) != null && yieldPct(l) >= 30 ? 'profit-pos' : ''}">${yieldPct(l) == null ? '-' : yieldPct(l).toFixed(1) + '%'}</div></div>
     </div>
     ${anomalyBoxHTML('listing', l)}
+    ${nextActionHTML(l)}
     ${l.desc ? `<div class="detail-desc">${esc(l.desc)}</div>` : ''}
     ${l.link ? `<div style="margin-bottom:14px;font-size:13px">🔗 <a href="${esc(l.link)}" target="_blank" rel="noopener" style="color:var(--blue)">원본 매물 링크 열기</a></div>` : ''}
     <div style="display:flex;gap:8px;margin-bottom:18px">
@@ -1392,7 +1496,8 @@ function renderPipeline() {
         return `<div class="k-card" onclick="${open}">
           <div class="t">${esc(isB ? o.tradeName : o.title)}${newBadge(o)}</div>
           <div class="m">${metric}</div>
-          <div style="margin-top:3px">${sigBadge(kind, o)}</div>
+          <div style="margin-top:3px">${sigBadge(kind, o)} ${trustBadge(o)}</div>
+          ${o.nextAction ? `<div class="m ${isOverdue(o) ? 'profit-neg' : ''}" style="margin-top:3px">▸ ${esc(o.nextAction)}${o.nextDue ? ' · ~' + esc(o.nextDue.slice(5)) : ''}${isOverdue(o) ? ' ⏰' : ''}</div>` : ''}
           ${checks.length ? `<div class="m">✅ ${checks.filter(c => c.done).length}/${checks.length}</div>` : ''}
           <div class="k-move" onclick="event.stopPropagation()">
             <button onclick="moveStage('${kind}','${o.id}',-1)">◀</button>
@@ -1577,6 +1682,7 @@ function renderDash() {
     const inDD = kind === 'brand' ? o.status === '실사중' : o.status === '계약진행';
     const cks = o.checks || [];
     if (inDD && cks.some(c => !c.done)) todos.push({ icon: '✅', tt: '실사 미완료', name: entName(kind, o), open: entOpen(kind, o), detail: cks.filter(c => c.done).length + '/' + cks.length + ' 완료' });
+    if (o.nextAction && isOverdue(o)) todos.push({ icon: '⏰', tt: '기한 지남', name: entName(kind, o), open: entOpen(kind, o), detail: o.nextAction + ' (~' + o.nextDue + ')' });
   });
   const todoEl = document.getElementById('dashTodo');
   if (todos.length) {
