@@ -75,6 +75,13 @@ function checkExtras(o, tag) {
   if (o.nextAction != null && !isStr(o.nextAction)) errors.push(`${tag}: nextAction은 문자열`);
   if (o.nextDue != null && o.nextDue !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(o.nextDue)) errors.push(`${tag}: nextDue는 YYYY-MM-DD`);
 }
+function checkAcct(a, tag) {
+  if (a == null) return;
+  if (typeof a !== 'object' || Array.isArray(a)) { errors.push(`${tag}: acct는 객체`); return; }
+  ['taxSales','insuredCount','expectedTax','fundNeeded','loanAvail','equity','downPayment'].forEach(k => {
+    if (a[k] != null && (typeof a[k] !== 'number' || Number.isNaN(a[k]))) errors.push(`${tag}: acct.${k}는 숫자(만원)`);
+  });
+}
 function checkFilesMeta(list, tag) {
   if (list == null) return;
   if (!Array.isArray(list)) { errors.push(`${tag}: files는 배열`); return; }
@@ -127,6 +134,7 @@ const ids = new Set();
   checkSource(l.source, tag);
   checkExtras(l, tag);
   checkFilesMeta(l.files, tag);
+  checkAcct(l.acct, tag);
   const sub = new Set();
   checkSub(l.comments, 'comments', tag, sub);
   checkSub(l.docs, 'docs', tag, sub);

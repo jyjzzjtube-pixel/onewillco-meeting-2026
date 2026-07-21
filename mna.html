@@ -43,8 +43,8 @@ body {
   font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   background: var(--bg);
   color: var(--fg);
-  line-height: 1.6;
-  font-size: 14.5px;
+  line-height: 1.62;
+  font-size: 15px;
 }
 button { font-family: inherit; cursor: pointer; }
 input, select, textarea { font-family: inherit; font-size: 14px; color: var(--fg); }
@@ -215,9 +215,9 @@ table.db td .sub { font-size: 11.5px; color: var(--muted-fg); }
 .l-card .head { display:flex; align-items:flex-start; gap:8px; }
 .l-card .title { font-size: 15.5px; font-weight:700; flex:1; }
 .l-card .region { font-size: 12px; color: var(--muted-fg); }
-.l-card .price { font-size: 20px; font-weight:800; color: var(--primary); font-variant-numeric: tabular-nums; }
+.l-card .price { font-size: 22px; font-weight:800; color: var(--primary); font-variant-numeric: tabular-nums; letter-spacing:-.01em; }
 .l-card .price small { font-size:12px; color: var(--muted-fg); font-weight:500; }
-.l-card .nums { display:grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; font-size: 12.5px; }
+.l-card .nums { display:grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; font-size: 13px; }
 .l-card .nums .k { color: var(--muted-fg); }
 .l-card .nums .v { font-weight:600; text-align:right; font-variant-numeric: tabular-nums; }
 .l-card .foot { display:flex; align-items:center; gap:8px; border-top:1px solid var(--muted); padding-top:10px; font-size:12px; color: var(--muted-fg); }
@@ -376,6 +376,17 @@ table.cmp-table td.best { background: var(--green-bg); color: var(--green-fg); f
 .onboard h3 { font-size: 17px; color: var(--navy); margin-bottom: 6px; }
 .onboard p { color: var(--muted-fg); font-size: 13.5px; margin-bottom: 16px; }
 .onboard .btn { display:inline-flex; }
+/* 폼 섹션 구분 */
+.form-section { grid-column:1/-1; font-size:12.5px; font-weight:800; color:var(--primary); margin:10px 0 -2px; padding-top:10px; border-top:1px solid var(--border); letter-spacing:.01em; }
+/* 회계사 검토란 */
+.acct-box { padding-top:6px; }
+.acct-grp { margin-bottom:10px; }
+.acct-grp h5 { font-size:11.5px; color:var(--muted-fg); font-weight:700; margin-bottom:4px; }
+.acct-row { display:flex; justify-content:space-between; gap:10px; font-size:13px; padding:5px 0; border-bottom:1px solid var(--muted); }
+.acct-row .k { color:var(--muted-fg); }
+.acct-row .v { font-weight:600; font-variant-numeric:tabular-nums; text-align:right; }
+.acct-empty { font-size:12.5px; color:var(--muted-fg); padding:4px 0; }
+.fund-line { background:var(--primary-10); border-radius:8px; padding:10px 12px; margin-top:8px; font-size:13px; line-height:1.6; }
 .anom-box { border: 1px solid #f0d9a8; background: #fffaf0; border-radius: var(--radius); padding: 10px 14px; margin-bottom: 14px; font-size: 13px; display:flex; flex-direction:column; gap: 4px; }
 .anom-box .error { color: var(--destructive); font-weight: 700; }
 .anom-box .warn { color: var(--amber-fg); }
@@ -415,6 +426,20 @@ details.fold summary b { color: var(--primary); }
 .check-row .del:hover { color: var(--destructive); }
 
 /* ===== Mobile ===== */
+@media (max-width: 760px) {
+  table.db { min-width: 0; }
+  table.db thead { display: none; }
+  table.db, table.db tbody, table.db tr, table.db td { display: block; width: 100%; }
+  table.db tr { border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; background: var(--card); box-shadow: var(--shadow); }
+  table.db tr:hover td { background: none; }
+  table.db td { border: none; border-bottom: 1px solid var(--muted); padding: 7px 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; white-space: normal; text-align: right; }
+  table.db td:first-child { display: block; text-align: left; font-size: 15px; padding-bottom: 9px; }
+  table.db td:first-child b { font-size: 16px; }
+  table.db td:last-child { border-bottom: none; justify-content: flex-end; }
+  table.db td[data-label]::before { content: attr(data-label); color: var(--muted-fg); font-size: 11.5px; font-weight: 600; text-align: left; white-space: nowrap; }
+  table.db td.num { justify-content: space-between; }
+  table.db td .sub { text-align: right; }
+}
 @media (max-width: 860px) {
   .sidebar { width: 100%; height:auto; position: static; padding: 12px 14px; border-right: none; border-bottom: 1px solid var(--border); }
   .sidebar .nav-wrap { display:flex; gap:6px; overflow-x:auto; }
@@ -638,6 +663,7 @@ details.fold summary b { color: var(--primary); }
     <button class="close-x" aria-label="닫기" onclick="closeModal('listingModal')">✕</button>
     <h2 id="listingFormTitle">매물 등록</h2>
     <div class="form-grid">
+      <div class="form-section">기본 정보 · M&A 최초 필요 항목</div>
       <div class="f-group"><label>매물명 <span class="req">*</span></label><input id="lf_title" placeholder="예: 포카드홀덤펍 강남점"></div>
       <div class="f-group"><label>연결 브랜드</label><select id="lf_brand"></select></div>
       <div class="f-group"><label>지역 <span class="req">*</span></label><input id="lf_region" placeholder="예: 서울 강남구 역삼동"></div>
@@ -661,7 +687,9 @@ details.fold summary b { color: var(--primary); }
       </div>
       <div class="f-group"><label>다음 액션</label><input id="lf_nextAction" placeholder="예: 부가세 신고서 수령"></div>
       <div class="f-group"><label>액션 기한</label><input id="lf_nextDue" type="date"></div>
-      <div class="f-group full"><label>상세 설명</label><textarea id="lf_desc" rows="3" placeholder="양도 사유, 시설 상태, 인수 조건 등"></textarea></div>
+      <div class="f-group full"><label>양도 사유 · 상세 설명</label><textarea id="lf_desc" rows="2" placeholder="양도 사유, 시설 상태, 인수 조건 등"></textarea></div>
+      <div class="form-section" style="color:var(--green-fg);border-top-color:var(--green-bg)">🧮 회계사 검토란 · 회계사가 채우는 칸 <span style="font-weight:400;color:var(--muted-fg)">(모객·브리핑용 · 비워도 됨)</span></div>
+      <div class="full" id="acctFields"></div>
     </div>
     <div class="modal-actions actions">
       <button class="btn ghost" onclick="closeModal('listingModal')">취소</button>
@@ -1021,6 +1049,92 @@ function fmtMonths(m) {
   if (m == null) return '-';
   return m < 12 ? Math.round(m) + '개월' : (m / 12).toFixed(1) + '년';
 }
+/* ---------- 회계사 검토란 (모객·브리핑용) ---------- */
+const ACCT_GROUPS = [
+  { title: '재무·세무 검증', fields: [
+    { key: 'taxSales', label: '부가세 신고 연매출(만원)', type: 'num' },
+    { key: 'hasFin', label: '재무제표', type: 'sel', opts: ['', '있음', '없음', '미확인'] },
+    { key: 'insuredCount', label: '4대보험 가입인원(명)', type: 'num' },
+    { key: 'expectedTax', label: '예상 세금·양도세/취득세(만원)', type: 'num' },
+  ] },
+  { title: '인수 구조', fields: [
+    { key: 'dealType', label: '인수 방식', type: 'sel', opts: ['', '자산양수도', '지분양수도', '미정'] },
+    { key: 'debtAssume', label: '부채 승계', type: 'sel', opts: ['', '없음', '일부', '전부', '미확인'] },
+    { key: 'premiumTax', label: '권리금 세무처리(원천징수)', type: 'sel', opts: ['', '필요', '불필요', '미확인'] },
+  ] },
+  { title: '자금 조달', fields: [
+    { key: 'fundNeeded', label: '필요자금 총액(만원)', type: 'num', ph: '비우면 양도가+권리금+보증금 자동' },
+    { key: 'loanAvail', label: '대출 가능액(만원)', type: 'num' },
+    { key: 'equity', label: '자기자본(만원)', type: 'num' },
+  ] },
+  { title: '계약·실사', fields: [
+    { key: 'downPayment', label: '계약금(만원)', type: 'num' },
+    { key: 'balanceDate', label: '잔금일', type: 'date' },
+    { key: 'license', label: '인허가·영업권 승계', type: 'sel', opts: ['', '승계가능', '불가', '미확인'] },
+    { key: 'staffTransfer', label: '종업원 승계', type: 'sel', opts: ['', '승계', '일부', '미승계', '미확인'] },
+    { key: 'leaseRemain', label: '임대차 잔여기간', type: 'text', ph: '예: 2년 3개월' },
+  ] },
+];
+const ACCT_ALL = ACCT_GROUPS.flatMap(g => g.fields);
+function acctFormHTML() {
+  return ACCT_GROUPS.map(g => `<div class="form-section" style="border:none;padding-top:2px;margin-top:4px;color:var(--muted-fg);font-size:11.5px">${g.title}</div>` +
+    g.fields.map(f => {
+      const id = 'af_' + f.key;
+      let input;
+      if (f.type === 'sel') input = `<select id="${id}">${f.opts.map(o => `<option value="${o}">${o || '미입력'}</option>`).join('')}</select>`;
+      else if (f.type === 'num') input = `<input id="${id}" type="number" placeholder="${f.ph || ''}">`;
+      else if (f.type === 'date') input = `<input id="${id}" type="date">`;
+      else input = `<input id="${id}" placeholder="${f.ph || ''}">`;
+      return `<div class="f-group"><label>${f.label}</label>${input}</div>`;
+    }).join('')).join('');
+}
+function acctLoad(l) {
+  const a = (l && l.acct) || {};
+  ACCT_ALL.forEach(f => { const el = document.getElementById('af_' + f.key); if (el) el.value = a[f.key] ?? ''; });
+}
+function acctRead() {
+  const a = {};
+  ACCT_ALL.forEach(f => {
+    const el = document.getElementById('af_' + f.key);
+    if (!el) return;
+    let v = el.value;
+    if (v === '') return;
+    a[f.key] = f.type === 'num' ? Number(v) : v;
+  });
+  return a;
+}
+function acctFilled(l) { const a = l.acct || {}; return ACCT_ALL.filter(f => a[f.key] != null && a[f.key] !== '').length; }
+function acctFmt(f, v) {
+  if (f.type === 'num') return (/만원/.test(f.label)) ? fmtMoney(v) : (fmtNum(v) + (/명/.test(f.label) ? '명' : ''));
+  return esc(String(v));
+}
+function fundNeededOf(l) {
+  const a = l.acct || {};
+  if (a.fundNeeded != null && a.fundNeeded !== '') return Number(a.fundNeeded);
+  return (Number(l.price) || 0) + (Number(l.premium) || 0) + (Number(l.deposit) || 0);
+}
+function acctDetailHTML(l) {
+  const a = l.acct || {};
+  const n = acctFilled(l);
+  const groups = ACCT_GROUPS.map(g => {
+    const rows = g.fields.filter(f => a[f.key] != null && a[f.key] !== '')
+      .map(f => `<div class="acct-row"><span class="k">${esc(f.label)}</span><span class="v">${acctFmt(f, a[f.key])}</span></div>`).join('');
+    return rows ? `<div class="acct-grp"><h5>${g.title}</h5>${rows}</div>` : '';
+  }).join('');
+  // 자금 요약
+  const need = fundNeededOf(l), loan = Number(a.loanAvail) || 0, eq = Number(a.equity) || 0;
+  const gap = need - loan - eq;
+  const roe = (eq > 0 && l.mProfit != null) ? (Number(effMProfit(l)) * 12 / eq * 100) : null;
+  const fund = (a.loanAvail != null || a.equity != null || a.fundNeeded != null) ? `<div class="fund-line">💰 필요자금 <b>${fmtMoney(need)}</b> = 대출 ${fmtMoney(loan)} + 자기자본 ${fmtMoney(eq)}${gap !== 0 ? ` <span class="${gap > 0 ? 'profit-neg' : 'profit-pos'}">(${gap > 0 ? '부족 ' + fmtMoney(gap) : '여유 ' + fmtMoney(-gap)})</span>` : ''}${roe != null ? ` · 자기자본수익률 <b class="${roe >= 30 ? 'profit-pos' : ''}">${roe.toFixed(1)}%</b>` : ''}</div>` : '';
+  return `<details class="fold"${n ? ' open' : ''}>
+    <summary>🧮 회계사 검토란 <b>${n ? n + '칸 작성' : '미작성'}</b></summary>
+    <div class="acct-box">
+      ${groups || '<div class="acct-empty">아직 작성된 항목이 없습니다. [매물 수정] → 회계사 검토란에서 채우세요.</div>'}
+      ${fund}
+    </div>
+  </details>`;
+}
+
 /* ---------- 이상치 자동 감지 (회계 팩트 체크) ---------- */
 function anomalies(kind, o) {
   const A = [];
@@ -1168,16 +1282,16 @@ function renderBrands() {
     return `<tr onclick="openBrandDetail('${b.id}')" style="cursor:pointer" title="클릭하면 상세·질문답변 창이 열립니다">
       <td><b>${esc(b.corpName)}</b> ${sigBadge('brand', b)} ${trustBadge(b)}${newBadge(b)}${agingBadge(b)} ${cn ? `<span class="badge b-dd">💬 ${cn}</span>` : ''}${dn ? ` <span class="badge b-review">📎 ${dn}</span>` : ''}${b.memo ? `<div class="sub" title="${esc(b.memo)}">📝 ${esc(b.memo.length > 18 ? b.memo.slice(0, 18) + '…' : b.memo)}</div>` : ''}</td>
       <td>${esc(b.tradeName)}${linked ? `<div class="sub">🏪 매물 ${linked}건</div>` : ''}</td>
-      <td>${esc(b.industry) || '-'}</td>
-      <td>${fmtDate(b.openDate)}<div class="sub">${yearsSince(b.openDate)}</div></td>
-      <td class="num">${fmtNum(b.branches)}</td>
-      <td class="num">${fmtMoney(b.revenue)}</td>
-      <td class="num ${Number(b.profit) < 0 ? 'profit-neg' : ''}">${fmtMoney(b.profit)}</td>
-      <td class="num ${mCls}">${m == null ? '-' : m.toFixed(1) + '%'}</td>
-      <td class="num">${fmtMoney(b.askPrice)}</td>
-      <td class="num">${brandMultiple(b) == null ? '-' : brandMultiple(b).toFixed(1) + '배'}</td>
-      <td>${statusBadgeBrand(b.status)}</td>
-      <td>${esc(b.manager) || '-'}</td>
+      <td data-label="업종">${esc(b.industry) || '-'}</td>
+      <td data-label="개업일">${fmtDate(b.openDate)}<div class="sub">${yearsSince(b.openDate)}</div></td>
+      <td class="num" data-label="지점수">${fmtNum(b.branches)}</td>
+      <td class="num" data-label="연매출">${fmtMoney(b.revenue)}</td>
+      <td class="num ${Number(b.profit) < 0 ? 'profit-neg' : ''}" data-label="영업이익">${fmtMoney(b.profit)}</td>
+      <td class="num ${mCls}" data-label="이익률">${m == null ? '-' : m.toFixed(1) + '%'}</td>
+      <td class="num" data-label="희망양도가">${fmtMoney(b.askPrice)}</td>
+      <td class="num" data-label="인수배수">${brandMultiple(b) == null ? '-' : brandMultiple(b).toFixed(1) + '배'}</td>
+      <td data-label="상태">${statusBadgeBrand(b.status)}</td>
+      <td data-label="담당">${esc(b.manager) || '-'}</td>
       <td onclick="event.stopPropagation()">
         <button class="btn ghost sm" onclick="openBrandForm('${b.id}')">수정</button>
 <button class="btn danger sm admin-only" onclick="deleteBrand('${b.id}')" style="display:${isAdmin() ? '' : 'none'}">삭제</button>
@@ -1368,6 +1482,7 @@ function renderListings() {
         ${(l.checks?.length || 0) ? `<span class="cmt">✅ ${l.checks.filter(c => c.done).length}/${l.checks.length}</span>` : ''}
         ${(l.docs?.length || 0) ? `<span class="cmt">📎 ${l.docs.length}</span>` : ''}
         ${(l.files?.length || 0) ? `<span class="cmt">🖼 ${l.files.length}</span>` : ''}
+        ${acctFilled(l) ? `<span class="cmt" style="background:var(--green-bg);color:var(--green-fg)">🧮 ${acctFilled(l)}</span>` : ''}
         <span class="cmt ${cn ? 'hot' : ''}">💬 ${cn}</span>
       </div>
     </div>`;
@@ -1468,6 +1583,8 @@ function openListingForm(id) {
   lf_nextAction.value = l?.nextAction || '';
   lf_nextDue.value = l?.nextDue || '';
   lf_desc.value = l?.desc || '';
+  document.getElementById('acctFields').innerHTML = acctFormHTML();
+  acctLoad(l);
   openModal('listingModal');
 }
 function saveListing() {
@@ -1485,6 +1602,7 @@ function saveListing() {
     size: numOr(lf_size.value), floor: lf_floor.value.trim(),
     status: lf_status.value, link: lf_link.value.trim(), desc: lf_desc.value.trim(),
     trust: lf_trust.value, nextAction: lf_nextAction.value.trim(), nextDue: lf_nextDue.value,
+    acct: acctRead(),
   };
   const lErrs = anomalies('listing', { ...(id ? DB.listings.find(x => x.id === id) : {}), ...data }).filter(a => a.level === 'error');
   if (lErrs.length && !confirm('⛔ 숫자 이상 감지:\n- ' + lErrs.map(a => a.msg).join('\n- ') + '\n\n그래도 저장할까요?')) return;
@@ -1556,6 +1674,7 @@ function renderDetail(id) {
     ${anomalyBoxHTML('listing', l)}
     ${nextActionHTML(l)}
     ${l.desc ? `<div class="detail-desc">${esc(l.desc)}</div>` : ''}
+    ${acctDetailHTML(l)}
     ${l.link ? `<div style="margin-bottom:14px;font-size:13px">🔗 <a href="${esc(l.link)}" target="_blank" rel="noopener" style="color:var(--blue)">원본 매물 링크 열기</a></div>` : ''}
     <div style="display:flex;gap:8px;margin-bottom:18px">
       <button class="btn ghost sm" onclick="openListingForm('${l.id}')">✏ 매물 수정</button>
