@@ -342,6 +342,16 @@ table.cmp-table th:first-child { text-align: left; color: var(--muted-fg); curso
 table.cmp-table td { padding: 9px 10px; border-bottom: 1px solid var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
 table.cmp-table td:first-child { text-align: left; color: var(--muted-fg); font-size: 12.5px; }
 table.cmp-table td.best { background: var(--green-bg); color: var(--green-fg); font-weight: 700; }
+.file-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr)); gap: 10px; margin: 6px 0 10px; }
+.file-tile { border:1px solid var(--border); border-radius: 8px; overflow:hidden; background: var(--card); position: relative; }
+.file-tile .thumb { width:100%; height: 72px; object-fit: cover; display:block; cursor:pointer; background: var(--muted); }
+.file-tile .ficon { height: 72px; display:flex; align-items:center; justify-content:center; font-size: 30px; background: var(--muted); cursor:pointer; }
+.file-tile .fname { font-size: 10.5px; padding: 4px 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color: var(--secondary-fg); }
+.file-tile .fdel { position:absolute; top:3px; right:3px; background: rgba(27,28,39,.6); color:#fff; border:none; border-radius: 6px; width:20px; height:20px; font-size: 11px; line-height:1; cursor:pointer; }
+.file-drop { border:1.5px dashed var(--border); border-radius: 8px; padding: 12px; text-align:center; color: var(--muted-fg); font-size: 12.5px; cursor:pointer; }
+.file-drop:hover, .file-drop.over { border-color: var(--primary); color: var(--primary); background: var(--primary-10); }
+.mail-note { font-size: 12.5px; color: var(--muted-fg); background: var(--muted); border-radius: 8px; padding: 10px 12px; margin: 10px 0; line-height: 1.6; }
+.mail-note b { color: var(--fg); }
 .anom-box { border: 1px solid #f0d9a8; background: #fffaf0; border-radius: var(--radius); padding: 10px 14px; margin-bottom: 14px; font-size: 13px; display:flex; flex-direction:column; gap: 4px; }
 .anom-box .error { color: var(--destructive); font-weight: 700; }
 .anom-box .warn { color: var(--amber-fg); }
@@ -511,6 +521,7 @@ details.fold summary b { color: var(--primary); }
           <option value="cmtDesc">댓글 많은순</option>
         </select>
         <div class="spacer"></div>
+        <button class="btn ghost" id="mailBulkBtn" style="display:none" onclick="openMail('listing', null, [...compareSel])">📧 선택 이메일 <b id="mailBulkCnt"></b></button>
         <button class="btn ghost" id="compareBtn" style="display:none" onclick="openCompare()">⚖ 비교하기 <b id="compareCnt"></b></button>
         <button class="btn" onclick="openListingForm()">＋ 매물 등록</button>
       </div>
@@ -622,6 +633,24 @@ details.fold summary b { color: var(--primary); }
   <div class="modal wide">
     <button class="close-x" onclick="closeModal('detailModal')">✕</button>
     <div id="detailBody"></div>
+  </div>
+</div>
+
+<!-- ============ 이메일 모아보내기 모달 ============ -->
+<div class="modal-bg" id="mailModal">
+  <div class="modal">
+    <button class="close-x" onclick="closeModal('mailModal')">✕</button>
+    <h2 id="mailTitle">📧 자료 모아 이메일 보내기</h2>
+    <div class="form-grid">
+      <div class="f-group full"><label>받는 사람 (이메일)</label><input id="mailTo" placeholder="예: accountant@example.com, boss@example.com"></div>
+      <div class="f-group full"><label>제목</label><input id="mailSubject"></div>
+      <div class="f-group full"><label>메일 내용 (요약)</label><textarea id="mailBody" rows="8"></textarea></div>
+    </div>
+    <div class="mail-note" id="mailNote"></div>
+    <div class="modal-actions actions">
+      <button class="btn ghost" onclick="closeModal('mailModal')">취소</button>
+      <button class="btn" id="mailSendBtn" onclick="doSendMail()">⬇ 자료 ZIP 받고 메일 열기</button>
+    </div>
   </div>
 </div>
 
@@ -1167,6 +1196,7 @@ function renderBrandDetail(id) {
       <button class="btn danger sm" onclick="deleteBrand('${b.id}')">🗑 브랜드 삭제</button>
     </div>
     ${docsChatHTML('brand', b)}`;
+  afterDetailRender('brand', id);
 }
 
 /* =============================================================
@@ -1224,6 +1254,7 @@ function renderListings() {
         ${l.size ? `<span>${esc(String(l.size))}평${l.floor ? ' · ' + esc(l.floor) : ''}</span>` : (l.floor ? `<span>${esc(l.floor)}</span>` : '')}
         ${(l.checks?.length || 0) ? `<span class="cmt">✅ ${l.checks.filter(c => c.done).length}/${l.checks.length}</span>` : ''}
         ${(l.docs?.length || 0) ? `<span class="cmt">📎 ${l.docs.length}</span>` : ''}
+        ${(l.files?.length || 0) ? `<span class="cmt">🖼 ${l.files.length}</span>` : ''}
         <span class="cmt ${cn ? 'hot' : ''}">💬 ${cn}</span>
       </div>
     </div>`;
@@ -1231,6 +1262,8 @@ function renderListings() {
   refreshCounts();
   const cb = document.getElementById('compareBtn');
   if (cb) { cb.style.display = compareSel.size >= 2 ? 'inline-flex' : 'none'; document.getElementById('compareCnt').textContent = compareSel.size; }
+  const mb = document.getElementById('mailBulkBtn');
+  if (mb) { mb.style.display = compareSel.size >= 1 ? 'inline-flex' : 'none'; document.getElementById('mailBulkCnt').textContent = compareSel.size; }
 }
 const compareSel = new Set();
 function toggleCompare(id) {
@@ -1398,6 +1431,7 @@ function renderDetail(id) {
       <button class="btn danger sm" onclick="deleteListing('${l.id}')">🗑 매물 삭제</button>
     </div>
     ${docsChatHTML('listing', l)}`;
+  afterDetailRender('listing', id);
 }
 
 /* ---------- 실사 체크리스트 (브랜드·매물 공용) ---------- */
@@ -1513,6 +1547,194 @@ function renderPipeline() {
 }
 
 /* ---------- 공유 자료 + 채팅 (브랜드·매물 공용) ---------- */
+/* =============================================================
+   파일·사진 첨부 (IndexedDB 저장) + 이메일 모아보내기
+   ============================================================= */
+let _idb = null;
+function openIDB() {
+  return new Promise((res, rej) => {
+    if (_idb) return res(_idb);
+    if (typeof indexedDB === 'undefined') return rej(new Error('no-idb'));
+    const rq = indexedDB.open('onewillco_mna_files', 1);
+    rq.onupgradeneeded = () => { if (!rq.result.objectStoreNames.contains('files')) rq.result.createObjectStore('files'); };
+    rq.onsuccess = () => { _idb = rq.result; res(_idb); };
+    rq.onerror = () => rej(rq.error);
+  });
+}
+function idbPut(id, blob) { return openIDB().then(db => new Promise((res, rej) => { const tx = db.transaction('files', 'readwrite'); tx.objectStore('files').put(blob, id); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); })); }
+function idbGet(id) { return openIDB().then(db => new Promise((res, rej) => { const tx = db.transaction('files', 'readonly'); const r = tx.objectStore('files').get(id); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); })); }
+function idbDel(id) { return openIDB().then(db => new Promise((res, rej) => { const tx = db.transaction('files', 'readwrite'); tx.objectStore('files').delete(id); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); })); }
+
+async function attachFiles(kind, id, fileList) {
+  const o = ent(kind, id);
+  if (!o || !fileList || !fileList.length) return;
+  o.files = o.files || [];
+  let ok = 0, fail = 0;
+  for (const f of Array.from(fileList)) {
+    if (f.size > 25 * 1024 * 1024) { toast(`'${f.name}'은 25MB를 넘어 건너뜁니다.`); fail++; continue; }
+    const fid = uid();
+    try {
+      await idbPut(fid, f);
+      o.files.push({ id: fid, name: f.name, type: f.type || '', size: f.size, ts: Date.now(), author: myName() });
+      ok++;
+    } catch (e) { fail++; }
+  }
+  if (ok) { save(); renderDetailByKind(kind, id); if (kind === 'brand') renderBrands(); else renderListings(); }
+  if (fail && !ok) toast('파일 저장 실패 — 이 브라우저가 파일 저장을 지원하지 않을 수 있습니다.');
+  else if (ok) toast(ok + '개 파일 첨부 완료');
+}
+async function deleteFile(kind, id, fid) {
+  if (!confirm('이 파일을 삭제할까요?')) return;
+  const o = ent(kind, id);
+  if (!o) return;
+  o.files = (o.files || []).filter(f => f.id !== fid);
+  try { await idbDel(fid); } catch (e) {}
+  save(); renderDetailByKind(kind, id); if (kind === 'brand') renderBrands(); else renderListings();
+}
+async function openFile(fid) {
+  try {
+    const blob = await idbGet(fid);
+    if (!blob) { toast('이 기기에 파일이 없습니다 (다른 기기에서 첨부됨).'); return; }
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch (e) { toast('파일 열기 실패'); }
+}
+function afterDetailRender(kind, id) {
+  const o = ent(kind, id);
+  if (!o) return;
+  // 이미지 썸네일 로드
+  (o.files || []).forEach(f => {
+    if (!(f.type || '').startsWith('image/')) return;
+    const el = document.getElementById('thumb-' + f.id);
+    if (!el) return;
+    idbGet(f.id).then(blob => { if (blob) el.src = URL.createObjectURL(blob); }).catch(() => {});
+  });
+  // 드래그&드롭 + 클릭
+  const drop = document.getElementById('fileDrop');
+  const input = document.getElementById('fileInput');
+  if (drop && input) {
+    drop.addEventListener('click', () => input.click());
+    drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+    drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer?.files?.length) attachFiles(kind, id, e.dataTransfer.files); });
+  }
+}
+
+/* ---------- ZIP 생성 (store 방식, 라이브러리 불필요) ---------- */
+function crc32(u8) {
+  let crc = 0xFFFFFFFF;
+  for (let i = 0; i < u8.length; i++) {
+    crc ^= u8[i];
+    for (let k = 0; k < 8; k++) crc = (crc >>> 1) ^ (0xEDB88320 & -(crc & 1));
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+function buildZip(entries) {
+  const enc = new TextEncoder();
+  const parts = [], central = [];
+  let offset = 0;
+  const u16 = n => new Uint8Array([n & 255, (n >> 8) & 255]);
+  const u32 = n => new Uint8Array([n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255]);
+  const cat = arrs => { let len = 0; arrs.forEach(a => len += a.length); const o = new Uint8Array(len); let p = 0; arrs.forEach(a => { o.set(a, p); p += a.length; }); return o; };
+  for (const e of entries) {
+    const name = enc.encode(e.name);
+    const data = e.data;
+    const crc = crc32(data);
+    const lfh = cat([u32(0x04034b50), u16(20), u16(0x0800), u16(0), u16(0), u16(0), u32(crc), u32(data.length), u32(data.length), u16(name.length), u16(0), name]);
+    parts.push(lfh, data);
+    central.push(cat([u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0), u16(0), u16(0), u32(crc), u32(data.length), u32(data.length), u16(name.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset), name]));
+    offset += lfh.length + data.length;
+  }
+  const cd = cat(central);
+  const eocd = cat([u32(0x06054b50), u16(0), u16(0), u16(entries.length), u16(entries.length), u32(cd.length), u32(offset), u16(0)]);
+  return new Blob([...parts, cd, eocd], { type: 'application/zip' });
+}
+function blobToU8(blob) { return blob.arrayBuffer().then(b => new Uint8Array(b)); }
+function safeName(s) { return String(s || '').replace(/[\\/:*?"<>|]/g, '_').slice(0, 60); }
+
+/* ---------- 이메일 모아보내기 ---------- */
+let _mailCtx = null;
+const LS_EMAIL = 'onewillco_mna_email';
+function buildSummary(kind, o) {
+  const isB = kind === 'brand';
+  const L = [];
+  L.push('■ ' + (isB ? o.corpName + ' (' + o.tradeName + ')' : o.title));
+  if (isB) {
+    L.push(`업종: ${o.industry || '-'} · 지점 ${fmtNum(o.branches)}개 · 개업 ${o.openDate || '-'}`);
+    L.push(`연매출 ${fmtMoney(o.revenue)} · 영업이익 ${fmtMoney(o.profit)} · 희망양도가 ${fmtMoney(o.askPrice)} · 인수배수 ${brandMultiple(o) == null ? '-' : brandMultiple(o).toFixed(1) + '배'}`);
+    L.push(`상태: ${o.status || '검토중'} · 신뢰도: ${o.trust || '주장'}`);
+  } else {
+    L.push(`지역: ${o.region || '-'} · 업종 ${o.industry || '-'} · ${o.size ? o.size + '평' : ''} ${o.floor || ''}`);
+    L.push(`양도가 ${fmtMoney(o.price)} · 권리금 ${fmtMoney(o.premium)} · 보증금 ${fmtMoney(o.deposit)} · 월세 ${fmtMoney(o.rent)}`);
+    L.push(`월매출 ${fmtMoney(o.mRevenue)} · 월수익 ${fmtMoney(o.mProfit)} · 회수기간 ${fmtMonths(payback(o))} · 연수익률 ${yieldPct(o) == null ? '-' : yieldPct(o).toFixed(1) + '%'}`);
+    L.push(`상태: ${o.status || '판매중'} · 신뢰도: ${o.trust || '주장'}`);
+  }
+  if (o.nextAction) L.push(`다음 액션: ${o.nextAction}${o.nextDue ? ' (기한 ' + o.nextDue + ')' : ''}`);
+  if (o.memo || o.desc) L.push('메모: ' + (o.memo || o.desc));
+  const cks = o.checks || [];
+  if (cks.length) {
+    const undone = cks.filter(c => !c.done);
+    L.push(`실사 체크: ${cks.filter(c => c.done).length}/${cks.length} 완료` + (undone.length ? ' (미완료: ' + undone.map(c => c.label).join(', ') + ')' : ''));
+  }
+  if (o.link) L.push('원본 링크: ' + o.link);
+  (o.docs || []).forEach(d => L.push('자료 링크 [' + d.name + ']: ' + d.url));
+  const cs = o.comments || [];
+  if (cs.length) { L.push('— 질문·댓글 —'); cs.forEach(c => L.push(`  ${c.author}: ${c.text}`)); }
+  const fs = o.files || [];
+  if (fs.length) L.push('— 첨부파일 (ZIP) — ' + fs.map(f => f.name).join(', '));
+  return L.join('\n');
+}
+function openMail(kind, id, ids) {
+  const list = ids ? ids.map(x => ({ kind: 'listing', o: ent('listing', x) })).filter(x => x.o) : [{ kind, o: ent(kind, id) }];
+  if (!list.length) { toast('보낼 항목이 없습니다.'); return; }
+  _mailCtx = list;
+  const title = list.length === 1
+    ? (list[0].kind === 'brand' ? list[0].o.corpName : list[0].o.title)
+    : `매물 ${list.length}건`;
+  const fileCnt = list.reduce((s, x) => s + (x.o.files || []).length, 0);
+  document.getElementById('mailTitle').textContent = '📧 ' + title + ' 자료 이메일';
+  document.getElementById('mailTo').value = store.getItem(LS_EMAIL) || '';
+  document.getElementById('mailSubject').value = '[원윌앤코x구름랩스] ' + title + ' 자료';
+  const bodies = list.map(x => buildSummary(x.kind, x.o)).join('\n\n────────\n\n');
+  document.getElementById('mailBody').value = bodies + '\n\n※ 상세 요약(요약.txt)과 첨부파일은 함께 내려받은 ZIP에 담겨 있습니다. 이 메일에 ZIP을 첨부해 보내세요.';
+  document.getElementById('mailNote').innerHTML = `[<b>자료 ZIP 받고 메일 열기</b>]를 누르면 → ① 첨부파일 ${fileCnt}개 + 요약을 담은 <b>ZIP 파일이 다운로드</b>되고 ② <b>메일 앱이 열립니다</b>. 열린 메일에 내려받은 ZIP만 끌어다 첨부하고 보내면 끝입니다.<br>(정적 웹페이지라 파일이 자동 첨부되진 않습니다 — 무료로 안전하게 보내는 방식입니다.)`;
+  openModal('mailModal');
+}
+async function doSendMail() {
+  if (!_mailCtx) return;
+  const to = document.getElementById('mailTo').value.trim();
+  const subject = document.getElementById('mailSubject').value.trim();
+  const body = document.getElementById('mailBody').value;
+  if (to) store.setItem(LS_EMAIL, to);
+  // ZIP 구성
+  const entries = [{ name: '요약.txt', data: new TextEncoder().encode(body) }];
+  let missing = 0;
+  for (const { o, kind } of _mailCtx) {
+    const label = safeName(kind === 'brand' ? o.tradeName : o.title);
+    for (const f of (o.files || [])) {
+      try {
+        const blob = await idbGet(f.id);
+        if (!blob) { missing++; continue; }
+        entries.push({ name: label + '/' + safeName(f.name), data: await blobToU8(blob) });
+      } catch (e) { missing++; }
+    }
+  }
+  try {
+    const zip = buildZip(entries);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(zip);
+    a.download = '원윌앤코_자료_' + new Date().toISOString().slice(0, 10) + '.zip';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+  } catch (e) { toast('ZIP 생성 실패: ' + (e.message || e)); return; }
+  // 메일 앱 열기
+  const mailto = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body.slice(0, 1800));
+  window.location.href = mailto;
+  closeModal('mailModal');
+  toast('ZIP 다운로드 + 메일 앱을 열었습니다' + (missing ? ` (파일 ${missing}개는 이 기기에 없어 제외)` : ''));
+}
+
 function docsChatHTML(kind, e) {
   const me = myName();
   const comments = e.comments || [];
@@ -1558,7 +1780,52 @@ function docsChatHTML(kind, e) {
           <button class="btn sm" style="padding:8px 14px" onclick="addDoc('${kind}','${e.id}')">＋ 추가</button>
         </div>
       </div>
-    </details>`;
+    </details>
+    <details class="fold"${(e.files || []).length ? ' open' : ''}>
+      <summary>🖼 파일·사진 <b>${(e.files || []).length}</b></summary>
+      <div style="padding-top:6px">
+        <div class="file-grid" id="fileGrid">${fileTilesHTML(kind, e)}</div>
+        <label class="file-drop" id="fileDrop">
+          클릭하거나 파일을 끌어다 놓으세요 — 사진·PDF·문서 등 무엇이든
+          <input type="file" id="fileInput" multiple style="display:none" onchange="attachFiles('${kind}','${e.id}', this.files)">
+        </label>
+        <div style="font-size:11.5px;color:var(--muted-fg);margin-top:6px">파일은 이 브라우저에 저장됩니다. 상대와 실시간 공유가 필요하면 [공유 자료]에 링크로 올리세요.</div>
+      </div>
+    </details>
+    <div style="margin-top:16px;text-align:right">
+      <button class="btn" onclick="openMail('${kind}','${e.id}')">📧 이 물건 자료 모아 이메일 보내기</button>
+    </div>`;
+}
+function fileTilesHTML(kind, e) {
+  const files = e.files || [];
+  if (!files.length) return `<div style="grid-column:1/-1;font-size:12.5px;color:var(--muted-fg)">첨부된 파일이 없습니다.</div>`;
+  return files.map(f => {
+    const isImg = (f.type || '').startsWith('image/');
+    const inner = isImg
+      ? `<img class="thumb" id="thumb-${f.id}" alt="${esc(f.name)}" onclick="openFile('${f.id}')">`
+      : `<div class="ficon" onclick="openFile('${f.id}')">${fileIcon(f.type, f.name)}</div>`;
+    return `<div class="file-tile">
+      <button class="fdel" onclick="deleteFile('${kind}','${e.id}','${f.id}')" title="삭제">✕</button>
+      ${inner}
+      <div class="fname" title="${esc(f.name)} (${fmtBytes(f.size)})">${esc(f.name)}</div>
+    </div>`;
+  }).join('');
+}
+function fileIcon(type, name) {
+  const t = (type || '') + ' ' + (name || '');
+  if (/pdf/i.test(t)) return '📕';
+  if (/sheet|excel|csv|xls/i.test(t)) return '📊';
+  if (/word|document|hwp|doc/i.test(t)) return '📄';
+  if (/zip|rar|7z/i.test(t)) return '🗜';
+  if (/video|mp4|mov/i.test(t)) return '🎬';
+  if (/audio|mp3|wav/i.test(t)) return '🎵';
+  return '📎';
+}
+function fmtBytes(n) {
+  if (!n) return '0B';
+  if (n < 1024) return n + 'B';
+  if (n < 1048576) return (n / 1024).toFixed(0) + 'KB';
+  return (n / 1048576).toFixed(1) + 'MB';
 }
 function refreshAfterChat(kind) {
   if (kind === 'brand') renderBrands(); else renderListings();
