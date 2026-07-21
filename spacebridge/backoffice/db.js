@@ -99,7 +99,95 @@ function listPartners(db) {
   return db.prepare('SELECT * FROM partners ORDER BY created_at DESC').all();
 }
 
+// ===== 3단계: 정산 원장 =====
+
+// 상담을 파트너에게 연결 (제3자 제공 동의 확인)
+function createConnection(db, { lead_id, partner_id, category }) {
+  const lead = db.prepare(
+    `SELECT l.id, c.consent_thirdparty, l.receipt_no
+     FROM leads l JOIN customers c ON c.id=l.customer_id WHERE l.id=?`).get(lead_id);
+  if (!lead) throw new Error('상담을 찾을 수 없습니다');
+  if (!lead.consent_thirdparty) throw new Error('제3자 제공 미동의 상담은 연결할 수 없습니다');
+  const id = db.prepare(
+    'INSERT INTO connections(lead_id,partner_id,category) VALUES(?,?,?)'
+  ).run(lead_id, partner_id, category || '').lastInsertRowid;
+  logPrivacy(db, '제3자제공', lead.receipt_no, `파트너#${partner_id} 연결(${category||''})`, 'operator');
+  db.prepare("UPDATE leads SET status='연결', updated_at=datetime('now','localtime') WHERE id=?").run(lead_id);
+  return id;
+}
+function listConnections(db) {
+  return db.prepare(
+    `SELECT cn.*, l.receipt_no, cu.name AS customer, p.company AS partner
+     FROM connections cn
+     JOIN leads l ON l.id=cn.lead_id
+     JOIN customers cu ON cu.id=l.customer_id
+     JOIN partners p ON p.id=cn.partner_id
+     ORDER BY cn.created_at DESC LIMIT 500`).all();
+}
+
+// 정산 생성: 수수료 = round(계약금액 * 수수료율%)
+function createSettlement(db, { connection_id, amount, fee_rate, settle_month }) {
+  const amt = Math.round(Number(amount) || 0);
+  const rate = Number(fee_rate) || 0;
+  const fee = Math.round(amt * rate / 100);
+  const month = settle_month || new Date().toISOString().slice(0, 7);
+  const id = db.prepare(
+    `INSERT INTO settlements(connection_id,amount,fee_rate,fee_amount,settle_month)
+     VALUES(?,?,?,?,?)`).run(connection_id, amt, rate, fee, month).lastInsertRowid;
+  return { id, fee_amount: fee };
+}
+function setSettlementPaid(db, id, paid_status) {
+  db.prepare('UPDATE settlements SET paid_status=? WHERE id=?').run(paid_status, id);
+}
+function listSettlements(db, { month } = {}) {
+  let sql = `SELECT s.*, cn.category, l.receipt_no, cu.name AS customer, p.company AS partner
+             FROM settlements s
+             JOIN connections cn ON cn.id=s.connection_id
+             JOIN leads l ON l.id=cn.lead_id
+             JOIN customers cu ON cu.id=l.customer_id
+             JOIN partners p ON p.id=cn.partner_id`;
+  const a = [];
+  if (month) { sql += ' WHERE s.settle_month=?'; a.push(month); }
+  sql += ' ORDER BY s.created_at DESC LIMIT 1000';
+  return db.prepare(sql).all(...a);
+}
+
+// 월마감: 파트너별·분야별·입금상태별 집계
+function monthlyClose(db, month) {
+  const rows = listSettlements(db, { month });
+  const sum = (arr) => arr.reduce((n, r) => n + r.fee_amount, 0);
+  const by = (key) => {
+    const m = {};
+    rows.forEach(r => { const k = r[key] || '(미지정)'; (m[k] = m[k] || { count: 0, amount: 0, fee: 0 });
+      m[k].count++; m[k].amount += r.amount; m[k].fee += r.fee_amount; });
+    return m;
+  };
+  return {
+    month,
+    count: rows.length,
+    amount_total: rows.reduce((n, r) => n + r.amount, 0),
+    fee_total: sum(rows),
+    fee_paid: sum(rows.filter(r => r.paid_status === '입금완료')),
+    fee_unpaid: sum(rows.filter(r => r.paid_status === '미수')),
+    by_partner: by('partner'),
+    by_category: by('category'),
+  };
+}
+
+// 세무 제출용 CSV
+function settlementsCsv(db, month) {
+  const rows = listSettlements(db, { month });
+  const head = ['정산월', '접수번호', '고객', '파트너', '분야', '계약금액', '수수료율(%)', '수수료', '입금상태', '생성일'];
+  const esc = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const lines = [head.map(esc).join(',')];
+  rows.forEach(r => lines.push([r.settle_month, r.receipt_no, r.customer, r.partner, r.category,
+    r.amount, r.fee_rate, r.fee_amount, r.paid_status, (r.created_at || '').slice(0, 10)].map(esc).join(',')));
+  return '﻿' + lines.join('\r\n'); // BOM: 엑셀 한글 깨짐 방지
+}
+
 module.exports = {
   openDb, nextReceiptNo, logPrivacy, createLead, listLeads,
   updateLeadStatus, stats, createPartner, listPartners,
+  createConnection, listConnections, createSettlement, setSettlementPaid,
+  listSettlements, monthlyClose, settlementsCsv,
 };

@@ -23,6 +23,11 @@
   td .rc{font-weight:800;color:var(--ink)}
   select.st{padding:6px 8px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:13px}
   .tp{display:inline-block;font-size:11px;font-weight:800;border-radius:10px;padding:2px 8px;background:#E7F0F9;color:var(--point)}
+  .tabs{display:flex;gap:6px;margin-bottom:16px}
+  .tabs button{padding:9px 16px;border:1px solid var(--line);background:#fff;border-radius:10px;font:inherit;font-weight:800;color:var(--body);cursor:pointer}
+  .tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .dl{display:inline-block;padding:9px 14px;background:var(--point);color:#fff;border-radius:10px;text-decoration:none;font-weight:800;font-size:14px}
+  .paid{color:#177367;font-weight:800}.due{color:#B85C38;font-weight:800}
   .login{max-width:360px;margin:80px auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px}
   .login h1{font-size:20px;color:var(--ink);margin-bottom:16px}
   .login input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit;margin-bottom:10px}
@@ -49,25 +54,32 @@ function loginView(msg){
     if(r.data.ok)dash(); else loginView(r.data.error||'로그인 실패');};
   $('#p').onkeydown=e=>{if(e.key==='Enter')$('#b').click();};
 }
+const won=n=>(n||0).toLocaleString('ko-KR')+'원';
 async function dash(){
   const s=(await api('/api/stats')).data;
   $('#app').innerHTML=`<header><b>공간브릿지 운영 콘솔</b><button class="out" id="out">로그아웃</button></header>
     <div class="wrap">
-      <div class="kpis">
-        <div class="kpi"><div class="n">${s.total||0}</div><div class="l">총 상담</div></div>
-        <div class="kpi"><div class="n">${s.신규||0}</div><div class="l">신규</div></div>
-        <div class="kpi"><div class="n">${s.연결||0}</div><div class="l">연결</div></div>
-        <div class="kpi"><div class="n">${s.계약||0}</div><div class="l">계약</div></div>
-        <div class="kpi"><div class="n">${s.partners||0}</div><div class="l">제휴업체</div></div>
+      <div class="tabs"><button class="on" id="t1">상담 CRM</button><button id="t2">정산 원장</button></div>
+      <div id="view1">
+        <div class="kpis">
+          <div class="kpi"><div class="n">${s.total||0}</div><div class="l">총 상담</div></div>
+          <div class="kpi"><div class="n">${s.신규||0}</div><div class="l">신규</div></div>
+          <div class="kpi"><div class="n">${s.연결||0}</div><div class="l">연결</div></div>
+          <div class="kpi"><div class="n">${s.계약||0}</div><div class="l">계약</div></div>
+          <div class="kpi"><div class="n">${s.partners||0}</div><div class="l">제휴업체</div></div>
+        </div>
+        <div class="bar">
+          <input id="q" placeholder="이름·연락처·접수번호 검색">
+          <select id="fs"><option value="">전체 상태</option>${STATUSES.map(x=>`<option>${x}</option>`).join('')}</select>
+        </div>
+        <table><thead><tr><th>접수번호</th><th>고객</th><th>연락처</th><th>지역</th><th>분야</th><th>제3자동의</th><th>상태</th><th>접수일</th></tr></thead>
+        <tbody id="rows"></tbody></table>
       </div>
-      <div class="bar">
-        <input id="q" placeholder="이름·연락처·접수번호 검색">
-        <select id="fs"><option value="">전체 상태</option>${STATUSES.map(x=>`<option>${x}</option>`).join('')}</select>
-      </div>
-      <table><thead><tr><th>접수번호</th><th>고객</th><th>연락처</th><th>지역</th><th>분야</th><th>제3자동의</th><th>상태</th><th>접수일</th></tr></thead>
-      <tbody id="rows"></tbody></table>
+      <div id="view2" style="display:none"></div>
     </div>`;
   $('#out').onclick=async()=>{await api('/api/logout',{method:'POST'});loginView();};
+  $('#t1').onclick=()=>{$('#t1').classList.add('on');$('#t2').classList.remove('on');$('#view1').style.display='';$('#view2').style.display='none';};
+  $('#t2').onclick=()=>{$('#t2').classList.add('on');$('#t1').classList.remove('on');$('#view2').style.display='';$('#view1').style.display='none';loadSettle();};
   const load=async()=>{
     const q=$('#q').value,st=$('#fs').value;
     const r=await api('/api/leads?q='+encodeURIComponent(q)+'&status='+encodeURIComponent(st));
@@ -82,6 +94,39 @@ async function dash(){
       await api('/api/lead/status',{method:'POST',body:JSON.stringify({id:+sel.dataset.id,status:sel.value})});});
   };
   $('#q').oninput=load;$('#fs').onchange=load;load();
+}
+async function loadSettle(){
+  const now=new Date();const defMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const v=$('#view2');
+  if(!v.dataset.init){
+    v.dataset.init='1';
+    v.innerHTML=`<div class="bar">
+        <input id="mon" type="month" value="${defMonth}">
+        <a class="dl" id="csv">세무용 CSV 내려받기</a>
+      </div>
+      <div class="kpis" id="sk"></div>
+      <table><thead><tr><th>정산월</th><th>접수번호</th><th>고객</th><th>파트너</th><th>분야</th><th>계약금액</th><th>수수료율</th><th>수수료</th><th>입금</th></tr></thead>
+      <tbody id="srows"></tbody></table>`;
+    $('#mon').onchange=loadSettle;
+  }
+  const m=$('#mon').value||defMonth;
+  $('#csv').href='/api/settlements/csv?month='+m;
+  const c=(await api('/api/settlements/close?month='+m)).data;
+  $('#sk').innerHTML=`
+    <div class="kpi"><div class="n">${c.count||0}</div><div class="l">정산 건수</div></div>
+    <div class="kpi"><div class="n" style="font-size:20px">${won(c.amount_total)}</div><div class="l">계약금액 합계</div></div>
+    <div class="kpi"><div class="n" style="font-size:20px">${won(c.fee_total)}</div><div class="l">수수료 합계</div></div>
+    <div class="kpi"><div class="n" style="font-size:20px" class="paid">${won(c.fee_paid)}</div><div class="l">입금완료</div></div>
+    <div class="kpi"><div class="n" style="font-size:20px">${won(c.fee_unpaid)}</div><div class="l">미수</div></div>`;
+  const r=await api('/api/settlements?month='+m);
+  $('#srows').innerHTML=(r.data.settlements||[]).map(s=>`<tr>
+    <td>${s.settle_month}</td><td class="rc">${s.receipt_no}</td><td>${s.customer}</td>
+    <td>${s.partner}</td><td>${s.category||'-'}</td><td>${won(s.amount)}</td>
+    <td>${s.fee_rate}%</td><td>${won(s.fee_amount)}</td>
+    <td><select class="st sp" data-id="${s.id}"><option ${s.paid_status==='미수'?'selected':''}>미수</option><option ${s.paid_status==='입금완료'?'selected':''}>입금완료</option></select></td>
+    </tr>`).join('')||'<tr><td colspan="9" style="text-align:center;color:#7A8B9C">해당 월 정산 내역이 없습니다</td></tr>';
+  document.querySelectorAll('.sp').forEach(sel=>sel.onchange=async()=>{
+    await api('/api/settlement/paid',{method:'POST',body:JSON.stringify({id:+sel.dataset.id,paid_status:sel.value})});loadSettle();});
 }
 (async()=>{const me=(await api('/api/me')).data;me.user?dash():loginView();})();
 </script>

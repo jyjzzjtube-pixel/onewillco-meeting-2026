@@ -91,6 +91,37 @@ function req(method, path, body, cookie) {
   assert.ok(blocked);
   console.log('✓ rate limit 동작(429)'); pass++;
 
-  console.log('\n=== 전체 ' + pass + '/10 통과 ===');
+  // 11) 연결: 제3자 미동의 상담은 거부
+  //   먼저 미동의 상담 하나 만들고 파트너 연결 시도 → 400
+  const partnersList = (await req('GET', '/api/partners', null, cookie)).data.partners;
+  const partnerId = partnersList[0].id;
+  // 홍길동(leadId, 제3자동의 O) 연결 → 성공
+  r = await req('POST', '/api/connect', { lead_id: leadId, partner_id: partnerId, category: '인테리어' }, cookie);
+  assert.strictEqual(r.status, 200);
+  const connId = r.data.id;
+  console.log('✓ 상담→파트너 연결(동의 확인)'); pass++;
+
+  // 12) 정산 생성: 2000만원 × 3% = 60만원
+  r = await req('POST', '/api/settlement', { connection_id: connId, amount: 20000000, fee_rate: 3, settle_month: '2026-08' }, cookie);
+  assert.strictEqual(r.data.fee_amount, 600000);
+  const setId = r.data.id;
+  console.log('✓ 정산 생성 (2천만×3% = 60만원)'); pass++;
+
+  // 13) 입금 처리 + 월마감 집계
+  await req('POST', '/api/settlement/paid', { id: setId, paid_status: '입금완료' }, cookie);
+  r = await req('GET', '/api/settlements/close?month=2026-08', null, cookie);
+  assert.strictEqual(r.data.fee_total, 600000);
+  assert.strictEqual(r.data.fee_paid, 600000);
+  assert.strictEqual(r.data.fee_unpaid, 0);
+  assert.ok(r.data.by_partner['가나인테리어']);
+  console.log('✓ 월마감 집계 (수수료계 60만·입금완료·파트너별)'); pass++;
+
+  // 14) 세무 CSV 내보내기 (BOM + 헤더)
+  r = await req('GET', '/api/settlements/csv?month=2026-08', null, cookie);
+  assert.ok(String(r.data).includes('정산월'));
+  assert.ok(String(r.data).includes('가나인테리어'));
+  console.log('✓ 세무 CSV 내보내기'); pass++;
+
+  console.log('\n=== 전체 ' + pass + '/14 통과 ===');
   server.close(); process.exit(0);
 })().catch(e => { console.error('✗ 실패:', e.message); process.exit(1); });

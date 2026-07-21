@@ -104,6 +104,42 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { log: DB.prepare('SELECT * FROM privacy_log ORDER BY at DESC LIMIT 300').all() });
     }
 
+    // ---- 3단계: 정산 ----
+    if (p === '/api/connect' && req.method === 'POST') {   // 상담→파트너 연결
+      if (!requireAuth(req, res)) return;
+      try { const id = db.createConnection(DB, await readBody(req)); return send(res, 200, { ok: true, id }); }
+      catch (e) { return send(res, 400, { error: e.message }); }
+    }
+    if (p === '/api/connections' && req.method === 'GET') {
+      if (!requireAuth(req, res)) return;
+      return send(res, 200, { connections: db.listConnections(DB) });
+    }
+    if (p === '/api/settlement' && req.method === 'POST') {
+      if (!requireAuth(req, res)) return;
+      return send(res, 200, { ok: true, ...db.createSettlement(DB, await readBody(req)) });
+    }
+    if (p === '/api/settlement/paid' && req.method === 'POST') {
+      if (!requireAuth(req, res)) return;
+      const { id, paid_status } = await readBody(req);
+      db.setSettlementPaid(DB, id, paid_status); return send(res, 200, { ok: true });
+    }
+    if (p === '/api/settlements' && req.method === 'GET') {
+      if (!requireAuth(req, res)) return;
+      return send(res, 200, { settlements: db.listSettlements(DB, { month: url.searchParams.get('month') || '' }) });
+    }
+    if (p === '/api/settlements/close' && req.method === 'GET') {
+      if (!requireAuth(req, res)) return;
+      const month = url.searchParams.get('month') || new Date().toISOString().slice(0, 7);
+      return send(res, 200, db.monthlyClose(DB, month));
+    }
+    if (p === '/api/settlements/csv' && req.method === 'GET') {
+      if (!requireAuth(req, res)) return;
+      const month = url.searchParams.get('month') || new Date().toISOString().slice(0, 7);
+      return send(res, 200, db.settlementsCsv(DB, month),
+        { 'Content-Type': 'text/csv; charset=utf-8',
+          'Content-Disposition': `attachment; filename="settlement-${month}.csv"` });
+    }
+
     // ---- 정적: /admin 콘솔 ----
     if (p === '/admin' || p === '/admin/') {
       return send(res, 200, fs.readFileSync(path.join(__dirname, 'public', 'admin.html'), 'utf8'));
