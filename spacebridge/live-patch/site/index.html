@@ -9,7 +9,7 @@
 <meta name="naver-site-verification" content="__NAVER_VERIFICATION_CODE__">
 <meta name="google-site-verification" content="__GOOGLE_VERIFICATION_CODE__">
 <meta name="keywords" content="상가 인테리어, 카페 창업 비용, 인테리어 견적 비교, 포스 키오스크, 세무기장, 남양주 인테리어, 상가 인테리어 견적">
-<title>공간브릿지 | 인테리어·사업 운영 전문가 연결</title><script>window.SB_STATIC=true</script>
+<title>공간브릿지 | 인테리어·사업 운영 전문가 연결</title><script>window.SB_STATIC=true;window.SB_API='';/* 백오피스 배포 후 여기에 주소(예: https://gongganbridge-backoffice.fly.dev) 넣으면 상담이 DB로 자동 저장됨 */</script>
 <meta name="description" content="인테리어, 포스·CCTV·키오스크, 세무기장, 회계, 보험, 부동산, 홈페이지, 앱 개발. 무료 도구로 기준을 확인하고 필요한 분야만 상담하세요.">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <link rel="canonical" href="https://gongganbridge.com/">
@@ -3965,7 +3965,11 @@ footer.site-footer.sb2-footer{background:var(--c-ink) !important;background-imag
 
               <div class="lf-agree" id="lf-agree-box">
               <input id="lf-agree" type="checkbox" required aria-required="true" aria-describedby="lf-toast">
-              <label for="lf-agree">개인정보 수집·이용 동의 (필수: 이름·연락처·지역·상담 분야·상담 내용 / 선택: 연락 희망시간·계산 결과 / 목적: 상담 접수와 회신 / 보유: 접수일로부터 1년 / 동의 거부 가능, 미동의 시 상담 진행 불가) <a href="/privacy.html" target="_blank" rel="noopener">전문 보기</a></label>
+              <label for="lf-agree">[필수] 개인정보 수집·이용 동의 (수집: 이름·연락처·지역·상담 분야·상담 내용 / 목적: 상담 접수와 회신 / 보유: 접수일로부터 1년 / 동의 거부 가능, 미동의 시 상담 진행 불가) <a href="/privacy.html" target="_blank" rel="noopener">전문 보기</a></label>
+              </div>
+              <div class="lf-agree" id="lf-agree3p-box">
+              <input id="lf-agree-3p" type="checkbox" aria-describedby="lf-toast">
+              <label for="lf-agree-3p">[선택] 파트너사 제3자 제공 동의 — 조건이 맞는 협력업체에 상담 내용(지역·분야·연락처)을 전달해 연결받는 데 동의합니다. 미동의 시에도 상담 접수는 가능하며, 파트너 연결은 제한됩니다. <a href="/privacy.html" target="_blank" rel="noopener">전문 보기</a></label>
               </div>
 
               <div class="leadform-actions">
@@ -4815,6 +4819,7 @@ footer.site-footer.sb2-footer{background:var(--c-ink) !important;background-imag
       memo: g('lf-memo'),
       calc: lastCalc,
       consent: !!(document.getElementById('lf-agree') && document.getElementById('lf-agree').checked),
+      consent_thirdparty: !!(document.getElementById('lf-agree-3p') && document.getElementById('lf-agree-3p').checked),
       privacyPolicyVersion: PRIVACY_POLICY_VERSION,
       attribution: (window.SB && typeof window.SB.getLeadContext === 'function') ? window.SB.getLeadContext() : null
     };
@@ -5065,17 +5070,27 @@ footer.site-footer.sb2-footer{background:var(--c-ink) !important;background-imag
       }
     }
 
-    /* 정적 공개판은 서버 자동접수를 가장하지 않고 실제 문자 경로로 즉시 연결한다. */
-    if (window.SB_STATIC || !window.fetch) { fallback(); return; }
-    postJsonWithTimeout('/api/lead-intake', payload, 10000).then(function (res) {
+    /* 백오피스(SB_API)가 설정돼 있으면 상담을 DB로 자동 저장. 없으면 문자 경로. */
+    var apiBase = (window.SB_API || '').replace(/\/$/, '');
+    if (!apiBase || !window.fetch) { fallback(); return; }
+    var body = {
+      name: payload.name, phone: payload.phone, region: payload.region,
+      business_type: '', categories: payload.categories,
+      message: payload.memo, desired_time: payload.preferredTime || '',
+      consent_service: payload.consent, consent_thirdparty: payload.consent_thirdparty,
+      source: (payload.attribution && payload.attribution.source) || 'site'
+    };
+    postJsonWithTimeout(apiBase + '/api/lead', body, 10000).then(function (res) {
       var contentType = res.headers.get('content-type') || '';
-      if (!res.ok || contentType.indexOf('json') === -1) throw new Error('lead-intake unavailable');
+      if (!res.ok || contentType.indexOf('json') === -1) throw new Error('lead api unavailable');
       return res.json();
     }).then(function (data) {
-      if (!data || (data.ok !== true && data.status !== 'ok')) throw new Error('lead-intake rejected');
+      if (!data || data.ok !== true || !data.receiptNo) throw new Error('lead api rejected');
       lfSubmitPending = false;
       lfSetBusy(false);
       if (window.SB && typeof window.SB.track === 'function') window.SB.track('lead_submit_server_accepted', payload.topic || 'topic_not_selected');
+      var sn = document.getElementById('lf-success-next');
+      if (sn) sn.textContent = '접수번호 ' + data.receiptNo + ' · 연결 가능 여부 순차 안내';
       showSuccess();
     }).catch(fallback);
   };

@@ -39,10 +39,20 @@ function requireAuth(req, res) {
   return u;
 }
 
+const CORS_ORIGIN = process.env.SB_CORS_ORIGIN || 'https://gongganbridge.com';
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const p = url.pathname;
   const ip = req.socket.remoteAddress || 'x';
+
+  // 공개 상담 접수(/api/lead)만 교차출처 허용 — 사이트 폼에서 직접 POST
+  if (p === '/api/lead') {
+    res.setHeader('Access-Control-Allow-Origin', CORS_ORIGIN);
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
+  }
 
   try {
     // ---- 공개 API: 상담 접수 (사이트 폼 → DB) ----
