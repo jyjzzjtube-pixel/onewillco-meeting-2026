@@ -185,9 +185,49 @@ function settlementsCsv(db, month) {
   return '﻿' + lines.join('\r\n'); // BOM: 엑셀 한글 깨짐 방지
 }
 
+// ===== 4단계: 마케팅 + KPI 대시보드 =====
+
+function dashboard(db) {
+  const cnt = (s) => db.prepare('SELECT COUNT(*) n FROM leads WHERE status=?').get(s).n;
+  const total = db.prepare('SELECT COUNT(*) n FROM leads').get().n;
+  // 유입경로별
+  const bySource = {};
+  db.prepare('SELECT source, COUNT(*) n FROM customers GROUP BY source').all()
+    .forEach(r => bySource[r.source || 'direct'] = r.n);
+  // 전환 퍼널
+  const funnel = { 접수: total, 연결: cnt('연결') + cnt('계약') + cnt('완료'),
+    계약: cnt('계약') + cnt('완료'), 완료: cnt('완료') };
+  // 이번달 수수료
+  const month = new Date().toISOString().slice(0, 7);
+  const fee = db.prepare("SELECT COALESCE(SUM(fee_amount),0) f, COALESCE(SUM(CASE WHEN paid_status='입금완료' THEN fee_amount ELSE 0 END),0) p FROM settlements WHERE settle_month=?").get(month);
+  // 전환율
+  const rate = (a, b) => b ? Math.round(a / b * 1000) / 10 : 0;
+  return {
+    total, month, bySource, funnel,
+    conv_connect: rate(funnel.연결, total),
+    conv_deal: rate(funnel.계약, total),
+    fee_month: fee.f, fee_paid_month: fee.p,
+    partners: db.prepare('SELECT COUNT(*) n FROM partners').get().n,
+  };
+}
+
+function addContent(db, c) {
+  return db.prepare(
+    'INSERT INTO content_calendar(topic,channel,keyword,publish_date,status,draft_path) VALUES(?,?,?,?,?,?)'
+  ).run(c.topic, c.channel || '네이버블로그', c.keyword || '', c.publish_date || '',
+        c.status || '초안', c.draft_path || '').lastInsertRowid;
+}
+function listContent(db) {
+  return db.prepare('SELECT * FROM content_calendar ORDER BY COALESCE(publish_date,created_at) ASC LIMIT 500').all();
+}
+function setContentStatus(db, id, status) {
+  db.prepare('UPDATE content_calendar SET status=? WHERE id=?').run(status, id);
+}
+
 module.exports = {
   openDb, nextReceiptNo, logPrivacy, createLead, listLeads,
   updateLeadStatus, stats, createPartner, listPartners,
   createConnection, listConnections, createSettlement, setSettlementPaid,
   listSettlements, monthlyClose, settlementsCsv,
+  dashboard, addContent, listContent, setContentStatus,
 };

@@ -122,6 +122,20 @@ function req(method, path, body, cookie) {
   assert.ok(String(r.data).includes('가나인테리어'));
   console.log('✓ 세무 CSV 내보내기'); pass++;
 
-  console.log('\n=== 전체 ' + pass + '/14 통과 ===');
+  // 15) KPI 대시보드: 퍼널·유입경로·이번달 수수료
+  r = await req('GET', '/api/dashboard', null, cookie);
+  assert.ok(r.data.total >= 1);
+  assert.strictEqual(r.data.funnel.접수, r.data.total);
+  assert.strictEqual(r.data.bySource.naver, 1);   // 최초 상담만 naver
+  console.log('✓ KPI 대시보드 (퍼널·유입경로 naver·수수료)'); pass++;
+
+  // 16) 콘텐츠 캘린더 추가·조회·상태
+  r = await req('POST', '/api/content', { topic: '카페 창업 비용', keyword: '카페 창업 비용', publish_date: '2026-08-01' }, cookie);
+  assert.strictEqual(r.status, 200);
+  r = await req('GET', '/api/content', null, cookie);
+  assert.strictEqual(r.data.content.length, 1);
+  console.log('✓ 콘텐츠 캘린더 추가·조회'); pass++;
+
+  console.log('\n=== 전체 ' + pass + '/16 통과 ===');
   server.close(); process.exit(0);
 })().catch(e => { console.error('✗ 실패:', e.message); process.exit(1); });

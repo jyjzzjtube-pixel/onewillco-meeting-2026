@@ -89,6 +89,17 @@ CREATE TABLE IF NOT EXISTS audit_log (
   at        TEXT NOT NULL DEFAULT (datetime('now','localtime'))
 );
 
+CREATE TABLE IF NOT EXISTS content_calendar (   -- 4단계: 마케팅 콘텐츠 캘린더
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  topic        TEXT NOT NULL,
+  channel      TEXT NOT NULL DEFAULT '네이버블로그',  -- 네이버블로그/인스타/사이트
+  keyword      TEXT,                 -- 타겟 키워드(지역+업종)
+  publish_date TEXT,                 -- 발행 예정일
+  status       TEXT NOT NULL DEFAULT '초안',  -- 초안/검토/발행완료
+  draft_path   TEXT,                 -- 초안 파일 경로
+  created_at   TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
 CREATE INDEX IF NOT EXISTS idx_leads_status  ON leads(status);
 CREATE INDEX IF NOT EXISTS idx_leads_created ON leads(created_at);
 CREATE INDEX IF NOT EXISTS idx_cust_phone    ON customers(phone);

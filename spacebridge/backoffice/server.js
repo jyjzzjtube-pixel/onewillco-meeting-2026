@@ -140,6 +140,25 @@ const server = http.createServer(async (req, res) => {
           'Content-Disposition': `attachment; filename="settlement-${month}.csv"` });
     }
 
+    // ---- 4단계: 마케팅 + 대시보드 ----
+    if (p === '/api/dashboard' && req.method === 'GET') {
+      if (!requireAuth(req, res)) return;
+      return send(res, 200, db.dashboard(DB));
+    }
+    if (p === '/api/content' && req.method === 'GET') {
+      if (!requireAuth(req, res)) return;
+      return send(res, 200, { content: db.listContent(DB) });
+    }
+    if (p === '/api/content' && req.method === 'POST') {
+      if (!requireAuth(req, res)) return;
+      const id = db.addContent(DB, await readBody(req)); return send(res, 200, { ok: true, id });
+    }
+    if (p === '/api/content/status' && req.method === 'POST') {
+      if (!requireAuth(req, res)) return;
+      const { id, status } = await readBody(req);
+      db.setContentStatus(DB, id, status); return send(res, 200, { ok: true });
+    }
+
     // ---- 정적: /admin 콘솔 ----
     if (p === '/admin' || p === '/admin/') {
       return send(res, 200, fs.readFileSync(path.join(__dirname, 'public', 'admin.html'), 'utf8'));

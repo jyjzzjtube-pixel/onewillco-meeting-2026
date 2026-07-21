@@ -59,7 +59,7 @@ async function dash(){
   const s=(await api('/api/stats')).data;
   $('#app').innerHTML=`<header><b>공간브릿지 운영 콘솔</b><button class="out" id="out">로그아웃</button></header>
     <div class="wrap">
-      <div class="tabs"><button class="on" id="t1">상담 CRM</button><button id="t2">정산 원장</button></div>
+      <div class="tabs"><button class="on" id="t1">상담 CRM</button><button id="t2">정산 원장</button><button id="t3">대시보드</button><button id="t4">마케팅</button></div>
       <div id="view1">
         <div class="kpis">
           <div class="kpi"><div class="n">${s.total||0}</div><div class="l">총 상담</div></div>
@@ -76,10 +76,16 @@ async function dash(){
         <tbody id="rows"></tbody></table>
       </div>
       <div id="view2" style="display:none"></div>
+      <div id="view3" style="display:none"></div>
+      <div id="view4" style="display:none"></div>
     </div>`;
   $('#out').onclick=async()=>{await api('/api/logout',{method:'POST'});loginView();};
-  $('#t1').onclick=()=>{$('#t1').classList.add('on');$('#t2').classList.remove('on');$('#view1').style.display='';$('#view2').style.display='none';};
-  $('#t2').onclick=()=>{$('#t2').classList.add('on');$('#t1').classList.remove('on');$('#view2').style.display='';$('#view1').style.display='none';loadSettle();};
+  const tabs=['t1','t2','t3','t4'],views=['view1','view2','view3','view4'];
+  function show(i){tabs.forEach((t,j)=>{$('#'+t).classList.toggle('on',i===j);$('#'+views[j]).style.display=i===j?'':'none';});}
+  $('#t1').onclick=()=>show(0);
+  $('#t2').onclick=()=>{show(1);loadSettle();};
+  $('#t3').onclick=()=>{show(2);loadDash();};
+  $('#t4').onclick=()=>{show(3);loadContent();};
   const load=async()=>{
     const q=$('#q').value,st=$('#fs').value;
     const r=await api('/api/leads?q='+encodeURIComponent(q)+'&status='+encodeURIComponent(st));
@@ -127,6 +133,36 @@ async function loadSettle(){
     </tr>`).join('')||'<tr><td colspan="9" style="text-align:center;color:#7A8B9C">해당 월 정산 내역이 없습니다</td></tr>';
   document.querySelectorAll('.sp').forEach(sel=>sel.onchange=async()=>{
     await api('/api/settlement/paid',{method:'POST',body:JSON.stringify({id:+sel.dataset.id,paid_status:sel.value})});loadSettle();});
+}
+async function loadDash(){
+  const d=(await api('/api/dashboard')).data,v=$('#view3');
+  const src=Object.entries(d.bySource||{}).map(([k,n])=>`<tr><td>${k}</td><td style="text-align:right">${n}건</td></tr>`).join('')||'<tr><td colspan="2">데이터 없음</td></tr>';
+  v.innerHTML=`<div class="kpis">
+      <div class="kpi"><div class="n">${d.total||0}</div><div class="l">총 상담</div></div>
+      <div class="kpi"><div class="n">${d.conv_connect||0}%</div><div class="l">연결 전환율</div></div>
+      <div class="kpi"><div class="n">${d.conv_deal||0}%</div><div class="l">계약 전환율</div></div>
+      <div class="kpi"><div class="n" style="font-size:20px">${won(d.fee_month)}</div><div class="l">이번달 수수료</div></div>
+      <div class="kpi"><div class="n" style="font-size:20px">${won(d.fee_paid_month)}</div><div class="l">이번달 입금</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div><h3 style="font-size:14px;color:var(--ink);margin:8px 0">전환 퍼널</h3>
+        <table><tbody>${Object.entries(d.funnel||{}).map(([k,n])=>`<tr><td>${k}</td><td style="text-align:right">${n}건</td></tr>`).join('')}</tbody></table></div>
+      <div><h3 style="font-size:14px;color:var(--ink);margin:8px 0">유입경로</h3>
+        <table><tbody>${src}</tbody></table></div>
+    </div>`;
+}
+async function loadContent(){
+  const v=$('#view4');
+  if(!v.dataset.init){v.dataset.init='1';
+    v.innerHTML=`<div class="bar"><input id="ct" placeholder="콘텐츠 주제"><input id="ck" placeholder="타겟 키워드(지역+업종)"><input id="cd" type="date"><button id="cadd" class="dl" style="border:0;cursor:pointer">캘린더에 추가</button></div>
+      <table><thead><tr><th>발행예정</th><th>주제</th><th>채널</th><th>키워드</th><th>상태</th></tr></thead><tbody id="crows"></tbody></table>`;
+    $('#cadd').onclick=async()=>{if(!$('#ct').value)return;await api('/api/content',{method:'POST',body:JSON.stringify({topic:$('#ct').value,keyword:$('#ck').value,publish_date:$('#cd').value})});$('#ct').value='';$('#ck').value='';loadContent();};
+  }
+  const CS=['초안','검토','발행완료'];
+  const r=await api('/api/content');
+  $('#crows').innerHTML=(r.data.content||[]).map(c=>`<tr><td>${c.publish_date||'-'}</td><td>${c.topic}</td><td>${c.channel}</td><td>${c.keyword||'-'}</td>
+    <td><select class="st cc" data-id="${c.id}">${CS.map(x=>`<option ${x===c.status?'selected':''}>${x}</option>`).join('')}</select></td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:#7A8B9C">콘텐츠 계획이 없습니다</td></tr>';
+  document.querySelectorAll('.cc').forEach(sel=>sel.onchange=async()=>{await api('/api/content/status',{method:'POST',body:JSON.stringify({id:+sel.dataset.id,status:sel.value})});});
 }
 (async()=>{const me=(await api('/api/me')).data;me.user?dash():loginView();})();
 </script>
