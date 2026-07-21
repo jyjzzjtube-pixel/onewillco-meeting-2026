@@ -2537,14 +2537,14 @@ body.sb-sticky-active .kakao-float { opacity:1; transform:none; pointer-events:a
   color:var(--service-accent,var(--sb-blue));
 }
 .service-icon svg { width:19px; height:19px; stroke-width:1.9; }
-.hero-start-service.interior { --service-accent:#0797D5; }
-.hero-start-service.pos { --service-accent:#0A9B78; }
-.hero-start-service.tax { --service-accent:#B47A0B; }
-.hero-start-service.accounting { --service-accent:#4F67B8; }
-.hero-start-service.insurance { --service-accent:#E45F4E; }
-.hero-start-service.property { --service-accent:#536BBE; }
-.hero-start-service.website { --service-accent:#6B5BB8; }
-.hero-start-service.app { --service-accent:#2D7AA4; }
+.hero-start-service.interior { --service-accent:var(--c-point); }
+.hero-start-service.pos { --service-accent:var(--c-point); }
+.hero-start-service.tax { --service-accent:var(--c-point); }
+.hero-start-service.accounting { --service-accent:var(--c-point); }
+.hero-start-service.insurance { --service-accent:var(--c-point); }
+.hero-start-service.property { --service-accent:var(--c-point); }
+.hero-start-service.website { --service-accent:var(--c-point); }
+.hero-start-service.app { --service-accent:var(--c-point); }
 .hero-intent-details { margin-top:10px; }
 .hero-mini { margin-top:14px; }
 
@@ -2577,14 +2577,14 @@ body.sb-sticky-active .kakao-float { opacity:1; transform:none; pointer-events:a
   border-color:var(--tab-accent,var(--sb-blue)); background:color-mix(in srgb, var(--tab-accent,var(--sb-blue)) 9%, white);
   color:var(--sb-navy); box-shadow:inset 0 0 0 1px var(--tab-accent,var(--sb-blue));
 }
-.category-mobile-tab:nth-child(1) { --tab-accent:#0797D5; }
-.category-mobile-tab:nth-child(2) { --tab-accent:#0A9B78; }
-.category-mobile-tab:nth-child(3) { --tab-accent:#B47A0B; }
-.category-mobile-tab:nth-child(4) { --tab-accent:#4F67B8; }
-.category-mobile-tab:nth-child(5) { --tab-accent:#E45F4E; }
-.category-mobile-tab:nth-child(6) { --tab-accent:#536BBE; }
-.category-mobile-tab:nth-child(7) { --tab-accent:#6B5BB8; }
-.category-mobile-tab:nth-child(8) { --tab-accent:#2D7AA4; }
+.category-mobile-tab:nth-child(1) { --tab-accent:var(--c-point); }
+.category-mobile-tab:nth-child(2) { --tab-accent:var(--c-point); }
+.category-mobile-tab:nth-child(3) { --tab-accent:var(--c-point); }
+.category-mobile-tab:nth-child(4) { --tab-accent:var(--c-point); }
+.category-mobile-tab:nth-child(5) { --tab-accent:var(--c-point); }
+.category-mobile-tab:nth-child(6) { --tab-accent:var(--c-point); }
+.category-mobile-tab:nth-child(7) { --tab-accent:var(--c-point); }
+.category-mobile-tab:nth-child(8) { --tab-accent:var(--c-point); }
 .service-card:nth-child(1) { --card-accent:#0797D5; }
 .service-card:nth-child(2) { --card-accent:#0A9B78; }
 .service-card:nth-child(3) { --card-accent:#B47A0B; }
@@ -3036,22 +3036,22 @@ body {
 .btn-ghost-green:hover, .btn-sms:hover { border-color:#4BB59D; background:#E2F5F0; }
 
 /* Category tabs and active panel share one explicit category color. */
-.category-mobile-tab:nth-child(1), .service-card:nth-child(1) { --category:#078BC6; --category-soft:#EAF7FD; }
-.category-mobile-tab:nth-child(2), .service-card:nth-child(2) { --category:#0B927C; --category-soft:#EAF8F4; }
-.category-mobile-tab:nth-child(3), .service-card:nth-child(3) { --category:#A96C0B; --category-soft:#FFF7E8; }
-.category-mobile-tab:nth-child(4), .service-card:nth-child(4) { --category:#4E66B3; --category-soft:#F0F2FC; }
-.category-mobile-tab:nth-child(5), .service-card:nth-child(5) { --category:#D95D4E; --category-soft:#FFF0EE; }
-.category-mobile-tab:nth-child(6), .service-card:nth-child(6) { --category:#536BBE; --category-soft:#EEF2FF; }
-.category-mobile-tab:nth-child(7), .service-card:nth-child(7) { --category:#7657B5; --category-soft:#F5F0FC; }
-.category-mobile-tab:nth-child(8), .service-card:nth-child(8) { --category:#257B9F; --category-soft:#EAF7FB; }
-.hero-start-service.interior { --category:#078BC6; --category-soft:#EAF7FD; }
-.hero-start-service.pos { --category:#0B927C; --category-soft:#EAF8F4; }
-.hero-start-service.tax { --category:#A96C0B; --category-soft:#FFF7E8; }
-.hero-start-service.accounting { --category:#4E66B3; --category-soft:#F0F2FC; }
-.hero-start-service.insurance { --category:#D95D4E; --category-soft:#FFF0EE; }
-.hero-start-service.property { --category:#536BBE; --category-soft:#EEF2FF; }
-.hero-start-service.website { --category:#7657B5; --category-soft:#F5F0FC; }
-.hero-start-service.app { --category:#257B9F; --category-soft:#EAF7FB; }
+.category-mobile-tab:nth-child(1), .service-card:nth-child(1) { --category:var(--c-point); --category-soft:#EAF7FD; }
+.category-mobile-tab:nth-child(2), .service-card:nth-child(2) { --category:var(--c-point); --category-soft:#EAF8F4; }
+.category-mobile-tab:nth-child(3), .service-card:nth-child(3) { --category:var(--c-point); --category-soft:#FFF7E8; }
+.category-mobile-tab:nth-child(4), .service-card:nth-child(4) { --category:var(--c-point); --category-soft:#F0F2FC; }
+.category-mobile-tab:nth-child(5), .service-card:nth-child(5) { --category:var(--c-point); --category-soft:#FFF0EE; }
+.category-mobile-tab:nth-child(6), .service-card:nth-child(6) { --category:var(--c-point); --category-soft:#EEF2FF; }
+.category-mobile-tab:nth-child(7), .service-card:nth-child(7) { --category:var(--c-point); --category-soft:#F5F0FC; }
+.category-mobile-tab:nth-child(8), .service-card:nth-child(8) { --category:var(--c-point); --category-soft:#EAF7FB; }
+.hero-start-service.interior { --category:var(--c-point); --category-soft:#EAF7FD; }
+.hero-start-service.pos { --category:var(--c-point); --category-soft:#EAF8F4; }
+.hero-start-service.tax { --category:var(--c-point); --category-soft:#FFF7E8; }
+.hero-start-service.accounting { --category:var(--c-point); --category-soft:#F0F2FC; }
+.hero-start-service.insurance { --category:var(--c-point); --category-soft:#FFF0EE; }
+.hero-start-service.property { --category:var(--c-point); --category-soft:#EEF2FF; }
+.hero-start-service.website { --category:var(--c-point); --category-soft:#F5F0FC; }
+.hero-start-service.app { --category:var(--c-point); --category-soft:#EAF7FB; }
 .hero-start-service { border-inline-start:3px solid var(--category); }
 .hero-start-service:hover, .hero-start-service[aria-pressed="true"] {
   border-color:var(--category); background:linear-gradient(145deg,#FFFFFF 0%,var(--category-soft) 100%);
