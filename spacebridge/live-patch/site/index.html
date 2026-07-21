@@ -567,7 +567,7 @@ body.mnav-open { overflow:hidden; }
 .ft-card { background: var(--sb-white); border: 1px solid var(--sb-line); border-radius: 16px; padding: 26px 24px; transition: all .15s; display: block; box-shadow: 0 2px 8px rgba(22,35,58,.05); }
 .ft-card:hover { border-color: var(--sb-green); transform: translateY(-3px); box-shadow: 0 14px 30px rgba(14,165,233,.14); }
 .ft-card .ico { font-size:28px; }
-.ft-card h4 { color:var(--sb-charcoal); font-size:16px; font-weight:800; margin: 12px 0 8px; letter-spacing: -.01em; }
+.ft-card :is(h3,h4) { color:var(--sb-charcoal); font-size:16px; font-weight:800; margin: 12px 0 8px; letter-spacing: -.01em; }
 .ft-card p { color:var(--sb-gray-500); font-size:14px; line-height: 1.6; }
 .ft-card .go { display: inline-block; margin-top: 14px; color:var(--sb-green-hover); font-size:14px; font-weight:800; padding: 8px 0; }
 .freetools .free-note { text-align: center; margin-top: 30px; color:var(--sb-gray-500); font-size:14px; line-height:1.7; }
@@ -1357,7 +1357,7 @@ table.pkg tfoot td.num.hi { font-size:16px; }
   .pf-body h4 { font-size:16px; margin-top: 5px; }
   .ft-card { padding: 16px 15px; }
   .ft-card .ico { font-size:20px; }
-  .ft-card h4 { margin: 8px 0 5px; font-size:16px; }
+  .ft-card :is(h3,h4) { margin: 8px 0 5px; font-size:16px; }
   .ft-card p { font-size:12px; line-height: 1.5; }
   .ft-card .go { margin-top: 10px; font-size:14px; padding: 6px 0; }
   .step { padding: 14px 12px 13px; }
@@ -1537,7 +1537,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .ft-card { min-height:270px; border-radius:10px; padding:24px 22px; box-shadow:none; }
 .ft-card:nth-child(n+5) { display:none; }
 .ft-card .ico { color:var(--sb-blue-dark); font-size:20px; font-weight:800; letter-spacing:0; }
-.ft-card h4 { font-size:16px; letter-spacing:0; }
+.ft-card :is(h3,h4) { font-size:16px; letter-spacing:0; }
 .ft-card p { font-size:14px; line-height:1.65; }
 .tools-more { display:flex; justify-content:center; margin-top:24px; }
 .free-note { text-align:center; }
@@ -1653,7 +1653,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .trust .inner { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .ft-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
   .ft-card { min-height:230px; padding:18px 16px; }
-  .ft-card h4 { font-size:16px; }
+  .ft-card :is(h3,h4) { font-size:16px; }
   .ft-card p { font-size:12px; }
   .match-flow { grid-template-columns:1fr; gap:8px; }
   .match-step, .match-step:nth-child(3), .match-step:nth-child(4) { display:grid; grid-template-columns:34px 1fr; column-gap:12px; padding:16px; border:1px solid var(--sb-border); }
@@ -1776,7 +1776,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   width:36px; height:28px; border-radius:10px; background:#EAF7FC;
   color:var(--sb-blue-dark); font-size:12px; font-weight:800; line-height:1;
 }
-.ft-card h4 { margin:14px 0 7px; font-size:16px; line-height:1.35; letter-spacing:0; }
+.ft-card :is(h3,h4) { margin:14px 0 7px; font-size:16px; line-height:1.35; letter-spacing:0; }
 .ft-card p { margin:0; font-size:12px; line-height:1.55; }
 .ft-result {
   display:block; margin-top:10px; color:var(--sb-navy);
@@ -1939,7 +1939,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .ft-card-featured h4 { max-width:230px; margin-top:18px; font-size:20px; }
   .ft-card-featured p { font-size:14px; }
   .ft-points { margin-top:18px; }
-  .ft-card h4 { font-size:14px; }
+  .ft-card :is(h3,h4) { font-size:14px; }
   .ft-card p, .ft-result { font-size:12px; }
   .free-note { font-size:12px; }
   .final { padding-top:48px; }
@@ -1978,7 +1978,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .tools-layout .ft-card {
     display:grid; grid-template-columns:38px minmax(0,1fr); column-gap:12px;
   }
-  .tools-layout .ft-card h4 { margin:2px 0 5px; }
+  .tools-layout .ft-card :is(h3,h4) { margin:2px 0 5px; }
   .tools-layout .ft-card p,
   .tools-layout .ft-card .ft-result,
   .tools-layout .ft-card .go { grid-column:2; }
@@ -2367,7 +2367,7 @@ body.sb-sticky-active .kakao-float { opacity:1; transform:none; pointer-events:a
 @media (min-width:1100px) {
   .tools-layout .ft-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .tools-layout .ft-card { min-height:210px; padding:17px; }
-  .tools-layout .ft-card h4 { margin-top:10px; font-size:14px; }
+  .tools-layout .ft-card :is(h3,h4) { margin-top:10px; font-size:14px; }
   .tools-layout .ft-card p { font-size:12px; }
   .tools-layout .ft-card .ft-result { font-size:12px; }
 }
@@ -2405,7 +2405,7 @@ body.sb-sticky-active .kakao-float { opacity:1; transform:none; pointer-events:a
     min-height:148px; padding:13px 11px;
   }
   .tools-layout .ft-card .ico { width:34px; min-height:28px; padding:6px; font-size:12px; }
-  .tools-layout .ft-card h4 { margin:7px 0 5px; font-size:14px; line-height:1.35; }
+  .tools-layout .ft-card :is(h3,h4) { margin:7px 0 5px; font-size:14px; line-height:1.35; }
   .tools-layout .ft-card p { display:none; }
   .tools-layout .ft-card .ft-result { font-size:12px; line-height:1.4; }
   .tools-layout .ft-card .go { margin-top:auto; padding-top:7px; font-size:12px; }
@@ -3739,7 +3739,7 @@ footer.site-footer.sb2-footer{background:var(--c-ink) !important;background-imag
     <div class="tools-layout">
       <a class="ft-card ft-card-featured" href="/calc.html?tool=area">
         <span class="ico">01</span>
-        <h4>도면 평수 계산기</h4>
+        <h3>도면 평수 계산기</h3>
         <p>가로·세로 치수를 m·cm·mm로 입력하고 여러 구역 면적을 합산합니다.</p>
         <ul class="ft-points">
           <li>여러 공간 면적을 한 번에 합산</li>
@@ -3751,42 +3751,42 @@ footer.site-footer.sb2-footer{background:var(--c-ink) !important;background-imag
       <div class="ft-grid">
         <a class="ft-card" href="/calc.html?tool=seat">
           <span class="ico">02</span>
-          <h4>주방·좌석 계산기</h4>
+          <h3>주방·좌석 계산기</h3>
           <p>주방을 뺀 홀 면적에 다찌·2인·4인 테이블 조합을 적용합니다.</p>
           <span class="ft-result">결과: 테이블 수와 예상 좌석</span>
           <span class="go">배치해 보기 →</span>
         </a>
         <a class="ft-card" href="/calc.html?tool=estimate">
           <span class="ico">03</span>
-          <h4>간편 비용 가이드</h4>
+          <h3>간편 비용 가이드</h3>
           <p>공개 표본과 공식요금을 기준일·조건과 함께 단순 환산합니다.</p>
           <span class="ft-result">결과: 조건별 참고 범위</span>
           <span class="go">비용 범위 보기 →</span>
         </a>
         <a class="ft-card" href="/calc.html?tool=check">
           <span class="ico">04</span>
-          <h4>견적서 체크</h4>
+          <h3>견적서 체크</h3>
           <p>평 단가와 VAT·철거·설비·AS 등 빠진 조건을 확인합니다.</p>
           <span class="ft-result">결과: 누락 가능 항목</span>
           <span class="go">확인해 보기 →</span>
         </a>
         <a class="ft-card" href="/calc.html?tool=budget">
           <span class="ico">05</span>
-          <h4>실견적 총비용</h4>
+          <h3>실견적 총비용</h3>
           <p>실제 받은 초기비와 월비를 원하는 기간으로 합산합니다.</p>
           <span class="ft-result">결과: 기간 총비용</span>
           <span class="go">합산해 보기 →</span>
         </a>
         <a class="ft-card" href="/guide.html">
           <span class="ico">06</span>
-          <h4>계약 전 가이드</h4>
+          <h3>계약 전 가이드</h3>
           <p>공정표·추가비·하자보수처럼 계약 전에 볼 조건을 정리합니다.</p>
           <span class="ft-result">결과: 계약 전 질문 목록</span>
           <span class="go">가이드 보기 →</span>
         </a>
         <a class="ft-card" href="#matching">
           <span class="ico">07</span>
-          <h4>담당자 요청 항목표</h4>
+          <h3>담당자 요청 항목표</h3>
           <p>8개 분야 담당자에게 받아야 할 숫자와 증빙을 확인합니다.</p>
           <span class="ft-result">결과: 비교·요청 기준</span>
           <span class="go">요청 기준 보기 →</span>
