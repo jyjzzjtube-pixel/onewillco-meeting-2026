@@ -75,6 +75,11 @@ function checkExtras(o, tag) {
   if (o.nextAction != null && !isStr(o.nextAction)) errors.push(`${tag}: nextAction은 문자열`);
   if (o.nextDue != null && o.nextDue !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(o.nextDue)) errors.push(`${tag}: nextDue는 YYYY-MM-DD`);
 }
+function checkFilesMeta(list, tag) {
+  if (list == null) return;
+  if (!Array.isArray(list)) { errors.push(`${tag}: files는 배열`); return; }
+  // files는 사용자가 화면에서 첨부하는 로컬 전용 필드 (실제 바이트는 브라우저에 저장). AI는 보통 docs 링크를 사용.
+}
 function checkSource(src, tag) {
   if (src == null) return;
   if (typeof src !== 'object') { errors.push(`${tag}: source는 {url, name, fetchedAt} 객체`); return; }
@@ -100,6 +105,7 @@ const ids = new Set();
   if (b.profit != null && b.revenue && b.profit / b.revenue > 0.4) warns.push(`${tag}: 이익률 ${Math.round(b.profit / b.revenue * 100)}% — 비정상 고이익, 근거 확인`);
   checkSource(b.source, tag);
   checkExtras(b, tag);
+  checkFilesMeta(b.files, tag);
   const sub = new Set();
   checkSub(b.comments, 'comments', tag, sub);
   checkSub(b.docs, 'docs', tag, sub);
@@ -120,6 +126,7 @@ const ids = new Set();
   if (l.rent != null && l.mRevenue && l.rent / l.mRevenue > 0.25) warns.push(`${tag}: 월세가 월매출의 25% 초과 — 임차료 부담 확인`);
   checkSource(l.source, tag);
   checkExtras(l, tag);
+  checkFilesMeta(l.files, tag);
   const sub = new Set();
   checkSub(l.comments, 'comments', tag, sub);
   checkSub(l.docs, 'docs', tag, sub);
