@@ -117,7 +117,7 @@ const ids = new Set();
   if (ids.has(l.id)) errors.push(`${tag}: id 중복`); else ids.add(l.id);
   if (!isStr(l.title) || !l.title) errors.push(`${tag}: title(매물명) 필요`);
   if (!isStr(l.region) || !l.region) errors.push(`${tag}: region(지역) 필요`);
-  checkMoney(l, ['price', 'premium', 'deposit', 'rent', 'mRevenue', 'mProfit', 'size'], tag);
+  checkMoney(l, ['price', 'premium', 'deposit', 'rent', 'mRevenue', 'mProfit', 'size', 'ownerSalary'], tag);
   if (l.status && !['판매중', '협상중', '계약진행', '거래완료'].includes(l.status)) errors.push(`${tag}: status 값 확인`);
   if (l.brandId && !(seed.brands || []).some(b => b.id === l.brandId)) errors.push(`${tag}: brandId '${l.brandId}'에 해당하는 브랜드 없음`);
   // 이상치
