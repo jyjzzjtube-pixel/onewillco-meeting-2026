@@ -173,6 +173,10 @@ const server = http.createServer(async (req, res) => {
     if (p === '/admin' || p === '/admin/') {
       return send(res, 200, fs.readFileSync(path.join(__dirname, 'public', 'admin.html'), 'utf8'));
     }
+    // ---- 용역계약서 양식 (직접입력·인쇄·PDF) ----
+    if (p === '/contract' || p === '/contract.html') {
+      return send(res, 200, fs.readFileSync(path.join(__dirname, 'public', 'contract.html'), 'utf8'));
+    }
     if (p === '/health') return send(res, 200, { ok: true });
 
     send(res, 404, { error: 'not found' });
