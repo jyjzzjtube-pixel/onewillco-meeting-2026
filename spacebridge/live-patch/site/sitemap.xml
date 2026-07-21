@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://gongganbridge.com/</loc>
+    <lastmod>2026-07-17</lastmod>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://gongganbridge.com/assets/hero/spacebridge-platform-consultation-og-1200x630.jpg</image:loc>
+      <image:title>공간브릿지 전문가 상담</image:title>
+      <image:caption>도면과 견적 자료를 함께 확인하는 공간브릿지 상담 테이블</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://gongganbridge.com/calc.html</loc>
+    <lastmod>2026-07-17</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://gongganbridge.com/guide.html</loc>
+    <lastmod>2026-07-17</lastmod>
+    <priority>0.8</priority>
+  </url>
+</urlset>

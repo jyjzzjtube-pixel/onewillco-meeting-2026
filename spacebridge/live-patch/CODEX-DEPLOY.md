@@ -1,22 +1,30 @@
-# 총감독 시정 1차 — 배포 지시 (Codex용)
+# 총감독 시정 1차 — 완성본 배포 안내
 
-`spacebridge/live-patch/index.html` 을 현재 라이브 `index.html` 위에 **그대로 교체 배포**하라.
-이 파일은 2026-07-21 라이브 홈(gongganbridge.com) 원본에 아래 4개 작업을 적용해 검증을 마친 결과물이다.
-다른 파일(assets, calc.html 등)은 건드리지 않는다.
+`spacebridge/live-patch/site/` = gongganbridge.com **전체 교체용 완성 사이트**입니다.
+2026-07-21 라이브 원본(외부 CSS 5종 포함 전체)을 내려받아 시정 명령 1차를 적용하고 실측 검증을 마쳤습니다.
+이 폴더를 통째로 올리면 끝 — 부분 수정 불필요.
 
-## 적용된 작업
-1. **디자인 토큰 통일** — font-size 6종(12/14/16/20/28/40), weight 2종(400/800), 본문색 4색(#14324F/#3F5265/#2E7CC4/#fff), radius 10/16px(+50% 원형). 폼 컨트롤 폰트 상속 추가로 Arial 누수 제거.
-2. **유령 섹션 5개 삭제** — trust/solution/howwework/package/honest (hidden 상태로 방치되던 죽은 코드).
-3. **히어로 시정** — 문제 합성 이미지(폰 속 외국인·영어 서류·블러) 제거 → 토큰 색 브릿지 그래픽 임시 적용. CTA를 "내 조건 30초 계산하기"(주) + "비교 기준표 무료로 받기"(보조)로 교체. 부제를 방문자 이득 문장으로 교체. "상담신청" 문구 전면 제거.
-4. **초대형 밴드 분해** — CSS 클래스가 존재하지 않아 SVG가 화면 절반 크기로 렌더되던 top-route-stages 내비 삭제(5,465px→894px). 역할이 중복된 #categories 섹션(1,212px) 삭제, 앵커는 #category-start로 재지정.
+## 배포 방법 (Codex 없이, 내 PC에서 2분)
+Vercel로 배포하던 그 PC에서:
+1. 이 폴더(또는 전달받은 gongganbridge-fix-v1.zip 압축 해제 폴더)를 연다
+2. 폴더 안에서 주소창에 `cmd` 입력 → 터미널 열림
+3. `npx vercel --prod` 입력
+   - "Link to existing project?" → **Y** → 기존 gongganbridge 프로젝트 선택
+   - 나머지는 Enter
+4. 끝나면 https://gongganbridge.com 새로고침(Ctrl+F5)으로 확인
+
+## 적용된 시정 (명령 1차 전체)
+1. **토큰 통일** — 글자 25종→6종(12/14/16/20/28/40), 굵기 19종→2종(400/800), 본문색 45종→4색, radius 10/16px. clamp()·color-mix()·외부 CSS 5종까지 전부 치환. Arial 누수 제거.
+2. **유령 섹션 5개 삭제** — trust/solution/howwework/package/honest.
+3. **히어로** — 문제 합성 이미지 제거→토큰 브릿지 그래픽 임시 적용, CTA "내 조건 30초 계산하기"+"비교 기준표 무료로 받기", 부제 이득 문장, "상담신청" 문구 전 사이트 0개.
+4. **중복 밴드 정리** — 스타일 누락 top-route 내비 삭제, 중복 #categories 섹션(1,267px) 삭제·앵커 재지정.
 
 ## 배포 전 자체 확인값 (로컬 렌더 실측)
-- font-size 6종 / weight 2종 / 본문 텍스트색 4색 이외 값: **0개**
-- 높이 0px 섹션: **0개**
-- "상담신청" 문구: **0개**
-- 홈 전체 높이: **8,259px** (기존 13,969px, 기준 9,000 이하 통과)
-- 모바일 390px 문서폭: **390px** (가로 스크롤 없음)
+- font-size 6종 / weight 2종 / 본문색 4색 이외: **0개**
+- 높이 0px 섹션: **0개** · "상담신청": **0개**
+- 홈 높이 **8,071px** (기존 9,369px, 기준 9,000 이하)
+- 모바일 390px 가로 스크롤: index/calc/guide/post/privacy 전부 **없음**
 
 ## 남은 것 (2차)
-- 히어로 실사 이미지 v2 (image-prompt-pack ⓪-A 결과물 도착 시 .hero-graphic 자리에 교체)
-- 비용근거·업무제휴·푸터 리디자인 목업 적용 (spacebridge/redesign/ 3종)
+- 히어로 실사 v2 이미지(⓪-A 결과물) 도착 시 교체
+- 비용근거·업무제휴·푸터 리디자인(spacebridge/redesign/ 3종) 적용

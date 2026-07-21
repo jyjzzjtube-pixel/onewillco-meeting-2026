@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="공간브릿지">
+  <rect width="48" height="48" rx="11" fill="#0f172a"/>
+  <path d="M11.4 31.1c0-7 5.7-12.7 12.7-12.7h12.6v5.2H24.1c-4.1 0-7.5 3.4-7.5 7.5v2.2h-5.2v-2.2Z" fill="#0ea5e9"/>
+  <path d="M36.6 16.9c0 7-5.7 12.7-12.7 12.7H11.4v-5.2h12.5c4.1 0 7.5-3.4 7.5-7.5v-2.2h5.2v2.2Z" fill="#f8fbff"/>
+  <rect x="11.4" y="14.7" width="5.2" height="18.6" rx="2" fill="#f8fbff"/>
+  <rect x="31.4" y="14.7" width="5.2" height="18.6" rx="2" fill="#38bdf8"/>
+  <circle cx="24" cy="24" r="2.8" fill="#e0f2fe"/>
+  <circle cx="24" cy="24" r="1.2" fill="#0ea5e9"/>
+</svg>
