@@ -471,6 +471,7 @@ details.fold summary b { color: var(--primary); }
     <input type="text" class="global-search" id="globalSearch" placeholder="🔍 법인명·상호명·지역 통합검색" oninput="onGlobalSearch()">
     <div class="me-chip">
       <span class="who" id="whoChip">관리자</span>
+      <span class="who" id="roleBadge" style="background:var(--muted);color:var(--muted-fg);display:none"></span>
       <input type="text" id="myName" placeholder="내 이름" onchange="saveMyName()" style="display:none">
       <button class="logout-btn" onclick="gateLogout()">로그아웃</button>
     </div>
@@ -577,12 +578,12 @@ details.fold summary b { color: var(--primary); }
         <h3>백업 · 이동</h3>
         <div class="data-actions">
           <button class="btn" onclick="exportData()">⬇ JSON 파일 내보내기</button>
-          <button class="btn ghost" onclick="document.getElementById('importFile').click()">⬆ JSON 파일 불러오기</button>
+          <button class="btn ghost admin-only" onclick="document.getElementById('importFile').click()">⬆ JSON 파일 불러오기</button>
           <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
           <button class="btn ghost" onclick="copyData()">📋 JSON 텍스트 복사</button>
         </div>
         <textarea class="io" id="ioArea" placeholder="JSON을 붙여넣고 [텍스트에서 불러오기]를 누르면 데이터가 교체됩니다."></textarea>
-        <div class="data-actions" style="margin-top:10px">
+        <div class="data-actions admin-only" style="margin-top:10px">
           <button class="btn ghost" onclick="importFromText()">텍스트에서 불러오기</button>
         </div>
       </div>
@@ -590,7 +591,7 @@ details.fold summary b { color: var(--primary); }
         <h3>시작 도구</h3>
         <div class="data-actions">
           <button class="btn ghost" onclick="loadSample()">🧪 샘플 데이터 넣기</button>
-          <button class="btn danger" onclick="wipeAll()">🗑 전체 데이터 삭제</button>
+          <button class="btn danger admin-only" onclick="wipeAll()">🗑 전체 데이터 삭제</button>
         </div>
       </div>
     </section>
@@ -849,10 +850,20 @@ function saveMyName() {
 
 /* ---------- 로그인 게이트 (발급 계정) ---------- */
 const ACCOUNTS = {
-  'admin': { pw: '123123', name: '관리자' },
-  '구름': { pw: '12341234', name: '구름' },
+  'admin':     { pw: '123123',   name: '관리자',   role: 'admin' },  // 최고 관리자
+  'onewill':   { pw: '0729',     name: '원윌앤코', role: 'member' },
+  'groomlabs': { pw: '12341234', name: '구름랩스', role: 'member' },
 };
 const LS_USER = 'onewillco_mna_user';
+function currentUser() { return ACCOUNTS[store.getItem(LS_USER)] || null; }
+function isAdmin() { const u = currentUser(); return !!(u && u.role === 'admin'); }
+// 관리자 전용 UI 표시/숨김 반영
+function applyRoleUI() {
+  const admin = isAdmin();
+  document.querySelectorAll('.admin-only').forEach(el => { el.style.display = admin ? '' : 'none'; });
+  const badge = document.getElementById('roleBadge');
+  if (badge) { const u = currentUser(); badge.textContent = u ? (u.role === 'admin' ? '최고관리자' : '협업자') : ''; badge.style.display = u ? '' : 'none'; }
+}
 function gateEnter() {
   const id = document.getElementById('gateId').value.trim();
   const pw = document.getElementById('gatePw').value;
@@ -864,8 +875,9 @@ function gateEnter() {
     store.setItem(LS_NAME, acc.name);
   }
   updateWhoChip();
+  applyRoleUI();
   document.getElementById('gate').classList.add('hidden');
-  toast(acc.name + '님, 어서오세요!');
+  toast(acc.name + '님, 어서오세요!' + (acc.role === 'admin' ? ' (최고관리자)' : ''));
 }
 function gateLogout() {
   store.removeItem(LS_USER);
@@ -875,6 +887,7 @@ function gateLogout() {
 }
 function updateWhoChip() {
   document.getElementById('whoChip').textContent = myName();
+  applyRoleUI();
 }
 
 /* ---------- 공식 데이터(seed) 로드 ----------
@@ -1167,7 +1180,7 @@ function renderBrands() {
       <td>${esc(b.manager) || '-'}</td>
       <td onclick="event.stopPropagation()">
         <button class="btn ghost sm" onclick="openBrandForm('${b.id}')">수정</button>
-        <button class="btn danger sm" onclick="deleteBrand('${b.id}')">삭제</button>
+<button class="btn danger sm admin-only" onclick="deleteBrand('${b.id}')" style="display:${isAdmin() ? '' : 'none'}">삭제</button>
       </td>
     </tr>`;
   }).join('');
@@ -1229,6 +1242,7 @@ function saveBrand() {
   if (id && currentDetail?.kind === 'brand' && currentDetail.id === id && document.getElementById('detailModal').classList.contains('open')) renderBrandDetail(id);
 }
 function deleteBrand(id) {
+  if (!isAdmin()) { toast('삭제는 최고관리자(admin)만 할 수 있습니다.'); return; }
   const b = DB.brands.find(x => x.id === id);
   if (!b) return;
   if (!confirm(`'${b.corpName} (${b.tradeName})' 브랜드를 삭제할까요?\n연결된 매물은 삭제되지 않고 연결만 해제됩니다.`)) return;
@@ -1282,7 +1296,7 @@ function renderBrandDetail(id) {
       `<a href="javascript:void(0)" onclick="openDetail('${l.id}')" style="color:var(--blue)">${esc(l.title)}</a>`).join(' · ')}</div>` : ''}
     <div style="display:flex;gap:8px;margin-bottom:18px">
       <button class="btn ghost sm" onclick="openBrandForm('${b.id}')">✏ 브랜드 수정</button>
-      <button class="btn danger sm" onclick="deleteBrand('${b.id}')">🗑 브랜드 삭제</button>
+      <button class="btn danger sm admin-only" onclick="deleteBrand('${b.id}')" style="display:${isAdmin() ? '' : 'none'}">🗑 브랜드 삭제</button>
     </div>
     ${docsChatHTML('brand', b)}`;
   afterDetailRender('brand', id);
@@ -1489,6 +1503,7 @@ function saveListing() {
   if (id && currentDetail?.kind === 'listing' && currentDetail.id === id && document.getElementById('detailModal').classList.contains('open')) renderDetail(id);
 }
 function deleteListing(id) {
+  if (!isAdmin()) { toast('삭제는 최고관리자(admin)만 할 수 있습니다.'); return; }
   const l = DB.listings.find(x => x.id === id);
   if (!l) return;
   if (!confirm(`'${l.title}' 매물을 삭제할까요? 댓글도 함께 삭제됩니다.`)) return;
@@ -1544,7 +1559,7 @@ function renderDetail(id) {
     ${l.link ? `<div style="margin-bottom:14px;font-size:13px">🔗 <a href="${esc(l.link)}" target="_blank" rel="noopener" style="color:var(--blue)">원본 매물 링크 열기</a></div>` : ''}
     <div style="display:flex;gap:8px;margin-bottom:18px">
       <button class="btn ghost sm" onclick="openListingForm('${l.id}')">✏ 매물 수정</button>
-      <button class="btn danger sm" onclick="deleteListing('${l.id}')">🗑 매물 삭제</button>
+      <button class="btn danger sm admin-only" onclick="deleteListing('${l.id}')" style="display:${isAdmin() ? '' : 'none'}">🗑 매물 삭제</button>
     </div>
     ${docsChatHTML('listing', l)}`;
   afterDetailRender('listing', id);
@@ -2177,6 +2192,7 @@ function applyImported(d) {
   return true;
 }
 function importData(input) {
+  if (!isAdmin()) { toast('데이터 불러오기는 최고관리자(admin)만 할 수 있습니다.'); input.value = ''; return; }
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
@@ -2188,12 +2204,14 @@ function importData(input) {
   reader.readAsText(file);
 }
 function importFromText() {
+  if (!isAdmin()) { toast('데이터 불러오기는 최고관리자(admin)만 할 수 있습니다.'); return; }
   const txt = document.getElementById('ioArea').value.trim();
   if (!txt) { toast('텍스트박스에 JSON을 붙여넣으세요.'); return; }
   try { applyImported(JSON.parse(txt)); }
   catch (e) { toast('JSON 파싱 실패: 내용을 확인하세요.'); }
 }
 function wipeAll() {
+  if (!isAdmin()) { toast('전체 삭제는 최고관리자(admin)만 할 수 있습니다.'); return; }
   if (!confirm('브랜드·매물·댓글 데이터를 전부 삭제합니다. 되돌릴 수 없습니다. 계속할까요?')) return;
   if (!confirm('정말 삭제할까요? (마지막 확인)')) return;
   DB = { brands: [], listings: [] };

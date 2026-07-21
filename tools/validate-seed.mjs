@@ -23,7 +23,7 @@ const isStr = v => typeof v === 'string';
 const isNumOrNull = v => v == null || (typeof v === 'number' && !Number.isNaN(v));
 const NOW = Date.now();
 const TS_MIN = 1.5e12; // 2017년 이후 — 초 단위(10자리) 입력을 잡아냄
-const BANNED_AUTHORS = ['관리자', '구름']; // 실제 사용자 계정명 사칭 금지
+const BANNED_AUTHORS = ['관리자', '구름', '원윌앤코', '구름랩스']; // 실제 사용자 계정명 사칭 금지
 
 function checkId(id, kind, tag) {
   const re = new RegExp('^seed-' + kind + '-\\d{3,}$');
