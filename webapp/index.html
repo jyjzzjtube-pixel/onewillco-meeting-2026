@@ -567,6 +567,7 @@ details.fold summary b { color: var(--primary); }
             <option>검토중</option><option>협상중</option><option>실사중</option><option>인수완료</option><option>보류</option>
           </select>
           <div class="spacer"></div>
+          <button class="btn ghost" onclick="openIntake('brand')">📄 정보 요청서 양식</button>
           <button class="btn" onclick="openBrandForm()">＋ 브랜드 등록</button>
         </div>
         <div class="table-wrap">
@@ -608,6 +609,7 @@ details.fold summary b { color: var(--primary); }
         <div class="spacer"></div>
         <button class="btn ghost" id="mailBulkBtn" style="display:none" onclick="openMail('listing', null, [...compareSel])">📧 선택 이메일 <b id="mailBulkCnt"></b></button>
         <button class="btn ghost" id="compareBtn" style="display:none" onclick="openCompare()">⚖ 비교하기 <b id="compareCnt"></b></button>
+        <button class="btn ghost" onclick="openIntake('listing')">📄 정보 요청서 양식</button>
         <button class="btn" onclick="openListingForm()">＋ 매물 등록</button>
       </div>
       <div class="card-grid" id="listingGrid"></div>
@@ -749,6 +751,20 @@ details.fold summary b { color: var(--primary); }
   <img id="lbImg" alt="">
   <button class="lb-nav lb-next" aria-label="다음 사진" onclick="lbStep(1)">›</button>
   <div class="lb-cap" id="lbCap"></div>
+</div>
+
+<div class="modal-bg" id="intakeModal">
+  <div class="modal">
+    <button class="close-x" aria-label="닫기" onclick="closeModal('intakeModal')">✕</button>
+    <h2 id="intakeTitle">정보 요청서 양식</h2>
+    <div class="mail-note" id="intakeNote"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px">
+      <button class="btn" onclick="downloadIntake('excel')">⬇ 엑셀(.xls)</button>
+      <button class="btn" onclick="downloadIntake('word')">⬇ 워드·한글(.doc)</button>
+      <button class="btn ghost" onclick="downloadIntake('text')">⬇ 텍스트(.txt)</button>
+    </div>
+    <div style="font-size:12px;color:var(--muted-fg);margin-top:12px">고객이 빈칸을 채워 회신하면, 그 내용을 보고 [＋ 등록]에 옮겨 담으면 됩니다. (금액은 원 단위로 적으셔도 됩니다.)</div>
+  </div>
 </div>
 
 <div id="toast"></div>
@@ -2403,6 +2419,91 @@ document.addEventListener('keydown', e => {
 /* =============================================================
    데이터 관리
    ============================================================= */
+/* ---------- 고객 작성용 정보 요청서 (브랜드 M&A / 양도양수 실매물 별도) ---------- */
+const INTAKE = {
+  brand: {
+    title: '브랜드 M&A 정보 요청서',
+    intro: '브랜드(법인) 인수 검토를 위한 기본 정보입니다. 아는 범위에서 빈칸을 채워 회신해 주세요.',
+    sections: [
+      { h: '① 기본 정보', rows: ['법인명', '상호명(브랜드)', '업종', '개업일 (YYYY-MM-DD)', '지점수 (직영 __ / 가맹 __)', '담당자 · 연락처'] },
+      { h: '② 최근 3개년 실적 (단위: 원 또는 만원)', years3: true },
+      { h: '③ 재무·부채', rows: ['부가세 신고 연매출', '차입금(부채) 총액', '4대보험 가입 인원', '재무제표 3개년 (유/무)'] },
+      { h: '④ 거래 조건', rows: ['희망 양도가', '인수 방식 (자산양수도 / 지분양수도)', '가맹 구조 · 리스크 · 특이사항'] },
+      { h: '⑤ 참고 자료 (있으면 링크·파일 첨부)', rows: ['정보공개서 · 가맹계약서', '기타 자료'] },
+    ],
+  },
+  listing: {
+    title: '양도양수 실매물 정보 요청서',
+    intro: '점포 양도양수 검토를 위한 정보입니다. 아는 범위에서 빈칸을 채워 회신해 주세요.',
+    sections: [
+      { h: '① 매물 기본', rows: ['매물명(상호)', '지역(주소)', '업종', '전용면적(평)', '층', '양도 사유'] },
+      { h: '② 거래 조건 (단위: 원 또는 만원)', rows: ['양도 희망가', '권리금', '보증금', '월세'] },
+      { h: '③ 월 손익 · 최근 월 기준 (단위: 원 또는 만원)', rows: ['총매출', '임대료', '관리비', '재료비', '인건비', '공과금', '기타잡비'] },
+      { h: '④ 참고 (아는 범위에서)', rows: ['부가세 신고 월매출', '4대보험 가입 인원', '임대차 잔여기간', '인허가·영업권 승계 (가능/불가)', '종업원 승계 (승계/일부/미승계)'] },
+    ],
+  },
+};
+let _intakeKind = 'listing';
+function openIntake(kind) {
+  _intakeKind = kind;
+  const t = INTAKE[kind];
+  document.getElementById('intakeTitle').textContent = '📄 ' + t.title + ' 양식';
+  document.getElementById('intakeNote').innerHTML = `<b>${esc(t.title)}</b> — 고객(의뢰자)에게 보내 <b>빈칸을 채워 회신</b>받는 양식입니다. 원하는 형식으로 내려받아 이메일·메신저로 전달하세요.`;
+  openModal('intakeModal');
+}
+function intakeBlankTable(kind) {
+  const t = INTAKE[kind];
+  let rowsHtml = '';
+  t.sections.forEach(sec => {
+    rowsHtml += `<tr><td colspan="2" style="background:#EEF0FB;font-weight:bold;padding:8px">${esc(sec.h)}</td></tr>`;
+    if (sec.years3) {
+      rowsHtml += `<tr><td style="padding:7px 10px;width:40%">연도</td><td style="padding:7px 10px">매출 / 영업이익</td></tr>`;
+      ['(  년)', '(  년)', '(  년)'].forEach(y => { rowsHtml += `<tr><td style="padding:10px">${y}</td><td style="padding:10px">&nbsp;</td></tr>`; });
+    } else {
+      (sec.rows || []).forEach(r => { rowsHtml += `<tr><td style="padding:9px 10px;width:40%">${esc(r)}</td><td style="padding:9px 10px">&nbsp;</td></tr>`; });
+    }
+  });
+  return rowsHtml;
+}
+function buildIntakeHTML(kind) {
+  const t = INTAKE[kind];
+  return `<html><head><meta charset="utf-8"></head><body>
+    <h2 style="font-family:sans-serif">${esc(t.title)}</h2>
+    <p style="font-family:sans-serif;color:#555">${esc(t.intro)}</p>
+    <table border="1" cellspacing="0" style="border-collapse:collapse;font-family:sans-serif;font-size:13px;width:100%">
+      ${intakeBlankTable(kind)}
+    </table>
+    <p style="font-family:sans-serif;color:#888;font-size:12px;margin-top:14px">※ 원윌앤코x구름랩스 · 작성 후 회신 부탁드립니다.</p>
+  </body></html>`;
+}
+function buildIntakeText(kind) {
+  const t = INTAKE[kind];
+  let out = t.title + '\n' + '='.repeat(t.title.length * 2) + '\n' + t.intro + '\n';
+  t.sections.forEach(sec => {
+    out += '\n[' + sec.h + ']\n';
+    if (sec.years3) { ['(  년)', '(  년)', '(  년)'].forEach(y => out += '  ' + y + ' 매출: ______________  영업이익: ______________\n'); }
+    else (sec.rows || []).forEach(r => out += '  - ' + r + ': ________________________\n');
+  });
+  out += '\n※ 원윌앤코x구름랩스 · 작성 후 회신 부탁드립니다.';
+  return out;
+}
+function downloadBlob(content, mime, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff' + content], { type: mime }));
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 30000);
+}
+function downloadIntake(fmt) {
+  const kind = _intakeKind, t = INTAKE[kind];
+  const base = t.title;
+  if (fmt === 'text') downloadBlob(buildIntakeText(kind), 'text/plain;charset=utf-8', base + '.txt');
+  else if (fmt === 'excel') downloadBlob(buildIntakeHTML(kind), 'application/vnd.ms-excel;charset=utf-8', base + '.xls');
+  else downloadBlob(buildIntakeHTML(kind), 'application/msword;charset=utf-8', base + '.doc');
+  toast(base + ' ' + (fmt === 'text' ? '텍스트' : fmt === 'excel' ? '엑셀' : '워드') + ' 내려받기');
+  closeModal('intakeModal');
+}
+
 function exportData() {
   const blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
