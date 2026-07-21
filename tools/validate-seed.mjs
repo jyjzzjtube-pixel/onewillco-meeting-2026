@@ -70,6 +70,11 @@ function checkMoney(o, fields, tag) {
     if (v != null && v >= 1e7) warns.push(`${tag}: ${k}=${v} — 100억↑ 표기, 원 단위로 넣은 것 아닌지 확인 (만원 단위)`);
   });
 }
+function checkExtras(o, tag) {
+  if (o.trust != null && !['주장', '자료확인', '실사검증'].includes(o.trust)) errors.push(`${tag}: trust는 주장|자료확인|실사검증`);
+  if (o.nextAction != null && !isStr(o.nextAction)) errors.push(`${tag}: nextAction은 문자열`);
+  if (o.nextDue != null && o.nextDue !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(o.nextDue)) errors.push(`${tag}: nextDue는 YYYY-MM-DD`);
+}
 function checkSource(src, tag) {
   if (src == null) return;
   if (typeof src !== 'object') { errors.push(`${tag}: source는 {url, name, fetchedAt} 객체`); return; }
@@ -94,6 +99,7 @@ const ids = new Set();
   if (b.profit != null && b.revenue != null && b.profit > b.revenue) errors.push(`${tag}: 영업이익 > 연매출`);
   if (b.profit != null && b.revenue && b.profit / b.revenue > 0.4) warns.push(`${tag}: 이익률 ${Math.round(b.profit / b.revenue * 100)}% — 비정상 고이익, 근거 확인`);
   checkSource(b.source, tag);
+  checkExtras(b, tag);
   const sub = new Set();
   checkSub(b.comments, 'comments', tag, sub);
   checkSub(b.docs, 'docs', tag, sub);
@@ -113,6 +119,7 @@ const ids = new Set();
   if (l.rent != null && l.mRevenue != null && l.rent > l.mRevenue) errors.push(`${tag}: 월세 > 월매출`);
   if (l.rent != null && l.mRevenue && l.rent / l.mRevenue > 0.25) warns.push(`${tag}: 월세가 월매출의 25% 초과 — 임차료 부담 확인`);
   checkSource(l.source, tag);
+  checkExtras(l, tag);
   const sub = new Set();
   checkSub(l.comments, 'comments', tag, sub);
   checkSub(l.docs, 'docs', tag, sub);
