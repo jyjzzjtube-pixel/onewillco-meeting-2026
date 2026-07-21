@@ -446,10 +446,23 @@ table.cmp-table td.best { background: var(--green-bg); color: var(--green-fg); f
 .c-paper table.c-sign td { border:1px solid #bbb; padding:12px 14px; vertical-align:top; font-size:13px; }
 .c-paper table.c-sign td.c-role { width:130px; font-weight:700; background:#f5f5f7; white-space:nowrap; }
 .c-paper .c-notice { margin-top:20px; padding-top:10px; border-top:1px solid #ddd; color:#b45; font-size:11.5px; }
+.c-paper .c-blank { color:#a9adbb; letter-spacing:1px; }
+.c-paper .c-val { font-weight:700; color:#1b1c27; background:linear-gradient(transparent 60%, #fff2b8 60%); padding:0 1px; }
+.ctr-form { border:1px solid var(--border); background:var(--muted); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
+.ctr-form .cf-head { font-weight:700; font-size:14px; margin-bottom:10px; }
+.ctr-form .cf-head span { font-weight:400; font-size:12px; color:var(--muted-fg); }
+.ctr-form .cf-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px 14px; }
+.ctr-form label.cf { display:flex; flex-direction:column; gap:4px; font-size:12px; }
+.ctr-form label.cf > span { color:var(--muted-fg); font-weight:600; }
+.ctr-form label.cf > span em { font-style:normal; color:var(--primary); font-size:10.5px; background:rgba(94,86,210,.1); padding:0 5px; border-radius:6px; margin-left:2px; }
+.ctr-form label.cf input { border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13px; font-family:inherit; background:#fff; }
+.ctr-form label.cf input:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 2px rgba(94,86,210,.15); }
 @media print {
   body > *:not(#printArea) { display:none !important; }
   #printArea { display:block !important; }
   #printArea .c-paper { border:none; padding:0; max-width:none; margin:0; }
+  #printArea .c-val { background:none !important; padding:0; }
+  #printArea .c-blank { color:#000; }
   @page { margin:18mm 16mm; }
 }
 /* 손익 입력표 (원윌앤코) */
@@ -616,6 +629,7 @@ details.fold summary b { color: var(--primary); }
         <h3>👋 시작해볼까요?</h3>
         <p>아직 데이터가 없습니다. 샘플로 먼저 둘러보거나, 브랜드·매물을 바로 등록하세요.</p>
         <button class="btn" onclick="loadSample()">🧪 샘플 데이터로 시작</button>
+        <button class="btn ghost" onclick="removeSample()">🧹 샘플 빼기</button>
         <button class="btn ghost" onclick="go('brands')">🏢 브랜드 등록</button>
         <button class="btn ghost" onclick="go('listings')">🏪 매물 등록</button>
       </div>
@@ -752,6 +766,7 @@ details.fold summary b { color: var(--primary); }
         <h3>시작 도구</h3>
         <div class="data-actions">
           <button class="btn ghost" onclick="loadSample()">🧪 샘플 데이터 넣기</button>
+          <button class="btn ghost" onclick="removeSample()">🧹 샘플 데이터 빼기</button>
           <button class="btn danger admin-only" onclick="wipeAll()">🗑 전체 데이터 삭제</button>
         </div>
       </div>
@@ -871,11 +886,14 @@ details.fold summary b { color: var(--primary); }
 <div class="modal-bg" id="contractModal">
   <div class="modal wide">
     <button class="close-x" aria-label="닫기" onclick="closeModal('contractModal')">✕</button>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-      <button class="btn" onclick="printContract()">🖨 인쇄 / PDF 저장</button>
-      <button class="btn ghost" onclick="downloadContract('word')">⬇ 워드·한글(.doc)</button>
-      <span style="font-size:12px;color:var(--muted-fg);align-self:center">인쇄 창에서 "PDF로 저장"을 고르면 PDF가 됩니다.</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+      <button class="btn" onclick="printContract()">🖨 인쇄 / PDF</button>
+      <button class="btn ghost" onclick="downloadContract('word')">⬇ 워드(.doc)</button>
+      <button class="btn ghost" onclick="downloadContract('hwp')">⬇ 한글(HWP)</button>
+      <button class="btn ghost" onclick="clearContractFields()">↺ 입력 지우기</button>
+      <span style="font-size:12px;color:var(--muted-fg);align-self:center">인쇄 창에서 "PDF로 저장"을 고르면 PDF · 한글(HWP)은 .doc를 그대로 엽니다.</span>
     </div>
+    <div id="contractForm" class="ctr-form"></div>
     <div id="contractPaper" class="c-paper"></div>
   </div>
 </div>
@@ -2735,9 +2753,16 @@ const CONTRACTS = [
     id: 'nda',
     cat: '보안·자문',
     title: '비밀유지계약서 (NDA)',
+    fields: [
+      { k: 'itemName', label: '대상 거래', auto: 'itemName' },
+      { k: 'penalty', label: '위약벌 금액(원)' },
+      { k: 'date', label: '계약 체결일', auto: 'date' },
+      { k: 'gapName', label: '「갑」 상호' }, { k: 'gapCeo', label: '「갑」 대표' }, { k: 'gapAddr', label: '「갑」 주소', auto: 'addr' },
+      { k: 'eulName', label: '「을」 상호' }, { k: 'eulCeo', label: '「을」 대표' }, { k: 'eulAddr', label: '「을」 주소' },
+    ],
     body: ctx => `
 <h1 class="c-title">비밀유지계약서</h1>
-<p class="c-pre">본 계약은 정보를 제공하는 당사자(이하 「갑」)와 정보를 제공받는 당사자(이하 「을」)가, ${ctx.itemName || ctx.blank} 관련 거래(이하 "본건 거래")의 검토·협의를 목적으로, 상호 교환하는 비밀정보의 보호에 관하여 다음과 같이 체결한다.</p>
+<p class="c-pre">본 계약은 정보를 제공하는 당사자(이하 「갑」)와 정보를 제공받는 당사자(이하 「을」)가, ${ctx.f('itemName', ctx.itemName)} 관련 거래(이하 "본건 거래")의 검토·협의를 목적으로, 상호 교환하는 비밀정보의 보호에 관하여 다음과 같이 체결한다.</p>
 
 <div class="c-art"><h3>제1조 (목적)</h3><p>본 계약은 본건 거래의 검토·협상·실행 과정에서 「갑」이 「을」에게 개시하는 비밀정보의 보호 및 사용 범위를 정함을 목적으로 한다.</p></div>
 
@@ -2762,46 +2787,52 @@ const CONTRACTS = [
 
 <div class="c-art"><h3>제7조 (손해배상 및 위약벌)</h3>
 <p class="c-num">① 「을」이 본 계약을 위반하여 「갑」에게 손해가 발생한 경우 「을」은 그 손해를 배상한다.</p>
-<p class="c-num">② 위반의 성질상 손해액 입증이 곤란한 점을 고려하여, 「을」은 위약벌로서 금 ${ctx.blank}원을 「갑」에게 지급하며, 이는 실손해 배상청구를 배제하지 아니한다.</p></div>
+<p class="c-num">② 위반의 성질상 손해액 입증이 곤란한 점을 고려하여, 「을」은 위약벌로서 금 ${ctx.f('penalty')}원을 「갑」에게 지급하며, 이는 실손해 배상청구를 배제하지 아니한다.</p></div>
 
 <div class="c-art"><h3>제8조 (권리 부존재)</h3><p>비밀정보의 개시는 「을」에게 어떠한 지식재산권·실시권도 부여하지 아니하며, 본건 거래 성립을 보장하지 아니한다.</p></div>
 
 <div class="c-art"><h3>제9조 (관할)</h3><p>본 계약과 관련한 분쟁은 서울중앙지방법원을 제1심 전속관할 법원으로 한다.</p></div>
 
-<p class="c-date">${ctx.date}</p>
+<p class="c-date">${ctx.f('date', ctx.date)}</p>
 <table class="c-sign">
-<tr><td class="c-role">「갑」</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.addr || ctx.blank}</td></tr>
-<tr><td class="c-role">「을」</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-</table>
-<p class="c-notice">※ 본 서식은 표준 초안입니다. 실제 체결 전 반드시 변호사·법무 검토를 받으시기 바랍니다.</p>`
+<tr><td class="c-role">「갑」</td><td>상호 ${ctx.f('gapName')}<br>대표 ${ctx.f('gapCeo')} (인)<br>주소 ${ctx.f('gapAddr', ctx.addr)}</td></tr>
+<tr><td class="c-role">「을」</td><td>상호 ${ctx.f('eulName')}<br>대표 ${ctx.f('eulCeo')} (인)<br>주소 ${ctx.f('eulAddr')}</td></tr>
+</table>`
   },
 
   {
     id: 'sell-mandate',
     cat: '의뢰·중개',
     title: '매도(양도) 중개 의뢰서',
+    fields: [
+      { k: 'itemName', label: '대상(목적물)', auto: 'itemName' }, { k: 'addr', label: '소재지', auto: 'addr' }, { k: 'price', label: '희망 매각가', auto: 'price' },
+      { k: 'brokerType', label: '중개형태(전속/일반)' }, { k: 'feeRate', label: '중개보수 요율(%)' }, { k: 'period', label: '의뢰기간(개월)' },
+      { k: 'date', label: '계약 체결일', auto: 'date' },
+      { k: 'gapName', label: '「갑」(의뢰인) 상호' }, { k: 'gapCeo', label: '「갑」 대표' }, { k: 'gapAddr', label: '「갑」 주소' },
+      { k: 'eulCeo', label: '「을」(중개사) 대표' }, { k: 'eulAddr', label: '「을」 주소' },
+    ],
     body: ctx => `
 <h1 class="c-title">매도(양도) 중개 의뢰서</h1>
-<p class="c-pre">본 계약은 매각을 의뢰하는 당사자(이하 「갑」)와 중개·자문사인 ${ctx.company}(이하 「을」)가, ${ctx.itemName || ctx.blank}의 매각 중개에 관하여 다음과 같이 체결한다.</p>
+<p class="c-pre">본 계약은 매각을 의뢰하는 당사자(이하 「갑」)와 중개·자문사인 ${ctx.company}(이하 「을」)가, ${ctx.f('itemName', ctx.itemName)}의 매각 중개에 관하여 다음과 같이 체결한다.</p>
 
 <div class="c-art"><h3>제1조 (목적 및 위임)</h3><p>「갑」은 아래 목적물의 매각(양도) 중개 및 관련 자문 업무를 「을」에게 위임하고, 「을」은 이를 수임한다.</p></div>
 
 <div class="c-art"><h3>제2조 (목적물)</h3>
-<p class="c-sub">1. 대상: ${ctx.itemName || ctx.blank}</p>
-<p class="c-sub">2. 소재지: ${ctx.addr || ctx.blank}</p>
+<p class="c-sub">1. 대상: ${ctx.f('itemName', ctx.itemName)}</p>
+<p class="c-sub">2. 소재지: ${ctx.f('addr', ctx.addr)}</p>
 <p class="c-sub">3. 구분: ${ctx.isBrand ? '브랜드(법인·사업) 양도' : '점포(영업) 양도'}</p></div>
 
-<div class="c-art"><h3>제3조 (희망 매각조건)</h3><p>「갑」의 희망 매각가격은 ${ctx.price || ctx.blank}로 하며, 구체적 조건은 협의에 따라 조정될 수 있다.</p></div>
+<div class="c-art"><h3>제3조 (희망 매각조건)</h3><p>「갑」의 희망 매각가격은 ${ctx.f('price', ctx.price)}로 하며, 구체적 조건은 협의에 따라 조정될 수 있다.</p></div>
 
 <div class="c-art"><h3>제4조 (중개형태 — 전속/비전속)</h3>
-<p class="c-num">① 「갑」은 본 건을 ${ctx.blank}(전속중개 / 일반중개)으로 「을」에게 의뢰한다.</p>
+<p class="c-num">① 「갑」은 본 건을 ${ctx.f('brokerType')}(전속중개 / 일반중개)으로 「을」에게 의뢰한다.</p>
 <p class="c-num">② 전속중개인 경우 「갑」은 의뢰기간 중 제3자(타 중개인 포함)에게 동일 목적물의 중개를 의뢰하지 아니한다.</p></div>
 
 <div class="c-art"><h3>제5조 (중개보수)</h3>
-<p class="c-num">① 매매가 성사되어 잔금이 지급된 경우, 「갑」은 「을」에게 거래대금의 ${ctx.blank}%(부가가치세 별도)에 해당하는 중개보수를 지급한다.</p>
+<p class="c-num">① 매매가 성사되어 잔금이 지급된 경우, 「갑」은 「을」에게 거래대금의 ${ctx.f('feeRate')}%(부가가치세 별도)에 해당하는 중개보수를 지급한다.</p>
 <p class="c-num">② 구체적 지급시기·조건은 별도 성공보수 약정서에 따른다.</p></div>
 
-<div class="c-art"><h3>제6조 (의뢰기간)</h3><p>본 의뢰의 유효기간은 계약 체결일로부터 ${ctx.blank}개월로 하며, 만료 30일 전까지 이의가 없으면 동일 조건으로 갱신된다.</p></div>
+<div class="c-art"><h3>제6조 (의뢰기간)</h3><p>본 의뢰의 유효기간은 계약 체결일로부터 ${ctx.f('period')}개월로 하며, 만료 30일 전까지 이의가 없으면 동일 조건으로 갱신된다.</p></div>
 
 <div class="c-art"><h3>제7조 (자료제공 및 정확성 의무)</h3>
 <p class="c-num">① 「갑」은 재무제표·매출자료·임대차계약·인허가 등 매각에 필요한 자료를 성실히 제공한다.</p>
@@ -2813,18 +2844,24 @@ const CONTRACTS = [
 
 <div class="c-art"><h3>제10조 (관할)</h3><p>본 계약과 관련한 분쟁은 서울중앙지방법원을 제1심 전속관할 법원으로 한다.</p></div>
 
-<p class="c-date">${ctx.date}</p>
+<p class="c-date">${ctx.f('date', ctx.date)}</p>
 <table class="c-sign">
-<tr><td class="c-role">「갑」(의뢰인)</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-<tr><td class="c-role">「을」(중개·자문)</td><td>상호 ${ctx.company}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-</table>
-<p class="c-notice">※ 본 서식은 표준 초안입니다. 실제 체결 전 반드시 변호사·법무 검토를 받으시기 바랍니다.</p>`
+<tr><td class="c-role">「갑」(의뢰인)</td><td>상호 ${ctx.f('gapName')}<br>대표 ${ctx.f('gapCeo')} (인)<br>주소 ${ctx.f('gapAddr')}</td></tr>
+<tr><td class="c-role">「을」(중개·자문)</td><td>상호 ${ctx.company}<br>대표 ${ctx.f('eulCeo')} (인)<br>주소 ${ctx.f('eulAddr')}</td></tr>
+</table>`
   },
 
   {
     id: 'buy-mandate',
     cat: '의뢰·중개',
     title: '인수 중개 의뢰서',
+    fields: [
+      { k: 'itemName', label: '대상 업종·업태', auto: 'itemName' }, { k: 'addr', label: '희망 지역', auto: 'addr' }, { k: 'price', label: '인수 예산', auto: 'price' },
+      { k: 'etc', label: '기타 조건' }, { k: 'brokerType', label: '중개형태(전속/일반)' }, { k: 'feeRate', label: '중개보수 요율(%)' }, { k: 'period', label: '의뢰기간(개월)' },
+      { k: 'date', label: '계약 체결일', auto: 'date' },
+      { k: 'gapName', label: '「갑」(의뢰인) 상호' }, { k: 'gapCeo', label: '「갑」 대표' }, { k: 'gapAddr', label: '「갑」 주소' },
+      { k: 'eulCeo', label: '「을」(중개사) 대표' }, { k: 'eulAddr', label: '「을」 주소' },
+    ],
     body: ctx => `
 <h1 class="c-title">인수 중개 의뢰서</h1>
 <p class="c-pre">본 계약은 인수(매수)를 의뢰하는 당사자(이하 「갑」)와 중개·자문사인 ${ctx.company}(이하 「을」)가, ${ctx.isBrand ? '브랜드(법인·사업)' : '점포(영업)'} 인수 중개에 관하여 다음과 같이 체결한다.</p>
@@ -2832,20 +2869,20 @@ const CONTRACTS = [
 <div class="c-art"><h3>제1조 (목적 및 위임)</h3><p>「갑」은 아래 조건에 부합하는 매물의 발굴·소개·인수 중개 및 관련 자문 업무를 「을」에게 위임하고, 「을」은 이를 수임한다.</p></div>
 
 <div class="c-art"><h3>제2조 (인수 희망조건)</h3>
-<p class="c-sub">1. 대상 업종·업태: ${ctx.itemName || ctx.blank}</p>
-<p class="c-sub">2. 희망 지역: ${ctx.addr || ctx.blank}</p>
+<p class="c-sub">1. 대상 업종·업태: ${ctx.f('itemName', ctx.itemName)}</p>
+<p class="c-sub">2. 희망 지역: ${ctx.f('addr', ctx.addr)}</p>
 <p class="c-sub">3. 인수구조: ${ctx.isBrand ? '지분/자산 양수도' : '영업(점포) 양수도'}</p>
-<p class="c-sub">4. 기타 조건: ${ctx.blank}</p></div>
+<p class="c-sub">4. 기타 조건: ${ctx.f('etc')}</p></div>
 
-<div class="c-art"><h3>제3조 (예산)</h3><p>「갑」의 인수 희망 예산은 ${ctx.price || ctx.blank} 이내로 하며, 실사 결과에 따라 조정될 수 있다.</p></div>
+<div class="c-art"><h3>제3조 (예산)</h3><p>「갑」의 인수 희망 예산은 ${ctx.f('price', ctx.price)} 이내로 하며, 실사 결과에 따라 조정될 수 있다.</p></div>
 
-<div class="c-art"><h3>제4조 (중개형태)</h3><p>「갑」은 본 건을 ${ctx.blank}(전속중개 / 일반중개)으로 「을」에게 의뢰하며, 전속인 경우 의뢰기간 중 동일 목적의 매물 탐색을 제3자에게 중복 의뢰하지 아니한다.</p></div>
+<div class="c-art"><h3>제4조 (중개형태)</h3><p>「갑」은 본 건을 ${ctx.f('brokerType')}(전속중개 / 일반중개)으로 「을」에게 의뢰하며, 전속인 경우 의뢰기간 중 동일 목적의 매물 탐색을 제3자에게 중복 의뢰하지 아니한다.</p></div>
 
 <div class="c-art"><h3>제5조 (중개보수)</h3>
-<p class="c-num">① 인수가 성사되어 잔금이 지급된 경우, 「갑」은 「을」에게 거래대금의 ${ctx.blank}%(부가가치세 별도)에 해당하는 중개보수를 지급한다.</p>
+<p class="c-num">① 인수가 성사되어 잔금이 지급된 경우, 「갑」은 「을」에게 거래대금의 ${ctx.f('feeRate')}%(부가가치세 별도)에 해당하는 중개보수를 지급한다.</p>
 <p class="c-num">② 구체적 지급시기·조건은 별도 성공보수 약정서에 따른다.</p></div>
 
-<div class="c-art"><h3>제6조 (의뢰기간)</h3><p>본 의뢰의 유효기간은 계약 체결일로부터 ${ctx.blank}개월로 하며, 만료 30일 전까지 이의가 없으면 동일 조건으로 갱신된다.</p></div>
+<div class="c-art"><h3>제6조 (의뢰기간)</h3><p>본 의뢰의 유효기간은 계약 체결일로부터 ${ctx.f('period')}개월로 하며, 만료 30일 전까지 이의가 없으면 동일 조건으로 갱신된다.</p></div>
 
 <div class="c-art"><h3>제7조 (협조 및 정확성 의무)</h3><p>「갑」은 인수 검토에 필요한 자금계획·의사결정 정보를 성실히 제공하며, 정당한 사유 없이 소개된 매물의 검토를 지연하지 아니한다.</p></div>
 
@@ -2855,21 +2892,27 @@ const CONTRACTS = [
 
 <div class="c-art"><h3>제10조 (관할)</h3><p>본 계약과 관련한 분쟁은 서울중앙지방법원을 제1심 전속관할 법원으로 한다.</p></div>
 
-<p class="c-date">${ctx.date}</p>
+<p class="c-date">${ctx.f('date', ctx.date)}</p>
 <table class="c-sign">
-<tr><td class="c-role">「갑」(의뢰인)</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-<tr><td class="c-role">「을」(중개·자문)</td><td>상호 ${ctx.company}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-</table>
-<p class="c-notice">※ 본 서식은 표준 초안입니다. 실제 체결 전 반드시 변호사·법무 검토를 받으시기 바랍니다.</p>`
+<tr><td class="c-role">「갑」(의뢰인)</td><td>상호 ${ctx.f('gapName')}<br>대표 ${ctx.f('gapCeo')} (인)<br>주소 ${ctx.f('gapAddr')}</td></tr>
+<tr><td class="c-role">「을」(중개·자문)</td><td>상호 ${ctx.company}<br>대표 ${ctx.f('eulCeo')} (인)<br>주소 ${ctx.f('eulAddr')}</td></tr>
+</table>`
   },
 
   {
     id: 'advisory',
     cat: '보안·자문',
     title: 'M&A 자문·용역 계약서',
+    fields: [
+      { k: 'itemName', label: '대상 거래', auto: 'itemName' }, { k: 'price', label: '거래대금', auto: 'price' },
+      { k: 'period', label: '용역기간(개월)' }, { k: 'retainer', label: '착수금(원)' }, { k: 'feeRate', label: '성공보수 요율(%)' },
+      { k: 'date', label: '계약 체결일', auto: 'date' },
+      { k: 'gapName', label: '「갑」(의뢰인) 상호' }, { k: 'gapCeo', label: '「갑」 대표' }, { k: 'gapAddr', label: '「갑」 주소', auto: 'addr' },
+      { k: 'eulCeo', label: '「을」(자문사) 대표' }, { k: 'eulAddr', label: '「을」 주소' },
+    ],
     body: ctx => `
 <h1 class="c-title">M&A 자문·용역 계약서</h1>
-<p class="c-pre">본 계약은 자문을 의뢰하는 당사자(이하 「갑」)와 M&A 자문·용역을 제공하는 ${ctx.company}(이하 「을」)가, ${ctx.itemName || ctx.blank} 관련 M&A 거래(이하 "본건 거래")의 자문 용역에 관하여 다음과 같이 체결한다.</p>
+<p class="c-pre">본 계약은 자문을 의뢰하는 당사자(이하 「갑」)와 M&A 자문·용역을 제공하는 ${ctx.company}(이하 「을」)가, ${ctx.f('itemName', ctx.itemName)} 관련 M&A 거래(이하 "본건 거래")의 자문 용역에 관하여 다음과 같이 체결한다.</p>
 
 <div class="c-art"><h3>제1조 (목적)</h3><p>본 계약은 본건 거래의 성사를 위하여 「을」이 「갑」에게 제공하는 자문 용역의 범위·보수·책임 등을 정함을 목적으로 한다.</p></div>
 
@@ -2879,11 +2922,11 @@ const CONTRACTS = [
 <p class="c-sub">3. 재무·세무 실사 지원 및 자료 검토</p>
 <p class="c-sub">4. 협상 및 계약체결 지원, 종결(Closing) 관리</p></div>
 
-<div class="c-art"><h3>제3조 (용역기간)</h3><p>용역기간은 계약 체결일로부터 본건 거래의 종결일 또는 ${ctx.blank}개월 중 먼저 도래하는 날까지로 한다.</p></div>
+<div class="c-art"><h3>제3조 (용역기간)</h3><p>용역기간은 계약 체결일로부터 본건 거래의 종결일 또는 ${ctx.f('period')}개월 중 먼저 도래하는 날까지로 한다.</p></div>
 
 <div class="c-art"><h3>제4조 (보수)</h3>
-<p class="c-num">① 착수금: 「갑」은 계약 체결 후 7일 내 금 ${ctx.blank}원(부가세 별도)을 「을」에게 지급한다.</p>
-<p class="c-num">② 성공보수: 본건 거래가 종결되는 경우 「갑」은 거래대금 ${ctx.price || ctx.blank}의 ${ctx.blank}%(부가세 별도)를 「을」에게 지급하며, 착수금은 성공보수에서 공제한다.</p>
+<p class="c-num">① 착수금: 「갑」은 계약 체결 후 7일 내 금 ${ctx.f('retainer')}원(부가세 별도)을 「을」에게 지급한다.</p>
+<p class="c-num">② 성공보수: 본건 거래가 종결되는 경우 「갑」은 거래대금 ${ctx.f('price', ctx.price)}의 ${ctx.f('feeRate')}%(부가세 별도)를 「을」에게 지급하며, 착수금은 성공보수에서 공제한다.</p>
 <p class="c-num">③ 실비(외부 전문가 비용·출장비 등)는 사전 협의하여 「갑」이 부담한다.</p></div>
 
 <div class="c-art"><h3>제5조 (비밀유지)</h3><p>「을」은 용역 수행 중 취득한 「갑」 및 대상의 정보를 목적 외로 사용·누설하지 아니하며, 그 의무는 계약 종료 후 3년간 존속한다.</p></div>
@@ -2898,29 +2941,35 @@ const CONTRACTS = [
 
 <div class="c-art"><h3>제9조 (관할)</h3><p>본 계약과 관련한 분쟁은 서울중앙지방법원을 제1심 전속관할 법원으로 한다.</p></div>
 
-<p class="c-date">${ctx.date}</p>
+<p class="c-date">${ctx.f('date', ctx.date)}</p>
 <table class="c-sign">
-<tr><td class="c-role">「갑」(의뢰인)</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.addr || ctx.blank}</td></tr>
-<tr><td class="c-role">「을」(자문사)</td><td>상호 ${ctx.company}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-</table>
-<p class="c-notice">※ 본 서식은 표준 초안입니다. 실제 체결 전 반드시 변호사·법무 검토를 받으시기 바랍니다.</p>`
+<tr><td class="c-role">「갑」(의뢰인)</td><td>상호 ${ctx.f('gapName')}<br>대표 ${ctx.f('gapCeo')} (인)<br>주소 ${ctx.f('gapAddr', ctx.addr)}</td></tr>
+<tr><td class="c-role">「을」(자문사)</td><td>상호 ${ctx.company}<br>대표 ${ctx.f('eulCeo')} (인)<br>주소 ${ctx.f('eulAddr')}</td></tr>
+</table>`
   },
 
   {
     id: 'loi',
     cat: '거래',
     title: '인수의향서 (LOI)',
+    fields: [
+      { k: 'itemName', label: '대상', auto: 'itemName' }, { k: 'addr', label: '소재지', auto: 'addr' }, { k: 'price', label: '잠정 인수대금', auto: 'price' },
+      { k: 'exclDays', label: '배타적 협상기간(일)' },
+      { k: 'date', label: '작성일', auto: 'date' },
+      { k: 'gapName', label: '「갑」(인수인) 상호' }, { k: 'gapCeo', label: '「갑」 대표' }, { k: 'gapAddr', label: '「갑」 주소' },
+      { k: 'eulName', label: '「을」(매도인) 상호' }, { k: 'eulCeo', label: '「을」 대표' }, { k: 'eulAddr', label: '「을」 주소', auto: 'addr' },
+    ],
     body: ctx => `
 <h1 class="c-title">인수의향서 (LOI)</h1>
-<p class="c-pre">본 인수의향서는 인수를 희망하는 당사자(이하 「갑」, 인수인)가 매도인(이하 「을」)에게, ${ctx.itemName || ctx.blank}(이하 "대상")의 인수에 관한 의향을 표명하고 협상의 기본 방향을 확인하기 위하여 작성한다.</p>
+<p class="c-pre">본 인수의향서는 인수를 희망하는 당사자(이하 「갑」, 인수인)가 매도인(이하 「을」)에게, ${ctx.f('itemName', ctx.itemName)}(이하 "대상")의 인수에 관한 의향을 표명하고 협상의 기본 방향을 확인하기 위하여 작성한다.</p>
 
-<div class="c-art"><h3>제1조 (거래 개요)</h3><p>「갑」은 대상(소재지: ${ctx.addr || ctx.blank})을 아래 조건을 전제로 인수하고자 하는 의향을 표명한다.</p></div>
+<div class="c-art"><h3>제1조 (거래 개요)</h3><p>「갑」은 대상(소재지: ${ctx.f('addr', ctx.addr)})을 아래 조건을 전제로 인수하고자 하는 의향을 표명한다.</p></div>
 
 <div class="c-art"><h3>제2조 (인수구조)</h3><p>본건 인수는 ${ctx.isBrand ? '대상 법인의 지분양수도 또는 자산양수도' : '대상 점포의 영업(자산)양수도'} 방식으로 하며, 최종 구조는 실사 결과 및 세무 검토를 반영하여 확정한다.</p></div>
 
-<div class="c-art"><h3>제3조 (잠정 인수대금)</h3><p>잠정 인수대금은 ${ctx.price || ctx.blank}로 하며, 이는 실사 결과에 따라 조정될 수 있는 잠정 금액으로서 당사자를 구속하지 아니한다.</p></div>
+<div class="c-art"><h3>제3조 (잠정 인수대금)</h3><p>잠정 인수대금은 ${ctx.f('price', ctx.price)}로 하며, 이는 실사 결과에 따라 조정될 수 있는 잠정 금액으로서 당사자를 구속하지 아니한다.</p></div>
 
-<div class="c-art"><h3>제4조 (배타적 협상기간)</h3><p>「을」은 본 의향서 작성일로부터 ${ctx.blank}일간 「갑」에게 배타적 협상권을 부여하며, 동 기간 중 제3자와 대상에 관한 매각 협상·정보제공을 하지 아니한다.</p></div>
+<div class="c-art"><h3>제4조 (배타적 협상기간)</h3><p>「을」은 본 의향서 작성일로부터 ${ctx.f('exclDays')}일간 「갑」에게 배타적 협상권을 부여하며, 동 기간 중 제3자와 대상에 관한 매각 협상·정보제공을 하지 아니한다.</p></div>
 
 <div class="c-art"><h3>제5조 (실사 협조)</h3><p>「을」은 배타적 협상기간 중 「갑」 및 그 자문사(회계사·변호사 등)의 재무·법률·영업 실사에 성실히 협조하고 필요한 자료를 제공한다.</p></div>
 
@@ -2934,23 +2983,31 @@ const CONTRACTS = [
 
 <div class="c-art"><h3>제9조 (관할)</h3><p>본 의향서의 구속력 있는 조항과 관련한 분쟁은 서울중앙지방법원을 제1심 전속관할 법원으로 한다.</p></div>
 
-<p class="c-date">${ctx.date}</p>
+<p class="c-date">${ctx.f('date', ctx.date)}</p>
 <table class="c-sign">
-<tr><td class="c-role">「갑」(인수인)</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-<tr><td class="c-role">「을」(매도인)</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.addr || ctx.blank}</td></tr>
-</table>
-<p class="c-notice">※ 본 서식은 표준 초안입니다. 실제 체결 전 반드시 변호사·법무 검토를 받으시기 바랍니다.</p>`
+<tr><td class="c-role">「갑」(인수인)</td><td>상호 ${ctx.f('gapName')}<br>대표 ${ctx.f('gapCeo')} (인)<br>주소 ${ctx.f('gapAddr')}</td></tr>
+<tr><td class="c-role">「을」(매도인)</td><td>상호 ${ctx.f('eulName')}<br>대표 ${ctx.f('eulCeo')} (인)<br>주소 ${ctx.f('eulAddr', ctx.addr)}</td></tr>
+</table>`
   },
 
   {
     id: 'apa',
     cat: '거래',
     title: '자산양수도계약서',
+    fields: [
+      { k: 'itemName', label: '대상 영업', auto: 'itemName' }, { k: 'addr', label: '소재지', auto: 'addr' }, { k: 'price', label: '양수도대금(권리금 포함)', auto: 'price' },
+      { k: 'down', label: '계약금(원)' }, { k: 'mid', label: '중도금(원)' }, { k: 'midDate', label: '중도금 지급일' }, { k: 'balance', label: '잔금(원)' }, { k: 'balanceDate', label: '잔금일(양수도 실행일)' },
+      { k: 'nonCompeteYears', label: '경업금지 기간(년)' }, { k: 'nonCompeteKm', label: '경업금지 반경(km)' },
+      { k: 'date', label: '계약 체결일', auto: 'date' },
+      { k: 'sellerName', label: '양도인 상호' }, { k: 'sellerCeo', label: '양도인 대표' }, { k: 'sellerAddr', label: '양도인 주소' },
+      { k: 'buyerName', label: '양수인 상호' }, { k: 'buyerCeo', label: '양수인 대표' }, { k: 'buyerAddr', label: '양수인 주소' },
+      { k: 'brokerCeo', label: '입회(중개) 대표' },
+    ],
     body: ctx => `
 <h1 class="c-title">자산양수도계약서</h1>
-<p class="c-pre">본 계약은 대상 영업 및 자산을 양도하는 당사자(이하 "양도인")와 이를 양수하는 당사자(이하 "양수인")가, ${ctx.itemName || ctx.blank}(이하 "대상 영업")의 양수도에 관하여 다음과 같이 체결한다.</p>
+<p class="c-pre">본 계약은 대상 영업 및 자산을 양도하는 당사자(이하 "양도인")와 이를 양수하는 당사자(이하 "양수인")가, ${ctx.f('itemName', ctx.itemName)}(이하 "대상 영업")의 양수도에 관하여 다음과 같이 체결한다.</p>
 
-<div class="c-art"><h3>제1조 (목적)</h3><p>본 계약은 양도인이 운영하는 대상 영업(소재지: ${ctx.addr || ctx.blank}) 및 관련 자산을 양수인에게 양도함에 관한 제반 사항을 정함을 목적으로 한다.</p></div>
+<div class="c-art"><h3>제1조 (목적)</h3><p>본 계약은 양도인이 운영하는 대상 영업(소재지: ${ctx.f('addr', ctx.addr)}) 및 관련 자산을 양수인에게 양도함에 관한 제반 사항을 정함을 목적으로 한다.</p></div>
 
 <div class="c-art"><h3>제2조 (양도 대상)</h3><p>양도 대상은 다음 각 호를 포함한다.</p>
 <p class="c-sub">1. 영업권(권리금) 및 상호·간판·거래처</p>
@@ -2958,12 +3015,12 @@ const CONTRACTS = [
 <p class="c-sub">3. 임대차보증금 반환채권 및 임대차상 지위(임대인 동의를 전제)</p>
 <p class="c-sub">4. 인허가·영업신고상 지위(승계 가능한 범위)</p></div>
 
-<div class="c-art"><h3>제3조 (양수도대금)</h3><p>양수도대금(권리금 포함) 총액은 ${ctx.price || ctx.blank}(부가가치세 별도)로 한다.</p></div>
+<div class="c-art"><h3>제3조 (양수도대금)</h3><p>양수도대금(권리금 포함) 총액은 ${ctx.f('price', ctx.price)}(부가가치세 별도)로 한다.</p></div>
 
 <div class="c-art"><h3>제4조 (대금 지급일정)</h3>
-<p class="c-num">① 계약금: 금 ${ctx.blank}원, 본 계약 체결과 동시에 지급한다.</p>
-<p class="c-num">② 중도금: 금 ${ctx.blank}원, ${ctx.blank}에 지급한다.</p>
-<p class="c-num">③ 잔금: 금 ${ctx.blank}원, ${ctx.blank}(양수도 실행일)에 대상 영업의 인도와 상환하여 지급한다.</p></div>
+<p class="c-num">① 계약금: 금 ${ctx.f('down')}원, 본 계약 체결과 동시에 지급한다.</p>
+<p class="c-num">② 중도금: 금 ${ctx.f('mid')}원, ${ctx.f('midDate')}에 지급한다.</p>
+<p class="c-num">③ 잔금: 금 ${ctx.f('balance')}원, ${ctx.f('balanceDate')}(양수도 실행일)에 대상 영업의 인도와 상환하여 지급한다.</p></div>
 
 <div class="c-art"><h3>제5조 (인도 및 승계)</h3>
 <p class="c-num">① 양도인은 잔금 지급과 동시에 대상 영업 및 자산을 현상대로 양수인에게 인도한다.</p>
@@ -2972,7 +3029,7 @@ const CONTRACTS = [
 
 <div class="c-art"><h3>제6조 (진술 및 보증)</h3><p>양도인은 대상 영업에 관하여 (i) 자산에 대한 적법한 처분권한, (ii) 공개되지 않은 채무·담보·소송의 부존재, (iii) 제공 재무·매출 자료의 진실성을 진술·보증한다. 위반 시 양수인은 손해배상을 청구할 수 있다.</p></div>
 
-<div class="c-art"><h3>제7조 (경업금지)</h3><p>양도인은 양수도 실행일로부터 ${ctx.blank}년간, 대상 영업소 소재지로부터 반경 ${ctx.blank}km 이내에서 동종·유사 영업을 직접 또는 제3자를 통하여 하지 아니한다.</p></div>
+<div class="c-art"><h3>제7조 (경업금지)</h3><p>양도인은 양수도 실행일로부터 ${ctx.f('nonCompeteYears')}년간, 대상 영업소 소재지로부터 반경 ${ctx.f('nonCompeteKm')}km 이내에서 동종·유사 영업을 직접 또는 제3자를 통하여 하지 아니한다.</p></div>
 
 <div class="c-art"><h3>제8조 (위험부담)</h3><p>대상 자산의 멸실·훼손 위험은 인도 시점에 양수인에게 이전한다. 인도 전 양도인의 귀책 없는 멸실 시 당사자는 대금을 정산한다.</p></div>
 
@@ -2982,32 +3039,41 @@ const CONTRACTS = [
 
 <div class="c-art"><h3>제10조 (관할)</h3><p>본 계약과 관련한 분쟁은 대상 영업소 소재지 관할 법원을 제1심 전속관할 법원으로 한다.</p></div>
 
-<p class="c-date">${ctx.date}</p>
+<p class="c-date">${ctx.f('date', ctx.date)}</p>
 <table class="c-sign">
-<tr><td class="c-role">양도인</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-<tr><td class="c-role">양수인</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-<tr><td class="c-role">입회(중개)</td><td>상호 ${ctx.company}<br>대표 ${ctx.blank} (인)</td></tr>
-</table>
-<p class="c-notice">※ 본 서식은 표준 초안입니다. 실제 체결 전 반드시 변호사·법무 검토를 받으시기 바랍니다.</p>`
+<tr><td class="c-role">양도인</td><td>상호 ${ctx.f('sellerName')}<br>대표 ${ctx.f('sellerCeo')} (인)<br>주소 ${ctx.f('sellerAddr')}</td></tr>
+<tr><td class="c-role">양수인</td><td>상호 ${ctx.f('buyerName')}<br>대표 ${ctx.f('buyerCeo')} (인)<br>주소 ${ctx.f('buyerAddr')}</td></tr>
+<tr><td class="c-role">입회(중개)</td><td>상호 ${ctx.company}<br>대표 ${ctx.f('brokerCeo')} (인)</td></tr>
+</table>`
   },
 
   {
     id: 'spa',
     cat: '거래',
     title: '지분양수도계약서',
+    fields: [
+      { k: 'itemName', label: '대상회사', auto: 'itemName' }, { k: 'addr', label: '소재지', auto: 'addr' }, { k: 'price', label: '매매대금', auto: 'price' },
+      { k: 'shares', label: '양도 주식수(주)' }, { k: 'sharePct', label: '지분율(%)' },
+      { k: 'down', label: '계약금(원)' }, { k: 'balance', label: '잔금(원)' }, { k: 'closingDate', label: '종결일' },
+      { k: 'indemYears', label: '손해전보 존속기간(년)' }, { k: 'nonCompeteYears', label: '경업금지 기간(년)' },
+      { k: 'date', label: '계약 체결일', auto: 'date' },
+      { k: 'sellerName', label: '양도인 상호' }, { k: 'sellerCeo', label: '양도인 대표' }, { k: 'sellerAddr', label: '양도인 주소' },
+      { k: 'buyerName', label: '양수인 상호' }, { k: 'buyerCeo', label: '양수인 대표' }, { k: 'buyerAddr', label: '양수인 주소' },
+      { k: 'brokerCeo', label: '입회(자문) 대표' },
+    ],
     body: ctx => `
 <h1 class="c-title">지분양수도계약서</h1>
-<p class="c-pre">본 계약은 대상회사의 지분을 양도하는 당사자(이하 "양도인")와 이를 양수하는 당사자(이하 "양수인")가, ${ctx.itemName || ctx.blank}(이하 "대상회사")의 발행주식(지분) 양수도에 관하여 다음과 같이 체결한다.</p>
+<p class="c-pre">본 계약은 대상회사의 지분을 양도하는 당사자(이하 "양도인")와 이를 양수하는 당사자(이하 "양수인")가, ${ctx.f('itemName', ctx.itemName)}(이하 "대상회사")의 발행주식(지분) 양수도에 관하여 다음과 같이 체결한다.</p>
 
-<div class="c-art"><h3>제1조 (목적)</h3><p>본 계약은 양도인이 보유한 대상회사(소재지: ${ctx.addr || ctx.blank})의 주식(지분)을 양수인에게 양도함에 관한 제반 사항을 정함을 목적으로 한다.</p></div>
+<div class="c-art"><h3>제1조 (목적)</h3><p>본 계약은 양도인이 보유한 대상회사(소재지: ${ctx.f('addr', ctx.addr)})의 주식(지분)을 양수인에게 양도함에 관한 제반 사항을 정함을 목적으로 한다.</p></div>
 
-<div class="c-art"><h3>제2조 (양도 대상 주식)</h3><p>양도 대상은 양도인이 보유한 대상회사 발행주식(지분) 중 ${ctx.blank}주(지분율 ${ctx.blank}%, 이하 "대상주식")로 한다.</p></div>
+<div class="c-art"><h3>제2조 (양도 대상 주식)</h3><p>양도 대상은 양도인이 보유한 대상회사 발행주식(지분) 중 ${ctx.f('shares')}주(지분율 ${ctx.f('sharePct')}%, 이하 "대상주식")로 한다.</p></div>
 
-<div class="c-art"><h3>제3조 (매매대금)</h3><p>대상주식의 매매대금 총액은 ${ctx.price || ctx.blank}로 한다.</p></div>
+<div class="c-art"><h3>제3조 (매매대금)</h3><p>대상주식의 매매대금 총액은 ${ctx.f('price', ctx.price)}로 한다.</p></div>
 
 <div class="c-art"><h3>제4조 (대금 지급일정)</h3>
-<p class="c-num">① 계약금: 금 ${ctx.blank}원, 본 계약 체결과 동시에 지급한다.</p>
-<p class="c-num">② 잔금: 금 ${ctx.blank}원, 선행조건 충족 후 종결일(${ctx.blank})에 주식 및 관련 서류의 교부와 상환하여 지급한다.</p></div>
+<p class="c-num">① 계약금: 금 ${ctx.f('down')}원, 본 계약 체결과 동시에 지급한다.</p>
+<p class="c-num">② 잔금: 금 ${ctx.f('balance')}원, 선행조건 충족 후 종결일(${ctx.f('closingDate')})에 주식 및 관련 서류의 교부와 상환하여 지급한다.</p></div>
 
 <div class="c-art"><h3>제5조 (선행조건)</h3><p>양수인의 잔금 지급의무는 다음 조건의 충족을 전제로 한다.</p>
 <p class="c-sub">1. 양도인의 진술·보증이 종결일 현재 진실할 것</p>
@@ -3016,38 +3082,44 @@ const CONTRACTS = [
 
 <div class="c-art"><h3>제6조 (진술 및 보증)</h3><p>양도인은 (i) 대상주식에 대한 적법·완전한 소유권 및 담보·부담의 부존재, (ii) 대상회사 재무제표의 적정성, (iii) 미공개 우발채무·조세·소송의 부존재, (iv) 인허가의 유효성을 진술·보증한다.</p></div>
 
-<div class="c-art"><h3>제7조 (손해전보)</h3><p>양도인의 진술·보증 위반 또는 계약 위반으로 양수인 또는 대상회사에 손해가 발생한 경우, 양도인은 그 손해를 전보한다. 전보책임은 종결일로부터 ${ctx.blank}년간 존속한다.</p></div>
+<div class="c-art"><h3>제7조 (손해전보)</h3><p>양도인의 진술·보증 위반 또는 계약 위반으로 양수인 또는 대상회사에 손해가 발생한 경우, 양도인은 그 손해를 전보한다. 전보책임은 종결일로부터 ${ctx.f('indemYears')}년간 존속한다.</p></div>
 
-<div class="c-art"><h3>제8조 (경업금지)</h3><p>양도인은 종결일로부터 ${ctx.blank}년간 대상회사와 동종·경쟁하는 영업을 직접 또는 제3자를 통하여 영위하지 아니하며, 대상회사의 임직원·거래처를 유인하지 아니한다.</p></div>
+<div class="c-art"><h3>제8조 (경업금지)</h3><p>양도인은 종결일로부터 ${ctx.f('nonCompeteYears')}년간 대상회사와 동종·경쟁하는 영업을 직접 또는 제3자를 통하여 영위하지 아니하며, 대상회사의 임직원·거래처를 유인하지 아니한다.</p></div>
 
 <div class="c-art"><h3>제9조 (계약의 해제)</h3><p>일방이 본 계약을 중대하게 위반하거나 종결일까지 선행조건이 충족되지 아니하는 경우, 상대방은 서면 통지로써 본 계약을 해제할 수 있다. 귀책 있는 당사자는 상대방에게 손해를 배상한다.</p></div>
 
 <div class="c-art"><h3>제10조 (관할)</h3><p>본 계약과 관련한 분쟁은 서울중앙지방법원을 제1심 전속관할 법원으로 한다.</p></div>
 
-<p class="c-date">${ctx.date}</p>
+<p class="c-date">${ctx.f('date', ctx.date)}</p>
 <table class="c-sign">
-<tr><td class="c-role">양도인</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-<tr><td class="c-role">양수인</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-<tr><td class="c-role">입회(자문)</td><td>상호 ${ctx.company}<br>대표 ${ctx.blank} (인)</td></tr>
-</table>
-<p class="c-notice">※ 본 서식은 표준 초안입니다. 실제 체결 전 반드시 변호사·법무 검토를 받으시기 바랍니다.</p>`
+<tr><td class="c-role">양도인</td><td>상호 ${ctx.f('sellerName')}<br>대표 ${ctx.f('sellerCeo')} (인)<br>주소 ${ctx.f('sellerAddr')}</td></tr>
+<tr><td class="c-role">양수인</td><td>상호 ${ctx.f('buyerName')}<br>대표 ${ctx.f('buyerCeo')} (인)<br>주소 ${ctx.f('buyerAddr')}</td></tr>
+<tr><td class="c-role">입회(자문)</td><td>상호 ${ctx.company}<br>대표 ${ctx.f('brokerCeo')} (인)</td></tr>
+</table>`
   },
 
   {
     id: 'broker-fee',
     cat: '의뢰·중개',
     title: '중개보수(성공보수) 약정서',
+    fields: [
+      { k: 'itemName', label: '대상 거래', auto: 'itemName' }, { k: 'price', label: '거래대금 기준액', auto: 'price' },
+      { k: 'feeRate', label: '보수 요율(%)' }, { k: 'minBase', label: '최저보수 적용 기준액(원)' }, { k: 'minFee', label: '최저보수(원)' }, { k: 'lateRate', label: '지연이자(연 %)' },
+      { k: 'date', label: '계약 체결일', auto: 'date' },
+      { k: 'gapName', label: '「갑」(의뢰인) 상호' }, { k: 'gapCeo', label: '「갑」 대표' }, { k: 'gapAddr', label: '「갑」 주소' },
+      { k: 'eulCeo', label: '「을」(중개사) 대표' }, { k: 'eulAddr', label: '「을」 주소' },
+    ],
     body: ctx => `
 <h1 class="c-title">중개보수(성공보수) 약정서</h1>
-<p class="c-pre">본 약정은 중개보수를 지급하는 의뢰인(이하 「갑」)과 중개·자문사인 ${ctx.company}(이하 「을」)가, ${ctx.itemName || ctx.blank} 거래의 중개보수에 관하여 다음과 같이 체결한다.</p>
+<p class="c-pre">본 약정은 중개보수를 지급하는 의뢰인(이하 「갑」)과 중개·자문사인 ${ctx.company}(이하 「을」)가, ${ctx.f('itemName', ctx.itemName)} 거래의 중개보수에 관하여 다음과 같이 체결한다.</p>
 
 <div class="c-art"><h3>제1조 (목적)</h3><p>본 약정은 「을」의 중개로 본건 거래가 성사된 경우 「갑」이 「을」에게 지급할 성공보수의 요율·산정기준·지급조건을 정함을 목적으로 한다.</p></div>
 
 <div class="c-art"><h3>제2조 (보수 요율 및 산정기준)</h3>
 <p class="c-num">① 중개보수는 실제 거래대금(양수도대금·권리금·지분매매대금 등의 합계)을 기준으로 산정한다.</p>
-<p class="c-num">② 보수 요율은 거래대금의 ${ctx.blank}%로 한다. (거래대금 기준액: ${ctx.price || ctx.blank})</p></div>
+<p class="c-num">② 보수 요율은 거래대금의 ${ctx.f('feeRate')}%로 한다. (거래대금 기준액: ${ctx.f('price', ctx.price)})</p></div>
 
-<div class="c-art"><h3>제3조 (최저보수)</h3><p>제2조에 따라 산정한 금액이 금 ${ctx.blank}원에 미달하는 경우, 중개보수는 최저보수 금 ${ctx.blank}원으로 한다.</p></div>
+<div class="c-art"><h3>제3조 (최저보수)</h3><p>제2조에 따라 산정한 금액이 금 ${ctx.f('minBase')}원에 미달하는 경우, 중개보수는 최저보수 금 ${ctx.f('minFee')}원으로 한다.</p></div>
 
 <div class="c-art"><h3>제4조 (성공보수 지급시기 및 조건)</h3>
 <p class="c-num">① 성공보수는 본건 거래의 본계약 체결 및 잔금 지급이 완료된 때 발생한다.</p>
@@ -3057,37 +3129,43 @@ const CONTRACTS = [
 
 <div class="c-art"><h3>제6조 (직거래·우회거래 시 보수)</h3><p>「갑」이 「을」의 소개로 알게 된 상대방과 「을」을 배제하고 직접 또는 제3자를 통해 거래를 성사시킨 경우에도 제2조의 보수가 발생하며, 「갑」은 이를 「을」에게 지급한다.</p></div>
 
-<div class="c-art"><h3>제7조 (지연이자)</h3><p>「갑」이 지급기일에 보수를 지급하지 아니하는 경우, 지급기일 다음 날부터 완제일까지 연 ${ctx.blank}%의 지연손해금을 가산하여 지급한다.</p></div>
+<div class="c-art"><h3>제7조 (지연이자)</h3><p>「갑」이 지급기일에 보수를 지급하지 아니하는 경우, 지급기일 다음 날부터 완제일까지 연 ${ctx.f('lateRate')}%의 지연손해금을 가산하여 지급한다.</p></div>
 
 <div class="c-art"><h3>제8조 (비용)</h3><p>본 약정에 따른 중개보수 외에 통상적인 중개활동 비용은 「을」이 부담한다. 다만 「갑」의 요청으로 발생한 특별비용(외부 전문가·출장 등)은 사전 협의하여 「갑」이 부담한다.</p></div>
 
 <div class="c-art"><h3>제9조 (관할)</h3><p>본 약정과 관련한 분쟁은 서울중앙지방법원을 제1심 전속관할 법원으로 한다.</p></div>
 
-<p class="c-date">${ctx.date}</p>
+<p class="c-date">${ctx.f('date', ctx.date)}</p>
 <table class="c-sign">
-<tr><td class="c-role">「갑」(의뢰인)</td><td>상호 ${ctx.blank}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-<tr><td class="c-role">「을」(중개·자문)</td><td>상호 ${ctx.company}<br>대표 ${ctx.blank} (인)<br>주소 ${ctx.blank}</td></tr>
-</table>
-<p class="c-notice">※ 본 서식은 표준 초안입니다. 실제 체결 전 반드시 변호사·법무 검토를 받으시기 바랍니다.</p>`
+<tr><td class="c-role">「갑」(의뢰인)</td><td>상호 ${ctx.f('gapName')}<br>대표 ${ctx.f('gapCeo')} (인)<br>주소 ${ctx.f('gapAddr')}</td></tr>
+<tr><td class="c-role">「을」(중개·자문)</td><td>상호 ${ctx.company}<br>대표 ${ctx.f('eulCeo')} (인)<br>주소 ${ctx.f('eulAddr')}</td></tr>
+</table>`
   }
 ];
 
 let _curContract = null;
+let _ctrFields = {};
+function ctrBlankHTML() { return '<span class="c-blank">________________</span>'; }
 function contractCtx() {
   const id = (document.getElementById('ctrItem') || {}).value || '';
   const l = DB.listings.find(x => x.id === id);
   const b = DB.brands.find(x => x.id === id);
   const o = l || b, isBrand = !!b;
   const d = new Date();
-  const blank = '________________';
   const priceMan = o ? (isBrand ? (Number(o.askPrice) || 0) : ((Number(o.price) || 0) + (Number(o.premium) || 0))) : 0;
-  return {
+  const ctx = {
     date: d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일',
     itemName: o ? (isBrand ? (o.corpName + ' (' + o.tradeName + ')') : o.title) : '',
     addr: o ? (o.region || '') : '',
     price: priceMan ? (fmtMoney(priceMan) + '원') : '',
-    isBrand: isBrand, company: '주식회사 원윌앤코', blank: blank,
+    isBrand: isBrand, company: '주식회사 원윌앤코',
   };
+  ctx.f = (key, auto) => {
+    const u = (_ctrFields[key] != null ? String(_ctrFields[key]) : '').trim();
+    const v = u || (auto != null ? String(auto).trim() : '');
+    return v ? '<span class="c-val">' + esc(v) + '</span>' : ctrBlankHTML();
+  };
+  return ctx;
 }
 function renderContracts() {
   const sel = document.getElementById('ctrItem');
@@ -3097,17 +3175,52 @@ function renderContracts() {
       '<optgroup label="양도양수 매물">' + DB.listings.map(l => '<option value="' + l.id + '">🏪 ' + esc(l.title) + '</option>').join('') + '</optgroup>' +
       '<optgroup label="브랜드 M&A">' + DB.brands.map(b => '<option value="' + b.id + '">🏢 ' + esc(b.corpName) + '</option>').join('') + '</optgroup>';
     if (cur) sel.value = cur;
-    sel.onchange = () => { if (_curContract && document.getElementById('contractModal').classList.contains('open')) document.getElementById('contractPaper').innerHTML = contractHTML(_curContract); };
+    sel.onchange = () => { if (_curContract && document.getElementById('contractModal').classList.contains('open')) refreshContract(); };
   }
   const cats = [...new Set(CONTRACTS.map(c => c.cat))];
   const grid = document.getElementById('contractGrid');
   if (grid) grid.innerHTML = cats.map(cat =>
     '<div class="ctr-cat">' + esc(cat) + '</div><div class="ctr-grid">' +
-    CONTRACTS.filter(c => c.cat === cat).map(c => '<div class="ctr-card" onclick="openContract(\'' + c.id + '\')"><div class="ct">📄 ' + esc(c.title) + '</div><div class="cd">' + esc(cat) + '</div><div class="cgo">열기 → 인쇄·워드</div></div>').join('') +
+    CONTRACTS.filter(c => c.cat === cat).map(c => '<div class="ctr-card" onclick="openContract(\'' + c.id + '\')"><div class="ct">📄 ' + esc(c.title) + '</div><div class="cd">' + esc(cat) + '</div><div class="cgo">열기 → 입력·인쇄·워드</div></div>').join('') +
     '</div>').join('');
 }
 function contractHTML(id) { const c = CONTRACTS.find(x => x.id === id); return c ? c.body(contractCtx()) : ''; }
-function openContract(id) { _curContract = id; document.getElementById('contractPaper').innerHTML = contractHTML(id); openModal('contractModal'); }
+function renderContractForm(id) {
+  const c = CONTRACTS.find(x => x.id === id);
+  const box = document.getElementById('contractForm');
+  if (!c || !box) return;
+  const ctx = contractCtx();
+  const autoMap = { itemName: ctx.itemName, addr: ctx.addr, price: ctx.price, date: ctx.date };
+  box.innerHTML = '<div class="cf-head">✍️ 바로 입력하기 <span>— 아래 칸을 채우면 계약서에 실시간 반영됩니다. 비워 두면 밑줄(공란)로 인쇄됩니다.</span></div>' +
+    '<div class="cf-grid">' + (c.fields || []).map(fd => {
+      const auto = fd.auto ? (autoMap[fd.auto] || '') : '';
+      const val = _ctrFields[fd.k] != null ? _ctrFields[fd.k] : '';
+      const ph = auto ? ('자동입력: ' + auto) : '직접 입력';
+      return '<label class="cf"><span>' + esc(fd.label) + (auto ? ' <em>자동</em>' : '') + '</span>' +
+        '<input type="text" data-k="' + fd.k + '" value="' + esc(val) + '" placeholder="' + esc(ph) + '" oninput="onCtrInput(this)"></label>';
+    }).join('') + '</div>';
+}
+function onCtrInput(el) {
+  _ctrFields[el.getAttribute('data-k')] = el.value;
+  if (_curContract) document.getElementById('contractPaper').innerHTML = contractHTML(_curContract);
+}
+function refreshContract() {
+  if (!_curContract) return;
+  renderContractForm(_curContract);
+  document.getElementById('contractPaper').innerHTML = contractHTML(_curContract);
+}
+function clearContractFields() {
+  _ctrFields = {};
+  refreshContract();
+  toast('입력값을 초기화했습니다');
+}
+function openContract(id) {
+  if (id !== _curContract) _ctrFields = {};
+  _curContract = id;
+  renderContractForm(id);
+  document.getElementById('contractPaper').innerHTML = contractHTML(id);
+  openModal('contractModal');
+}
 function printContract() {
   if (!_curContract) return;
   const area = document.createElement('div');
@@ -3122,10 +3235,11 @@ function printContract() {
 function downloadContract(fmt) {
   if (!_curContract) return;
   const c = CONTRACTS.find(x => x.id === _curContract);
-  const st = "body{font-family:'바탕','Batang',serif;line-height:1.8;font-size:14px;padding:34px} .c-title{text-align:center;font-size:22px;font-weight:bold;letter-spacing:.08em;margin-bottom:22px} .c-pre{margin-bottom:16px;text-align:justify} .c-art{margin-bottom:12px} .c-art h3{font-size:14px;margin:0 0 4px} .c-art p{margin:0 0 4px;text-align:justify} .c-num{margin-left:4px} .c-sub{margin-left:16px} .c-date{text-align:center;margin:24px 0} table.c-sign{width:100%;border-collapse:collapse;margin-top:6px} table.c-sign td{border:1px solid #999;padding:12px} td.c-role{width:130px;font-weight:bold;background:#f5f5f7} .c-notice{margin-top:18px;color:#b4453a;font-size:11px;border-top:1px solid #ccc;padding-top:8px}";
+  const st = "body{font-family:'바탕','Batang',serif;line-height:1.8;font-size:14px;padding:34px} .c-title{text-align:center;font-size:22px;font-weight:bold;letter-spacing:.08em;margin-bottom:22px} .c-pre{margin-bottom:16px;text-align:justify} .c-art{margin-bottom:12px} .c-art h3{font-size:14px;margin:0 0 4px} .c-art p{margin:0 0 4px;text-align:justify} .c-num{margin-left:4px} .c-sub{margin-left:16px} .c-date{text-align:center;margin:24px 0} table.c-sign{width:100%;border-collapse:collapse;margin-top:6px} table.c-sign td{border:1px solid #999;padding:12px} td.c-role{width:130px;font-weight:bold;background:#f5f5f7} .c-blank{color:#555;letter-spacing:1px} .c-val{font-weight:bold}";
   const html = '<html><head><meta charset="utf-8"><style>' + st + '</style></head><body>' + contractHTML(_curContract) + '</body></html>';
-  downloadBlob(html, 'application/msword;charset=utf-8', c.title + '.doc');
-  toast(c.title + ' 워드·한글 내려받기');
+  const ext = fmt === 'hwp' ? '.doc' : '.doc';
+  downloadBlob(html, 'application/msword;charset=utf-8', c.title + ext);
+  toast(c.title + (fmt === 'hwp' ? ' — 한글(HWP)에서 열 수 있는 문서로 저장' : ' — 워드 문서로 저장'));
 }
 
 function exportData() {
@@ -3189,7 +3303,7 @@ function loadSample() {
   const now = Date.now();
   const b1 = uid(), b2 = uid(), b3 = uid();
   DB.brands.push(
-    { id: b1, createdAt: now, corpName: '(주)에이스에프앤비', tradeName: '포카드홀덤펍', industry: '홀덤펍', openDate: '2021-03-15', branches: 14, revenue: 320000, profit: 41000, askPrice: 180000, status: '협상중', manager: '진지윤', memo: '직영 3 + 가맹 11. 가맹계약서 검토 중.',
+    { id: b1, _sample: true, createdAt: now, corpName: '(주)에이스에프앤비', tradeName: '포카드홀덤펍', industry: '홀덤펍', openDate: '2021-03-15', branches: 14, revenue: 320000, profit: 41000, askPrice: 180000, status: '협상중', manager: '진지윤', memo: '직영 3 + 가맹 11. 가맹계약서 검토 중.',
       comments: [
         { id: uid(), author: '회계사', text: '연매출 32억 중 가맹 로열티 비중이 얼마나 되나요? 직영 매출과 분리된 손익계산서가 필요합니다.', ts: now - 3600e3 * 8 },
         { id: uid(), author: '관리자', text: '가맹본부 손익 분리자료 요청해 두었습니다. 받는 대로 공유 자료에 올리겠습니다.', ts: now - 3600e3 * 6 },
@@ -3197,11 +3311,11 @@ function loadSample() {
       docs: [
         { id: uid(), name: '법인등기부등본 (예시 링크)', url: 'https://drive.google.com', author: '관리자', ts: now - 3600e3 * 7 },
       ] },
-    { id: b2, createdAt: now, corpName: '(주)브루잉랩', tradeName: '카페 브루다', industry: '카페', openDate: '2019-07-01', branches: 27, revenue: 450000, profit: 28000, askPrice: 220000, status: '검토중', manager: '', memo: '지점수 대비 이익률 낮음. 원가 구조 확인 필요.' },
-    { id: b3, createdAt: now, corpName: '(주)한입푸드', tradeName: '치킨한입', industry: '치킨 프랜차이즈', openDate: '2016-11-20', branches: 52, revenue: 890000, profit: -12000, askPrice: 95000, status: '보류', manager: '', memo: '최근 2년 연속 영업적자. 물류센터 자산가치는 별도 평가 필요.' },
+    { id: b2, _sample: true, createdAt: now, corpName: '(주)브루잉랩', tradeName: '카페 브루다', industry: '카페', openDate: '2019-07-01', branches: 27, revenue: 450000, profit: 28000, askPrice: 220000, status: '검토중', manager: '', memo: '지점수 대비 이익률 낮음. 원가 구조 확인 필요.' },
+    { id: b3, _sample: true, createdAt: now, corpName: '(주)한입푸드', tradeName: '치킨한입', industry: '치킨 프랜차이즈', openDate: '2016-11-20', branches: 52, revenue: 890000, profit: -12000, askPrice: 95000, status: '보류', manager: '', memo: '최근 2년 연속 영업적자. 물류센터 자산가치는 별도 평가 필요.' },
   );
   DB.listings.push(
-    { id: uid(), createdAt: now, title: '포카드홀덤펍 강남역점', brandId: b1, region: '서울 강남구 역삼동', industry: '홀덤펍', price: 28000, premium: 9000, deposit: 5000, rent: 380, mRevenue: 5200, mProfit: 1100, size: 45, floor: '2층', status: '판매중', link: '', desc: '역세권 도보 2분. 시설 전체 2년차로 추가 투자 불필요. 양도 사유: 점주 해외 이주.',
+    { id: uid(), _sample: true, createdAt: now, title: '포카드홀덤펍 강남역점', brandId: b1, region: '서울 강남구 역삼동', industry: '홀덤펍', price: 28000, premium: 9000, deposit: 5000, rent: 380, mRevenue: 5200, mProfit: 1100, size: 45, floor: '2층', status: '판매중', link: '', desc: '역세권 도보 2분. 시설 전체 2년차로 추가 투자 불필요. 양도 사유: 점주 해외 이주.',
       comments: [
         { id: uid(), author: '회계사', text: '권리금 9,000에 시설 감가 반영된 건가요? 인테리어 원가 자료 요청해주세요. 그리고 최근 3개년 부가세 신고서도 부탁드립니다.', ts: now - 3600e3 * 5 },
         { id: uid(), author: '관리자', text: '네, 내일 점주 미팅 때 시설 견적서 원본 받아오겠습니다. 부가세 신고서는 공유 자료에 올려둘게요.', ts: now - 3600e3 * 2 },
@@ -3209,16 +3323,39 @@ function loadSample() {
       docs: [
         { id: uid(), name: '2025 매출자료 (예시 링크)', url: 'https://drive.google.com', author: '관리자', ts: now - 3600e3 * 3 },
       ] },
-    { id: uid(), createdAt: now - 86400e3, title: '카페 브루다 판교테크노밸리점', brandId: b2, region: '경기 성남시 분당구', industry: '카페', price: 15000, premium: 5000, deposit: 3000, rent: 250, mRevenue: 3100, mProfit: 600, size: 28, floor: '1층', status: '협상중', link: '', desc: '오피스 상권. 주말 매출 약함. 평일 테이크아웃 비중 70%.',
+    { id: uid(), _sample: true, createdAt: now - 86400e3, title: '카페 브루다 판교테크노밸리점', brandId: b2, region: '경기 성남시 분당구', industry: '카페', price: 15000, premium: 5000, deposit: 3000, rent: 250, mRevenue: 3100, mProfit: 600, size: 28, floor: '1층', status: '협상중', link: '', desc: '오피스 상권. 주말 매출 약함. 평일 테이크아웃 비중 70%.',
       comments: [
         { id: uid(), author: '관리자', text: '주말 매출 데이터 3개월치 확인 필요합니다.', ts: now - 86400e3 },
       ] },
-    { id: uid(), createdAt: now - 86400e3 * 3, title: '치킨한입 수원인계점', brandId: b3, region: '경기 수원시 팔달구', industry: '치킨', price: 7000, premium: 2000, deposit: 2000, rent: 180, mRevenue: 2400, mProfit: 350, size: 15, floor: '1층', status: '판매중', link: '', desc: '배달 위주 매장. 홀 좌석 4테이블. 배달앱 리뷰 평점 4.8.', comments: [] },
-    { id: uid(), createdAt: now - 86400e3 * 7, title: '단독 홀덤펍 (무브랜드) 부천점', brandId: '', region: '경기 부천시 원미구', industry: '홀덤펍', price: 12000, premium: 4000, deposit: 3000, rent: 220, mRevenue: 2800, mProfit: 500, size: 38, floor: 'B1', status: '거래완료', link: '', desc: '포카드 브랜드 전환 후보로 검토했던 매물. 거래 완료됨.', comments: [] },
+    { id: uid(), _sample: true, createdAt: now - 86400e3 * 3, title: '치킨한입 수원인계점', brandId: b3, region: '경기 수원시 팔달구', industry: '치킨', price: 7000, premium: 2000, deposit: 2000, rent: 180, mRevenue: 2400, mProfit: 350, size: 15, floor: '1층', status: '판매중', link: '', desc: '배달 위주 매장. 홀 좌석 4테이블. 배달앱 리뷰 평점 4.8.', comments: [] },
+    { id: uid(), _sample: true, createdAt: now - 86400e3 * 7, title: '단독 홀덤펍 (무브랜드) 부천점', brandId: '', region: '경기 부천시 원미구', industry: '홀덤펍', price: 12000, premium: 4000, deposit: 3000, rent: 220, mRevenue: 2800, mProfit: 500, size: 38, floor: 'B1', status: '거래완료', link: '', desc: '포카드 브랜드 전환 후보로 검토했던 매물. 거래 완료됨.', comments: [] },
   );
   sendOp({ type: 'replaceAll', db: DB });
   save(); renderBrands(); renderListings(); renderDash();
   toast('샘플 데이터 추가 완료');
+}
+
+// 샘플로 넣은 항목만 골라서 제거한다 (실제 등록한 데이터는 건드리지 않음).
+// _sample 플래그로 판별하고, 플래그가 없던 과거 샘플은 알려진 상호/제목으로 보조 판별한다.
+const SAMPLE_CORPS = ['(주)에이스에프앤비', '(주)브루잉랩', '(주)한입푸드'];
+const SAMPLE_TITLES = ['포카드홀덤펍 강남역점', '카페 브루다 판교테크노밸리점', '치킨한입 수원인계점', '단독 홀덤펍 (무브랜드) 부천점'];
+function isSampleBrand(b) { return b._sample === true || SAMPLE_CORPS.includes(b.corpName); }
+function isSampleListing(l) { return l._sample === true || SAMPLE_TITLES.includes(l.title); }
+function removeSample() {
+  const rmB = DB.brands.filter(isSampleBrand);
+  const rmL = DB.listings.filter(isSampleListing);
+  if (!rmB.length && !rmL.length) { toast('제거할 샘플 데이터가 없습니다'); return; }
+  if (!confirm(`샘플 데이터만 제거합니다.\n(브랜드 ${rmB.length}개, 매물 ${rmL.length}건)\n직접 등록한 데이터는 그대로 유지됩니다. 계속할까요?`)) return;
+  // 샘플에 첨부된 파일이 있으면 IndexedDB에서도 정리
+  [...rmB, ...rmL].forEach(o => (o.files || []).forEach(f => idbDel(f.id).catch(() => {})));
+  const rmIds = new Set(rmB.map(b => b.id));
+  DB.brands = DB.brands.filter(b => !isSampleBrand(b));
+  DB.listings = DB.listings.filter(l => !isSampleListing(l));
+  // 삭제된 샘플 브랜드를 참조하던 매물의 brandId 정리
+  DB.listings.forEach(l => { if (rmIds.has(l.brandId)) l.brandId = ''; });
+  sendOp({ type: 'replaceAll', db: DB });
+  save(); renderBrands(); renderListings(); renderDash();
+  toast(`샘플 데이터 제거 완료 (브랜드 ${rmB.length} · 매물 ${rmL.length})`);
 }
 
 /* =============================================================
