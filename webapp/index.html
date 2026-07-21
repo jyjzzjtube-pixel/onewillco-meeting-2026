@@ -448,6 +448,29 @@ table.cmp-table td.best { background: var(--green-bg); color: var(--green-fg); f
 .c-paper .c-notice { margin-top:20px; padding-top:10px; border-top:1px solid #ddd; color:#b45; font-size:11.5px; }
 .c-paper .c-blank { color:#a9adbb; letter-spacing:1px; }
 .c-paper .c-val { font-weight:700; color:#111418; background:linear-gradient(transparent 62%, #fff2b8 62%); padding:0 1px; }
+.c-paper .c-in { font:inherit; color:#111418; border:none; border-bottom:1.4px solid #b9bdc9; background:transparent; padding:0 3px 1px; margin:0 1px; min-width:6ch; max-width:100%; text-align:center; outline:none; vertical-align:baseline; transition:border-color .12s, background .12s; }
+.c-paper .c-in::placeholder { color:#c2c6d2; letter-spacing:.5px; font-weight:400; }
+.c-paper .c-in:hover { border-bottom-color:#8a8fa3; }
+.c-paper .c-in:focus { border-bottom-color:var(--primary); background:rgba(94,86,210,.07); }
+.c-paper .c-in.filled { font-weight:700; border-bottom-color:#111418; background:#fff8d8; }
+.ctr-hint { border:1px solid #e6e3fa; background:linear-gradient(#faf9ff,#f3f1fe); color:#3a3560; border-radius:12px; padding:12px 15px; margin-bottom:16px; font-size:12.5px; line-height:1.6; }
+.ctr-hint b { color:var(--primary); }
+/* 목록 요약 패널 */
+.list-summary { margin-top:16px; }
+.ls-panel { background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); padding:16px 18px; }
+.ls-h { font-size:13px; font-weight:800; letter-spacing:.02em; margin:0 0 12px; }
+.ls-tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-bottom:16px; }
+.ls-tile { border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:linear-gradient(180deg,#fff,#fbfbfe); }
+.ls-tile .lt { font-size:11.5px; color:var(--muted-fg); font-weight:700; }
+.ls-tile .lv { font-size:20px; font-weight:800; margin-top:3px; letter-spacing:-.01em; }
+.ls-tile .lv small { font-size:12px; font-weight:600; color:var(--muted-fg); }
+.ls-tile .ls-sub { font-size:11px; color:var(--muted-fg); margin-top:2px; }
+.ls-bar-h { font-size:11.5px; color:var(--muted-fg); font-weight:700; margin-bottom:6px; }
+.ls-bar { display:flex; height:14px; border-radius:8px; overflow:hidden; background:var(--muted); }
+.ls-seg { height:100%; }
+.ls-legend { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:8px; font-size:12px; }
+.ls-legend span { display:inline-flex; align-items:center; gap:5px; }
+.ls-legend i { width:10px; height:10px; border-radius:3px; display:inline-block; }
 .ctr-form { border:1px solid var(--border); background:var(--muted); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
 .ctr-form .cf-head { font-weight:700; font-size:14px; margin-bottom:10px; }
 .ctr-form .cf-head span { font-weight:400; font-size:12px; color:var(--muted-fg); }
@@ -695,6 +718,7 @@ details.fold summary b { color: var(--primary); }
         </div>
         <div class="empty-note" id="brandEmpty" style="display:none">등록된 브랜드가 없습니다. [＋ 브랜드 등록] 또는 [데이터 관리]의 샘플 데이터로 시작하세요.</div>
       </div>
+      <div id="brandSummary" class="list-summary"></div>
     </section>
 
     <!-- ============ 매물 카드 ============ -->
@@ -731,6 +755,7 @@ details.fold summary b { color: var(--primary); }
       </div>
       <div class="card-grid" id="listingGrid"></div>
       <div class="empty-note" id="listingEmpty" style="display:none">등록된 매물이 없습니다. [＋ 매물 등록] 또는 [데이터 관리]의 샘플 데이터로 시작하세요.</div>
+      <div id="listingSummary" class="list-summary"></div>
     </section>
 
     <!-- ============ 데이터 관리 ============ -->
@@ -895,7 +920,7 @@ details.fold summary b { color: var(--primary); }
       <button class="btn ghost" onclick="clearContractFields()">↺ 입력 지우기</button>
       <span style="font-size:12px;color:var(--muted-fg);align-self:center">인쇄 창에서 "PDF로 저장"을 고르면 PDF · 한글(HWP)은 .doc를 그대로 엽니다.</span>
     </div>
-    <div id="contractForm" class="ctr-form"></div>
+    <div class="ctr-hint">✍️ <b>계약서의 밑줄 칸을 클릭해 바로 입력</b>하세요. 같은 항목(상호·대표 등)은 한 곳만 채워도 전체가 함께 채워집니다. 매물·브랜드를 먼저 선택하면 대상·소재지·금액·날짜가 자동으로 채워집니다. 빈 칸은 밑줄(공란)로 인쇄됩니다.</div>
     <div id="contractPaper" class="c-paper"></div>
   </div>
 </div>
@@ -1475,6 +1500,73 @@ function sigBadge(kind, o) {
   return `<span class="sig sig-${g.s}" title="딜 신호등 — 기준: 회수기간 24개월 이하 · 연수익률 30% 이상 · 인수배수 5배 이하 · 이상치 없음">${dot} ${g.label}</span>`;
 }
 
+/* ---------- 목록 요약 패널 (빈 공간 활용) ---------- */
+function lsSegBar(parts) {
+  const total = parts.reduce((s, p) => s + p.count, 0) || 1;
+  const bar = parts.filter(p => p.count > 0).map(p => `<div class="ls-seg" style="width:${(p.count / total * 100).toFixed(2)}%;background:${p.color}" title="${esc(p.label)} ${p.count}"></div>`).join('');
+  const legend = parts.map(p => `<span><i style="background:${p.color}"></i>${esc(p.label)} <b>${p.count}</b></span>`).join('');
+  return `<div class="ls-bar">${bar}</div><div class="ls-legend">${legend}</div>`;
+}
+function renderBrandSummary(rows) {
+  const box = document.getElementById('brandSummary');
+  if (!box) return;
+  if (!rows || !rows.length) { box.innerHTML = ''; return; }
+  const cnt = s => rows.filter(b => b.status === s).length;
+  const sig = s => rows.filter(b => signal('brand', b).s === s).length;
+  const muls = rows.map(brandMultiple).filter(v => v != null);
+  const avgMul = muls.length ? muls.reduce((a, b) => a + b, 0) / muls.length : null;
+  const totAsk = rows.reduce((s, b) => s + (Number(b.askPrice) || 0), 0);
+  const inProg = cnt('협상중') + cnt('실사중');
+  const statusParts = [
+    { label: '검토중', count: cnt('검토중'), color: '#94a3b8' },
+    { label: '협상중', count: cnt('협상중'), color: '#5E56D2' },
+    { label: '실사중', count: cnt('실사중'), color: '#0ea5e9' },
+    { label: '인수완료', count: cnt('인수완료'), color: '#16a34a' },
+    { label: '보류', count: cnt('보류'), color: '#f59e0b' },
+  ];
+  box.innerHTML = `<div class="ls-panel">
+    <div class="ls-h">📊 목록 요약 <span style="font-weight:600;color:var(--muted-fg)">· 현재 보이는 ${rows.length}개 기준</span></div>
+    <div class="ls-tiles">
+      <div class="ls-tile"><div class="lt">총 브랜드</div><div class="lv">${rows.length}<small> 개</small></div></div>
+      <div class="ls-tile"><div class="lt">진행 중(협상·실사)</div><div class="lv">${inProg}<small> 개</small></div></div>
+      <div class="ls-tile"><div class="lt">평균 인수배수</div><div class="lv">${avgMul == null ? '-' : avgMul.toFixed(1) + '배'}</div><div class="ls-sub">낮을수록 저평가</div></div>
+      <div class="ls-tile"><div class="lt">희망양도가 합계</div><div class="lv" style="font-size:17px">${fmtMoney(totAsk)}<small> 원</small></div></div>
+      <div class="ls-tile"><div class="lt">딜 신호등</div><div class="lv" style="font-size:16px">🟢 ${sig('green')} · 🟡 ${sig('yellow')} · 🔴 ${sig('red')}</div></div>
+    </div>
+    <div class="ls-bar-h">상태 분포</div>
+    ${lsSegBar(statusParts)}
+  </div>`;
+}
+function renderListingSummary(rows) {
+  const box = document.getElementById('listingSummary');
+  if (!box) return;
+  if (!rows || !rows.length) { box.innerHTML = ''; return; }
+  const cnt = s => rows.filter(l => l.status === s).length;
+  const sig = s => rows.filter(l => signal('listing', l).s === s).length;
+  const pbs = rows.map(paybackEff).filter(v => v != null);
+  const avgPb = pbs.length ? pbs.reduce((a, b) => a + b, 0) / pbs.length : null;
+  const yps = rows.map(yieldEff).filter(v => v != null);
+  const avgYp = yps.length ? yps.reduce((a, b) => a + b, 0) / yps.length : null;
+  const totPrice = rows.reduce((s, l) => s + (Number(l.price) || 0) + (Number(l.premium) || 0), 0);
+  const sigParts = [
+    { label: '🟢 우량', count: sig('green'), color: '#16a34a' },
+    { label: '🟡 보통·검토', count: sig('yellow'), color: '#eab308' },
+    { label: '🔴 위험', count: sig('red'), color: '#dc2626' },
+  ];
+  box.innerHTML = `<div class="ls-panel">
+    <div class="ls-h">📊 매물 요약 <span style="font-weight:600;color:var(--muted-fg)">· 현재 보이는 ${rows.length}건 기준</span></div>
+    <div class="ls-tiles">
+      <div class="ls-tile"><div class="lt">총 매물</div><div class="lv">${rows.length}<small> 건</small></div></div>
+      <div class="ls-tile"><div class="lt">판매중</div><div class="lv">${cnt('판매중')}<small> 건</small></div></div>
+      <div class="ls-tile"><div class="lt">평균 회수기간</div><div class="lv">${avgPb == null ? '-' : fmtMonths(Math.round(avgPb))}</div><div class="ls-sub">실사장 기준</div></div>
+      <div class="ls-tile"><div class="lt">평균 연수익률</div><div class="lv">${avgYp == null ? '-' : avgYp.toFixed(1) + '%'}</div></div>
+      <div class="ls-tile"><div class="lt">양도가+권리금 합계</div><div class="lv" style="font-size:17px">${fmtMoney(totPrice)}<small> 원</small></div></div>
+    </div>
+    <div class="ls-bar-h">딜 신호등 분포</div>
+    ${lsSegBar(sigParts)}
+  </div>`;
+}
+
 /* ---------- 읽음 추적 (NEW 배지) ---------- */
 function readKey() { return 'onewillco_mna_read_' + (store.getItem(LS_USER) || 'anon'); }
 function readMap() { try { return JSON.parse(store.getItem(readKey()) || '{}'); } catch (e) { return {}; } }
@@ -1580,6 +1672,7 @@ function renderBrands() {
       </td>
     </tr>`;
   }).join('');
+  renderBrandSummary(rows);
   refreshCounts();
 }
 function openBrandForm(id) {
@@ -1770,6 +1863,7 @@ function renderListings() {
       </div>
     </div>`;
   }).join('');
+  renderListingSummary(rows);
   refreshCounts();
   const cb = document.getElementById('compareBtn');
   if (cb) { cb.style.display = compareSel.size >= 2 ? 'inline-flex' : 'none'; document.getElementById('compareCnt').textContent = compareSel.size; }
@@ -3148,13 +3242,15 @@ const CONTRACTS = [
 let _curContract = null;
 let _ctrFields = {};
 function ctrBlankHTML() { return '<span class="c-blank">________________</span>'; }
-function contractCtx() {
+function ctrChWidth(s) { let n = 0; s = String(s || ''); for (let i = 0; i < s.length; i++) n += s.charCodeAt(i) > 0x1100 ? 2 : 1; return n; }
+function contractCtx(mode) {
   const id = (document.getElementById('ctrItem') || {}).value || '';
   const l = DB.listings.find(x => x.id === id);
   const b = DB.brands.find(x => x.id === id);
   const o = l || b, isBrand = !!b;
   const d = new Date();
   const priceMan = o ? (isBrand ? (Number(o.askPrice) || 0) : ((Number(o.price) || 0) + (Number(o.premium) || 0))) : 0;
+  const edit = mode !== 'print';
   const ctx = {
     date: d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일',
     itemName: o ? (isBrand ? (o.corpName + ' (' + o.tradeName + ')') : o.title) : '',
@@ -3162,10 +3258,18 @@ function contractCtx() {
     price: priceMan ? (fmtMoney(priceMan) + '원') : '',
     isBrand: isBrand, company: '주식회사 원윌앤코',
   };
+  // edit 모드: 본문 밑줄을 클릭해 바로 입력하는 인라인 입력칸 / print 모드: 값만 정적으로 출력
   ctx.f = (key, auto) => {
+    const autoV = auto != null ? String(auto).trim() : '';
     const u = (_ctrFields[key] != null ? String(_ctrFields[key]) : '').trim();
-    const v = u || (auto != null ? String(auto).trim() : '');
-    return v ? '<span class="c-val">' + esc(v) + '</span>' : ctrBlankHTML();
+    if (!edit) {
+      const v = u || autoV;
+      return v ? '<span class="c-val">' + esc(v) + '</span>' : ctrBlankHTML();
+    }
+    const val = _ctrFields[key] != null ? String(_ctrFields[key]) : '';
+    const ph = autoV || '________';
+    const w = Math.max(ctrChWidth(ph), ctrChWidth(val), 6) + 2;
+    return '<input class="c-in' + (val ? ' filled' : '') + '" data-k="' + esc(key) + '" value="' + esc(val) + '" placeholder="' + esc(ph) + '" style="width:' + w + 'ch" oninput="onCtrIn(this)">';
   };
   return ctx;
 }
@@ -3186,30 +3290,18 @@ function renderContracts() {
     CONTRACTS.filter(c => c.cat === cat).map(c => '<div class="ctr-card" onclick="openContract(\'' + c.id + '\')"><div class="ct">📄 ' + esc(c.title) + '</div><div class="cd">' + esc(cat) + '</div><div class="cgo">열기 → 입력·인쇄·워드</div></div>').join('') +
     '</div>').join('');
 }
-function contractHTML(id) { const c = CONTRACTS.find(x => x.id === id); return c ? c.body(contractCtx()) : ''; }
-function renderContractForm(id) {
-  const c = CONTRACTS.find(x => x.id === id);
-  const box = document.getElementById('contractForm');
-  if (!c || !box) return;
-  const ctx = contractCtx();
-  const autoMap = { itemName: ctx.itemName, addr: ctx.addr, price: ctx.price, date: ctx.date };
-  box.innerHTML = '<div class="cf-head">✍️ 바로 입력하기 <span>— 아래 칸을 채우면 계약서에 실시간 반영됩니다. 비워 두면 밑줄(공란)로 인쇄됩니다.</span></div>' +
-    '<div class="cf-grid">' + (c.fields || []).map(fd => {
-      const auto = fd.auto ? (autoMap[fd.auto] || '') : '';
-      const val = _ctrFields[fd.k] != null ? _ctrFields[fd.k] : '';
-      const ph = auto ? ('자동입력: ' + auto) : '직접 입력';
-      return '<label class="cf"><span>' + esc(fd.label) + (auto ? ' <em>자동</em>' : '') + '</span>' +
-        '<input type="text" data-k="' + fd.k + '" value="' + esc(val) + '" placeholder="' + esc(ph) + '" oninput="onCtrInput(this)"></label>';
-    }).join('') + '</div>';
-}
-function onCtrInput(el) {
-  _ctrFields[el.getAttribute('data-k')] = el.value;
-  if (_curContract) document.getElementById('contractPaper').innerHTML = contractHTML(_curContract);
+function contractHTML(id, mode) { const c = CONTRACTS.find(x => x.id === id); return c ? c.body(contractCtx(mode)) : ''; }
+// 인라인 입력: 한 칸을 고치면 같은 항목(같은 data-k)을 쓰는 다른 칸도 즉시 동기화. 커서는 유지.
+function onCtrIn(el) {
+  const k = el.getAttribute('data-k');
+  _ctrFields[k] = el.value;
+  const resize = i => { i.style.width = (Math.max(ctrChWidth(i.placeholder), ctrChWidth(i.value), 6) + 2) + 'ch'; i.classList.toggle('filled', !!i.value); };
+  resize(el);
+  document.querySelectorAll('#contractPaper .c-in[data-k="' + k + '"]').forEach(o => { if (o !== el) { o.value = el.value; resize(o); } });
 }
 function refreshContract() {
   if (!_curContract) return;
-  renderContractForm(_curContract);
-  document.getElementById('contractPaper').innerHTML = contractHTML(_curContract);
+  document.getElementById('contractPaper').innerHTML = contractHTML(_curContract, 'edit');
 }
 function clearContractFields() {
   _ctrFields = {};
@@ -3219,8 +3311,7 @@ function clearContractFields() {
 function openContract(id) {
   if (id !== _curContract) _ctrFields = {};
   _curContract = id;
-  renderContractForm(id);
-  document.getElementById('contractPaper').innerHTML = contractHTML(id);
+  document.getElementById('contractPaper').innerHTML = contractHTML(id, 'edit');
   openModal('contractModal');
 }
 function printContract() {
@@ -3231,7 +3322,7 @@ function printContract() {
   if (c) document.title = c.title;
   const area = document.createElement('div');
   area.id = 'printArea';
-  area.innerHTML = '<div class="c-paper">' + contractHTML(_curContract) + '</div>';
+  area.innerHTML = '<div class="c-paper">' + contractHTML(_curContract, 'print') + '</div>';
   document.body.appendChild(area);
   const cleanup = () => { document.title = prevTitle; if (area.parentNode) area.remove(); window.removeEventListener('afterprint', cleanup); };
   window.addEventListener('afterprint', cleanup);
@@ -3242,7 +3333,7 @@ function downloadContract(fmt) {
   if (!_curContract) return;
   const c = CONTRACTS.find(x => x.id === _curContract);
   const st = "@page{size:A4;margin:20mm 18mm} body{font-family:'바탕','Batang',serif;color:#111418;line-height:1.85;font-size:11pt;margin:0} .c-title{text-align:center;font-size:17pt;font-weight:bold;letter-spacing:3px;margin:0 0 20px;padding-bottom:12px;border-bottom:1.5px solid #111418} .c-pre{margin:0 0 16px;text-align:justify} .c-art{margin:0 0 12px} .c-art h3{font-size:11.5pt;font-weight:bold;margin:0 0 4px} .c-art p{margin:0 0 4px;text-align:justify} .c-num{margin-left:2px} .c-sub{margin-left:18px} .c-date{text-align:center;margin:26px 0 18px;letter-spacing:2px;font-size:11.5pt} table.c-sign{width:100%;border-collapse:collapse;margin-top:8px} table.c-sign td{border:1px solid #2b2f36;padding:11px 14px;vertical-align:top;font-size:10.5pt;line-height:1.6} td.c-role{width:120px;font-weight:bold;background:#f3f4f6;text-align:center} .c-blank{color:#555;letter-spacing:1px} .c-val{font-weight:bold}";
-  const html = '<html><head><meta charset="utf-8"><style>' + st + '</style></head><body>' + contractHTML(_curContract) + '</body></html>';
+  const html = '<html><head><meta charset="utf-8"><style>' + st + '</style></head><body>' + contractHTML(_curContract, 'print') + '</body></html>';
   const ext = fmt === 'hwp' ? '.doc' : '.doc';
   downloadBlob(html, 'application/msword;charset=utf-8', c.title + ext);
   toast(c.title + (fmt === 'hwp' ? ' — 한글(HWP)에서 열 수 있는 문서로 저장' : ' — 워드 문서로 저장'));
