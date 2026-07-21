@@ -3513,10 +3513,11 @@ button,input,select,textarea{font:inherit;font-family:var(--font-kr);}
 h1,h2,h3,h4,h5,h6{font-weight:var(--fw-bold);color:var(--c-ink);}
 h2{font-size:var(--fs-lg);}h3{font-size:var(--fs-md);}h4,h5,h6{font-size:var(--fs-base);}
 b,strong{font-weight:var(--fw-bold);}
-.hero{background:linear-gradient(135deg,#F4F7FA 0%,#E7F0F9 100%);}
-.hero::before{content:none;}
-.hero-graphic{position:absolute;right:-40px;top:50%;transform:translateY(-50%);width:44%;max-width:560px;z-index:0;opacity:.9;pointer-events:none;}
-@media(max-width:980px){.hero-graphic{display:none;}}
+.hero{position:relative;background:#F4F7FA;overflow:hidden;}
+.hero-media{position:absolute;inset:0;z-index:0;pointer-events:none;}
+.hero-media img{width:100%;height:100%;object-fit:cover;object-position:72% center;display:block;}
+.hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#F4F7FA 0%,rgba(244,247,250,.95) 30%,rgba(244,247,250,.66) 50%,rgba(244,247,250,.20) 76%,rgba(244,247,250,0) 100%);}
+@media(max-width:700px){.hero::before{background:linear-gradient(180deg,rgba(244,247,250,.90) 0%,rgba(244,247,250,.80) 46%,rgba(244,247,250,.62) 100%);}}
 .hero h1{font-size:var(--fs-xl);font-weight:var(--fw-bold);color:var(--c-ink);}
 .hero .hero-sub{font-size:var(--fs-md);font-weight:var(--fw-normal);color:var(--c-body);}
 .hero-primary-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px;}
@@ -3659,7 +3660,7 @@ footer.site-footer.sb2-footer{background:var(--c-ink) !important;background-imag
 <!-- ================= ① 히어로: 비교 기준과 분야 선택 ================= -->
 <main id="main-content">
 <section class="hero">
-  <div class="hero-graphic" aria-hidden="true"><svg viewBox="0 0 640 420" fill="none"><rect x="90" y="200" width="52" height="170" rx="10" fill="#2E7CC4" opacity=".18"/><rect x="498" y="200" width="52" height="170" rx="10" fill="#2E7CC4" opacity=".18"/><path d="M96 230 Q320 40 544 230" stroke="#2E7CC4" stroke-width="26" stroke-linecap="round" opacity=".35"/><rect x="60" y="356" width="520" height="26" rx="13" fill="#14324F" opacity=".14"/><circle cx="320" cy="128" r="14" fill="#2E7CC4" opacity=".5"/></svg></div>
+  <div class="hero-media" aria-hidden="true"><img src="/assets/hero/spacebridge-hero-kr-v2.jpg" width="1672" height="941" alt="" loading="eager" fetchpriority="high" decoding="async"></div>
   <div class="inner">
     <div class="hero-copy">
       <span class="hero-badge"><span class="dot"></span>비교 기준부터 시작하는 연결 플랫폼</span>
