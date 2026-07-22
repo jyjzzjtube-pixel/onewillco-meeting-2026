@@ -33,3 +33,10 @@ channel: 네이버블로그
 👉 [평수·업종별 비용 계산기](https://gongganbridge.com/calc.html)
 
 공간브릿지는 인테리어·포스·세무를 같은 기준으로 비교하도록 돕습니다. 문자 010-8443-4756
+
+---
+### 공간브릿지 채널 한눈에
+- 홈페이지 https://gongganbridge.com · 무료도구 https://gongganbridge.com/calc.html
+- 네이버블로그 https://blog.naver.com/bridgeone11 · 인스타 https://www.instagram.com/gonggan.bridge
+- 카카오톡 상담 https://pf.kakao.com/_xkpqIX · 문자 010-8443-4756
+#공간브릿지 #상가인테리어 #카페창업 #인테리어견적
