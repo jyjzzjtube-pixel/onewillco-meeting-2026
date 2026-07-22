@@ -1166,6 +1166,7 @@ async function loadSeed() {
 /* ---------- 네비게이션 ---------- */
 const PAGE_TITLES = { dash: '대시보드', pipeline: '딜 파이프라인', brands: '브랜드 M&A 목록', listings: '양도양수 매물', contracts: '계약서 서식함', data: '데이터 관리' };
 function go(page) {
+  document.querySelectorAll('.modal-bg.open').forEach(m => closeModal(m.id));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
@@ -2682,6 +2683,18 @@ function renderDash() {
    모달 공통
    ============================================================= */
 function openModal(id) { document.getElementById(id).classList.add('open'); }
+// 배경(딤) 클릭으로 닫기 — 입력 폼(브랜드·매물 등록/수정)은 실수로 내용이 사라지지 않도록 제외
+const LIGHT_DISMISS = ['detailModal', 'contractModal', 'intakeModal', 'mailModal'];
+document.addEventListener('click', e => {
+  const t = e.target;
+  if (t && t.classList && t.classList.contains('modal-bg') && t.classList.contains('open') && LIGHT_DISMISS.includes(t.id)) closeModal(t.id);
+});
+// Esc 로 최상단 열린 모달 닫기
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const open = [...document.querySelectorAll('.modal-bg.open')];
+  if (open.length) closeModal(open[open.length - 1].id);
+});
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
   if (id === 'detailModal') { _thumbUrls.forEach(u => URL.revokeObjectURL(u)); _thumbUrls = []; }
