@@ -447,6 +447,86 @@ const STATS = [
   s.addNotes('계약 1건당 1,000만원, 부가세 별도. 성사된 건에만 청구합니다. 네고가 들어오면 저희 몫에서 부담하므로 본사 수취액은 변하지 않습니다.');
 }
 
+/* ══════════════ 6. 회수 구조 ══════════════ */
+{
+  const s = pres.addSlide();
+  chip(s, '06', 'RETURN');
+  title(s, [
+    { text: '성공보수는 ' },
+    { text: '가맹비 범위 안에서', options: { color: VIO } },
+    { text: ' 정산됩니다.' },
+  ]);
+  s.addText('본사가 추가로 지출하는 돈이 아닙니다. 계약 시점부터 이미 흑자이고, 이후 로열티는 전액 순증입니다.',
+    t({ x: M, y: 1.95, w: 10.5, h: 0.34, fontSize: 11.5, color: INK2 }));
+
+  // 좌 — 계약 시점 정산 산식
+  card(s, M, 2.5, 4.55, 3.24);
+  s.addText('계약 1건 · 계약 시점', t({ x: M + 0.36, y: 2.74, w: 3.4, h: 0.26,
+    fontSize: 9, bold: true, color: VIO, charSpacing: 1 }));
+
+  const CALC = [
+    ['가맹비 (본사 수취)', '+1,500', INK],
+    ['성공보수 (내일사장)', '−1,000', MUTED],
+  ];
+  CALC.forEach(([k, v, c], i) => {
+    const y = 3.16 + i * 0.46;
+    s.addText(k, t({ x: M + 0.36, y, w: 2.6, h: 0.3, fontSize: 10.5, color: INK2, valign: 'middle' }));
+    s.addText([{ text: v, options: { fontSize: 13.5, bold: true, color: c } },
+               { text: ' 만원', options: { fontSize: 9.5, color: MUTED } }],
+      t({ x: M + 2.9, y, w: 1.4, h: 0.3, align: 'right', valign: 'middle' }));
+  });
+
+  s.addShape(pres.ShapeType.rect, { x: M + 0.36, y: 4.12, w: 3.94, h: 0.012,
+    fill: { color: LINE }, line: { width: 0 } });
+
+  s.addText('계약 시점 본사 순수익', t({ x: M + 0.36, y: 4.3, w: 2.6, h: 0.3,
+    fontSize: 10.5, bold: true, valign: 'middle' }));
+  s.addText([{ text: '+500', options: { fontSize: 19, bold: true, color: VIOD } },
+             { text: ' 만원', options: { fontSize: 10.5, bold: true, color: GOLD } }],
+    t({ x: M + 2.6, y: 4.28, w: 1.7, h: 0.34, align: 'right', valign: 'middle' }));
+
+  s.addText('성공보수를 지급하고도 계약 즉시 흑자입니다. 본사가 별도 예산을 편성할 필요가 없습니다.',
+    t({ x: M + 0.36, y: 4.82, w: 3.94, h: 0.6, fontSize: 9.2, color: MUTED, lineSpacing: 14.5 }));
+
+  // 우 — 누적 수익 (로열티 순증)
+  const BX = M + 4.55 + 0.35, BW2 = CW - 4.55 - 0.35;
+  s.addText('이후 누적 본사 수익 (월 로열티 150만원 반영)', t({ x: BX, y: 2.5, w: BW2, h: 0.28,
+    fontSize: 9, bold: true, color: MUTED, charSpacing: 1.2 }));
+
+  const BARS = [['계약 시점', 500], ['12개월', 2300], ['24개월', 4100], ['36개월', 5900]];
+  const MAXV = 5900, TRACK = BW2 - 2.35;
+  BARS.forEach(([k, v], i) => {
+    const y = 2.98 + i * 0.66;
+    s.addText(k, t({ x: BX, y, w: 1.0, h: 0.4, fontSize: 9.6, bold: true, color: INK2, valign: 'middle' }));
+    s.addShape(pres.ShapeType.roundRect, { x: BX + 1.05, y: y + 0.09, w: TRACK, h: 0.22,
+      rectRadius: 0.02, fill: { color: TINT }, line: { color: TINT, width: 0 } });
+    s.addShape(pres.ShapeType.roundRect, { x: BX + 1.05, y: y + 0.09, w: Math.max(0.12, TRACK * v / MAXV), h: 0.22,
+      rectRadius: 0.02, fill: { color: i === 3 ? VIOD : VIO }, line: { width: 0 } });
+    s.addText([{ text: v.toLocaleString(), options: { fontSize: 12.5, bold: true, color: i === 3 ? VIOD : INK } },
+               { text: ' 만원', options: { fontSize: 8.8, color: MUTED } }],
+      t({ x: BX + BW2 - 1.25, y, w: 1.25, h: 0.4, align: 'right', valign: 'middle' }));
+  });
+
+  s.addText('성공보수는 1회성이고, 로열티는 매월 반복됩니다. 출점이 쌓일수록 격차는 벌어집니다.',
+    t({ x: BX, y: 5.66, w: BW2, h: 0.3, fontSize: 9.4, color: INK2, valign: 'middle' }));
+
+  // 결론 밴드
+  s.addShape(pres.ShapeType.roundRect, { x: M, y: 6.02, w: CW, h: 0.66, rectRadius: 0.06,
+    fill: { color: INK }, line: { color: INK, width: 0 } });
+  s.addText([
+    { text: '본사가 부담하는 것은 ' },
+    { text: '가맹비의 일부', options: { color: 'C9B8FF' } },
+    { text: '이고, 얻는 것은 ' },
+    { text: '매장 하나의 생애 매출', options: { color: 'C9B8FF' } },
+    { text: '입니다.' },
+  ], t({ x: M + 0.44, y: 6.02, w: CW - 0.88, h: 0.66, fontSize: 13.5, bold: true, color: W8, valign: 'middle' }));
+
+  s.addText('※ 러너펍 공개 가맹 안내 기준(가맹비 1,500만원 / 월 로열티 150만원·부가세 별도) 시뮬레이션이며, 실제 조건은 본사 정책에 따릅니다.',
+    t({ x: M, y: 6.78, w: 10.5, h: 0.24, fontSize: 7.6, color: MUTED, valign: 'middle' }));
+  s.addText('07', t({ x: 13.333 - M - 1, y: 6.78, w: 1, h: 0.24, fontSize: 8, bold: true, color: MUTED, align: 'right', valign: 'middle' }));
+  s.addNotes('본사가 가장 먼저 하실 계산이 "1,500만원 받아서 1,000만원 주면 500만원밖에 안 남는다"일 겁니다. 맞습니다. 다만 그 500만원은 계약 시점에 이미 흑자라는 뜻이고, 본사 수익의 본체는 월 로열티입니다. 3년이면 5,900만원입니다.');
+}
+
 /* ══════════════ 7. 다음 단계 ══════════════ */
 {
   const s = pres.addSlide();
@@ -454,7 +534,7 @@ const STATS = [
 
   s.addShape(pres.ShapeType.ellipse, { x: M, y: 0.44, w: 0.42, h: 0.42,
     fill: { color: VIO }, line: { width: 0 } });
-  s.addText('06', t({ x: M, y: 0.44, w: 0.42, h: 0.42, fontSize: 11, bold: true, color: W8, align: 'center', valign: 'middle' }));
+  s.addText('07', t({ x: M, y: 0.44, w: 0.42, h: 0.42, fontSize: 11, bold: true, color: W8, align: 'center', valign: 'middle' }));
   s.addText('NEXT STEP', t({ x: M + 0.6, y: 0.44, w: 6, h: 0.42, fontSize: 11, bold: true,
     color: '9E97BC', charSpacing: 2.2, valign: 'middle' }));
 

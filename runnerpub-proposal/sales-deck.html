@@ -261,6 +261,42 @@ table.cond tbody tr:nth-child(even){ background:var(--tint); }
 .rc .v span{ font-size:12pt; color:var(--gold); margin-left:.6mm; }
 .rc .d{ font-size:8.8pt; color:var(--muted); line-height:1.68; margin-top:2.5mm; }
 
+
+/* 회수 구조 */
+.roi{ display:grid; grid-template-columns:0.95fr 1.05fr; gap:7mm; margin-top:2mm; }
+.calc{ border:1px solid var(--line); border-radius:2.5mm; padding:7mm 7.5mm; }
+.calc .hd{ font-size:8.8pt; font-weight:800; color:var(--violet); letter-spacing:.1em; margin-bottom:5mm; }
+.calc .row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:3.4mm; }
+.calc .row .k{ font-size:10pt; color:var(--ink-2); }
+.calc .row .v{ font-size:13pt; font-weight:800; font-variant-numeric:tabular-nums; }
+.calc .row .v small{ font-size:8.8pt; font-weight:600; color:var(--muted); margin-left:.8mm; }
+.calc .sum{ border-top:1px solid var(--line); margin-top:4.5mm; padding-top:4.5mm;
+  display:flex; justify-content:space-between; align-items:baseline; gap:4mm; }
+.calc .sum .k{ font-size:10pt; font-weight:800; }
+.calc .sum .v{ font-size:19pt; font-weight:900; color:var(--violet-d); font-variant-numeric:tabular-nums; letter-spacing:-.03em; }
+.calc .sum .v small{ font-size:10pt; font-weight:800; color:var(--gold); margin-left:.8mm; }
+.calc .nt{ font-size:9pt; color:var(--muted); line-height:1.65; margin-top:4.5mm; }
+
+.bars .hd{ font-size:8.8pt; font-weight:800; color:var(--muted); letter-spacing:.12em; margin-bottom:5.5mm; }
+.bars .b{ display:grid; grid-template-columns:20mm 1fr 22mm; align-items:center; gap:4mm; margin-bottom:5mm; }
+.bars .b .k{ font-size:9.6pt; font-weight:700; color:var(--ink-2); }
+.bars .b .track{ display:block; height:5.6mm; background:var(--tint); border-radius:1mm; overflow:hidden; }
+.bars .b .fill{ display:block; height:100%; background:var(--violet); border-radius:1mm; }
+.bars .b.last .fill{ background:var(--violet-d); }
+.bars .b .v{ font-size:12.5pt; font-weight:800; text-align:right; font-variant-numeric:tabular-nums; }
+.bars .b .v small{ font-size:8.6pt; font-weight:600; color:var(--muted); margin-left:.6mm; }
+.bars .b.last .v{ color:var(--violet-d); }
+.bars .nt{ font-size:9.4pt; color:var(--ink-2); margin-top:1mm; }
+
+.scale{ margin-top:9mm; border-top:1.6px solid var(--ink); padding-top:5.5mm; }
+.scale .lb{ font-size:8.8pt; font-weight:800; letter-spacing:.12em; color:var(--muted); margin-bottom:5mm; }
+.scale .g{ display:grid; grid-template-columns:repeat(4,1fr); gap:5mm; }
+.scale .c .n{ font-size:9.4pt; font-weight:800; color:var(--violet); margin-bottom:1.5mm; }
+.scale .c .v{ font-size:17pt; font-weight:900; color:var(--violet-d); letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums; line-height:1.15; }
+.scale .c .v small{ font-size:9.6pt; font-weight:800; color:var(--gold); margin-left:.6mm; }
+.scale .c .d{ font-size:8.4pt; color:var(--muted); margin-top:1.2mm; }
+
 /* 페이지 하단 러닝 푸터 */
 .runfoot{
   position:absolute; left:20mm; right:20mm; bottom:10mm;
@@ -486,9 +522,54 @@ table.cond tbody tr:nth-child(even){ background:var(--tint); }
   <div class="runfoot"><span>내일사장 × 러너펍 가맹영업 파트너십 제안</span><span class="pg">06</span></div>
 </section>
 
-<!-- ================= 7. 다음 단계 ================= -->
+<!-- ================= 7. 회수 구조 ================= -->
+<section class="sheet">
+  <div class="eyebrow"><span class="no">06</span><span class="rule"></span><span class="lb">RETURN</span></div>
+  <h2 class="head">성공보수는 <em>가맹비 범위 안에서</em> 정산됩니다.</h2>
+  <p class="deck">본사가 추가로 지출하는 돈이 아닙니다. 계약 시점부터 이미 흑자이고, 이후 로열티는 전액 순증입니다.</p>
+
+  <div class="roi">
+    <div class="calc">
+      <div class="hd">계약 1건 · 계약 시점</div>
+      <div class="row"><span class="k">가맹비 (본사 수취)</span><span class="v">+1,500<small>만원</small></span></div>
+      <div class="row"><span class="k">성공보수 (내일사장)</span><span class="v" style="color:var(--muted)">−1,000<small>만원</small></span></div>
+      <div class="sum"><span class="k">계약 시점 본사 순수익</span><span class="v">+500<small>만원</small></span></div>
+      <div class="nt">성공보수를 지급하고도 계약 즉시 흑자입니다. 본사가 별도 예산을 편성할 필요가 없습니다.</div>
+    </div>
+
+    <div class="bars">
+      <div class="hd">이후 누적 본사 수익 (월 로열티 150만원 반영)</div>
+      <div class="b"><span class="k">계약 시점</span><span class="track"><span class="fill" style="width:8.5%"></span></span><span class="v">500<small>만원</small></span></div>
+      <div class="b"><span class="k">12개월</span><span class="track"><span class="fill" style="width:39%"></span></span><span class="v">2,300<small>만원</small></span></div>
+      <div class="b"><span class="k">24개월</span><span class="track"><span class="fill" style="width:69.5%"></span></span><span class="v">4,100<small>만원</small></span></div>
+      <div class="b last"><span class="k">36개월</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="v">5,900<small>만원</small></span></div>
+      <div class="nt">성공보수는 1회성이고, 로열티는 매월 반복됩니다. 출점이 쌓일수록 격차는 벌어집니다.</div>
+    </div>
+  </div>
+
+  <div class="scale">
+    <div class="lb">출점 규모별 · 36개월 누적 본사 수익 (성공보수 차감 후)</div>
+    <div class="g">
+      <div class="c"><div class="n">1개점</div><div class="v">5,900<small>만원</small></div><div class="d">성공보수 1,000만원 차감 후</div></div>
+      <div class="c"><div class="n">3개점</div><div class="v">1억 7,700<small>만원</small></div><div class="d">성공보수 3,000만원 차감 후</div></div>
+      <div class="c"><div class="n">5개점</div><div class="v">2억 9,500<small>만원</small></div><div class="d">성공보수 5,000만원 차감 후</div></div>
+      <div class="c"><div class="n">10개점</div><div class="v">5억 9,000<small>만원</small></div><div class="d">성공보수 1억원 차감 후</div></div>
+    </div>
+  </div>
+
+  <div class="pin">
+    <div class="band">
+      <div class="one">본사가 부담하는 것은 <u>가맹비의 일부</u>이고,<br>얻는 것은 <u>매장 하나의 생애 매출</u>입니다.</div>
+    </div>
+    <div class="fine" style="margin-top:4mm">※ 러너펍 공개 가맹 안내 기준(가맹비 1,500만원 / 월 로열티 150만원·부가세 별도) 시뮬레이션이며, 실제 조건은 본사 정책에 따릅니다.</div>
+  </div>
+
+  <div class="runfoot"><span>내일사장 × 러너펍 가맹영업 파트너십 제안</span><span class="pg">07</span></div>
+</section>
+
+<!-- ================= 8. 다음 단계 ================= -->
 <section class="sheet" style="display:flex; flex-direction:column;">
-  <div class="eyebrow"><span class="no">06</span><span class="rule"></span><span class="lb">NEXT STEP</span></div>
+  <div class="eyebrow"><span class="no">07</span><span class="rule"></span><span class="lb">NEXT STEP</span></div>
   <h2 class="head">시작에 필요한 것은<br><em>결정 하나</em>입니다.</h2>
   <p class="deck">계약 조건이 확정되면 곧바로 영업을 가동할 수 있습니다. 별도의 셋업 비용이나 준비 기간은 필요하지 않습니다.</p>
 
@@ -516,7 +597,7 @@ table.cond tbody tr:nth-child(even){ background:var(--tint); }
     </div>
   </div>
 
-  <div class="runfoot"><span>본 제안의 모든 조건은 협의를 통해 최종 확정됩니다.</span><span class="pg">07</span></div>
+  <div class="runfoot"><span>본 제안의 모든 조건은 협의를 통해 최종 확정됩니다.</span><span class="pg">08</span></div>
 </section>
 
 </body>
