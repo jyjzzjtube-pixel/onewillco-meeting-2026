@@ -19,6 +19,7 @@ const CW=RX-CX;
 
 const t=(o)=>Object.assign({fontFace:F,color:BODY,margin:0},o);
 const line=(s,x,y,w,c=RULE,h=0.008)=>s.addShape(p.ShapeType.rect,{x,y,w,h,fill:{color:c},line:{width:0}});
+const vline=(s,x,y,h,c=RULE,w=0.008)=>s.addShape(p.ShapeType.rect,{x,y,w,h,fill:{color:c},line:{width:0}});
 
 /* 진도 표식 + 좌측 레일 + 러닝 푸터 */
 function frame(s,no,label,sub,dark){
@@ -114,18 +115,19 @@ const STATS=[
 /* ══ 01 표지 ══ */
 {
   const s=p.addSlide(); s.background={color:INK};
-  s.addImage({path:path.join(A,'card.png'),x:10.55,y:1.15,w:2.05,h:2.94,transparency:82});
-  s.addImage({path:path.join(A,'logo.png'),x:10.62,y:0.52,w:1.9,h:0.62});
-  s.addText('수신',t({x:9.55,y:0.55,w:0.9,h:0.2,fontSize:7.5,color:ONWEAK,align:'right'}));
-  s.addText('러너스튜디오(주)',t({x:8.3,y:0.75,w:2.15,h:0.22,fontSize:8.6,color:ONINK,align:'right',bold:true}));
+  s.addImage({path:path.join(A,'logo.png'),x:RX-1.82,y:0.50,w:1.82,h:0.60});
+  s.addText('수신',t({x:RX-3.6,y:1.24,w:3.6,h:0.18,fontSize:7.2,color:ONWEAK,align:'right'}));
+  s.addText('러너스튜디오(주) 귀중',t({x:RX-3.6,y:1.42,w:3.6,h:0.22,fontSize:9,color:ONINK,align:'right',bold:true}));
+  s.addText('대표 박경관',t({x:RX-3.6,y:1.64,w:3.6,h:0.2,fontSize:8,color:ONWEAK,align:'right'}));
 
   s.addText('내일사장',t({x:ML,y:0.5,w:4,h:0.32,fontSize:15,bold:true,color:ONINK,charSpacing:-0.2}));
   s.addText('생성형 AI 기반 창업 지원 플랫폼 · 발신',t({x:ML,y:0.84,w:5,h:0.22,fontSize:8.4,color:ONWEAK}));
 
   s.addText([{text:'가맹 개설 영업을',options:{breakLine:true}},
-             {text:'이미 모인 창업 수요 위에서'},],
-    t({x:ML,y:2.05,w:8.6,h:1.3,fontSize:33,bold:true,color:ONINK,lineSpacing:46,charSpacing:-0.8}));
-  s.addText('수행하겠습니다',t({x:ML,y:3.28,w:8.6,h:0.62,fontSize:33,bold:true,color:TEAL3,lineSpacing:46,charSpacing:-0.8}));
+             {text:'이미 모인 창업 수요',options:{color:TEAL3}},
+             {text:' 위에서',options:{breakLine:true}},
+             {text:'수행하겠습니다'}],
+    t({x:ML,y:2.05,w:9.2,h:1.9,fontSize:33,bold:true,color:ONINK,lineSpacing:48,charSpacing:-0.8}));
 
   s.addText('내일사장은 매물·창업 수요·거래 데이터를 운영하는 플랫폼 사업자입니다. 러너펍 가맹 개설 영업을 위임해 주시면,\n계약이 체결되고 가맹비 입금이 완료된 건에 한하여 성공보수를 청구합니다.',
     t({x:ML,y:4.12,w:8.9,h:0.7,fontSize:10.5,color:ONWEAK,lineSpacing:18}));
@@ -170,7 +172,7 @@ const STATS=[
   table(s,CX,2.72,[{h:'구분',w:2.0},{h:'내용',w:CW-2.0}],rows,{rh:0.56,fs:9.2});
 
   ledger(s,'플랫폼 누적 거래 규모','1,600','억원 +');
-  s.addText('※ 지표는 내일사장 플랫폼 전체 누적 기준입니다.',t({x:CX,y:6.72,w:8,h:0.2,fontSize:7,color:WEAK}));
+  s.addText('※ 지표는 내일사장 플랫폼 전체 누적 기준입니다.',t({x:CX,y:6.79,w:8,h:0.18,fontSize:6.8,color:WEAK}));
   s.addNotes('내일사장이 어떤 회사인지부터 말씀드립니다. 세종대 겸임교수진이 만든 창업 지원 플랫폼이고, 설립 취지가 소상공인 피해 예방입니다.');
 }
 
@@ -186,21 +188,21 @@ const STATS=[
   STATS.forEach(([v,u,k,n],i)=>{
     const x=CX+cw3*(i%3), y=2.42+Math.floor(i/3)*1.42;
     stat(s,x,y,cw3-0.35,v,u,k,n,24);
-    if(i%3) line(s,x-0.16,y-0.14,0.008,VOID);
+    if(i%3) vline(s,x-0.18,y-0.10,1.16,VOID);
   });
   line(s,CX,3.78,CW);
   line(s,CX,5.20,CW);
 
   s.addText('리드타임 단축',t({x:CX,y:5.34,w:2.4,h:0.24,fontSize:8.6,bold:true,color:INK,valign:'middle'}));
-  bar(s,CX+2.5,5.40,5.2,0.6,TEAL);
-  s.addText([{text:'60',options:{fontSize:15,bold:true,color:INK}},{text:' %',options:{fontSize:9,color:BRONZE,bold:true}}],
-    t({x:CX+7.9,y:5.30,w:1.2,h:0.32,valign:'middle'}));
+  bar(s,CX+2.5,5.40,6.4,0.6,TEAL);
+  s.addText([{text:'60',options:{fontSize:16,bold:true,color:INK}},{text:' %',options:{fontSize:9.5,color:BRONZE,bold:true}}],
+    t({x:RX-2,y:5.30,w:2,h:0.32,align:'right',valign:'middle'}));
   s.addText('등록에서 계약까지 걸리는 기간의 플랫폼 누적 평균 단축률',
     t({x:CX+2.5,y:5.66,w:7.5,h:0.22,fontSize:7.6,color:WEAK,valign:'middle'}));
 
   ledger(s,'누적 거래 성사','2,000','건 +');
   s.addText('※ 플랫폼 전체 누적 기준이며, 홀덤 업종 단독 실적이 아닙니다. 업종 경험을 대체하는 장치는 P.12에 정리했습니다.',
-    t({x:CX,y:6.72,w:10,h:0.2,fontSize:7,color:WEAK}));
+    t({x:CX,y:6.79,w:10,h:0.18,fontSize:6.8,color:WEAK}));
   s.addNotes('1,600억원 거래, 앱 10만 다운로드, 월 5만 명. 이 모수는 이번 제안 이전에 이미 있는 값입니다.');
 }
 
@@ -222,17 +224,17 @@ const STATS=[
   line(s,CX,2.16,CW,INK,0.014);
   const cw4=CW/3;
   P.forEach(([n,ttl,d],i)=>{
-    const x=CX+cw4*(i%3), y=2.36+Math.floor(i/3)*1.30;
+    const x=CX+cw4*(i%3), y=2.42+Math.floor(i/3)*1.44;
     s.addText(n,t({x,y,w:1,h:0.2,fontSize:7.6,bold:true,color:BRONZE,charSpacing:0.8}));
     s.addText(ttl,t({x,y:y+0.22,w:cw4-0.4,h:0.28,fontSize:11.5,bold:true,color:INK,valign:'middle'}));
     s.addText(d,t({x,y:y+0.54,w:cw4-0.4,h:0.52,fontSize:8.4,color:WEAK,lineSpacing:12.5}));
-    if(i%3) line(s,x-0.18,y-0.06,0.008,VOID);
+    if(i%3) vline(s,x-0.20,y-0.04,1.10,VOID);
   });
-  line(s,CX,3.62,CW);
-  line(s,CX,4.92,CW);
+  line(s,CX,3.80,CW);
+  line(s,CX,5.24,CW);
 
   s.addText('이 여섯 가지는 러너펍 가맹 상담에도 그대로 투입됩니다. 창업자가 결정을 미루는 이유는 대부분 정보 부족이고, 저희는 근거를 문서로 제시해 그 지연을 끊습니다.',
-    t({x:CX,y:5.10,w:CW,h:0.5,fontSize:9.6,color:BODY,lineSpacing:15}));
+    t({x:CX,y:5.46,w:CW,h:0.6,fontSize:10,color:BODY,lineSpacing:16}));
 
   ledger(s,'등록 → 상담 → 검증 → 계약 · 단계별 도구','6','종');
   s.addNotes('플랫폼이 실제로 하는 업무 여섯 가지입니다. 매물 인증, AI 상권분석, 손익분석, 생성형 브리핑, ERP 리드관리, 점포개발. 러너펍 상담에도 그대로 씁니다.');
@@ -284,23 +286,23 @@ const STATS=[
     const x=CX+(bw+0.5)*i;
     line(s,x,2.20,bw,c,0.028);
     s.addText(tag,t({x,y:2.34,w:bw,h:0.24,fontSize:8.2,bold:true,color:c,charSpacing:1.4}));
-    s.addText(ttl,t({x,y:2.62,w:bw,h:0.48,fontSize:13,bold:true,color:INK,lineSpacing:19}));
-    s.addText(d,t({x,y:3.18,w:bw,h:0.86,fontSize:8.6,color:WEAK,lineSpacing:13}));
+    s.addText(ttl,t({x,y:2.60,w:bw,h:0.44,fontSize:13,bold:true,color:INK,lineSpacing:19}));
+    s.addText(d,t({x,y:3.10,w:bw,h:0.8,fontSize:8.8,color:WEAK,lineSpacing:13.5}));
     if(i<2) s.addText('+',t({x:x+bw+0.06,y:2.62,w:0.38,h:0.4,fontSize:15,bold:true,color:VOID,align:'center',valign:'middle'}));
   });
 
   line(s,CX,4.12,CW,INK,0.014);
   s.addText('러너펍이 이 구조에 들어오면',t({x:CX,y:4.26,w:5,h:0.24,fontSize:8.4,bold:true,color:WEAK,charSpacing:0.6}));
   const F2=[
-    ['브랜드망에 러너펍 편입','상담 중인 창업자에게 러너펍을 후보 브랜드로 제시합니다'],
-    ['중개망으로 입점지 확보','홀덤펍 조건에 맞는 상가를 제휴 중개망에서 물색합니다'],
-    ['기존 홀덤펍 접촉','매물·점주 데이터베이스에서 리브랜딩 대상을 발굴합니다'],
+    ['브랜드망에 러너펍 편입','상담 중인 창업자에게 러너펍을 후보 브랜드로 제시합니다. 별도 광고 없이 기존 상담 흐름에 편입됩니다'],
+    ['중개망으로 입점지 확보','홀덤펍 조건에 맞는 상가를 제휴 중개망에서 물색합니다. 입지가 확보된 상태로 창업자에게 제안합니다'],
+    ['기존 홀덤펍 접촉','매물·점주 데이터베이스에서 리브랜딩 대상을 발굴합니다. 이미 운영 중인 점주라 전환 결정이 빠릅니다'],
   ];
   F2.forEach(([h1,d],i)=>{
-    const y=4.58+i*0.52;
+    const y=4.52+i*0.58;
     s.addShape(p.ShapeType.rect,{x:CX,y:y+0.10,w:0.09,h:0.09,fill:{color:TEAL},line:{width:0}});
     s.addText(h1,t({x:CX+0.26,y,w:3.4,h:0.3,fontSize:9.6,bold:true,color:INK,valign:'middle'}));
-    s.addText(d,t({x:CX+3.8,y,w:CW-3.8,h:0.3,fontSize:9,color:BODY,valign:'middle'}));
+    s.addText(d,t({x:CX+3.8,y,w:CW-3.8,h:0.42,fontSize:9,color:BODY,lineSpacing:13.5,valign:'middle'}));
   });
 
   ledger(s,'제휴 브랜드 · 파트너','80','개 +');
@@ -322,7 +324,7 @@ const STATS=[
   s.addText('이미 갖춰진 것',t({x:CX,y:2.24,w:4,h:0.22,fontSize:8,bold:true,color:WEAK,charSpacing:0.8}));
   line(s,CX,2.48,6.55,INK,0.012);
   L.forEach((v,i)=>{
-    const y=2.62+i*0.44;
+    const y=2.66+i*0.50;
     s.addText(v,t({x:CX,y,w:6.5,h:0.34,fontSize:9.2,color:BODY,valign:'middle'}));
     line(s,CX,y+0.38,6.55);
   });
@@ -335,15 +337,15 @@ const STATS=[
   s.addText('내일사장이 담당하는 구간이 정확히 여기입니다.',
     t({x:CX+7.1,y:3.92,w:CW-7.1,h:0.3,fontSize:9.4,bold:true,color:TEAL,valign:'middle'}));
 
-  s.addImage({path:path.join(A,'ranking.png'),x:CX+7.35,y:4.34,w:1.95,h:2.0});
-  s.addText('러너러너 앱 화면',t({x:CX+9.45,y:5.2,w:1.6,h:0.2,fontSize:7.4,color:WEAK}));
-  s.addText('리뉴얼 후 플랫폼 서비스 이용자',t({x:CX+9.45,y:5.44,w:1.7,h:0.2,fontSize:7.4,color:WEAK}));
-  s.addText([{text:'1.5',options:{fontSize:16,bold:true,color:INK}},{text:' 배',options:{fontSize:9,color:BRONZE,bold:true}}],
-    t({x:CX+9.45,y:5.66,w:1.6,h:0.32,valign:'middle'}));
+  s.addImage({path:path.join(A,'ranking.png'),x:CX+7.25,y:4.42,w:1.62,h:1.66});
+  s.addText('리뉴얼 후 플랫폼 서비스 이용자',t({x:CX+9.0,y:4.60,w:1.7,h:0.34,fontSize:7.6,color:WEAK,lineSpacing:11}));
+  s.addText([{text:'1.5',options:{fontSize:20,bold:true,color:INK}},{text:' 배',options:{fontSize:10,color:BRONZE,bold:true}}],
+    t({x:CX+9.0,y:4.96,w:1.7,h:0.4,valign:'middle'}));
+  s.addText('러너러너 앱 화면',t({x:CX+9.0,y:5.40,w:1.7,h:0.2,fontSize:7,color:WEAK}));
 
   ledger(s,'병목 항목 · 계약 → 오픈','1','개 · 4~6주');
   s.addText('※ 러너러너 앱 운영사는 (주)러너소프트로 러너스튜디오(주)와 별개 법인입니다. 이용자 1.5배 증가는 IT비즈뉴스 2024.7.4 보도 기준.',
-    t({x:CX,y:6.72,w:10.5,h:0.2,fontSize:7,color:WEAK}));
+    t({x:CX,y:6.79,w:10.5,h:0.18,fontSize:6.8,color:WEAK}));
   s.addNotes('러너펍은 개설 이후 구조가 이미 완비되어 있습니다. 남은 변수는 창업자 접점 하나이고, 저희가 담당하는 구간이 정확히 거기입니다.');
 }
 
@@ -411,7 +413,7 @@ const STATS=[
     s.addText(v,t({x:CX+2.5,y,w:CW-2.5,h:0.3,fontSize:9.2,color:BODY,valign:'middle'}));
     line(s,CX,y+0.36,CW);
   });
-  s.addText('성공보수는 부가가치세 별도입니다.',t({x:CX,y:6.72,w:5,h:0.2,fontSize:7,color:WEAK}));
+  s.addText('성공보수는 부가가치세 별도입니다.',t({x:CX,y:6.79,w:5,h:0.18,fontSize:6.8,color:WEAK}));
 
   ledger(s,'계약 · 입금 완료 전 본사 부담','0','원');
   s.addNotes('계약 전에는 본사가 내실 돈이 없습니다. 계약이 깨지면 성공보수도 전액 반환합니다.');
@@ -437,11 +439,17 @@ const STATS=[
     [{v:'800만원 이하',b:true},{v:'본사 집행',c:BRONZE,b:true},'상한 200만원 기준으로 협의'],
     [{v:'800만원 초과 ~ 1,000만원 미만',b:true},{v:'협의',c:WEAK,b:true},'집행 주체와 금액을 양사 협의로 결정'],
   ];
-  table(s,CX,4.28,[{h:'내일사장 수취 구간',w:3.9},{h:'집행 주체',w:2.3},{h:'기준',w:CW-6.2}],rows2,{rh:0.40,fs:9});
+  const e10=table(s,CX,4.28,[{h:'내일사장 수취 구간',w:3.9},{h:'집행 주체',w:2.3},{h:'기준',w:CW-6.2}],rows2,{rh:0.42,fs:9});
 
-  s.addText('인테리어 시공',t({x:CX,y:5.94,w:2.4,h:0.22,fontSize:8,bold:true,color:WEAK,charSpacing:0.6}));
-  s.addText('내일사장이 진행할 수 있으며, 본사 지정 스펙과 감리 승인 범위 안에서 수행합니다. 시공 참여 여부는 가맹 조건에 영향을 주지 않고, 추가 수익 분배는 착수 전 별도 합의합니다.',
-    t({x:CX+2.5,y:5.90,w:CW-2.5,h:0.34,fontSize:8.8,color:BODY,lineSpacing:13}));
+  s.addText('인테리어 시공',t({x:CX,y:e10+0.26,w:2.4,h:0.22,fontSize:8,bold:true,color:BRONZE,charSpacing:0.6}));
+  const I10=['내일사장이 진행할 수 있으며, 본사 지정 스펙과 감리 승인 범위 안에서 수행합니다',
+             '시공 참여 여부는 가맹 조건에 영향을 주지 않습니다',
+             '추가 수익 분배는 착수 전 별도 합의합니다'];
+  I10.forEach((v,i)=>{
+    const x=CX+(CW/3)*i;
+    s.addShape(p.ShapeType.rect,{x,y:e10+0.62,w:0.08,h:0.08,fill:{color:BRONZE},line:{width:0}});
+    s.addText(v,t({x:x+0.22,y:e10+0.52,w:CW/3-0.4,h:0.4,fontSize:8.6,color:BODY,lineSpacing:12.5}));
+  });
 
   ledger(s,'네고 여하에 불구 본사 수취','1,500','만원 불변');
   s.addNotes('네고는 저희 몫에서 부담합니다. 본사 수취액은 어떤 경우에도 1,500만원입니다.');
@@ -471,6 +479,17 @@ const STATS=[
   s.addText('성공보수를 지급하고도 계약 즉시 흑자입니다. 본사가 별도 예산을 편성할 필요가 없습니다.',
     t({x:CX,y:4.08,w:4.5,h:0.44,fontSize:8.6,color:WEAK,lineSpacing:12.5}));
 
+  line(s,CX,4.72,4.5,INK,0.012);
+  s.addText('성공보수의 성격',t({x:CX,y:4.86,w:3,h:0.2,fontSize:7.8,bold:true,color:WEAK,charSpacing:0.6}));
+  const K11=[['1회성','계약 1건에 한 번만 발생합니다'],
+             ['가맹비 내 정산','추가 예산 편성이 필요하지 않습니다'],
+             ['로열티는 순증','월 150만원은 전액 본사 수익으로 남습니다']];
+  K11.forEach(([k,v],i)=>{
+    const y=5.14+i*0.42;
+    s.addText(k,t({x:CX,y,w:1.5,h:0.28,fontSize:8.8,bold:true,color:TEAL,valign:'middle'}));
+    s.addText(v,t({x:CX+1.6,y,w:2.9,h:0.28,fontSize:8.6,color:BODY,valign:'middle'}));
+  });
+
   // 우: 누적 막대
   const BX=CX+5.2, BW=CW-5.2;
   s.addText('이후 누적 본사 수익 · 월 로열티 150만원 반영',t({x:BX,y:2.24,w:BW,h:0.22,fontSize:8,bold:true,color:WEAK,charSpacing:0.6}));
@@ -495,7 +514,7 @@ const STATS=[
 
   ledger(s,'10개점 · 36개월 누적','5억 9,000','만원');
   s.addText('※ 러너펍 공개 가맹 안내 기준(가맹비 1,500만원 / 월 로열티 150만원·부가세 별도) 시뮬레이션이며, 실제 조건은 본사 정책에 따릅니다. 폐점·중도해지는 반영하지 않았습니다.',
-    t({x:CX,y:6.72,w:CW,h:0.2,fontSize:7,color:WEAK}));
+    t({x:CX,y:6.79,w:CW,h:0.18,fontSize:6.8,color:WEAK}));
   s.addNotes('본사가 가장 먼저 하실 계산이 500만원밖에 안 남는다는 것일 텐데, 그 500만원은 계약 시점에 이미 흑자라는 뜻입니다. 본체는 월 로열티입니다.');
 }
 
