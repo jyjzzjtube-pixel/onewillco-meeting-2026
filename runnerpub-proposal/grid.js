@@ -92,10 +92,26 @@ function pad(a, t, r, b, l) {
 
 /* ── 배치 검사기 ── */
 const EPS = 0.004;
-const placements = [];   // {slide, region, x,y,w,h, kind, text}
+const placements = [];   // {slide, region, x,y,w,h, kind, text, color, seq}
+const surfaces  = [];    // {slide, x,y,w,h, color, seq}  ← 그린 순서대로
+const slideBg   = {};    // {slide: color}
+const bandKind  = {};    // {slide: '문장형'|'수치형'|'칩형'}
 let CUR = { slide: 0 };
+let SEQ = 0;
+let PENDING_BG = 'FFFFFF';
 
-function setSlide(n) { CUR.slide = n; }
+function setSlide(n) { CUR.slide = n; if (!slideBg[n]) slideBg[n] = PENDING_BG; }
+/** 슬라이드 배경색 등록 — addSlide 직후 호출 */
+function setBg(c) {          // addSlide 직후 호출 — 이 시점부터 새 장으로 센다
+  PENDING_BG = c; CUR.slide += 1; slideBg[CUR.slide] = c;
+}
+/** 색 면 등록 — 가독 검사와 시각 면적 계산에 쓰인다 */
+function surface(box, color) {
+  surfaces.push({ slide: CUR.slide, seq: SEQ++, x: box.x, y: box.y, w: box.w, h: box.h, color });
+  return box;
+}
+/** 결론 밴드 종류 등록 */
+function setBand(kind) { bandKind[CUR.slide] = kind; }
 
 /**
  * 영역 안에 배치할 때만 통과. 벗어나면 예외.
@@ -115,7 +131,7 @@ function at(reg, box, meta = {}) {
       `   배치 x${b.x.toFixed(2)}~${(b.x + b.w).toFixed(2)} y${b.y.toFixed(2)}~${(b.y + b.h).toFixed(2)}\n` +
       `   내용 ${JSON.stringify(meta.text || meta.kind || '').slice(0, 90)}`);
   }
-  placements.push({ slide: CUR.slide, region: reg.name, ...b, ...meta });
+  placements.push({ slide: CUR.slide, region: reg.name, seq: SEQ++, ...b, ...meta });
   return b;
 }
 
@@ -157,7 +173,7 @@ function fit(reg, box, text, pt, opt = {}) {
       `   ${lines}줄 × ${(ls * 72).toFixed(1)}pt = ${need.toFixed(3)}in > 상자 ${box.h.toFixed(3)}in\n` +
       `   ${pt}pt · 폭 ${innerW.toFixed(2)}in · "${String(text).replace(/\n/g, '⏎').slice(0, 70)}"`);
   }
-  return at(reg, box, { kind: 'text', text: String(text).slice(0, 60), pt, lines });
+  return at(reg, box, { kind: 'text', text: String(text).slice(0, 60), pt, lines, color: opt.color });
 }
 
 
@@ -209,6 +225,96 @@ function overlapReport() {
   return hits;
 }
 
+
+/* ══════════════════════════════════════════════════════════════
+   §8 가독 검사 — 다크 면 위 어두운 글자 / 라이트 면 위 흰 글자
+   배경색과 글자색의 WCAG 대비율을 좌표 단위로 대조한다.
+   ══════════════════════════════════════════════════════════════ */
+function _lin(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+function lum(hex) {
+  const h = String(hex).replace('#', '');
+  return 0.2126 * _lin(parseInt(h.slice(0, 2), 16))
+       + 0.7152 * _lin(parseInt(h.slice(2, 4), 16))
+       + 0.0722 * _lin(parseInt(h.slice(4, 6), 16));
+}
+function contrast(a, b) {
+  const L1 = Math.max(lum(a), lum(b)), L2 = Math.min(lum(a), lum(b));
+  return (L1 + 0.05) / (L2 + 0.05);
+}
+/** 텍스트 상자 아래에 실제로 깔린 면을 찾는다 — 60% 이상 덮는 면 중 가장 나중에 그린 것 */
+function surfaceUnder(t) {
+  let best = null;
+  const area = t.w * t.h;
+  for (const s of surfaces) {
+    if (s.slide !== t.slide || s.seq > t.seq) continue;
+    const ox = Math.min(s.x + s.w, t.x + t.w) - Math.max(s.x, t.x);
+    const oy = Math.min(s.y + s.h, t.y + t.h) - Math.max(s.y, t.y);
+    if (ox <= 0 || oy <= 0) continue;
+    if ((ox * oy) / area < 0.6) continue;
+    if (!best || s.seq > best.seq) best = s;
+  }
+  return best ? best.color : (slideBg[t.slide] || 'FFFFFF');
+}
+const MIN_CONTRAST = 3.0;
+function contrastReport() {
+  const bad = [];
+  for (const t of placements) {
+    if (t.kind !== 'text' || !t.color) continue;
+    const bgc = surfaceUnder(t);
+    const r = contrast(t.color, bgc);
+    if (r < MIN_CONTRAST) bad.push({ slide: t.slide, text: t.text, fg: t.color, bg: bgc, ratio: +r.toFixed(2) });
+  }
+  return bad;
+}
+
+/* ── §4 시각 면적 — 본문 영역에서 도형·이미지·표가 차지하는 비율 (합집합, 0.04in 격자) ── */
+const TEXTISH = new Set(['text']);
+function visualReport() {
+  const CELL = 0.04;
+  const out = {};
+  const slides = [...new Set(placements.map(p => p.slide))].sort((a, b) => a - b);
+  for (const sl of slides) {
+    const bx = SAFE.x, by = Y.body.y, bw = SAFE.w, bh = Y.bodyFull.h;
+    const nx = Math.ceil(bw / CELL), ny = Math.ceil(bh / CELL);
+    const grid = new Uint8Array(nx * ny);
+    const marks = [
+      ...surfaces.filter(s => s.slide === sl && !(s.w > 12 && s.h > 6)),
+      ...placements.filter(p => p.slide === sl && !TEXTISH.has(p.kind)),
+    ];
+    for (const m of marks) {
+      const i0 = Math.max(0, Math.floor((m.x - bx) / CELL)), i1 = Math.min(nx, Math.ceil((m.x + m.w - bx) / CELL));
+      const j0 = Math.max(0, Math.floor((m.y - by) / CELL)), j1 = Math.min(ny, Math.ceil((m.y + m.h - by) / CELL));
+      for (let j = j0; j < j1; j++) for (let i = i0; i < i1; i++) grid[j * nx + i] = 1;
+    }
+    let on = 0; for (let k = 0; k < grid.length; k++) on += grid[k];
+    out[sl] = Math.round(on / grid.length * 1000) / 10;
+  }
+  return out;
+}
+
+/* ── §4 장별 시각 규격 요약 ── */
+function styleReport() {
+  const out = {};
+  const slides = [...new Set(placements.map(p => p.slide))].sort((a, b) => a - b);
+  const va = visualReport();
+  for (const sl of slides) {
+    const ps = placements.filter(p => p.slide === sl);
+    const ss = surfaces.filter(s => s.slide === sl);
+    const bg = slideBg[sl] || 'FFFFFF';
+    const dark = lum(bg) < 0.18;
+    const halfDark = ss.some(s => lum(s.color) < 0.18 && s.w > 3.5 && s.h > 2.5 && !(s.w > 12 && s.h > 6));
+    const fullDark = dark || ss.some(s => lum(s.color) < 0.18 && s.w > 12 && s.h > 6);
+    out[sl] = {
+      bg: fullDark ? '순색면' : halfDark ? '명암분할' : (ss.some(s => s.w > 3 && s.h > 1.4 && lum(s.color) > 0.18 && s.color !== 'FFFFFF') ? '라이트+틴트' : '라이트'),
+      bigFig: Math.max(0, ...ps.filter(p => p.pt).map(p => p.pt)),
+      icons: ps.filter(p => ['mk', 'icon', 'badge', 'pill', 'chip'].includes(p.kind)).length,
+      band: bandKind[sl] || '—',
+      visual: va[sl],
+    };
+  }
+  return out;
+}
+
 function report(file) {
   const hits = overlapReport();
   const lines = [];
@@ -218,11 +324,45 @@ function report(file) {
   lines.push(`  텍스트 넘침 0건 (넘침 시 빌드 중단)`);
   lines.push(`  텍스트 겹침 ${hits.length}건`);
   for (const h of hits) lines.push(`    P${String(h.slide).padStart(2, '0')}  «${h.a}» × «${h.b}»  ${h.ox}×${h.oy}in`);
+
+  const bad = contrastReport();
+  lines.push(`  가독 위반 ${bad.length}건 (배경 대비 ${MIN_CONTRAST} 미만)`);
+  for (const b of bad) lines.push(`    P${String(b.slide).padStart(2, '0')}  #${b.fg} on #${b.bg} = ${b.ratio}  «${b.text}»`);
+
+  const st = styleReport();
+  const kinds = Object.values(st);
+  const solid = kinds.filter(v => v.bg === '순색면').length;
+  const splitN = kinds.filter(v => v.bg === '명암분할').length;
+  const noFig = Object.entries(st).filter(([, v]) => v.bigFig < 28).map(([k]) => k);
+  const noIcon = Object.entries(st).filter(([, v]) => v.icons === 0).map(([k]) => k);
+  const thin = Object.entries(st).filter(([, v]) => v.visual < 40).map(([k]) => `${k}(${v_(st, k)}%)`);
+  let run = 0, worst = 0, runB = 0, worstB = 0, prevB = null;
+  for (const k of Object.keys(st)) {
+    if (st[k].bg === '라이트') { run++; worst = Math.max(worst, run); } else run = 0;
+    if (st[k].band === prevB) { runB++; worstB = Math.max(worstB, runB + 1); } else { runB = 0; }
+    prevB = st[k].band;
+  }
+  lines.push('');
+  lines.push('§4 비주얼 강제 규격');
+  lines.push(`  순색 풀블리드 면 ${solid}장 / ${kinds.length}장 = ${Math.round(solid / kinds.length * 100)}%  (규격 25~35%)`);
+  lines.push(`  좌우 명암분할 ${splitN}장  (규격 3장 이상)`);
+  lines.push(`  흰 배경 최대 연속 ${worst}장  (규격 3장 미만)`);
+  lines.push(`  같은 밴드 종류 최대 연속 ${worstB}장  (규격 3장 미만)`);
+  lines.push(`  대형 수치 28pt 미만인 장 ${noFig.length}장  ${noFig.map(n => 'P' + n).join(' ')}`);
+  lines.push(`  포인트 아이콘 없는 장 ${noIcon.length}장  ${noIcon.map(n => 'P' + n).join(' ')}`);
+  lines.push(`  시각 면적 40% 미만 ${thin.length}장  ${thin.map(n => 'P' + n).join(' ')}`);
+  lines.push('');
+  lines.push('  쪽  배경        수치  아이콘  밴드    시각면적');
+  for (const [k, v] of Object.entries(st))
+    lines.push(`  ${String(k).padStart(2, '0')}  ${v.bg.padEnd(10, ' ')}  ${String(v.bigFig).padStart(4)}  ${String(v.icons).padStart(5)}   ${v.band.padEnd(5, ' ')}   ${String(v.visual).padStart(5)}%`);
   const out = lines.join('\n');
   if (file) fs.writeFileSync(file, out + '\n');
   return { text: out, overlaps: hits };
 }
 
+function v_(st, k) { return st[k].visual; }
+
 module.exports = { W, H, M, SAFE, Y, BLEED, COLS, GUT, COLW, colX, span,
                    region, rows, split, pad, at, fit, img, imgAspect, textWidth, lineCount,
-                   setSlide, report, placements };
+                   setSlide, setBg, surface, setBand, report, placements, surfaces,
+                   contrast, lum, contrastReport, styleReport, visualReport };
