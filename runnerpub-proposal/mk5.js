@@ -276,6 +276,7 @@ function card(s,reg,box,accent,pd){
 /* ══════════ 05 팀 ══════════ */
 {
   const s=p.addSlide(); s.background={color:NAVY};
+  s.addImage({path:path.join(A,'p05_bg.png'),x:0,y:0,w:G.W,h:G.H});
   frame(s,5,'팀',true);
   head(s,'"가맹을 팔아 보셨습니까"에 대한 답입니다',true);
   lead(s,'저희 경영진은 프랜차이즈 가맹사업 본부에서 실제로 가맹점을 열어 온 사람들입니다.',true,10);
@@ -446,7 +447,9 @@ function card(s,reg,box,accent,pd){
     const [n,k,li]=J[i];
     hr(s,c.x,c.y,c.w,BLUE,0.036);
     tx(s,c,{x:c.x,y:c.y+0.16,w:1.2,h:0.26},n,11,{bold:true,color:BLUE,charSpacing:1.4});
-    tx(s,c,{x:c.x,y:c.y+0.46,w:c.w,h:0.38},k,19,{bold:true,valign:'middle'});
+    s.addImage({path:path.join(A,`p09_icon${i+1}.png`),
+      ...at(c,{x:c.x+c.w-0.46,y:c.y+0.14,w:0.44,h:0.44},{kind:'img'})});
+    tx(s,c,{x:c.x,y:c.y+0.46,w:c.w-0.60,h:0.38},k,19,{bold:true,valign:'middle'});
     const bl=G.rows(region(c.name+'.li',c.x,c.y+0.98,c.w,c.h-0.98),
       [['a',1],['b',1],['c',1],['d',1]]);
     [bl.a,bl.b,bl.c,bl.d].forEach((r,j)=>{
@@ -526,15 +529,12 @@ function card(s,reg,box,accent,pd){
     hr(s,r.x,r.y+r.h-0.06,L.w,RULE);
   });
 
-  slabel(s,Rr,{x:Rr.x,y:Rr.y,w:3.4,h:0.26},'아직 비어 있는 것',BLUE);
+  slabel(s,Rr,{x:Rr.x,y:Rr.y,w:Rr.w,h:0.26},'아직 비어 있는 것 — 계약 가능한 창업자 모수',BLUE);
   hr(s,Rr.x,Rr.y+0.32,Rr.w,BLUE,0.030);
-  tx(s,Rr,{x:Rr.x,y:Rr.y+0.46,w:Rr.w,h:0.96},'계약 가능한\n창업자 모수',24,{bold:true,lineSpacing:34});
-  tx(s,Rr,{x:Rr.x,y:Rr.y+1.48,w:Rr.w,h:0.62},
-    '출점 속도를 결정하는 것은 계약 이전 구간의 접점 총량입니다.\n러너펍이 아직 갖지 못한 것은 이 하나뿐입니다.',11.5,{color:MUTE,lineSpacing:17});
-  const cbox={x:Rr.x,y:Rr.y+2.20,w:Rr.w,h:0.98,name:'diagCard'};
-  const ci=card(s,Rr,cbox,BLUE);
-  tx(s,ci,{x:ci.x,y:ci.y,w:ci.w,h:ci.h},
-    '내일사장이 담당하는 구간이\n정확히 여기입니다',13,{bold:true,color:BLUE,lineSpacing:19,valign:'middle'});
+  s.addImage({path:path.join(A,'p11_pub.png'),
+    ...at(Rr,{x:Rr.x+0.16,y:Rr.y+0.46,w:4.48,h:2.44},{kind:'img'})});
+  tx(s,Rr,{x:Rr.x,y:Rr.y+2.98,w:Rr.w,h:0.22},
+    '매장은 준비되어 있습니다. 앉을 사람을 내일사장이 데려옵니다.',11,{bold:true,color:BLUE,lineSpacing:15});
 
   band(s,'남은 변수 · 창업자 접점','1','개');
   note(s,'※ 러너러너 앱 운영사는 (주)러너소프트로 러너스튜디오(주)와 별개 법인입니다. 이용자 1.5배 증가는 IT비즈뉴스 2024.7.4 보도 기준.');
