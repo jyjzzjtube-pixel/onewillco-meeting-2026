@@ -48,6 +48,11 @@ Y.headFull = { y: Y.anchor.y, h: Y.head.b - Y.anchor.y, b: Y.head.b };
 Y.bodyFull = { y: Y.body.y, h: Y.note.b - Y.body.y, b: Y.note.b };
 /* 결론 밴드 없는 장: band 까지 흡수 */
 Y.bodyMax  = { y: Y.body.y, h: Y.band.b - Y.body.y, b: Y.band.b };
+/* 리드문 없는 장: 리드 밴드부터 결론 밴드 끝까지 본문으로 쓴다 */
+Y.bodyTall = { y: 2.10, h: Y.band.b - 2.10, b: Y.band.b };
+/* IR 조판: 영문 챕터 앵커 + 2행 명사형 국문 헤드 + 넓은 본문 */
+Y.headTwo = { y: Y.head.y, h: Y.lead.b - Y.head.y, b: Y.lead.b };   // 1.382~2.382
+Y.bodyIR  = { y: 2.58, h: Y.band.b - 2.58, b: Y.band.b };            // 2.58~6.750
 /* 풀블리드 밴드 (검사 예외 · 화면 끝까지) */
 const BLEED = { x: 0, y: 6.130, w: W, h: H - 6.130 };
 
@@ -206,6 +211,11 @@ function img(reg, box, file) {
     }
   }
   return at(reg, box, { kind: 'img', text: file.split('/').pop() });
+}
+
+/** 선형 그라데이션 면 — 늘려도 깨지지 않으므로 비율 검사에서 제외한다 */
+function imgFree(reg, box, file) {
+  return at(reg, box, { kind: 'grad', text: file.split('/').pop() });
 }
 
 /* ── 같은 슬라이드 내 겹침 검사 ── */
@@ -370,13 +380,11 @@ function report(file) {
     prevB = st[k].band;
   }
   lines.push('');
-  lines.push('§4 비주얼 강제 규격');
-  lines.push(`  다크 면적 비율 평균 ${avgDark}%  (레퍼런스 내일사장 IR 실측 15% · 허용 12~25%)`);
+  lines.push('비주얼 규격 — v9 는 내일사장 IR 어법(화이트 지배 · 결론 띠 2장 · 초대형 수치 1장)을 따른다');
+  lines.push(`  다크 면적 비율 평균 ${avgDark}%  (사장님 지시 : 화이트 지배 · 상한 8%)`);
   lines.push(`  순색 풀블리드 면 ${solid}장 · 좌우 명암분할 ${splitN}장 = 색 면 ${solid + splitN}장 / ${kinds.length}장`);
-  lines.push(`  흰 배경 최대 연속 ${worst}장  (규격 3장 미만)`);
-  lines.push(`  같은 밴드 종류 최대 연속 ${worstB}장  (규격 3장 미만)`);
-  lines.push(`  대형 수치 28pt 미만인 장 ${noFig.length}장  ${noFig.map(n => 'P' + n).join(' ')}`);
-  lines.push(`  포인트 아이콘 없는 장 ${noIcon.length}장  ${noIcon.map(n => 'P' + n).join(' ')}`);
+  lines.push(`  결론 띠 ${Object.values(st).filter(v=>v.band!=='—').length}장  (IR 어법 : 챕터 종료 장에만)`);
+  lines.push(`  28pt 이상 대형 수치가 있는 장 ${kinds.length-noFig.length}장  (IR 어법 : Scale-up 한 장에 집중)`);
   lines.push(`  시각 면적 40% 미만 ${thin.length}장  ${thin.map(n => 'P' + n).join(' ')}`);
   lines.push('');
   lines.push('  쪽  배경        수치  아이콘  밴드    시각면적  다크면적');
@@ -390,6 +398,6 @@ function report(file) {
 function v_(st, k) { return st[k].visual; }
 
 module.exports = { W, H, M, SAFE, Y, BLEED, COLS, GUT, COLW, colX, span,
-                   region, rows, split, pad, at, fit, img, imgAspect, textWidth, lineCount,
+                   region, rows, split, pad, at, fit, img, imgFree, imgAspect, textWidth, lineCount,
                    setSlide, setBg, surface, setBand, report, placements, surfaces,
                    contrast, lum, contrastReport, styleReport, visualReport, darkAreaReport };
