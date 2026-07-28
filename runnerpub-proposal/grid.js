@@ -13,14 +13,14 @@ const SAFE = { x: M.l, y: M.t, w: W - M.l - M.r, h: H - M.t - M.b };  // 11.833 
 
 /* ── 세로 밴드: 위에서 아래로 누적. 합이 SAFE.h 와 정확히 일치해야 한다 ── */
 const BANDS = [
-  ['brow',    0.32],   // 로고 · 섹션 라벨
-  ['browGap', 0.14],
+  ['brow',    0.40],   // 로고 · 섹션 라벨
+  ['browGap', 0.10],
   ['rule',    0.012],  // 상단 괘선
   ['headGap', 0.22],
-  ['head',    0.66],   // 헤드라인 (33pt 1줄)
+  ['head',    0.62],   // 헤드라인 (33pt 1줄)
   ['lead',    0.50],   // 리드문 (13.5pt 최대 2줄)
-  ['leadGap', 0.26],
-  ['body',    3.202],  // ★ 본문 영역 — 모든 콘텐츠는 여기 안에서만
+  ['leadGap', 0.30],
+  ['body',    3.162],  // ★ 본문 영역 — 모든 콘텐츠는 여기 안에서만
   ['bodyGap', 0.16],
   ['note',    0.20],   // 각주
   ['noteGap', 0.10],
@@ -155,6 +155,38 @@ function fit(reg, box, text, pt, opt = {}) {
   return at(reg, box, { kind: 'text', text: String(text).slice(0, 60), pt, lines });
 }
 
+
+/* ── 이미지 비율 검사 ──
+   원본 종횡비와 배치 종횡비가 어긋나면 그림이 눌리거나 늘어난다.
+   허용 오차 1.5%. 넘으면 빌드 중단. */
+const imgSizeCache = {};
+function imgAspect(file) {
+  if (imgSizeCache[file] !== undefined) return imgSizeCache[file];
+  const buf = fs.readFileSync(file);
+  let a = null;
+  if (buf.slice(1, 4).toString() === 'PNG') {
+    a = buf.readUInt32BE(16) / buf.readUInt32BE(20);
+  }
+  imgSizeCache[file] = a;
+  return a;
+}
+/** 이미지를 영역 안에 배치하고 비율까지 검사한다 */
+function img(reg, box, file) {
+  const a = imgAspect(file);
+  if (a) {
+    const b = box.w / box.h;
+    const err = Math.abs(b - a) / a;
+    if (err > 0.015) {
+      throw new Error(
+        `[P${String(CUR.slide).padStart(2, '0')}] 이미지 비율 불일치 «${reg.name}»\n` +
+        `   원본 ${a.toFixed(4)} vs 배치 ${b.toFixed(4)}  (오차 ${(err * 100).toFixed(1)}%)\n` +
+        `   ${file.split('/').pop()}  배치 ${box.w.toFixed(3)} × ${box.h.toFixed(3)} in\n` +
+        `   → 높이를 ${(box.w / a).toFixed(3)} 또는 너비를 ${(box.h * a).toFixed(3)} 로 맞추십시오`);
+    }
+  }
+  return at(reg, box, { kind: 'img', text: file.split('/').pop() });
+}
+
 /* ── 같은 슬라이드 내 겹침 검사 ── */
 function overlapReport() {
   const bySlide = {};
@@ -187,5 +219,5 @@ function report(file) {
 }
 
 module.exports = { W, H, M, SAFE, Y, COLS, GUT, COLW, colX, span,
-                   region, rows, split, pad, at, fit, textWidth, lineCount,
+                   region, rows, split, pad, at, fit, img, imgAspect, textWidth, lineCount,
                    setSlide, report, placements };

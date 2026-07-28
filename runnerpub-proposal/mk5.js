@@ -17,7 +17,7 @@ const NAVY='16233D', NAVY2='1D2C47', BLUE='2C68F3', BLUEL='7FA8FF',
       MUTE='6C7891', MUTED='93A0B8', RULE='D6DCE7', RULED='2B3A56',
       ONINK='F4F6FA', TRACK='DDE3EE';
 const F = '맑은 고딕';
-const { SAFE, Y, span, region, split, pad, at, fit, setSlide } = G;
+const { SAFE, Y, span, region, split, pad, at, fit, img, setSlide } = G;
 
 const t=(o)=>Object.assign({fontFace:F,margin:0},o);
 const rect=(s,b,c)=>s.addShape(p.ShapeType.rect,{...b,fill:{color:c},line:{type:'none'}});
@@ -31,7 +31,7 @@ function frame(s,no,section,dark){
   const mu=dark?MUTED:MUTE, rl=dark?RULED:RULE;
   const brow=region('brow',SAFE.x,Y.brow.y,SAFE.w,Y.brow.h);
   s.addImage({path:path.join(A,dark?'ns_logo_w.png':'ns_logo.png'),
-    ...at(brow,{x:SAFE.x,y:Y.brow.y+0.05,w:1.22,h:0.214},{kind:'img'})});
+    ...img(brow,{x:SAFE.x,y:Y.brow.y+0.05,w:1.22,h:0.330},path.join(A,dark?'ns_logo_w.png':'ns_logo.png'))});
   const sec=span(6,6);
   fit(brow,{x:sec.x,y:Y.brow.y+0.05,w:sec.w,h:0.22},section,10.5);
   s.addText(section,t({x:sec.x,y:Y.brow.y+0.05,w:sec.w,h:0.22,fontSize:10.5,bold:true,
@@ -148,7 +148,8 @@ function card(s,reg,box,accent,pd){
   rect(s,{x:0,y:0,w:0.26,h:G.H},BLUE);
   const FULL=region('cover',SAFE.x,SAFE.y,SAFE.w,G.H-SAFE.y-0.30);
 
-  s.addImage({path:path.join(A,'ns_logo_w.png'),...at(FULL,{x:SAFE.x,y:0.56,w:1.86,h:0.327},{kind:'img'})});
+  s.addImage({path:path.join(A,'ns_logo_w.png'),
+    ...img(FULL,{x:SAFE.x,y:0.56,w:1.86,h:0.503},path.join(A,'ns_logo_w.png'))});
   tx(s,FULL,{x:SAFE.x,y:0.96,w:5,h:0.24},'주식회사 내일사장',11,{color:MUTED,charSpacing:0.6});
 
   tx(s,FULL,{x:SAFE.x,y:1.86,w:9,h:0.30},'가맹 개설 영업 위임 제안',14,
@@ -159,7 +160,7 @@ function card(s,reg,box,accent,pd){
   tx(s,FULL,{x:SAFE.x,y:2.62,w:8.6,h:1.88},HL,50,{bold:true,color:ONINK,lineSpacing:66,charSpacing:-1.6});
 
   s.addImage({path:path.join(A,'illust_cover.png'),
-    ...at(FULL,{x:SAFE.x+10.30,y:2.28,w:1.06,h:2.32},{kind:'img'})});
+    ...img(FULL,{x:SAFE.x+10.30,y:2.28,w:1.06,h:2.32},path.join(A,'illust_cover.png'))});
 
   tx(s,FULL,{x:SAFE.x,y:4.66,w:10.4,h:0.74},
     'SPC 파리바게뜨 가맹사업본부 · 이삭토스트 COO · 맥도날드 · 써브웨이 · CJ푸드빌 출신이 만든 창업 플랫폼입니다.\n계약이 체결되고 가맹비 입금이 완료된 건에만 성공보수를 청구합니다.',
@@ -395,15 +396,21 @@ function card(s,reg,box,accent,pd){
   const R=G.rows(B,[['logos',0.84,'fix'],['gap',0.20,'fix'],['n0',1],['n1',1],['n2',1]]);
   /* 제휴사 로고 8종 — IR 원본에서 추출 */
   rect(s,at(B,{x:R.logos.x,y:R.logos.y,w:R.logos.w,h:R.logos.h},{kind:'card'}),CARD);
-  const LG=[['spc',0.86],['samsung',0.92],['kfa',1.34],['barogo',1.10],
-            ['cashnote',0.92],['saramin',0.86],['yogiyo',0.60],['forbes',0.66]];
-  const totalW=LG.reduce((a,l)=>a+l[1],0);
-  const gapW=(R.logos.w-0.60-totalW)/(LG.length-1);
-  let lx=R.logos.x+0.30;
-  LG.forEach(([k,w])=>{
-    s.addImage({path:path.join(A,`lg_${k}.png`),
-      ...at(R.logos,{x:lx,y:R.logos.y+0.26,w,h:0.32},{kind:'img'})});
-    lx+=w+gapW;
+  /* 로고 폭은 원본 비율에서 계산한다. 높이 기준 0.30in, 최대 폭 1.90in 로 제한해
+     가로로 긴 로고가 과도하게 커지지 않게 한다. */
+  const KEYS=['spc','samsung','kfa','barogo','cashnote','saramin','yogiyo','forbes'];
+  const LG=KEYS.map(k=>{
+    const f=path.join(A,`lg_${k}.png`), a=G.imgAspect(f);
+    let w=Math.min(0.30*a, 1.90);
+    return {k,f,w,h:w/a};
+  });
+  const sumW=LG.reduce((t,l)=>t+l.w,0);
+  const gapW=(R.logos.w-0.56-sumW)/(LG.length-1);
+  let lx=R.logos.x+0.28;
+  const midY=R.logos.y+R.logos.h/2;
+  LG.forEach(l=>{
+    s.addImage({path:l.f, ...img(R.logos,{x:lx,y:midY-l.h/2,w:l.w,h:l.h},l.f)});
+    lx+=l.w+gapW;
   });
 
   const N=[
@@ -448,7 +455,7 @@ function card(s,reg,box,accent,pd){
     hr(s,c.x,c.y,c.w,BLUE,0.036);
     tx(s,c,{x:c.x,y:c.y+0.16,w:1.2,h:0.26},n,11,{bold:true,color:BLUE,charSpacing:1.4});
     s.addImage({path:path.join(A,`p09_icon${i+1}.png`),
-      ...at(c,{x:c.x+c.w-0.46,y:c.y+0.14,w:0.44,h:0.44},{kind:'img'})});
+    ...img(c,{x:c.x+c.w-0.46,y:c.y+0.14,w:0.44,h:0.44},path.join(A,`p09_icon${i+1}.png`))});
     tx(s,c,{x:c.x,y:c.y+0.46,w:c.w-0.60,h:0.38},k,19,{bold:true,valign:'middle'});
     const bl=G.rows(region(c.name+'.li',c.x,c.y+0.98,c.w,c.h-0.98),
       [['a',1],['b',1],['c',1],['d',1]]);
@@ -495,9 +502,9 @@ function card(s,reg,box,accent,pd){
 
   slabel(s,Rr,{x:Rr.x,y:Rr.y,w:Rr.w,h:0.26},'실제 화면 · 홈택스 연동 실매출',MUTED);
   s.addImage({path:path.join(A,'app_sales.png'),
-    ...at(Rr,{x:Rr.x+0.16,y:Rr.y+0.36,w:1.62,h:2.82},{kind:'img'})});
+    ...img(Rr,{x:Rr.x+0.16,y:Rr.y+0.36,w:1.62,h:2.82},path.join(A,'app_sales.png'))});
   s.addImage({path:path.join(A,'app_report.png'),
-    ...at(Rr,{x:Rr.x+1.94,y:Rr.y+0.36,w:1.75,h:2.82},{kind:'img'})});
+    ...img(Rr,{x:Rr.x+1.94,y:Rr.y+0.36,w:1.75,h:2.82},path.join(A,'app_report.png'))});
 
   band(s,'상담 · 검증 · 계약 단계별 자체 운영 도구','6','종',true);
   s.addNotes('창업자가 결정을 미루는 이유는 근거가 없어서입니다. 저희는 근거를 문서로 만듭니다.');
@@ -532,8 +539,8 @@ function card(s,reg,box,accent,pd){
   slabel(s,Rr,{x:Rr.x,y:Rr.y,w:Rr.w,h:0.26},'아직 비어 있는 것 — 계약 가능한 창업자 모수',BLUE);
   hr(s,Rr.x,Rr.y+0.32,Rr.w,BLUE,0.030);
   s.addImage({path:path.join(A,'p11_pub.png'),
-    ...at(Rr,{x:Rr.x+0.16,y:Rr.y+0.46,w:4.48,h:2.44},{kind:'img'})});
-  tx(s,Rr,{x:Rr.x,y:Rr.y+2.98,w:Rr.w,h:0.22},
+    ...img(Rr,{x:Rr.x+0.28,y:Rr.y+0.44,w:4.24,h:2.385},path.join(A,'p11_pub.png'))});
+  tx(s,Rr,{x:Rr.x,y:Rr.y+2.90,w:Rr.w,h:0.22},
     '매장은 준비되어 있습니다. 앉을 사람을 내일사장이 데려옵니다.',11,{bold:true,color:BLUE,lineSpacing:15});
 
   band(s,'남은 변수 · 창업자 접점','1','개');
@@ -712,7 +719,7 @@ function card(s,reg,box,accent,pd){
   [['1회성','계약 1건에 한 번만 발생합니다'],
    ['가맹비 내 정산','추가 예산 편성이 필요하지 않습니다'],
    ['로열티는 순증','월 150만원은 전액 본사 수익입니다']].forEach(([k,v],i)=>{
-    const y=L.y+2.50+i*0.23;
+    const y=L.y+2.48+i*0.22;
     tx(s,L,{x:L.x,y,w:1.7,h:0.22},k,11,{bold:true,color:MUTE,valign:'middle'});
     tx(s,L,{x:L.x+1.8,y,w:L.w-1.8,h:0.22},v,11,{valign:'middle'});
   });
@@ -727,14 +734,14 @@ function card(s,reg,box,accent,pd){
                {text:' 만원',options:{fontSize:10,color:MUTE}}],
       t({...at(Rr,{x:Rr.x+Rr.w-1.9,y,w:1.9,h:0.36},{kind:'fig'}),align:'right',valign:'middle'}));
   });
-  hr(s,Rr.x,Rr.y+2.22,Rr.w,RULE);
-  slabel(s,Rr,{x:Rr.x,y:Rr.y+2.34,w:3.6,h:0.26},'출점 규모별 36개월 누적',BLUE);
+  hr(s,Rr.x,Rr.y+2.16,Rr.w,RULE);
+  slabel(s,Rr,{x:Rr.x,y:Rr.y+2.28,w:3.6,h:0.26},'출점 규모별 36개월 누적',BLUE);
   [['3개점','1억 7,700'],['5개점','2억 9,500']].forEach(([k,v],i)=>{
     const x=Rr.x+(Rr.w/2)*i;
-    tx(s,Rr,{x,y:Rr.y+2.64,w:1.4,h:0.22},k,11,{color:MUTE,valign:'middle'});
+    tx(s,Rr,{x,y:Rr.y+2.58,w:1.4,h:0.24},k,11,{color:MUTE,valign:'middle'});
     s.addText([{text:v,options:{fontSize:18,bold:true,color:NAVY2}},{text:' 만원',options:{fontSize:10,color:MUTE}}],
-      t({...at(Rr,{x,y:Rr.y+2.86,w:Rr.w/2-0.3,h:0.32},{kind:'fig'}),valign:'middle'}));
-    if(i) vr(s,x-0.20,Rr.y+2.64,0.54,RULE);
+      t({...at(Rr,{x,y:Rr.y+2.84,w:Rr.w/2-0.3,h:0.32},{kind:'fig'}),valign:'middle'}));
+    if(i) vr(s,x-0.20,Rr.y+2.58,0.56,RULE);
   });
 
   band(s,'10개점 출점 시 · 36개월 누적','5억 9,000','만원',false,true);
@@ -813,18 +820,18 @@ function card(s,reg,box,accent,pd){
              '앱 10만 · 월 5만 명 · 상담 DB 5,114명 위에서 팝니다',
              '계약 전 본사 지출 0원 · 성공보수는 가맹비 안에서 정산',
              '계약 시점 +500만원 · 로열티는 전액 순증'];
-  const SR=G.rows(region('sum',Rr.x,Rr.y+0.44,Rr.w,1.62),[['a',1],['b',1],['c',1],['d',1]]);
+  const SR=G.rows(region('sum',Rr.x,Rr.y+0.42,Rr.w,1.54),[['a',1],['b',1],['c',1],['d',1]]);
   [SR.a,SR.b,SR.c,SR.d].forEach((r,i)=>{
     rect(s,at(r,{x:r.x,y:r.y+0.14,w:0.10,h:0.10},{kind:'mk'}),BLUEL);
     tx(s,r,{x:r.x+0.26,y:r.y,w:r.w-0.26,h:r.h-0.04},SUM[i],11.5,{color:ONINK,lineSpacing:16,valign:'middle'});
   });
   s.addImage({path:path.join(A,'logo.png'),
-    ...at(Rr,{x:Rr.x,y:Rr.y+2.08,w:1.62,h:0.531},{kind:'img'})});
+    ...img(Rr,{x:Rr.x,y:Rr.y+2.02,w:1.62,h:0.531},path.join(A,'logo.png'))});
 
   hr(s,R.sig.x,R.sig.y,R.sig.w,RULED);
   tx(s,R.sig,{x:R.sig.x,y:R.sig.y+0.10,w:1,h:0.20},'발신',9,{color:MUTED});
   s.addImage({path:path.join(A,'ns_logo_w.png'),
-    ...at(R.sig,{x:R.sig.x,y:R.sig.y+0.32,w:1.44,h:0.253},{kind:'img'})});
+    ...img(R.sig,{x:R.sig.x,y:R.sig.y+0.32,w:1.44,h:0.389},path.join(A,'ns_logo_w.png'))});
   let acc=R.sig.x+2.0;
   [['담당',1.9],['연락처',2.0],['이메일',2.3]].forEach(([k,w])=>{
     tx(s,R.sig,{x:acc,y:R.sig.y+0.10,w,h:0.20},k,9,{color:MUTED});

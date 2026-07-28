@@ -188,8 +188,8 @@ def icon_mega(name='p09_icon2.png', N=320, col=BLUE):
     L(d, [(48, 128), (128, 128), (224, 62), (224, 258), (128, 192), (48, 192)], col, w, closed=True)
     L(d, [(48, 128), (48, 192)], col, w)
     L(d, [(96, 192), (96, 250), (134, 250), (134, 210)], col, w)
-    for i, r in enumerate((32, 56, 80)):
-        arc(d, (250 - r, 160 - r, 250 + r, 160 + r), -52, 52, col, 9 - i)
+    for i, r in enumerate((28, 50, 72)):
+        arc(d, (236 - r, 160 - r, 236 + r, 160 + r), -52, 52, col, 9 - i)
     return finish(im, N, N, name)
 
 
