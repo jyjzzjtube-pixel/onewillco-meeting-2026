@@ -136,7 +136,7 @@ function at(reg, box, meta = {}) {
 }
 
 /* ── 텍스트 실측 (한글 폭 계수) ── */
-/* 맑은 고딕/Pretendard 기준 실측 근사: 한글 1.00em, 라틴·숫자 0.52em, 공백 0.28em */
+/* 맑은 고딕 실측 근사: 한글 1.00em, 라틴·숫자 0.58em(대문자 볼드 여유 반영), 공백 0.28em */
 function textWidth(str, pt) {
   const em = pt / 72;
   let w = 0;
@@ -147,7 +147,7 @@ function textWidth(str, pt) {
     else if (c >= 0x3130 && c <= 0x318F) w += 1.00 * em;      // 자모
     else if (c > 0x2000 && c < 0x3000) w += 0.55 * em;        // 문장부호·기호
     else if (c >= 0xFF00 && c <= 0xFFEF) w += 1.00 * em;      // 전각
-    else w += 0.52 * em;
+    else w += 0.58 * em;
   }
   return w;
 }
@@ -292,6 +292,29 @@ function visualReport() {
   return out;
 }
 
+/* ── 다크 면적 비율 — 화면 전체에서 어두운 면이 차지하는 비율 (레퍼런스 IR 실측 15%) ── */
+function darkAreaReport() {
+  const CELL = 0.06;
+  const out = {};
+  const slides = [...new Set(placements.map(p => p.slide))].sort((a, b) => a - b);
+  const nx = Math.ceil(W / CELL), ny = Math.ceil(H / CELL);
+  for (const sl of slides) {
+    const grid = new Uint8Array(nx * ny);
+    const bgDark = lum(slideBg[sl] || 'FFFFFF') < 0.12;
+    if (bgDark) grid.fill(1);
+    for (const m of surfaces.filter(s => s.slide === sl)) {
+      const on = lum(m.color) < 0.12 ? 1 : 0;   // 파란 면(0.17)은 다크로 세지 않는다
+      const i0 = Math.max(0, Math.floor(m.x / CELL)), i1 = Math.min(nx, Math.ceil((m.x + m.w) / CELL));
+      const j0 = Math.max(0, Math.floor(m.y / CELL)), j1 = Math.min(ny, Math.ceil((m.y + m.h) / CELL));
+      if (i1 - i0 < 2 || j1 - j0 < 2) continue;              // 괘선 두께는 면으로 세지 않는다
+      for (let j = j0; j < j1; j++) for (let i = i0; i < i1; i++) grid[j * nx + i] = on;
+    }
+    let n = 0; for (let k = 0; k < grid.length; k++) n += grid[k];
+    out[sl] = Math.round(n / grid.length * 1000) / 10;
+  }
+  return out;
+}
+
 /* ── §4 장별 시각 규격 요약 ── */
 function styleReport() {
   const out = {};
@@ -306,6 +329,7 @@ function styleReport() {
     const fullDark = dark || ss.some(s => lum(s.color) < 0.18 && s.w > 12 && s.h > 6);
     out[sl] = {
       bg: fullDark ? '순색면' : halfDark ? '명암분할' : (ss.some(s => s.w > 3 && s.h > 1.4 && lum(s.color) > 0.18 && s.color !== 'FFFFFF') ? '라이트+틴트' : '라이트'),
+      dark: 0,
       bigFig: Math.max(0, ...ps.filter(p => p.pt).map(p => p.pt)),
       icons: ps.filter(p => ['mk', 'icon', 'badge', 'pill', 'chip'].includes(p.kind)).length,
       band: bandKind[sl] || '—',
@@ -330,6 +354,9 @@ function report(file) {
   for (const b of bad) lines.push(`    P${String(b.slide).padStart(2, '0')}  #${b.fg} on #${b.bg} = ${b.ratio}  «${b.text}»`);
 
   const st = styleReport();
+  const da = darkAreaReport();
+  for (const k of Object.keys(st)) st[k].dark = da[k];
+  const avgDark = Math.round(Object.values(da).reduce((a, b) => a + b, 0) / Object.keys(da).length * 10) / 10;
   const kinds = Object.values(st);
   const solid = kinds.filter(v => v.bg === '순색면').length;
   const splitN = kinds.filter(v => v.bg === '명암분할').length;
@@ -344,17 +371,17 @@ function report(file) {
   }
   lines.push('');
   lines.push('§4 비주얼 강제 규격');
-  lines.push(`  순색 풀블리드 면 ${solid}장 / ${kinds.length}장 = ${Math.round(solid / kinds.length * 100)}%  (규격 25~35%)`);
-  lines.push(`  좌우 명암분할 ${splitN}장  (규격 3장 이상)`);
+  lines.push(`  다크 면적 비율 평균 ${avgDark}%  (레퍼런스 내일사장 IR 실측 15% · 허용 12~25%)`);
+  lines.push(`  순색 풀블리드 면 ${solid}장 · 좌우 명암분할 ${splitN}장 = 색 면 ${solid + splitN}장 / ${kinds.length}장`);
   lines.push(`  흰 배경 최대 연속 ${worst}장  (규격 3장 미만)`);
   lines.push(`  같은 밴드 종류 최대 연속 ${worstB}장  (규격 3장 미만)`);
   lines.push(`  대형 수치 28pt 미만인 장 ${noFig.length}장  ${noFig.map(n => 'P' + n).join(' ')}`);
   lines.push(`  포인트 아이콘 없는 장 ${noIcon.length}장  ${noIcon.map(n => 'P' + n).join(' ')}`);
   lines.push(`  시각 면적 40% 미만 ${thin.length}장  ${thin.map(n => 'P' + n).join(' ')}`);
   lines.push('');
-  lines.push('  쪽  배경        수치  아이콘  밴드    시각면적');
+  lines.push('  쪽  배경        수치  아이콘  밴드    시각면적  다크면적');
   for (const [k, v] of Object.entries(st))
-    lines.push(`  ${String(k).padStart(2, '0')}  ${v.bg.padEnd(10, ' ')}  ${String(v.bigFig).padStart(4)}  ${String(v.icons).padStart(5)}   ${v.band.padEnd(5, ' ')}   ${String(v.visual).padStart(5)}%`);
+    lines.push(`  ${String(k).padStart(2, '0')}  ${v.bg.padEnd(10, ' ')}  ${String(v.bigFig).padStart(4)}  ${String(v.icons).padStart(5)}   ${v.band.padEnd(5, ' ')}   ${String(v.visual).padStart(5)}%  ${String(v.dark).padStart(6)}%`);
   const out = lines.join('\n');
   if (file) fs.writeFileSync(file, out + '\n');
   return { text: out, overlaps: hits };
@@ -365,4 +392,4 @@ function v_(st, k) { return st[k].visual; }
 module.exports = { W, H, M, SAFE, Y, BLEED, COLS, GUT, COLW, colX, span,
                    region, rows, split, pad, at, fit, img, imgAspect, textWidth, lineCount,
                    setSlide, setBg, surface, setBand, report, placements, surfaces,
-                   contrast, lum, contrastReport, styleReport, visualReport };
+                   contrast, lum, contrastReport, styleReport, visualReport, darkAreaReport };
