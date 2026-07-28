@@ -13,23 +13,22 @@ const SAFE = { x: M.l, y: M.t, w: W - M.l - M.r, h: H - M.t - M.b };  // 11.833 
 
 /* ── 세로 밴드: 위에서 아래로 누적. 합이 SAFE.h 와 정확히 일치해야 한다 ── */
 const BANDS = [
-  ['brow',    0.40],   // 로고 · 섹션 라벨
-  ['browGap', 0.10],
-  ['rule',    0.012],  // 상단 괘선
-  ['headGap', 0.22],
-  ['head',    0.62],   // 헤드라인 (33pt 1줄)
-  ['lead',    0.50],   // 리드문 (13.5pt 최대 2줄)
-  ['leadGap', 0.30],
-  ['body',    3.162],  // ★ 본문 영역 — 모든 콘텐츠는 여기 안에서만
-  ['bodyGap', 0.16],
-  ['note',    0.20],   // 각주
-  ['noteGap', 0.10],
-  ['bandRule',0.016],  // 결산 괘선
-  ['bandGap', 0.10],
-  ['band',    0.44],   // 결산 라벨 + 수치
-  ['footGap', 0.22],
-  ['footRule',0.010],
-  ['foot',    0.28],   // 러닝 푸터
+  ['topRule',  0.012],   // 최상단 풀폭 괘선
+  ['topGap',   0.150],
+  ['brow',     0.300],   // 좌: 챕터번호 / 우: 내일사장 로고
+  ['browGap',  0.100],
+  ['anchor',   0.460],   // 영문 챕터 앵커 (챕터 첫 장만)
+  ['head',     0.560],   // 국문 헤드 26pt 1줄
+  ['lead',     0.440],   // 리드문 13pt 최대 2줄
+  ['leadGap',  0.260],
+  ['body',     3.128],   // ★ 본문
+  ['bodyGap',  0.140],
+  ['note',     0.200],   // 각주 8.5pt
+  ['noteGap',  0.120],
+  ['band',     0.520],   // 결론 밴드
+  ['footGap',  0.180],
+  ['footRule', 0.010],
+  ['foot',     0.260],
 ];
 
 /* 밴드 → 절대 y 좌표 */
@@ -43,8 +42,14 @@ const Y = {};
   }
 }
 
-/* 각주 없는 장은 note 밴드까지 본문으로 흡수한다 */
+/* 앵커 없는 장: anchor + head 를 합쳐 국문 헤드 2줄 허용 */
+Y.headFull = { y: Y.anchor.y, h: Y.head.b - Y.anchor.y, b: Y.head.b };
+/* 각주 없는 장: note 밴드까지 본문으로 흡수 */
 Y.bodyFull = { y: Y.body.y, h: Y.note.b - Y.body.y, b: Y.note.b };
+/* 결론 밴드 없는 장: band 까지 흡수 */
+Y.bodyMax  = { y: Y.body.y, h: Y.band.b - Y.body.y, b: Y.band.b };
+/* 풀블리드 밴드 (검사 예외 · 화면 끝까지) */
+const BLEED = { x: 0, y: 6.130, w: W, h: H - 6.130 };
 
 /* ── 가로 컬럼: 12열 그리드 ── */
 const COLS = 12, GUT = 0.22;
@@ -218,6 +223,6 @@ function report(file) {
   return { text: out, overlaps: hits };
 }
 
-module.exports = { W, H, M, SAFE, Y, COLS, GUT, COLW, colX, span,
+module.exports = { W, H, M, SAFE, Y, BLEED, COLS, GUT, COLW, colX, span,
                    region, rows, split, pad, at, fit, img, imgAspect, textWidth, lineCount,
                    setSlide, report, placements };
