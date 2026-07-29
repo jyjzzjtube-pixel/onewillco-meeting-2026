@@ -210,12 +210,12 @@ function img(reg, box, file) {
         `   → 높이를 ${(box.w / a).toFixed(3)} 또는 너비를 ${(box.h * a).toFixed(3)} 로 맞추십시오`);
     }
   }
-  return at(reg, box, { kind: 'img', text: file.split('/').pop() });
+  return at(reg, box, { kind: 'img', text: file.split('/').pop(), file });
 }
 
 /** 선형 그라데이션 면 — 늘려도 깨지지 않으므로 비율 검사에서 제외한다 */
 function imgFree(reg, box, file) {
-  return at(reg, box, { kind: 'grad', text: file.split('/').pop() });
+  return at(reg, box, { kind: 'grad', text: file.split('/').pop(), file });
 }
 
 /* ── 같은 슬라이드 내 겹침 검사 ── */
@@ -275,6 +275,17 @@ function contrastReport() {
     if (r < MIN_CONTRAST) bad.push({ slide: t.slide, text: t.text, fg: t.color, bg: bgc, ratio: +r.toFixed(2) });
   }
   return bad;
+}
+
+/* 이미지 잉크 대비 검사용 매니페스트 — 배경색은 surfaceUnder() 로 확정하고
+   실제 픽셀 판독은 check_img_contrast.py 가 맡는다 (검사기가 이미지를 건너뛰던 구멍을 막음) */
+function imgManifest(outFile) {
+  const rows = placements
+    .filter(p => p.kind === 'img' && p.file)
+    .map(p => ({ slide: p.slide, file: p.file, name: p.text,
+                 w: +p.w.toFixed(3), h: +p.h.toFixed(3), bg: surfaceUnder(p) }));
+  if (outFile) fs.writeFileSync(outFile, JSON.stringify(rows, null, 1) + '\n');
+  return rows;
 }
 
 /* ── §4 시각 면적 — 본문 영역에서 도형·이미지·표가 차지하는 비율 (합집합, 0.04in 격자) ── */
@@ -400,4 +411,4 @@ function v_(st, k) { return st[k].visual; }
 module.exports = { W, H, M, SAFE, Y, BLEED, COLS, GUT, COLW, colX, span,
                    region, rows, split, pad, at, fit, img, imgFree, imgAspect, textWidth, lineCount,
                    setSlide, setBg, surface, setBand, report, placements, surfaces,
-                   contrast, lum, contrastReport, styleReport, visualReport, darkAreaReport };
+                   contrast, lum, contrastReport, styleReport, visualReport, darkAreaReport, imgManifest };

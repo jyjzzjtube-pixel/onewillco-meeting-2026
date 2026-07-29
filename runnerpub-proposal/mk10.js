@@ -670,6 +670,7 @@ function gbar(s,reg,x,y,w,h){
 
 /* ═══ 저장 ═══ */
 const OUT='/tmp/claude-0/-home-user-onewillco-meeting-2026/e45e1d59-bb0f-5971-8866-2e14a767d632/scratchpad/v4/runnerpub_v10.pptx';
+G.imgManifest('/tmp/claude-0/-home-user-onewillco-meeting-2026/e45e1d59-bb0f-5971-8866-2e14a767d632/scratchpad/v4/img_manifest.json');
 const rep=G.report('/tmp/claude-0/-home-user-onewillco-meeting-2026/e45e1d59-bb0f-5971-8866-2e14a767d632/scratchpad/v4/layout_report_v10.txt');
 console.log(rep.text);
 p.writeFile({fileName:OUT}).then(async f=>{
