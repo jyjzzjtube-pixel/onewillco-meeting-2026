@@ -37,9 +37,14 @@ def phone(screen_path, w, h, crop_top=0.0, crop_h=1.0):
     # 폭 기준 맞춤 — 가로는 절대 자르지 않는다(글줄 절단 0). 세로만 crop_top 으로 창을 고른다
     sc = sw / src.width
     src = src.resize((sw, max(1, int(src.height * sc))), Image.LANCZOS)
-    if src.height < sh:                       # 세로가 모자라면 흰 바탕으로 채운다
-        pad_im = Image.new('RGB', (sw, sh), (255, 255, 255))
-        pad_im.paste(src, (0, 0))
+    if src.height < sh:                       # 세로가 모자라면 화면 자체의 위·아래 바탕색으로 잇는다
+        extra = sh - src.height
+        top = extra // 2
+        c_top = src.crop((0, 0, sw, 1)).resize((1, 1), Image.BOX).getpixel((0, 0))
+        c_bot = src.crop((0, src.height - 1, sw, src.height)).resize((1, 1), Image.BOX).getpixel((0, 0))
+        pad_im = Image.new('RGB', (sw, sh), c_bot)
+        pad_im.paste(Image.new('RGB', (sw, top), c_top), (0, 0))
+        pad_im.paste(src, (0, top))
         src = pad_im
     y0 = min(max(0, int((src.height - sh) * crop_top)), max(0, src.height - sh))
     src = src.crop((0, y0, sw, y0 + sh))
@@ -61,8 +66,8 @@ def cover_phones(name='cover_phones.png'):
     out = Image.new('RGBA', (W, H), (0, 0, 0, 0))
     # 두 대만 쓴다 — 서로 다른 화면 2종이 실재하므로 3대째는 같은 화면 반복이 된다
     specs = [
-        ('app_report.png', 520, 945, -9, (10, 670), 0.02, 1.0),
-        ('app_sales.png', 740, 1330, 0, (700, 150), 0.00, 1.0),
+        ('app_report_screen.png', 520, 945, -9, (10, 670), 0.00, 1.0),
+        ('app_sales_screen.png', 740, 1330, 0, (700, 150), 0.00, 1.0),
     ]
     for f, w, h, ang, pos, ct, ch in specs:
         p = phone(os.path.join(A, f), w, h, ct, ch)
