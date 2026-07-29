@@ -20,12 +20,13 @@ const RIGHT = SAFE.x + SAFE.w;                       // 12.583
 const FULL  = ()=>region('full',0,0,G.W,G.H);
 const GBAR  = P('gr_bar_h.png');
 
+const CHAPFIRST = {2:1,4:1,11:1,13:1};               // 영문 앵커는 챕터 첫 장만
 /* 공통 — 지면 그라데이션 + 챕터 마크 */
 function page(no, chapNo, chapEn, gradient){
   const s = p.addSlide(); bg(s,C.WHITE);
   if(gradient) grad(s,FULL(),{x:0,y:0,w:G.W,h:G.H},'gr_page.png',C.WHITE);
   frame(s,no,chapNo);
-  if(chapEn) anchor(s,chapEn);
+  if(chapEn && CHAPFIRST[no]) anchor(s,chapEn);
   return s;
 }
 /* 회색 각주 — 수치 블록 바로 아래 */
@@ -135,7 +136,7 @@ function gbar(s,reg,x,y,w,h){
   const s = p.addSlide(); bg(s,C.WHITE);
   grad(s,FULL(),{x:CUT,y:0,w:G.W-CUT,h:G.H},'gr_panelh.png',C.BLUEBG0);
   vr(s,CUT,0,G.H,C.RULE,0.010);
-  frame(s,3,'01'); anchor(s,'Problem');
+  frame(s,3,'01');
   head2(s,'러너펍 [보유 자산] 현황과\n미확보 변수',{x:SAFE.x,w:6.20});
 
   const B = BODY('ir');
@@ -194,7 +195,7 @@ function gbar(s,reg,x,y,w,h){
       tx(s,c,{x:c.x+c.w-0.56,y,w:0.56,h:0.22},`${v}만`,T.glabel,
         {size:9,color:C.BLUE,align:'right',valign:'middle'});
     });
-    else gbar(s,c,c.x,c.y+1.10,c.w*0.54,0.09);
+    else hr(s,c.x,c.y+1.17,c.w,C.RULE);
     foot(s,c,c.x,c.y+1.92,c.w,cap,8);
   });
 
@@ -220,7 +221,7 @@ function gbar(s,reg,x,y,w,h){
   const s = p.addSlide(); bg(s,C.WHITE);
   grad(s,FULL(),{x:0,y:0,w:CUT,h:G.H},'gr_panel.png',C.BLUEBG0);
   vr(s,CUT-0.010,0,G.H,C.RULE,0.010);
-  frame(s,5,'02'); anchor(s,'Solution');
+  frame(s,5,'02');
   head2(s,'[가맹 개설 · 영업]을 직접 수행한\n4인 중심의 팀 구성',{x:SAFE.x,w:5.00});
 
   const B = BODY('ir');
@@ -331,7 +332,6 @@ function gbar(s,reg,x,y,w,h){
   AL.forEach(([k,tag,v,lg,major],i)=>{
     const x = B.x+(gw+0.28)*(i%4), y = B.y+0.56+(gh+0.26)*Math.floor(i/4);
     rrect(s,at(B,{x,y,w:gw,h:gh},{kind:'card'}),major?C.BLUEBG:C.BLUEBG0,0.08);
-    if(major) rect(s,at(B,{x,y,w:0.05,h:gh},{kind:'hl'}),C.BLUE);
     if(lg){
       const f = P(`lg_${lg}.png`), a = G.imgAspect(f);
       const lh = 0.30, lwd = Math.min(1.46,lh*a), lh2 = lwd/a;
@@ -351,7 +351,7 @@ function gbar(s,reg,x,y,w,h){
   const s = p.addSlide(); bg(s,C.WHITE);
   grad(s,FULL(),{x:0,y:2.44,w:G.W,h:G.H-2.44},'gr_panel.png',C.BLUEBG0);
   hr(s,0,2.44,G.W,C.RULE,0.010);
-  frame(s,8,'02'); anchor(s,'Solution');
+  frame(s,8,'02');
   head(s,'결정 지연 구간별 [근거 문서] 제공');
   lead(s,'홈택스 신고자료 연동 · 검증 리포트 · 상권 분석 · 정보공개서 D-day까지 이미 운영 중인 화면',false,11);
 
@@ -453,7 +453,7 @@ function gbar(s,reg,x,y,w,h){
   const R = region('cR',SAFE.x+6.66,B.y,RIGHT-(SAFE.x+6.66),B.h);
 
   sectionBar(s,L,L.x,L.y,L.w,'비용 발생 시점과 금액');
-  const tb = region('tb',L.x,L.y+0.48,L.w,2.72);
+  const tb = region('tb',L.x,L.y+0.48,L.w,3.34);
   { const rh=(tb.h-0.38)/5;
     for(let i=1;i<5;i+=2) rect(s,at(tb,{x:tb.x,y:tb.y+0.38+rh*i,w:tb.w,h:rh},{kind:'row'}),C.BLUEBG0); }
   table(s,tb,[{h:'항목',w:1.50},{h:'발생 시점',w:tb.w-3.20},{h:'금액',w:1.70,a:'right'}],[
@@ -463,14 +463,13 @@ function gbar(s,reg,x,y,w,h){
     [{v:'성공보수',b:true},'가맹계약 체결 및 가맹비 입금 완료 후',{v:'1,000만원',b:true,c:C.NAVY}],
     ['해제 · 환불 시','본사 정책에 맞춰 착수 전 협의',{v:'협의',c:C.MUTE}],
   ],{rh:(tb.h-0.38)/5});
-  foot(s,L,L.x,L.y+3.28,L.w,'※ 성공보수는 부가가치세 별도');
+  foot(s,L,L.x,L.y+3.90,L.w,'※ 성공보수는 부가가치세 별도');
 
   sectionBar(s,R,R.x,R.y,R.w,'할인 귀속과 해제 시 환수');
   [['할인 귀속','창업자 네고 할인액 전액 내일사장 성공보수에서 차감 · 본사 수취액 불변'],
    ['해제 시 환수','가맹계약 해제 · 환불 발생 시 성공보수 환수 기준을 착수 전 협의']].forEach(([k,v],i)=>{
     const y = R.y+0.48+i*0.66;
     rrect(s,at(R,{x:R.x,y,w:R.w,h:0.60},{kind:'card'}),C.BLUEBG0,0.06);
-    rect(s,at(R,{x:R.x,y,w:0.05,h:0.60},{kind:'hl'}),C.BLUE);
     tx(s,R,{x:R.x+0.18,y:y+0.04,w:R.w-0.36,h:0.22},k,T.label,{color:C.BLUE,valign:'middle'});
     tx(s,R,{x:R.x+0.18,y:y+0.26,w:R.w-0.36,h:0.32},v,T.cardtx,{size:9.3,color:C.NAVY});
   });
@@ -495,7 +494,7 @@ function gbar(s,reg,x,y,w,h){
   const s = p.addSlide(); bg(s,C.WHITE);
   grad(s,FULL(),{x:CUT,y:0,w:G.W-CUT,h:G.H},'gr_panelh.png',C.BLUEBG0);
   vr(s,CUT,0,G.H,C.RULE,0.010);
-  frame(s,12,'03'); anchor(s,'Terms');
+  frame(s,12,'03');
   head2(s,'계약 시점부터 흑자,\n[로열티 전액 순증]',{x:SAFE.x,w:5.10});
 
   const B = BODY('ir');
@@ -518,7 +517,10 @@ function gbar(s,reg,x,y,w,h){
     t({...at(L,{x:L.x+0.20,y:L.y+1.94,w:L.w-0.40,h:0.48},{kind:'fig',pt:30}),valign:'middle'}));
   tx(s,L,{x:L.x,y:L.y+2.62,w:L.w,h:0.26},'이후 월 로열티 150만원 전액 본사 순증 — 개설 대가 추가 청구 없음',T.body,
     {size:11,valign:'middle'});
-  foot(s,L,L.x,L.y+3.00,L.w,'※ 러너펍 공개 가맹 안내 기준 시뮬레이션 · 실제 조건은 본사 정책에 따름');
+  tx(s,L,{x:L.x,y:L.y+2.96,w:L.w,h:0.44},
+    '개설 기본비용 1,600만원 전액 할인 프로모션은 본사 정책 그대로 유지 · 성공보수는 가맹비 1,500만원 범위 안에서만 정산',
+    T.body,{size:10,color:C.NAVY});
+  foot(s,L,L.x,L.y+3.58,L.w,'※ 러너펍 공개 가맹 안내 기준 시뮬레이션 · 실제 조건은 본사 정책에 따름');
 
   sectionBar(s,R,R.x,R.y,R.w,'1개점 누적 본사 순수취 — 성공보수 차감 후',{bg:C.WHITE});
   [['12개월',2300],['24개월',4100],['36개월',5900]].forEach(([k,v],i)=>{
@@ -572,12 +574,8 @@ function gbar(s,reg,x,y,w,h){
               ['광고 · 상담 스크립트','본사 사전 승인 후 사용'],
               ['위반 확인 시','해당 건 영업 즉시 중단 및 본사 통보'],
               ['업종 인허가 · 게임물 기준','러너펍 본사 기준 그대로 적용 · 내일사장 독자 판단 및 안내 금지']];
-  table(s,gt,[{h:'',w:0.32},{h:'항목',w:3.00},{h:'기준',w:gt.w-3.32}],
-    GV.map(([k,v])=>['',{v:k,b:true},v]),{rh:(gt.h-0.38)/6});
-  GV.forEach((_,i)=>{
-    const rh = (gt.h-0.38)/6;
-    check(s,Rw.tbl,Rw.tbl.x,gt.y+0.42+rh*i+(rh-0.20)/2,0.20);
-  });
+  table(s,gt,[{h:'항목',w:3.32},{h:'기준',w:gt.w-3.32}],
+    GV.map(([k,v])=>[{v:k,b:true},v]),{rh:(gt.h-0.38)/6});
   s.addNotes('준법은 사람이 아니라 시스템이 강제합니다.');
 }
 
@@ -604,12 +602,13 @@ function gbar(s,reg,x,y,w,h){
              {text:'건',options:{fontSize:13,bold:true,color:C.BLUE}}],
     t({...at(L,{x:L.x+2.62,y:L.y+0.80,w:1.70,h:0.60},{kind:'fig',pt:32}),valign:'middle'}));
   ['첫 구간 파일럿 운영','건수 · 기간 · 중단 시점 본사 단독 결정',
-   '보완 장치 — 파일럿 · 주 단위 리포트 · 본사 승인 자료 전용'].forEach((v,i)=>{
+   '보완 장치 — 파일럿 · 주 단위 리포트 · 본사 승인 자료 전용',
+   '러너펍 브랜드 및 러너러너 앱 본사 교육 이수 후 영업 투입'].forEach((v,i)=>{
     const y = L.y+1.86+i*0.34;
     check(s,L,L.x,y+0.03,0.20);
     tx(s,L,{x:L.x+0.32,y,w:L.w-0.32,h:0.28},v,T.body,{size:11,valign:'middle'});
   });
-  foot(s,L,L.x,L.y+3.02,L.w,'※ 리브랜딩 트랙은 운영 중 점주 대상이며, 입지 · 손익 · 계약 절차는 업종과 무관');
+  foot(s,L,L.x,L.y+3.44,L.w,'※ 리브랜딩 트랙은 운영 중 점주 대상이며, 입지 · 손익 · 계약 절차는 업종과 무관');
 
   sectionBar(s,R,R.x,R.y,R.w,'파일럿 운영 기준 — 본사 결정 사항');
   const pt = region('pt',R.x,R.y+0.48,R.w,B.h-0.48);
@@ -623,12 +622,8 @@ function gbar(s,reg,x,y,w,h){
               ['착수 조건','본사 승인 자료 확정 후 즉시 착수 · 착수금 없음'],
               ['중단 기준','본사 판단으로 즉시 중단 — 사유 제한 없음'],
               ['기간 종료 시','연장 또는 종료 본사 단독 결정']];
-  table(s,pt,[{h:'',w:0.32},{h:'항목',w:2.10},{h:'본사 결정 사항',w:pt.w-2.42}],
-    PT.map(([k,v])=>['',{v:k,b:true},v]),{rh:(pt.h-0.38)/8});
-  PT.forEach((_,i)=>{
-    const rh = (pt.h-0.38)/8;
-    icon(s,R,R.x,pt.y+0.42+rh*i+(rh-0.22)/2,0.22,'badge',false);
-  });
+  table(s,pt,[{h:'항목',w:2.42},{h:'본사 결정 사항',w:pt.w-2.42}],
+    PT.map(([k,v])=>[{v:k,b:true},v]),{rh:(pt.h-0.38)/8});
   s.addNotes('숨기지 않고 먼저 말씀드립니다. 검증 방법은 본사가 정하십니다.');
 }
 
