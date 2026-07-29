@@ -80,23 +80,27 @@ function gbar(s,reg,x,y,w,h){
   head2(s,'창업자를 멈추게 하는\n[판단 근거]의 부재');
 
   const B = BODY('full');
-  const Rw = G.rows(B,[['path',1.36,'fix'],['gap',0.20,'fix'],['tbl',1]]);
+  const Rw = G.rows(B,[['path',1.28,'fix'],['gap',0.18,'fix'],['tbl',1]]);
 
   sectionBar(s,Rw.path,Rw.path.x,Rw.path.y,5.60,'주요 창업 경로 1');
   sectionBar(s,Rw.path,Rw.path.x+6.23,Rw.path.y,5.60,'주요 창업 경로 2');
   [[0,'포털사이트 검색','컨설턴트(프랜차이즈) 매물 추천','브랜드 정보 출처 — 컨설턴트'],
    [6.23,'지인 · 커뮤니티','공인중개사 사무소 방문','매물 정보 출처 — 중개사']].forEach(([dx,a,b,tail])=>{
-    const x = Rw.path.x+dx, y = Rw.path.y+0.50;
-    rrect(s,at(Rw.path,{x,y,w:2.42,h:0.40},{kind:'chip'}),C.BLUEBG,0.06);
-    tx(s,Rw.path,{x:x+0.14,y,w:2.14,h:0.40},a,T.body,{size:10.5,valign:'middle'});
-    icon(s,Rw.path,x+2.52,y+0.08,0.24,'arrow',false);
-    rrect(s,at(Rw.path,{x:x+2.86,y,w:2.74,h:0.40},{kind:'chip'}),C.BLUEBG,0.06);
-    tx(s,Rw.path,{x:x+3.00,y,w:2.46,h:0.40},b,T.body,{size:10.5,valign:'middle'});
-    tx(s,Rw.path,{x,y:y+0.48,w:5.60,h:0.26},tail,T.note,{size:8.5,color:C.MUTE,valign:'middle'});
+    const x = Rw.path.x+dx, y = Rw.path.y+0.52;
+    rrect(s,at(Rw.path,{x,y,w:1.72,h:0.40},{kind:'chip'}),C.BLUEBG,0.06);
+    tx(s,Rw.path,{x:x+0.12,y,w:1.48,h:0.40},a,T.body,{size:10,valign:'middle'});
+    icon(s,Rw.path,x+1.80,y+0.08,0.24,'arrow',false);
+    rrect(s,at(Rw.path,{x:x+2.12,y,w:2.44,h:0.40},{kind:'chip'}),C.BLUEBG,0.06);
+    tx(s,Rw.path,{x:x+2.24,y,w:2.20,h:0.40},b,T.body,{size:10,valign:'middle'});
+    icon(s,Rw.path,x+4.64,y+0.08,0.24,'arrow',false);
+    rrect(s,at(Rw.path,{x:x+4.96,y,w:0.64,h:0.40},{kind:'chip'}),C.GRAY,0.06);
+    tx(s,Rw.path,{x:x+4.96,y,w:0.64,h:0.40},'계약',T.body,
+      {size:10,bold:true,color:C.NAVY,align:'center',valign:'middle'});
+    tx(s,Rw.path,{x,y:y+0.46,w:5.60,h:0.26},tail,T.note,{size:8.5,color:C.MUTE,valign:'middle'});
   });
 
   sectionBar(s,Rw.tbl,Rw.tbl.x,Rw.tbl.y,Rw.tbl.w,'이해관계자별 거래 목적과 문제 내용');
-  const tb = region('tb',Rw.tbl.x,Rw.tbl.y+0.48,Rw.tbl.w,Rw.tbl.h-0.48);
+  const tb = region('tb',Rw.tbl.x,Rw.tbl.y+0.46,Rw.tbl.w,Rw.tbl.h-0.60);
   { const rh=(tb.h-0.38)/3;
     for(let i=1;i<3;i+=2) rect(s,at(tb,{x:tb.x,y:tb.y+0.38+rh*i,w:tb.w,h:rh},{kind:'row'}),C.BLUEBG0); }
   table(s,tb,[{h:'이해관계자',w:2.10},{h:'거래 목적',w:4.20},{h:'문제 내용',w:tb.w-6.30}],[
@@ -111,9 +115,10 @@ function gbar(s,reg,x,y,w,h){
 
 /* ══════════════ 03 01 Problem — 보유 자산 · 미확보 변수 ══════════════ */
 {
-  const s = page(3,'01','Problem');
   const CUT = 7.30;
+  const s = p.addSlide(); bg(s,C.WHITE);
   grad(s,FULL(),{x:CUT,y:0,w:G.W-CUT,h:G.H},'gr_panelh.png',C.BLUEBG0);
+  frame(s,3,'01'); anchor(s,'Problem');
   head2(s,'러너펍 [보유 자산] 현황과\n미확보 변수',{x:SAFE.x,w:6.20});
 
   const B = BODY('ir');
@@ -124,24 +129,25 @@ function gbar(s,reg,x,y,w,h){
   ['러너러너 앱 (예약 · 회원관리 · 정산 · 토너먼트)','본사 검증 점포 추천 체계',
    '준법 운영 기준','가맹 절차 9단계 · 계약에서 오픈까지 4~6주',
    '래빗 페스티벌 · 시즌 랭킹전 · 매장 간 콜라보','앱 리뉴얼 후 플랫폼 이용자 1.5배 증가'].forEach((v,i)=>{
-    const y = L.y+0.62+i*0.50;
-    check(s,L,L.x,y+0.04,0.20);
+    const y = L.y+0.62+i*0.56;
+    check(s,L,L.x,y+0.05,0.20);
     tx(s,L,{x:L.x+0.32,y,w:L.w-0.32,h:0.30},v,T.body,{size:11,valign:'middle'});
   });
-  foot(s,L,L.x,L.y+3.66,L.w,'출처 : IT비즈뉴스(2024.7.4) · 앱 리뉴얼 후 플랫폼 이용자 증가분');
+  foot(s,L,L.x,L.y+3.94,L.w,'출처 : IT비즈뉴스(2024.7.4) · 앱 리뉴얼 후 플랫폼 이용자 증가분');
 
-  tagChip(s,R,R.x,R.y+0.04,'미확보');
-  sectionBar(s,R,R.x,R.y+0.44,R.w,'미확보 변수',{bg:C.WHITE});
-  tx(s,R,{x:R.x+0.18,y:R.y+0.92,w:R.w-0.18,h:0.34},'계약 가능한 창업자 모수',T.sub,
+  sectionBar(s,R,R.x,R.y,R.w,'미확보 변수',{bg:C.WHITE});
+  tx(s,R,{x:R.x+0.18,y:R.y+0.52,w:R.w-0.18,h:0.34},'계약 가능한 창업자 모수',T.sub,
     {size:16,color:C.BLUE,valign:'middle'});
-  const pf = P('p11_pub.png'), pw = 3.10, ph = pw/1.778;
-  s.addImage({path:pf, ...img(R,{x:R.x+(R.w-pw)/2,y:R.y+1.40,w:pw,h:ph},pf)});
-  const yb = R.y+1.50+ph;
-  rrect(s,at(R,{x:R.x,y:yb,w:R.w,h:0.92},{kind:'card'}),C.WHITE,0.08);
-  tx(s,R,{x:R.x+0.18,y:yb+0.10,w:R.w-0.36,h:0.26},'다음 장 — 확보된 창업 수요',T.note,
+  tx(s,R,{x:R.x+0.18,y:R.y+0.92,w:R.w-0.36,h:0.46},
+    '개설 속도를 결정하는 계약 이전 구간의 접점 총량',T.cardtx,{size:9.5,color:C.MUTE});
+  const pf = P('p11_pub.png'), pw = 3.00, ph = pw/1.778;
+  s.addImage({path:pf, ...img(R,{x:R.x+(R.w-pw)/2,y:R.y+1.50,w:pw,h:ph},pf)});
+  const yb = R.y+1.60+ph;
+  rrect(s,at(R,{x:R.x,y:yb,w:R.w,h:0.86},{kind:'card'}),C.WHITE,0.08);
+  icon(s,R,R.x+0.18,yb+0.30,0.24,'arrow',false);
+  tx(s,R,{x:R.x+0.50,y:yb+0.14,w:R.w-0.68,h:0.24},'내일사장이 채우는 값',T.note,
     {size:9,color:C.MUTE,valign:'middle'});
-  icon(s,R,R.x+0.18,yb+0.42,0.22,'arrow',false);
-  tx(s,R,{x:R.x+0.48,y:yb+0.40,w:R.w-0.66,h:0.28},'내일사장 예비창업자 상담 DB',T.body,
+  tx(s,R,{x:R.x+0.50,y:yb+0.40,w:R.w-0.68,h:0.28},'예비창업자 상담 DB 5,114명',T.body,
     {size:11,bold:true,color:C.BLUE,valign:'middle'});
   s.addNotes('러너펍은 개설 이후 구조가 완비돼 있습니다. 남은 변수는 창업자 모수입니다.');
 }
@@ -260,7 +266,7 @@ function gbar(s,reg,x,y,w,h){
   [['deal','가맹영업대행',['예비창업자 모객 · 1차 상담 · 등급 분류','조건별 브랜드 매칭 및 미팅 주선','정보공개서 제공부터 계약 체결까지 절차 관리']],
    ['mega','마케팅',['블로그 · 네이버 플레이스 · 검색광고 · SNS','창업박람회 부스 · 사업설명회','매장 오픈 마케팅']],
    ['store','점포개발 → 물건화',['보증금 · 권리금 · 월세 · 평수 수집','실측 · 현장사진 · 인테리어 견적 산출','즉시 브리핑 가능한 상태로 완성']]].forEach(([ic,k,vs],i)=>{
-    const y = L.y+0.58+i*1.16;
+    const y = L.y+0.58+i*1.20;
     icon(s,L,L.x,y+0.01,0.26,ic,false);
     tx(s,L,{x:L.x+0.36,y,w:L.w-0.36,h:0.26},k,T.sub,{size:12.5,valign:'middle'});
     vs.forEach((v,j)=>tx(s,L,{x:L.x+0.36,y:y+0.30+j*0.24,w:L.w-0.36,h:0.24},'· '+v,T.cardtx,
@@ -272,18 +278,18 @@ function gbar(s,reg,x,y,w,h){
     {size:9,color:C.MUTE,align:'right',valign:'middle'});
   const BR = ['33떡볶이','백소정','원앤원','투썸플레이스','명륜진사갈비','요아정',
               '차알','밀본','오레노카츠','랑데자뷰','청년피자','셀렉토커피'];
-  const gr = region('br',R.x,R.y+0.52,R.w,1.62);
+  const gr = region('br',R.x,R.y+0.52,R.w,2.10);
   const bw = (gr.w-0.16*3)/4, bh = (gr.h-0.14*2)/3;
   BR.forEach((b,i)=>{
     const x = gr.x+(bw+0.16)*(i%4), y = gr.y+(bh+0.14)*Math.floor(i/4);
     rrect(s,at(gr,{x,y,w:bw,h:bh},{kind:'card'}),C.BLUEBG0,0.05);
     tx(s,gr,{x:x+0.08,y,w:bw-0.16,h:bh},b,T.body,{size:10.5,align:'center',valign:'middle'});
   });
-  sectionBar(s,R,R.x,R.y+2.32,R.w,'대표 사례');
-  rrect(s,at(R,{x:R.x,y:R.y+2.80,w:R.w,h:0.64},{kind:'card'}),C.BLUEBG,0.08);
-  tx(s,R,{x:R.x+0.22,y:R.y+2.80,w:R.w-0.44,h:0.64},
+  sectionBar(s,R,R.x,R.y+2.74,R.w,'대표 사례');
+  rrect(s,at(R,{x:R.x,y:R.y+3.22,w:R.w,h:0.64},{kind:'card'}),C.BLUEBG,0.08);
+  tx(s,R,{x:R.x+0.22,y:R.y+3.22,w:R.w-0.44,h:0.64},
     '33떡볶이 강동역점 — 임대차 · 가맹 예약 완료',T.sub,{size:13,valign:'middle'});
-  foot(s,R,R.x,R.y+3.54,R.w,'출처 : 내일사장 영업팀 주간보고 · 블로그(2025~2026)');
+  foot(s,R,R.x,R.y+3.94,R.w,'출처 : 내일사장 영업팀 주간보고 · 블로그(2025~2026)');
   s.addNotes('플랫폼 지표가 아니라 가맹을 판 실적입니다.');
 }
 
@@ -294,22 +300,22 @@ function gbar(s,reg,x,y,w,h){
 
   const B = BODY('ir');
   sectionBar(s,B,B.x,B.y,B.w,'내일사장 전략적 제휴 현황');
-  const AL = [['SPC 플랫폼 개발 참여','모객','파리바게뜨 · 배스킨라빈스 · 던킨 등 가맹점 6,000개 · 그룹사 협업'],
-              ['KFA 공동사업단 공동설립','신뢰도','1,400여개 프랜차이즈 본사 대상 · 인증매장 · 위생교육 공동 수행'],
-              ['삼성웰스토리 365솔루션','모객','사업단 공동설립 · 고객사 브랜드인증관 입점 및 광고'],
-              ['바로고 든든상점','모객','18만 등록매장 대상 배너 · 푸시 상호 노출'],
+  const AL = [['SPC 플랫폼 개발 참여','모객','파리바게뜨 · 던킨 등 가맹점 6,000개'],
+              ['KFA 공동사업단 공동설립','신뢰도','프랜차이즈 본사 1,400여개 대상 · 인증매장 · 위생교육'],
+              ['삼성웰스토리 365솔루션','모객','사업단 공동설립 · 브랜드인증관 입점 및 광고'],
+              ['바로고 든든상점','모객','등록매장 18만 대상 배너 · 푸시 상호 노출'],
               ['요기요','모객','플랫폼 배너 · 내일사장 제작 콘텐츠 노출'],
               ['동네알바 (사람인)','모객','상시 배너 노출'],
               ['포브스코리아 어워즈','신뢰도','중앙일보 주최 · 내일사장 주관'],
-              ['아프니까 사장이다','모객','210만 회원 대상 바이럴']];
+              ['아프니까 사장이다','모객','회원 210만 대상 바이럴']];
   const gw = (B.w-0.28*3)/4, gh = (B.h-0.56-0.26)/2;
   AL.forEach(([k,tag,v],i)=>{
     const x = B.x+(gw+0.28)*(i%4), y = B.y+0.56+(gh+0.26)*Math.floor(i/4);
     rrect(s,at(B,{x,y,w:gw,h:gh},{kind:'card'}),C.BLUEBG0,0.08);
-    tx(s,B,{x:x+0.20,y:y+0.14,w:gw-0.40,h:0.46},k,T.sub,{size:11.5});
-    tagChip(s,B,x+0.20,y+0.66,tag,{bg:C.WHITE,color:C.BLUE});
-    hr(s,x+0.20,y+1.02,gw-0.40,C.RULE);
-    tx(s,B,{x:x+0.20,y:y+1.12,w:gw-0.40,h:0.52},v,T.cardtx,{size:9.3,color:C.MUTE});
+    tagChip(s,B,x+0.20,y+0.16,tag,{bg:C.WHITE,color:C.BLUE});
+    tx(s,B,{x:x+0.20,y:y+0.50,w:gw-0.40,h:0.48},k,T.sub,{size:11.5});
+    hr(s,x+0.20,y+1.06,gw-0.40,C.RULE);
+    tx(s,B,{x:x+0.20,y:y+1.16,w:gw-0.40,h:0.50},v,T.cardtx,{size:9.3,color:C.MUTE});
   });
   s.addNotes('러너펍에 필요한 창업 수요는 이 제휴망 안에서 나옵니다.');
 }
@@ -329,20 +335,20 @@ function gbar(s,reg,x,y,w,h){
   const cs = split(B,4,0.26);
   ST.forEach(([st,file,cap],i)=>{
     const c = cs[i];
-    tx(s,c,{x:c.x,y:c.y,w:c.w,h:0.26},st,T.label,{color:C.MUTE,align:'center',valign:'middle'});
+    tx(s,c,{x:c.x,y:c.y+0.40,w:c.w,h:0.26},st,T.label,{color:C.MUTE,align:'center',valign:'middle'});
     const f = P(file), a = G.imgAspect(f);
-    const iw = Math.min(c.w-0.20,2.10*a), ih = iw/a;
-    rrect(s,at(c,{x:c.x,y:c.y+0.36,w:c.w,h:2.34},{kind:'card'}),C.WHITE,0.08);
-    s.addImage({path:f, ...img(c,{x:c.x+(c.w-iw)/2,y:c.y+0.44+(2.18-ih)/2,w:iw,h:ih},f)});
-    rect(s,at(c,{x:c.x,y:c.y+2.80,w:c.w,h:0.36},{kind:'cap'}),C.BLUE);
-    tx(s,c,{x:c.x+0.08,y:c.y+2.80,w:c.w-0.16,h:0.36},cap,T.label,
+    const iw = Math.min(c.w-0.20,2.34*a), ih = iw/a;
+    rrect(s,at(c,{x:c.x,y:c.y+0.76,w:c.w,h:2.86},{kind:'card'}),C.WHITE,0.08);
+    s.addImage({path:f, ...img(c,{x:c.x+(c.w-iw)/2,y:c.y+0.86+(2.34-ih)/2,w:iw,h:ih},f)});
+    rect(s,at(c,{x:c.x,y:c.y+3.26,w:c.w,h:0.36},{kind:'cap'}),C.BLUE);
+    tx(s,c,{x:c.x+0.08,y:c.y+3.26,w:c.w-0.16,h:0.36},cap,T.label,
       {color:C.WHITE,align:'center',valign:'middle'});
-    if(i<3) hr(s,c.x+c.w+0.04,c.y+1.54,0.18,C.MUTED,0.022);
+    if(i<3) hr(s,c.x+c.w+0.04,c.y+2.18,0.18,C.MUTED,0.022);
   });
-  sectionBar(s,B,B.x,B.y+3.34,B.w,'보유 도구',{h:0.30,labelW:1.0});
+  sectionBar(s,B,B.x,B.y+3.74,B.w,'보유 도구',{h:0.30,labelW:1.0});
   let tx0 = B.x+1.36;
   ['홈택스 연동','상권분석 보고서','거리제한 지도','정보공개서 D-day','전자계약','SV 점검보고서']
-    .forEach(v=>{ tx0 += tagChip(s,B,tx0,B.y+3.37,v,{bg:C.WHITE,color:C.BLUE}) + 0.16; });
+    .forEach(v=>{ tx0 += tagChip(s,B,tx0,B.y+3.77,v,{bg:C.WHITE,color:C.BLUE}) + 0.16; });
   s.addNotes('창업자가 결정을 미루는 자리마다 근거 문서를 내놓습니다.');
 }
 
@@ -357,7 +363,7 @@ function gbar(s,reg,x,y,w,h){
   const tb = region('tb',Rw.tbl.x,Rw.tbl.y+0.48,Rw.tbl.w,Rw.tbl.h-0.48);
   { const rh=(tb.h-0.38)/6;
     for(let i=1;i<6;i+=2) rect(s,at(tb,{x:tb.x,y:tb.y+0.38+rh*i,w:tb.w,h:rh},{kind:'row'}),C.BLUEBG0); }
-  table(s,tb,[{h:'업무',w:2.40},{h:'내일사장 수행',w:5.30},{h:'본사 승인',w:tb.w-7.70}],[
+  table(s,tb,[{h:'업무',w:2.70},{h:'내일사장 수행',w:5.80},{h:'본사 승인',w:tb.w-8.50}],[
     ['영업 조직 운영','가맹영업팀 운영 · 두 트랙 동시 영업',{v:'—',c:C.MUTE}],
     ['창업 마케팅','예비창업자 리드 확보 · 창업마케팅 집행','브랜드 자료 승인'],
     ['창업 상담 및 브리핑','상권 · 손익 자료로 결정 마무리','승인 문구 사용'],
