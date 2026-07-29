@@ -64,7 +64,7 @@ function gbar(s,reg,x,y,w,h){
     t({...at(F,{x:RX,y:4.00,w:RW,h:0.78},{kind:'fig',pt:42}),valign:'middle'}));
   tx(s,F,{x:RX,y:4.82,w:RW,h:0.28},'가맹비 1,500만원 − 성공보수 1,000만원 = 계약 시점 본사 순수취 +500만원',T.body,
     {size:11,bold:true,color:C.NAVY,valign:'middle'});
-  foot(s,F,RX,5.14,RW,'※ 계약 체결 및 가맹비 입금 완료 건에만 청구 · 착수금 · 월 고정비 · 광고비 없음 · 러너펍 공개 가맹 안내 기준',9);
+  foot(s,F,RX,5.14,RW,'※ 계약 체결 및 가맹비 입금 완료 건에만 청구하며, 착수금 · 월 고정비 · 광고비 없음 (러너펍 공개 가맹 안내 기준)',9);
 
   /* 다크 띠 — 제안 4행 요약 */
   const SUM = [['확보된 창업 수요','앱 10만 · 예비창업자 DB 5,114명'],
@@ -319,10 +319,10 @@ function gbar(s,reg,x,y,w,h){
 
   const B = BODY('ir');
   sectionBar(s,B,B.x,B.y,B.w,'러너펍 창업 수요 확보에 활용되는 제휴망');
-  const AL = [['SPC 플랫폼 개발 참여','모객','파리바게뜨 · 던킨 등 가맹점 6,000개','spc',1],
+  const AL = [['SPC 플랫폼 개발 참여','모객','파리바게뜨 · 던킨 등 가맹점 6,000개',null,1],
               ['KFA 공동사업단 공동설립','신뢰도','프랜차이즈 본사 1,400여개 대상 · 인증매장 · 위생교육','kfa',1],
               ['바로고 든든상점','모객','등록매장 18만 대상 배너 · 푸시 상호 노출','barogo',1],
-              ['삼성웰스토리 365솔루션','모객','사업단 공동설립 · 브랜드인증관 입점 및 광고','samsung',0],
+              ['삼성웰스토리 365솔루션','모객','사업단 공동설립 · 브랜드인증관 입점 및 광고',null,0],
               ['요기요','모객','플랫폼 배너 · 내일사장 제작 콘텐츠 노출','yogiyo',0],
               ['동네알바 (사람인)','모객','상시 배너 노출','saramin',0],
               ['포브스코리아 어워즈','신뢰도','중앙일보 주최 · 내일사장 주관','forbes',0],
@@ -511,16 +511,16 @@ function gbar(s,reg,x,y,w,h){
     hr(s,L.x,y+0.38,L.w,C.RULE);
   });
   rrect(s,at(L,{x:L.x,y:L.y+1.62,w:L.w,h:0.86},{kind:'card'}),C.BLUEBG,0.08);
-  tx(s,L,{x:L.x+0.20,y:L.y+1.72,w:L.w-0.40,h:0.24},'계약 시점 본사 순수익',T.note,
+  tx(s,L,{x:L.x+0.20,y:L.y+1.72,w:L.w-0.40,h:0.24},'계약 시점 본사 순수취',T.note,
     {size:9,color:C.MUTE,valign:'middle'});
   s.addText([{text:'+500',options:{fontSize:30,bold:true,color:C.BLUE,charSpacing:-1.2}},
              {text:'만원',options:{fontSize:13,bold:true,color:C.BLUE}}],
     t({...at(L,{x:L.x+0.20,y:L.y+1.94,w:L.w-0.40,h:0.48},{kind:'fig',pt:30}),valign:'middle'}));
-  tx(s,L,{x:L.x,y:L.y+2.62,w:L.w,h:0.26},'이후 월 로열티 150만원 전액 본사 수익 순증',T.body,
+  tx(s,L,{x:L.x,y:L.y+2.62,w:L.w,h:0.26},'이후 월 로열티 150만원 전액 본사 순증 — 개설 대가 추가 청구 없음',T.body,
     {size:11,valign:'middle'});
   foot(s,L,L.x,L.y+3.00,L.w,'※ 러너펍 공개 가맹 안내 기준 시뮬레이션 · 실제 조건은 본사 정책에 따름');
 
-  sectionBar(s,R,R.x,R.y,R.w,'1개점 누적 본사 수익',{bg:C.WHITE});
+  sectionBar(s,R,R.x,R.y,R.w,'1개점 누적 본사 순수취 — 성공보수 차감 후',{bg:C.WHITE});
   [['12개월',2300],['24개월',4100],['36개월',5900]].forEach(([k,v],i)=>{
     const y = R.y+0.54+i*0.42;
     tx(s,R,{x:R.x,y,w:0.96,h:0.28},k,T.body,{size:10.5,valign:'middle'});
@@ -528,7 +528,7 @@ function gbar(s,reg,x,y,w,h){
     tx(s,R,{x:R.x+R.w-1.52,y,w:1.52,h:0.28},v.toLocaleString()+'만원',T.glabel,
       {size:11,color:i===2?C.BLUE:C.NAVY,align:'right',valign:'middle'});
   });
-  sectionBar(s,R,R.x,R.y+1.86,R.w,'출점 규모별 36개월 누적',{bg:C.WHITE});
+  sectionBar(s,R,R.x,R.y+1.86,R.w,'출점 규모별 36개월 누적 순수취',{bg:C.WHITE});
   [['3개점',17700],['5개점',29500],['10개점',59000]].forEach(([k,v],i)=>{
     const y = R.y+2.40+i*0.42;
     tx(s,R,{x:R.x,y,w:0.96,h:0.28},k,T.body,{size:10.5,valign:'middle'});
@@ -584,7 +584,7 @@ function gbar(s,reg,x,y,w,h){
 /* ══════════════ 14 04 Governance — 업종 이력 없음 ══════════════ */
 {
   const s = page(14,'04','Governance',true);
-  head2(s,'홀덤 업종 전담 영업\n[이력 없음]');
+  head2(s,'홀덤 업종 전담\n[영업 이력 없음]');
 
   const B = BODY('ir');
   const L = region('nL',SAFE.x,B.y,4.72,B.h);
@@ -609,7 +609,7 @@ function gbar(s,reg,x,y,w,h){
     check(s,L,L.x,y+0.03,0.20);
     tx(s,L,{x:L.x+0.32,y,w:L.w-0.32,h:0.28},v,T.body,{size:11,valign:'middle'});
   });
-  foot(s,L,L.x,L.y+3.02,L.w,'※ 리브랜딩 트랙은 운영 중 점주 대상 · 입지 · 손익 · 계약 절차는 업종 무관');
+  foot(s,L,L.x,L.y+3.02,L.w,'※ 리브랜딩 트랙은 운영 중 점주 대상이며, 입지 · 손익 · 계약 절차는 업종과 무관');
 
   sectionBar(s,R,R.x,R.y,R.w,'파일럿 운영 기준 — 본사 결정 사항');
   const pt = region('pt',R.x,R.y+0.48,R.w,B.h-0.48);
