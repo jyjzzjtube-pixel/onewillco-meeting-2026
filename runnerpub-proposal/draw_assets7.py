@@ -34,12 +34,13 @@ def phone(screen_path, w, h, crop_top=0.0, crop_h=1.0):
     sx1, sy1 = W - pad, H - int(H * 0.038)
     sw, sh = sx1 - sx0, sy1 - sy0
     src = Image.open(screen_path).convert('RGB')
-    # cover 맞춤 — 화면을 반드시 꽉 채운다(흰 여백 0), 세로 창 위치만 crop_top 으로 고른다
-    sc = max(sw / src.width, sh / src.height)
-    src = src.resize((max(1, int(src.width * sc)), max(1, int(src.height * sc))), Image.LANCZOS)
-    if src.width > sw:
-        x0 = (src.width - sw) // 2
-        src = src.crop((x0, 0, x0 + sw, src.height))
+    # 폭 기준 맞춤 — 가로는 절대 자르지 않는다(글줄 절단 0). 세로만 crop_top 으로 창을 고른다
+    sc = sw / src.width
+    src = src.resize((sw, max(1, int(src.height * sc))), Image.LANCZOS)
+    if src.height < sh:                       # 세로가 모자라면 흰 바탕으로 채운다
+        pad_im = Image.new('RGB', (sw, sh), (255, 255, 255))
+        pad_im.paste(src, (0, 0))
+        src = pad_im
     y0 = min(max(0, int((src.height - sh) * crop_top)), max(0, src.height - sh))
     src = src.crop((0, y0, sw, y0 + sh))
     mask = Image.new('L', (sw, sh), 0)
@@ -56,12 +57,12 @@ def phone(screen_path, w, h, crop_top=0.0, crop_h=1.0):
 
 def cover_phones(name='cover_phones.png'):
     """앱 화면 2대 겹침 — 팔레트 프레임"""
-    W, H = 1560, 1780
+    W, H = 1470, 1740
     out = Image.new('RGBA', (W, H), (0, 0, 0, 0))
     # 두 대만 쓴다 — 서로 다른 화면 2종이 실재하므로 3대째는 같은 화면 반복이 된다
     specs = [
-        ('app_report.png', 600, 1090, -9, (20, 560), 0.02, 1.0),
-        ('app_sales.png', 720, 1300, 0, (620, 200), 0.00, 1.0),
+        ('app_report.png', 520, 945, -9, (10, 670), 0.02, 1.0),
+        ('app_sales.png', 740, 1330, 0, (700, 150), 0.00, 1.0),
     ]
     for f, w, h, ang, pos, ct, ch in specs:
         p = phone(os.path.join(A, f), w, h, ct, ch)
