@@ -2639,18 +2639,18 @@ function renderDash() {
   const avgPayback = paybacks.length ? paybacks.reduce((a, b) => a + b, 0) / paybacks.length : null;
   const allChecks = [...DB.brands, ...DB.listings].flatMap(o => o.checks || []);
   const ddPct = allChecks.length ? Math.round(allChecks.filter(c => c.done).length / allChecks.length * 100) : null;
-  const greenCnt = [...DB.brands.map(b => ['brand', b]), ...DB.listings.map(l => ['listing', l])].filter(([k, o]) => signal(k, o).s === 'green').length;
+  const greenCnt = [...DB.brands.map(b => ['brand', b]), ...liveListings().map(l => ['listing', l])].filter(([k, o]) => signal(k, o).s === 'green').length;
   document.getElementById('dashStats').innerHTML = `
-    <div class="kpi k-accent"><div class="kt"><span class="ic">💰</span><span class="lbl">진행 중 딜 가치</span></div><div class="val">${fmtMoney(activeBrandValue + activeListingValue)}<small> 원</small></div><div class="sub">브랜드+매물 합산</div></div>
-    <div class="kpi k-slate"><div class="kt"><span class="ic">🏢</span><span class="lbl">브랜드 / 매물</span></div><div class="val">${DB.brands.length} <small>/ ${DB.listings.length}</small></div><div class="sub">진행 중 매물 ${onSale}건</div></div>
-    <div class="kpi k-green"><div class="kt"><span class="ic">🟢</span><span class="lbl">우량 딜</span></div><div class="val">${greenCnt}<small> 건</small></div><div class="sub">신호등 초록 (먼저 볼 딜)</div></div>
-    <div class="kpi k-slate"><div class="kt"><span class="ic">⏱</span><span class="lbl">평균 회수기간</span></div><div class="val">${avgPayback == null ? '-' : fmtMonths(avgPayback)}</div><div class="sub">매물 평균</div></div>
-    <div class="kpi k-amber"><div class="kt"><span class="ic">✅</span><span class="lbl">실사 진행률</span></div><div class="val">${ddPct == null ? '-' : ddPct + '%'}</div><div class="sub">체크리스트 완료 비율</div></div>
-    <div class="kpi k-accent"><div class="kt"><span class="ic">💬</span><span class="lbl">누적 질문·댓글</span></div><div class="val">${totalComments}<small> 개</small></div><div class="sub">협업 활동</div></div>`;
+    <div class="kpi k-accent"><div class="kt"><span class="lbl">진행 중 딜 가치</span></div><div class="val">${fmtMoney(activeBrandValue + activeListingValue)}<small> 원</small></div><div class="sub">브랜드+매물 합산</div></div>
+    <div class="kpi k-slate"><div class="kt"><span class="lbl">브랜드 / 매물</span></div><div class="val">${DB.brands.length} <small>/ ${liveListings().length}</small></div><div class="sub">진행 중 매물 ${onSale}건</div></div>
+    <div class="kpi k-green"><div class="kt"><span class="lbl">우량 딜</span></div><div class="val">${greenCnt}<small> 건</small></div><div class="sub">신호등 초록 (먼저 볼 딜)</div></div>
+    <div class="kpi k-slate"><div class="kt"><span class="lbl">평균 회수기간</span></div><div class="val">${avgPayback == null ? '-' : fmtMonths(avgPayback)}</div><div class="sub">매물 평균</div></div>
+    <div class="kpi k-amber"><div class="kt"><span class="lbl">실사 진행률</span></div><div class="val">${ddPct == null ? '-' : ddPct + '%'}</div><div class="sub">체크리스트 완료 비율</div></div>
+    <div class="kpi k-accent"><div class="kt"><span class="lbl">누적 질문·댓글</span></div><div class="val">${totalComments}<small> 개</small></div><div class="sub">협업 활동</div></div>`;
 
   // 파이프라인 퍼널
   const funnelHTML = (title, stages, items, kind, priceKey) => `
-    <div class="funnel-lab">${title}</div>
+    <div class="funnel-lab">${esc(title)}</div>
     <div class="funnel">${stages.map(st => {
       const list = items.filter(o => (o.status || stages[0]) === st);
       const val = list.reduce((s, o) => s + (Number(o[priceKey]) || 0), 0);
@@ -2658,14 +2658,14 @@ function renderDash() {
         <div class="n">${list.length}</div><div class="s">${esc(st)}</div><div class="v">${val ? fmtMoney(val) : '·'}</div></div>`;
     }).join('')}</div>`;
   document.getElementById('dashFunnel').innerHTML =
-    funnelHTML('🏢 브랜드', BRAND_STAGES, DB.brands, 'brand', 'askPrice') +
-    funnelHTML('🏪 매물', LISTING_STAGES, DB.listings, 'listing', 'price');
+    funnelHTML('브랜드 M&A', BRAND_STAGES, DB.brands, 'brand', 'askPrice') +
+    funnelHTML('양도양수 매물', LISTING_STAGES, liveListings(), 'listing', 'price');
 
   // 신호등 요약
   const sc = { green: 0, yellow: 0, red: 0 };
-  [...DB.brands.map(b => ['brand', b]), ...DB.listings.map(l => ['listing', l])].forEach(([k, o]) => { sc[signal(k, o).s]++; });
+  [...DB.brands.map(b => ['brand', b]), ...liveListings().map(l => ['listing', l])].forEach(([k, o]) => { sc[signal(k, o).s]++; });
   document.getElementById('dashSignals').innerHTML = `
-    <div class="s g" onclick="go('listings');document.getElementById('listingSignalFilter').value='green';renderListings()"><div class="n">${sc.green}</div><div class="l">🟢 우량</div></div>
+    <div class="s g" onclick="go('listings');document.getElementById('listingSignalFilter').value='green';renderListings()"><div class="n">${sc.green}</div><div class="l">우량</div></div>
     <div class="s y"><div class="n">${sc.yellow}</div><div class="l">검토</div></div>
     <div class="s r"><div class="n">${sc.red}</div><div class="l">위험</div></div>`;
 
@@ -2724,17 +2724,17 @@ function renderDash() {
   [...DB.brands.map(o => ({ kind: 'brand', o })), ...DB.listings.map(o => ({ kind: 'listing', o }))].forEach(({ kind, o }) => {
     const cs = o.comments || [];
     const last = cs[cs.length - 1];
-    if (last && last.author !== me2) todos.push({ icon: '💬', tt: '답변 필요', name: entName(kind, o), open: entOpen(kind, o), detail: last.author + ': ' + last.text });
+    if (last && last.author !== me2) todos.push({ icon: '', tt: '답변 필요', name: entName(kind, o), open: entOpen(kind, o), detail: last.author + ': ' + last.text });
     const inDD = kind === 'brand' ? o.status === '실사중' : o.status === '계약진행';
     const cks = o.checks || [];
-    if (inDD && cks.some(c => !c.done)) todos.push({ icon: '✅', tt: '실사 미완료', name: entName(kind, o), open: entOpen(kind, o), detail: cks.filter(c => c.done).length + '/' + cks.length + ' 완료' });
-    if (o.nextAction && isOverdue(o)) todos.push({ icon: '⏰', tt: '기한 지남', name: entName(kind, o), open: entOpen(kind, o), detail: o.nextAction + ' (~' + o.nextDue + ')' });
-    else if (agingDays(o) >= 14) todos.push({ icon: '🥶', tt: '정체', name: entName(kind, o), open: entOpen(kind, o), detail: agingDays(o) + '일간 진전 없음 — 접을지 판단' });
+    if (inDD && cks.some(c => !c.done)) todos.push({ icon: '', tt: '실사 미완료', name: entName(kind, o), open: entOpen(kind, o), detail: cks.filter(c => c.done).length + '/' + cks.length + ' 완료' });
+    if (o.nextAction && isOverdue(o)) todos.push({ icon: '', tt: '기한 지남', name: entName(kind, o), open: entOpen(kind, o), detail: o.nextAction + ' (~' + o.nextDue + ')' });
+    else if (agingDays(o) >= 14) todos.push({ icon: '', tt: '정체', name: entName(kind, o), open: entOpen(kind, o), detail: agingDays(o) + '일간 진전 없음 — 접을지 판단' });
   });
   const todoEl = document.getElementById('dashTodo');
   if (todos.length) {
     todoEl.style.display = 'block';
-    todoEl.innerHTML = `<h3>📋 오늘 할 일 <span style="color:var(--primary)">${todos.length}</span></h3>` +
+    todoEl.innerHTML = `<h3>오늘 할 일 <span style="color:var(--primary)">${todos.length}</span></h3>` +
       todos.slice(0, 8).map(t => `<div class="todo-row" onclick="${t.open}"><span>${t.icon}</span><span class="tt">${esc(t.tt)}</span><span>${esc(t.name)}</span><span class="td">${esc(t.detail)}</span></div>`).join('');
   } else {
     todoEl.style.display = 'none';
