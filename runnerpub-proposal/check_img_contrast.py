@@ -71,6 +71,32 @@ def measure(path, bg_hex):
 SKIP_PREFIX = ('gr_', 'cover_phones', 'app_', 'p07_step', 'p07_dday', 'p07_area', 'p11_pub')
 
 
+def ink_gap(path, box_w, box_h):
+    """선언한 상자와 실제로 보이는 잉크 사이의 빈 띠를 in 단위로 낸다.
+       좌표를 정확히 찍어도 PNG 안에 투명 여백이 있으면 잉크가 상자 안에서 떠다닌다 —
+       "좌표는 맞는데 눈으로 보면 어긋난다" 의 정체."""
+    im = Image.open(path)
+    if im.mode not in ('RGBA', 'LA', 'PA'):
+        return None                                  # 불투명 사진은 상자를 꽉 채운다
+    a = np.asarray(im.convert('RGBA'))[:, :, 3]
+    ys, xs = np.nonzero(a > 8)
+    if len(xs) == 0:
+        return None
+    w, h = im.size
+    return {
+        'left':   box_w * (xs.min() / w),
+        'right':  box_w * ((w - 1 - xs.max()) / w),
+        'top':    box_h * (ys.min() / h),
+        'bottom': box_h * ((h - 1 - ys.max()) / h),
+    }
+
+
+# 눈에 어긋나 보이는 원인은 여백의 절대량이 아니라 좌우·상하 비대칭이다.
+# (정사각 아이콘 상자에 가로로 긴 화살표를 넣으면 위아래 여백은 설계상 남는다 — 결함이 아니다.)
+MAX_ASYM = 0.010        # 좌우 또는 상하 여백 차이 허용치 (in)
+MIN_FILL = 0.86         # 긴 축이 상자를 채워야 하는 최소 비율
+
+
 def main():
     mf = os.path.join(V, 'img_manifest.json')
     if not os.path.exists(mf):
@@ -97,6 +123,36 @@ def main():
         elif m['strong'] < 0.15:
             bad.append((r, m, f"진한 잉크 {m['strong']*100:.0f}% — 획 대부분이 배경에 묻힘"))
 
+    # ── 선언 상자 대비 잉크 정합 ──
+    gaps, seen_ok = [], {}
+    for r in rows:
+        g = ink_gap(r['file'], r['w'], r['h']) if os.path.exists(r['file']) else None
+        if not g:
+            continue
+        ax = abs(g['left'] - g['right'])
+        ay = abs(g['top'] - g['bottom'])
+        fx = 1 - (g['left'] + g['right']) / r['w']
+        fy = 1 - (g['top'] + g['bottom']) / r['h']
+        fill = max(fx, fy)
+        why = []
+        if ax > MAX_ASYM:
+            why.append(f'좌우 치우침 {ax:.3f}in')
+        if ay > MAX_ASYM:
+            why.append(f'상하 치우침 {ay:.3f}in')
+        if fill < MIN_FILL:
+            why.append(f'긴 축 채움 {fill:.0%}')
+        if why:
+            gaps.append((r, g, why, max(ax, ay)))
+        else:
+            seen_ok.setdefault(r['name'], (fill, ax, ay))
+    print('이미지 잉크 정합 검사 — 선언한 상자와 실제 잉크가 일치하는가')
+    print(f'  검사 {len(rows)}건 · 어긋남 {len(gaps)}건 '
+          f'(치우침 {MAX_ASYM}in 초과 또는 긴 축 채움 {MIN_FILL:.0%} 미만)')
+    for r, g, why, _ in sorted(gaps, key=lambda t: -t[3])[:14]:
+        print(f"    P{r['slide']:02d}  {r['name']:22s} 상자 {r['w']:.2f}×{r['h']:.2f}in  "
+              f"여백 좌{g['left']:.3f} 우{g['right']:.3f} 상{g['top']:.3f} 하{g['bottom']:.3f}  "
+              f"— {' · '.join(why)}")
+    print()
     print('이미지 잉크 대비 검사')
     print(f'  검사 대상 {len(checked)}건 (사진·스크린샷·그라데이션 제외)')
     print(f'  위반 {len(bad)}건 (p99 대비 {MIN} 미만 또는 진한 잉크 15% 미만)')
@@ -120,7 +176,7 @@ def main():
         for r, m in worst:
             print(f"    P{r['slide']:02d}  {r['name']:22s} on #{r['bg']}  "
                   f"p90 {m['p90']:5.2f}  진한잉크 {m['strong']*100:3.0f}%")
-    return 1 if bad else 0
+    return 1 if (bad or gaps) else 0
 
 
 if __name__ == '__main__':

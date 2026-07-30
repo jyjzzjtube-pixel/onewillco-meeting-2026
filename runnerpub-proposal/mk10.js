@@ -42,30 +42,33 @@ function gbar(s,reg,x,y,w,h){
 {
   const s = p.addSlide(); bg(s,C.WHITE);
   const F = FULL();
-  grad(s,F,{x:0,y:0,w:G.W,h:5.62},'gr_page.png',C.WHITE);
-  grad(s,F,{x:0,y:5.62,w:G.W,h:G.H-5.62},'gr_cover.png',C.NAVY);
+  grad(s,F,{x:0,y:0,w:G.W,h:5.86},'gr_page.png',C.WHITE);
+  grad(s,F,{x:0,y:5.86,w:G.W,h:G.H-5.86},'gr_cover.png',C.NAVY);
   setSlide(1);
 
-  const pf = P('cover_phones.png'), pw = 3.80, ph = pw/G.imgAspect(pf);
-  s.addImage({path:pf, ...img(F,{x:0.95,y:0.62,w:pw,h:ph},pf)});
-  tx(s,F,{x:0.95,y:0.70+ph,w:pw+1.0,h:0.24},'내일사장 앱 — 실매출 검증 · 인증 리포트',T.note,
+  const TOP = 0.94, BOT = 5.30;                       // 좌우 두 단이 공유하는 상·하 기준선
+  const CAPH = 0.22, CAPGAP = 0.16;
+  const pf = P('cover_phones.png');
+  const ph = BOT - TOP - CAPGAP - CAPH, pw = ph*G.imgAspect(pf);
+  s.addImage({path:pf, ...img(F,{x:SAFE.x,y:TOP,w:pw,h:ph},pf)});
+  const RX = 5.40, RW = RIGHT-RX;
+  tx(s,F,{x:SAFE.x,y:BOT-CAPH,w:RX-SAFE.x-0.30,h:CAPH},'내일사장 앱 — 실매출 검증 · 인증 리포트',T.note,
     {size:9,color:C.MUTE,valign:'middle'});
 
-  const RX = 5.90, RW = RIGHT-RX;
-  tx(s,F,{x:RX,y:1.24,w:RW,h:0.26},'가맹 개설 영업 위임 제안',T.label,
+  tx(s,F,{x:RX,y:TOP,w:RW,h:0.26},'가맹 개설 영업 위임 제안',T.label,
     {size:11,color:C.BLUE,cs:2.8,valign:'middle'});
-  hr(s,RX,1.62,1.60,C.BLUE,0.030);
-  tx(s,F,{x:RX,y:1.92,w:RW,h:1.42},
+  hr(s,RX,1.34,1.60,C.BLUE,0.030);
+  tx(s,F,{x:RX,y:1.58,w:RW,h:1.48},
     runs('러너펍 가맹 개설 영업\n[전면 위임] 제안',false),T.head,{size:35,ls:48});
-  hr(s,RX,3.58,RW,C.RULE);
-  tx(s,F,{x:RX,y:3.74,w:RW,h:0.24},'가맹계약 1건당 성공보수 (VAT 별도)',T.note,
+  hr(s,RX,3.34,RW,C.RULE);
+  tx(s,F,{x:RX,y:3.52,w:RW,h:0.24},'가맹계약 1건당 성공보수 (VAT 별도)',T.note,
     {size:9.5,color:C.MUTE,valign:'middle'});
   s.addText([{text:'1,000',options:{fontSize:42,bold:true,color:C.BLUE,charSpacing:-1.4}},
              {text:'만원',options:{fontSize:16,bold:true,color:C.BLUE}}],
-    t({...at(F,{x:RX,y:4.00,w:RW,h:0.78},{kind:'fig',pt:42}),valign:'middle'}));
-  tx(s,F,{x:RX,y:4.82,w:RW,h:0.28},'가맹비 1,500만원 − 성공보수 1,000만원 = 계약 시점 본사 순수취 +500만원',T.body,
+    t({...at(F,{x:RX,y:3.82,w:RW,h:0.80},{kind:'fig',pt:42}),valign:'middle'}));
+  tx(s,F,{x:RX,y:4.68,w:RW,h:0.28},'가맹비 1,500만원 − 성공보수 1,000만원 = 계약 시점 본사 순수취 +500만원',T.body,
     {size:11,bold:true,color:C.NAVY,valign:'middle'});
-  foot(s,F,RX,5.14,RW,'※ 계약 체결 및 가맹비 입금 완료 건에만 청구하며, 착수금 · 월 고정비 · 광고비 없음 (러너펍 공개 가맹 안내 기준)',9);
+  foot(s,F,RX,BOT-CAPH,RW,'※ 계약 체결 및 가맹비 입금 완료 건에만 청구하며, 착수금 · 월 고정비 · 광고비 없음 (러너펍 공개 가맹 안내 기준)',9);
 
   /* 다크 띠 — 제안 4행 요약 */
   const SUM = [['확보된 창업 수요','앱 10만 · 예비창업자 DB 5,114명'],
@@ -75,18 +78,18 @@ function gbar(s,reg,x,y,w,h){
   const sw = SAFE.w/4;
   SUM.forEach(([k,v],i)=>{
     const x = SAFE.x+sw*i;
-    if(i) vr(s,x-0.14,5.94,0.44,C.NAVYTEX,0.010);
-    tx(s,F,{x,y:5.90,w:sw-0.28,h:0.22},k,T.note,{size:8.5,color:C.BLUEP,valign:'middle'});
-    tx(s,F,{x,y:6.12,w:sw-0.28,h:0.26},v,T.body,{size:10,color:C.INK_ON,valign:'middle'});
+    if(i) vr(s,x-0.14,6.14,0.44,C.NAVYTEX,0.010);
+    tx(s,F,{x,y:6.10,w:sw-0.28,h:0.22},k,T.note,{size:8.5,color:C.BLUEP,valign:'middle'});
+    tx(s,F,{x,y:6.32,w:sw-0.28,h:0.26},v,T.body,{size:10,color:C.INK_ON,valign:'middle'});
   });
-  hr(s,SAFE.x,6.58,SAFE.w,C.NAVYTEX,0.010);
+  hr(s,SAFE.x,6.74,SAFE.w,C.NAVYTEX,0.010);
 
-  const lw = 1.34, lh = lw/3.7009;
-  s.addImage({path:P('ns_logo_w.png'), ...img(F,{x:SAFE.x,y:6.80,w:lw,h:lh},P('ns_logo_w.png'))});
-  icon(s,F,SAFE.x+lw+0.24,6.84,0.24,'arrow',true);
-  const rw = 1.46, rh = rw/3.045;
-  s.addImage({path:P('logo.png'), ...img(F,{x:SAFE.x+lw+0.70,y:6.74,w:rw,h:rh},P('logo.png'))});
-  tx(s,F,{x:RIGHT-5.2,y:6.84,w:5.2,h:0.26},'수신  러너스튜디오(주) 귀중 · 대표 박경관',T.body,
+  const NSL = P('ns_logo_w.png'), lw = 1.34, lh = lw/G.imgAspect(NSL);
+  s.addImage({path:NSL, ...img(F,{x:SAFE.x,y:6.94,w:lw,h:lh},NSL)});
+  icon(s,F,SAFE.x+lw+0.24,6.98,0.24,'arrow',true);
+  const RPL = P('logo.png'), rw = 1.46, rh = rw/G.imgAspect(RPL);
+  s.addImage({path:RPL, ...img(F,{x:SAFE.x+lw+0.70,y:6.88,w:rw,h:rh},RPL)});
+  tx(s,F,{x:RIGHT-5.2,y:6.98,w:5.2,h:0.26},'수신  러너스튜디오(주) 귀중 · 대표 박경관',T.body,
     {size:10.5,color:C.INK_ON,align:'right',valign:'middle'});
   s.addNotes('발신은 주식회사 내일사장입니다. 가맹 개설 영업을 전면 위임받겠다는 제안입니다.');
 }
@@ -158,7 +161,7 @@ function gbar(s,reg,x,y,w,h){
     {size:16,color:C.BLUE,valign:'middle'});
   tx(s,R,{x:R.x+0.18,y:R.y+0.92,w:R.w-0.36,h:0.46},
     '개설 속도를 결정하는 계약 이전 구간의 접점 총량',T.cardtx,{size:9.5,color:C.MUTE});
-  const pf = P('p11_pub.png'), pw = 3.00, ph = pw/1.778;
+  const pf = P('p11_pub.png'), pw = 3.00, ph = pw/G.imgAspect(pf);
   s.addImage({path:pf, ...img(R,{x:R.x+(R.w-pw)/2,y:R.y+1.50,w:pw,h:ph},pf)});
   const yb = R.y+1.60+ph;
   rrect(s,at(R,{x:R.x,y:yb,w:R.w,h:0.86},{kind:'card'}),C.WHITE,0.08);
@@ -333,8 +336,12 @@ function gbar(s,reg,x,y,w,h){
     const x = B.x+(gw+0.28)*(i%4), y = B.y+0.56+(gh+0.26)*Math.floor(i/4);
     rrect(s,at(B,{x,y,w:gw,h:gh},{kind:'card'}),major?C.BLUEBG:C.BLUEBG0,0.08);
     if(lg){
-      const f = P(`lg_${lg}.png`), a = G.imgAspect(f);
-      const lh = 0.30, lwd = Math.min(1.46,lh*a), lh2 = lwd/a;
+      // 로고 벽은 높이가 아니라 잉크 면적을 통일해야 광학 무게가 맞는다.
+      // 높이로 맞추면 가로로 긴 마크(KFA a=8.7)가 짧은 마크(요기요 a=2.0)보다 4배 커 보인다.
+      const f = P(`lg_${lg}.png`), a = G.imgAspect(f), AREA = 0.190;
+      let lh2 = Math.sqrt(AREA/a), lwd = a*lh2;
+      if(lwd > 1.46){ lwd = 1.46; lh2 = lwd/a; }
+      if(lh2 > 0.30){ lh2 = 0.30; lwd = a*lh2; }
       s.addImage({path:f, ...img(B,{x:x+0.20,y:y+0.13+(0.30-lh2)/2,w:lwd,h:lh2},f)});
     }
     const cw = G.textWidth(tag,8.5)+0.42;
@@ -635,8 +642,8 @@ function gbar(s,reg,x,y,w,h){
   setSlide(15);
   hr(s,SAFE.x,Y.topRule.y,SAFE.w,C.NAVY,0.014);
   const brow = region('brow',SAFE.x,Y.brow.y,SAFE.w,Y.brow.h);
-  const bl = 1.10, blh = bl/3.7009;
-  s.addImage({path:P('ns_logo.png'), ...img(brow,{x:RIGHT-bl,y:Y.brow.y+(Y.brow.h-blh)/2,w:bl,h:blh},P('ns_logo.png'))});
+  const BL = P('ns_logo.png'), bl = 1.10, blh = bl/G.imgAspect(BL);
+  s.addImage({path:BL, ...img(brow,{x:RIGHT-bl,y:Y.brow.y+(Y.brow.h-blh)/2,w:bl,h:blh},BL)});
   { const ft = region('foot',SAFE.x,Y.foot.y,SAFE.w,Y.foot.h);
     tx(s,ft,{x:RIGHT-1.2,y:Y.foot.y+0.02,w:1.2,h:0.22},'15',T.foot,
       {size:9,color:C.MUTE,align:'right',valign:'middle'}); }
@@ -658,8 +665,8 @@ function gbar(s,reg,x,y,w,h){
   foot(s,B,B.x,B.y+2.40,B.w,'※ 착수금 없음 · 본사 승인 자료 확정 후 즉시 착수');
 
   hr(s,B.x+(B.w-4.20)/2,B.y+2.76,4.20,C.RULE);
-  const cl = 1.86, clh = cl/3.7009;
-  s.addImage({path:P('ns_logo.png'), ...img(B,{x:B.x+(B.w-cl)/2,y:B.y+2.92,w:cl,h:clh},P('ns_logo.png'))});
+  const CL = P('ns_logo.png'), cl = 1.86, clh = cl/G.imgAspect(CL);
+  s.addImage({path:CL, ...img(B,{x:B.x+(B.w-cl)/2,y:B.y+2.92,w:cl,h:clh},CL)});
   tx(s,B,{x:B.x,y:B.y+2.96+clh,w:B.w,h:0.34},'내일부터 내 일이 사장이 되는 플랫폼',T.sub,
     {size:15,align:'center',valign:'middle'});
   tx(s,B,{x:B.x,y:B.y+3.36+clh,w:B.w,h:0.24},

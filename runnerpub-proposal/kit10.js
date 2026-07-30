@@ -102,7 +102,7 @@ module.exports = function make(p) {
     if(chap) tx(s,brow,{x:SAFE.x,y:Y.brow.y+0.02,w:1.6,h:0.24},chap,T.chap,
       {color:ld?C.MUTED:C.MUTE, valign:'middle'});
     const lf = path.join(A, rd?'ns_logo_w.png':'ns_logo.png');
-    const lw = 1.10, lh = lw/3.7009;
+    const lw = 1.10, lh = lw/G.imgAspect(lf);
     s.addImage({path:lf, ...img(brow,{x:SAFE.x+SAFE.w-lw, y:Y.brow.y+(Y.brow.h-lh)/2, w:lw, h:lh}, lf)});
 
     FOOTNO = no;
