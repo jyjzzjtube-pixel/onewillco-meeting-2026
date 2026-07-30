@@ -8,34 +8,34 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root {
-  --primary: #5E56D2;
-  --primary-hover: #4e47bd;
-  --primary-10: rgba(94,86,210,.10);
-  --primary-20: rgba(94,86,210,.20);
-  --bg: #fcfcfd;
-  --muted: #f4f4f8;
-  --muted-40: rgba(244,244,248,.4);
-  --muted-fg: #686b7d;
-  --border: #e4e5ec;
-  --fg: #1b1c27;
+  --primary: #23486B;
+  --primary-hover: #1A374F;
+  --primary-10: rgba(35,72,107,.07);
+  --primary-20: rgba(35,72,107,.16);
+  --bg: #f5f6f8;
+  --muted: #edeff2;
+  --muted-40: rgba(237,239,242,.55);
+  --muted-fg: #5E6773;
+  --border: #d8dce2;
+  --fg: #16191D;
   --card: #fff;
-  --secondary-fg: #393b4c;
-  --destructive: #d83131;
-  --green-bg: #d6f5e3;
-  --green-fg: #04785e;
-  --amber-bg: #fdf0ce;
-  --amber-fg: #a16207;
-  --red-bg: #fbe2e2;
-  --radius: 10px;
-  --shadow: 0 1px 2px rgba(27,28,39,.05);
+  --secondary-fg: #333A44;
+  --destructive: #9E322C;
+  --green-bg: #E3EDE7;
+  --green-fg: #23604A;
+  --amber-bg: #F3ECDC;
+  --amber-fg: #77571A;
+  --red-bg: #F2E2E0;
+  --radius: 5px;
+  --shadow: 0 1px 1px rgba(22,25,29,.04);
   /* 호환용 별칭 */
-  --accent: #5E56D2;
-  --green: #04785e;
-  --red: #d83131;
-  --navy: #1b1c27;
-  --blue: #5E56D2;
-  --gray-100: #f4f4f8;
-  --gray-400: #686b7d;
+  --accent: #23486B;
+  --green: #23604A;
+  --red: #9E322C;
+  --navy: #16191D;
+  --blue: #23486B;
+  --gray-100: #edeff2;
+  --gray-400: #5E6773;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
@@ -374,11 +374,43 @@ textarea.io:focus { border-color: var(--primary); outline: none; }
 #toast.show { opacity:1; transform: translateY(0); }
 
 /* ===== 딜 신호등 · NEW · 이상치 ===== */
-.sig { display:inline-block; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 8px; white-space:nowrap; vertical-align: 1px; }
+.sig { display:inline-block; font-size: 11px; font-weight: 700; border-radius: 3px; padding: 2px 7px; white-space:nowrap; vertical-align: 1px; letter-spacing:.01em; }
+
+/* ===== M&A 평가 블록 (브랜드 전용) ===== */
+.mna-box { border:1px solid var(--border); border-radius: var(--radius); background: var(--card); padding: 0; overflow: hidden; }
+.mna-head { display:flex; align-items:baseline; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border); background:var(--muted); }
+.mna-head h5 { font-size:13px; font-weight:800; letter-spacing:-.01em; }
+.mna-head .asof { margin-left:auto; font-size:11.5px; color:var(--muted-fg); font-variant-numeric:tabular-nums; }
+.mna-kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); border-bottom:1px solid var(--border); }
+.mna-kpi > div { padding:12px 16px; border-right:1px solid var(--border); }
+.mna-kpi > div:last-child { border-right:none; }
+.mna-kpi .k { font-size:11px; color:var(--muted-fg); font-weight:600; letter-spacing:.02em; }
+.mna-kpi .v { font-size:17px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.02em; margin-top:2px; }
+.mna-kpi .n { font-size:11px; color:var(--muted-fg); margin-top:1px; }
+.mna-sec { padding:14px 16px; border-bottom:1px solid var(--border); }
+.mna-sec:last-child { border-bottom:none; }
+.mna-sec h6 { font-size:11.5px; font-weight:700; color:var(--muted-fg); letter-spacing:.04em; margin-bottom:8px; }
+table.mna-t { width:100%; border-collapse:collapse; font-size:12.5px; }
+table.mna-t th { text-align:right; font-size:11px; color:var(--muted-fg); font-weight:700; padding:5px 8px; border-bottom:1px solid var(--border); white-space:nowrap; }
+table.mna-t th:first-child { text-align:left; }
+table.mna-t td { padding:6px 8px; border-bottom:1px solid var(--muted); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+table.mna-t td:first-child { text-align:left; white-space:normal; }
+table.mna-t td.note { text-align:left; color:var(--muted-fg); font-size:11.5px; white-space:normal; }
+table.mna-t tr:last-child td { border-bottom:none; }
+table.mna-t td.neg { color:var(--destructive); font-weight:700; }
+.mna-band { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.mna-band .bv { font-size:19px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.02em; color:var(--primary); }
+.mna-band .bc { font-size:12px; color:var(--muted-fg); }
+.mna-risk { margin:0; padding-left:18px; font-size:12.5px; color:var(--secondary-fg); }
+.mna-risk li { margin-bottom:3px; }
+.mna-empty { padding:14px 16px; font-size:12.5px; color:var(--muted-fg); }
+.sig-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:5px; vertical-align:0; }
+.sd-green { background:#2F7D5B; } .sd-yellow { background:#AD8228; } .sd-red { background:#9E322C; }
+.ml-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px; vertical-align:1px; }
 .sig-green { background: var(--green-bg); color: var(--green-fg); }
 .sig-yellow { background: var(--amber-bg); color: var(--amber-fg); }
 .sig-red { background: var(--red-bg); color: var(--destructive); }
-.sig-new { background: var(--primary); color: #fff; }
+.sig-new { background: var(--primary); color: #fff; font-weight:600; letter-spacing:.04em; }
 .trust-claim { background: var(--muted); color: var(--muted-fg); }
 .trust-doc { background: var(--primary-10); color: var(--primary); }
 .trust-dd { background: var(--green-bg); color: var(--green-fg); }
@@ -611,12 +643,12 @@ details.fold summary b { color: var(--primary); }
   <div class="logo">원윌앤코<b>x구름랩스</b></div>
   <div class="logo-sub">브랜드 M&A 플랫폼</div>
   <div class="nav-wrap">
-    <button class="nav-item active" data-page="dash" onclick="go('dash')">📊 대시보드</button>
-    <button class="nav-item" data-page="pipeline" onclick="go('pipeline')">📌 파이프라인</button>
-    <button class="nav-item" data-page="brands" onclick="go('brands')">🏢 브랜드 M&A 목록 <span class="cnt" id="navBrandCnt">0</span></button>
-    <button class="nav-item" data-page="listings" onclick="go('listings')">🏪 양도양수 매물 <span class="cnt" id="navListingCnt">0</span></button>
-    <button class="nav-item admin-only" data-page="contracts" onclick="go('contracts')">📑 계약서 서식함</button>
-    <button class="nav-item" data-page="data" onclick="go('data')">💾 데이터 관리</button>
+    <button class="nav-item active" data-page="dash" onclick="go('dash')">대시보드</button>
+    <button class="nav-item" data-page="pipeline" onclick="go('pipeline')">파이프라인</button>
+    <button class="nav-item" data-page="brands" onclick="go('brands')">브랜드 M&A 목록 <span class="cnt" id="navBrandCnt">0</span></button>
+    <button class="nav-item" data-page="listings" onclick="go('listings')">양도양수 매물 <span class="cnt" id="navListingCnt">0</span></button>
+    <button class="nav-item admin-only" data-page="contracts" onclick="go('contracts')">계약서 서식함</button>
+    <button class="nav-item" data-page="data" onclick="go('data')">데이터 관리</button>
   </div>
   <div class="foot">
     데이터는 이 브라우저에 자동 저장됩니다.<br>
@@ -628,7 +660,7 @@ details.fold summary b { color: var(--primary); }
   <div class="topbar">
     <h1 id="topTitle">대시보드</h1>
     <div class="spacer"></div>
-    <input type="text" class="global-search" id="globalSearch" placeholder="🔍 법인명·상호명·지역 통합검색" oninput="onGlobalSearch()">
+    <input type="text" class="global-search" id="globalSearch" placeholder="법인명·상호명·지역 통합검색" oninput="onGlobalSearch()">
     <div class="me-chip">
       <span class="who" id="whoChip">관리자</span>
       <span class="who" id="roleBadge" style="background:var(--muted);color:var(--muted-fg);display:none"></span>
@@ -652,12 +684,12 @@ details.fold summary b { color: var(--primary); }
         </div>
       </div>
       <div class="panel onboard" id="dashOnboard" style="display:none">
-        <h3>👋 시작해볼까요?</h3>
+        <h3>시작해볼까요?</h3>
         <p>아직 데이터가 없습니다. 샘플로 먼저 둘러보거나, 브랜드·매물을 바로 등록하세요.</p>
-        <button class="btn" onclick="loadSample()">🧪 샘플 데이터로 시작</button>
-        <button class="btn ghost" onclick="removeSample()">🧹 샘플 빼기</button>
-        <button class="btn ghost" onclick="go('brands')">🏢 브랜드 등록</button>
-        <button class="btn ghost" onclick="go('listings')">🏪 매물 등록</button>
+        <button class="btn" onclick="loadSample()">샘플 데이터로 시작</button>
+        <button class="btn ghost" onclick="removeSample()">샘플 빼기</button>
+        <button class="btn ghost" onclick="go('brands')">브랜드 등록</button>
+        <button class="btn ghost" onclick="go('listings')">매물 등록</button>
       </div>
       <div class="panel" id="dashTodo" style="display:none"></div>
       <div class="kpi-row" id="dashStats"></div>
@@ -692,8 +724,8 @@ details.fold summary b { color: var(--primary); }
     <section class="page" id="page-pipeline">
       <div class="page-title">딜 파이프라인</div>
       <div class="page-desc">브랜드·매물이 어느 단계에 있는지 한눈에 봅니다. ◀ ▶ 버튼으로 단계를 옮기고, 카드를 클릭하면 상세가 열립니다.</div>
-      <div class="panel"><h3>🏢 브랜드 딜</h3><div class="kanban" id="kanbanBrands"></div></div>
-      <div class="panel"><h3>🏪 매물 딜</h3><div class="kanban" id="kanbanListings"></div></div>
+      <div class="panel"><h3>브랜드 M&A 딜</h3><div class="kanban" id="kanbanBrands"></div></div>
+      <div class="panel"><h3>양도양수 매물 딜</h3><div class="kanban" id="kanbanListings"></div></div>
     </section>
 
     <!-- ============ 브랜드 목록 ============ -->
@@ -708,7 +740,7 @@ details.fold summary b { color: var(--primary); }
             <option>검토중</option><option>협상중</option><option>실사중</option><option>인수완료</option><option>보류</option>
           </select>
           <div class="spacer"></div>
-          <button class="btn ghost" onclick="openIntake('brand')">📄 정보 요청서 양식</button>
+          <button class="btn ghost" onclick="openIntake('brand')">정보 요청서 양식</button>
           <button class="btn" onclick="openBrandForm()">＋ 브랜드 등록</button>
         </div>
         <div class="table-wrap">
@@ -734,9 +766,9 @@ details.fold summary b { color: var(--primary); }
         </select>
         <select id="listingSignalFilter" onchange="renderListings()">
           <option value="">전체 신호등</option>
-          <option value="green">🟢 우량만</option>
-          <option value="yellow">🟡 검토</option>
-          <option value="red">🔴 위험</option>
+          <option value="green">우량만</option>
+          <option value="yellow">검토</option>
+          <option value="red">위험</option>
         </select>
         <select id="listingSort" onchange="renderListings()">
           <option value="new">최신 등록순</option>
@@ -749,9 +781,9 @@ details.fold summary b { color: var(--primary); }
         </select>
         <span id="listingCount" style="font-size:12.5px;color:var(--muted-fg)"></span>
         <div class="spacer"></div>
-        <button class="btn ghost" id="mailBulkBtn" style="display:none" onclick="openMail('listing', null, [...compareSel])">📧 선택 이메일 <b id="mailBulkCnt"></b></button>
-        <button class="btn ghost" id="compareBtn" style="display:none" onclick="openCompare()">⚖ 비교하기 <b id="compareCnt"></b></button>
-        <button class="btn ghost" onclick="openIntake('listing')">📄 정보 요청서 양식</button>
+        <button class="btn ghost" id="mailBulkBtn" style="display:none" onclick="openMail('listing', null, [...compareSel])">선택 이메일 <b id="mailBulkCnt"></b></button>
+        <button class="btn ghost" id="compareBtn" style="display:none" onclick="openCompare()">비교하기 <b id="compareCnt"></b></button>
+        <button class="btn ghost" onclick="openIntake('listing')">정보 요청서 양식</button>
         <button class="btn" onclick="openListingForm()">＋ 매물 등록</button>
       </div>
       <div class="card-grid" id="listingGrid"></div>
@@ -783,7 +815,7 @@ details.fold summary b { color: var(--primary); }
           <button class="btn" onclick="exportData()">⬇ JSON 파일 내보내기</button>
           <button class="btn ghost admin-only" onclick="document.getElementById('importFile').click()">⬆ JSON 파일 불러오기</button>
           <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
-          <button class="btn ghost" onclick="copyData()">📋 JSON 텍스트 복사</button>
+          <button class="btn ghost" onclick="copyData()">JSON 텍스트 복사</button>
         </div>
         <textarea class="io" id="ioArea" placeholder="JSON을 붙여넣고 [텍스트에서 불러오기]를 누르면 데이터가 교체됩니다."></textarea>
         <div class="data-actions admin-only" style="margin-top:10px">
@@ -793,9 +825,9 @@ details.fold summary b { color: var(--primary); }
       <div class="panel">
         <h3>시작 도구</h3>
         <div class="data-actions">
-          <button class="btn ghost" onclick="loadSample()">🧪 샘플 데이터 넣기</button>
-          <button class="btn ghost" onclick="removeSample()">🧹 샘플 데이터 빼기</button>
-          <button class="btn danger admin-only" onclick="wipeAll()">🗑 전체 데이터 삭제</button>
+          <button class="btn ghost" onclick="loadSample()">샘플 데이터 넣기</button>
+          <button class="btn ghost" onclick="removeSample()">샘플 데이터 빼기</button>
+          <button class="btn danger admin-only" onclick="wipeAll()">전체 데이터 삭제</button>
         </div>
       </div>
     </section>
@@ -867,7 +899,7 @@ details.fold summary b { color: var(--primary); }
       <div class="f-group"><label>다음 액션</label><input id="lf_nextAction" placeholder="예: 부가세 신고서 수령"></div>
       <div class="f-group"><label>액션 기한</label><input id="lf_nextDue" type="date"></div>
       <div class="f-group full"><label>양도 사유 · 상세 설명</label><textarea id="lf_desc" rows="2" placeholder="양도 사유, 시설 상태, 인수 조건 등"></textarea></div>
-      <div class="form-section" style="color:var(--green-fg);border-top-color:var(--green-bg)">🧮 회계사 검토란 · 회계사가 채우는 칸 <span style="font-weight:400;color:var(--muted-fg)">(모객·브리핑용 · 비워도 됨)</span></div>
+      <div class="form-section" style="color:var(--green-fg);border-top-color:var(--green-bg)">회계사 검토란 · 회계사가 채우는 칸 <span style="font-weight:400;color:var(--muted-fg)">(모객·브리핑용 · 비워도 됨)</span></div>
       <div class="full" id="acctFields"></div>
     </div>
     <div class="modal-actions actions">
@@ -889,7 +921,7 @@ details.fold summary b { color: var(--primary); }
 <div class="modal-bg" id="mailModal">
   <div class="modal">
     <button class="close-x" aria-label="닫기" onclick="closeModal('mailModal')">✕</button>
-    <h2 id="mailTitle">📧 자료 모아 이메일 보내기</h2>
+    <h2 id="mailTitle">자료 모아 이메일 보내기</h2>
     <div class="form-grid">
       <div class="f-group full"><label>받는 사람 (이메일)</label><input id="mailTo" placeholder="예: accountant@example.com, boss@example.com"></div>
       <div class="f-group full"><label>제목</label><input id="mailSubject"></div>
@@ -915,13 +947,13 @@ details.fold summary b { color: var(--primary); }
   <div class="modal wide">
     <button class="close-x" aria-label="닫기" onclick="closeModal('contractModal')">✕</button>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
-      <button class="btn" onclick="printContract()">🖨 인쇄 / PDF</button>
+      <button class="btn" onclick="printContract()">인쇄 / PDF</button>
       <button class="btn ghost" onclick="downloadContract('word')">⬇ 워드(.doc)</button>
       <button class="btn ghost" onclick="downloadContract('hwp')">⬇ 한글(HWP)</button>
       <button class="btn ghost" onclick="clearContractFields()">↺ 입력 지우기</button>
       <span style="font-size:12px;color:var(--muted-fg);align-self:center">인쇄 창에서 "PDF로 저장"을 고르면 PDF · 한글(HWP)은 .doc를 그대로 엽니다.</span>
     </div>
-    <div class="ctr-hint">✍️ <b>음영(연노랑)으로 표시된 칸을 클릭해 바로 입력</b>하세요 — 채우면 음영이 사라집니다. 같은 항목(상호·대표 등)은 한 곳만 채워도 전체가 함께 채워집니다. 매물·브랜드를 먼저 선택하면 대상·소재지·금액·날짜가 자동으로 채워집니다. 인쇄·PDF·문서에는 음영 없이 값(빈 칸은 밑줄)만 나옵니다.</div>
+    <div class="ctr-hint"><b>음영(연노랑)으로 표시된 칸을 클릭해 바로 입력</b>하세요 — 채우면 음영이 사라집니다. 같은 항목(상호·대표 등)은 한 곳만 채워도 전체가 함께 채워집니다. 매물·브랜드를 먼저 선택하면 대상·소재지·금액·날짜가 자동으로 채워집니다. 인쇄·PDF·문서에는 음영 없이 값(빈 칸은 밑줄)만 나옵니다.</div>
     <div id="contractPaper" class="c-paper"></div>
   </div>
 </div>
@@ -932,7 +964,7 @@ details.fold summary b { color: var(--primary); }
     <h2 id="intakeTitle">정보 요청서 양식</h2>
     <div class="mail-note" id="intakeNote"></div>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
-      <button class="btn" onclick="copyIntake()">📋 문자·카톡용 복사</button>
+      <button class="btn" onclick="copyIntake()">문자·카톡용 복사</button>
       <button class="btn ghost" onclick="downloadIntake('excel')">⬇ 엑셀</button>
       <button class="btn ghost" onclick="downloadIntake('word')">⬇ 워드·한글</button>
       <button class="btn ghost" onclick="downloadIntake('text')">⬇ 텍스트</button>
@@ -1006,6 +1038,12 @@ function rerenderAll() {
 function ent(kind, id) {
   return (kind === 'brand' ? DB.brands : DB.listings).find(x => x.id === id);
 }
+/* 브랜드·매물 구분 없이 id로 찾기 (id는 전역 유니크) */
+function entAny(id) { return DB.brands.find(x => x.id === id) || DB.listings.find(x => x.id === id) || null; }
+function entKind(id) { return DB.brands.some(x => x.id === id) ? 'brand' : 'listing'; }
+function renderDetailAny(id) { renderDetailByKind(entKind(id), id); }
+/* 양도양수 매물 목록에 노출할 실매물만 (archived = M&A 트랙으로 이관된 항목) */
+function liveListings() { return DB.listings.filter(l => !l.archived); }
 function renderDetailByKind(kind, id) {
   if (kind === 'brand') renderBrandDetail(id); else renderDetail(id);
 }
@@ -1158,7 +1196,7 @@ async function loadSeed() {
     };
     const c1 = mergeColl(DB.brands, seed.brands);
     const c2 = mergeColl(DB.listings, seed.listings);
-    if (c1 || c2) { save(); rerenderAll(); if (loadSeed._ran) toast('📥 공식 데이터가 갱신되었습니다'); }
+    if (c1 || c2) { save(); rerenderAll(); if (loadSeed._ran) toast('공식 데이터가 갱신되었습니다'); }
     loadSeed._ran = true;
   } catch (e) { /* 오프라인/로컬 파일 실행 시 조용히 무시 */ }
 }
@@ -1192,7 +1230,7 @@ function onGlobalSearch() {
 }
 function refreshCounts() {
   document.getElementById('navBrandCnt').textContent = DB.brands.length;
-  document.getElementById('navListingCnt').textContent = DB.listings.length;
+  document.getElementById('navListingCnt').textContent = liveListings().length;
 }
 
 /* =============================================================
@@ -1346,29 +1384,31 @@ function pnlHasData(l) { return !!(l.pnl && l.pnl.items && l.pnl.items.some(x =>
 function pnlBaseMan(pnl) { const b = pnl.items.find(x => x.base); return b && b.man != null && b.man !== '' ? Number(b.man) : 0; }
 function fmtWon(man) { if (man == null || man === '' || isNaN(man)) return '-'; return Math.round(Number(man) * 10000).toLocaleString() + '원'; }
 function pnlDisp(man, unit) { if (man == null || man === '' || isNaN(man)) return ''; return unit === '원' ? Math.round(Number(man) * 10000) : Number(man); }
-function persistPnl(id) { const l = ent('listing', id); if (!l) return; save(); sendOp({ type: 'upsertListing', listing: { id, pnl: l.pnl } }); renderListings(); }
-function pnlStart(id) { const l = ent('listing', id); if (!l) return; ensurePnl(l); persistPnl(id); renderDetail(id); }
-function pnlUnit(id, u) { const l = ent('listing', id); if (!l || !l.pnl) return; l.pnl.unit = u; persistPnl(id); renderDetail(id); }
-function pnlLabel(id, rid, v) { const l = ent('listing', id); const it = l?.pnl?.items.find(x => x.id === rid); if (it) { it.label = v; persistPnl(id); } }
+function persistPnl(id) { const o = entAny(id); if (!o) return; save(); const k = entKind(id);
+  sendOp(k === 'brand' ? { type: 'upsertBrand', brand: { id, pnl: o.pnl } } : { type: 'upsertListing', listing: { id, pnl: o.pnl } });
+  if (k === 'brand') renderBrands(); else renderListings(); }
+function pnlStart(id) { const l = entAny(id); if (!l) return; ensurePnl(l); persistPnl(id); renderDetailAny(id); }
+function pnlUnit(id, u) { const l = entAny(id); if (!l || !l.pnl) return; l.pnl.unit = u; persistPnl(id); renderDetailAny(id); }
+function pnlLabel(id, rid, v) { const l = entAny(id); const it = l?.pnl?.items.find(x => x.id === rid); if (it) { it.label = v; persistPnl(id); } }
 function pnlAmt(id, rid, v) {
-  const l = ent('listing', id); if (!l || !l.pnl) return;
+  const l = entAny(id); if (!l || !l.pnl) return;
   const it = l.pnl.items.find(x => x.id === rid); if (!it) return;
   const num = (v === '' || v == null) ? null : Number(v);
   it.man = (num == null || isNaN(num)) ? null : (l.pnl.unit === '원' ? num / 10000 : num);
   persistPnl(id); pnlSyncDom(id);
 }
 function pnlPct(id, rid, v) {
-  const l = ent('listing', id); if (!l || !l.pnl) return;
+  const l = entAny(id); if (!l || !l.pnl) return;
   const it = l.pnl.items.find(x => x.id === rid); if (!it || it.base) return;
   const base = pnlBaseMan(l.pnl);
   if (v === '' || v == null) it.man = null;
   else if (base > 0) it.man = base * Number(v) / 100;
   persistPnl(id); pnlSyncDom(id);
 }
-function pnlAddRow(id) { const l = ent('listing', id); if (!l) { return; } ensurePnl(l); l.pnl.items.push({ id: uid(), label: '새 항목', man: null, isCost: true }); persistPnl(id); renderDetail(id); }
-function pnlDelRow(id, rid) { const l = ent('listing', id); if (!l || !l.pnl) return; l.pnl.items = l.pnl.items.filter(x => x.id !== rid); persistPnl(id); renderDetail(id); }
+function pnlAddRow(id) { const l = entAny(id); if (!l) { return; } ensurePnl(l); l.pnl.items.push({ id: uid(), label: '새 항목', man: null, isCost: true }); persistPnl(id); renderDetailAny(id); }
+function pnlDelRow(id, rid) { const l = entAny(id); if (!l || !l.pnl) return; l.pnl.items = l.pnl.items.filter(x => x.id !== rid); persistPnl(id); renderDetailAny(id); }
 function pnlSyncDom(id) {
-  const l = ent('listing', id); if (!l || !l.pnl) return;
+  const l = entAny(id); if (!l || !l.pnl) return;
   const pnl = l.pnl, base = pnlBaseMan(pnl);
   pnl.items.forEach(it => {
     const cap = document.getElementById('pcap-' + it.id); if (cap) cap.textContent = (it.man != null && it.man !== '') ? fmtWon(it.man) : '';
@@ -1387,7 +1427,7 @@ function pnlSyncDom(id) {
 }
 function pnlDetailHTML(l) {
   if (!l.pnl || !pnlHasData(l) && !(l.pnl && l.pnl.items)) {
-    return `<details class="fold"><summary>💹 손익 입력표 · 원윌앤코 <b>미작성</b></summary>
+    return `<details class="fold"><summary>손익 입력표 <b>미작성</b></summary>
       <div style="padding:8px 0"><button class="btn ghost sm" onclick="pnlStart('${l.id}')">＋ 손익 입력표 시작 (총매출·임대료·재료비·인건비 등 기본 항목)</button></div></details>`;
   }
   const pnl = l.pnl, base = pnlBaseMan(pnl);
@@ -1402,7 +1442,7 @@ function pnlDetailHTML(l) {
     </tr>`;
   }).join('');
   return `<details class="fold" open>
-    <summary>💹 손익 입력표 · 원윌앤코 <b>${pnlHasData(l) ? '작성중' : ''}</b></summary>
+    <summary>손익 입력표 <b>${pnlHasData(l) ? '작성중' : ''}</b></summary>
     <div class="pnl-head">
       <span class="pnl-cap">금액을 넣으면 % 자동 · %를 넣으면 금액 자동 (총매출 대비)</span>
       <span class="u">단위 <select onchange="pnlUnit('${l.id}',this.value)">
@@ -1431,9 +1471,9 @@ function acctDetailHTML(l) {
   const need = fundNeededOf(l), loan = Number(a.loanAvail) || 0, eq = Number(a.equity) || 0;
   const gap = need - loan - eq;
   const roe = (eq > 0 && l.mProfit != null) ? (Number(effMProfit(l)) * 12 / eq * 100) : null;
-  const fund = (a.loanAvail != null || a.equity != null || a.fundNeeded != null) ? `<div class="fund-line">💰 필요자금 <b>${fmtMoney(need)}</b> = 대출 ${fmtMoney(loan)} + 자기자본 ${fmtMoney(eq)}${gap !== 0 ? ` <span class="${gap > 0 ? 'profit-neg' : 'profit-pos'}">(${gap > 0 ? '부족 ' + fmtMoney(gap) : '여유 ' + fmtMoney(-gap)})</span>` : ''}${roe != null ? ` · 자기자본수익률 <b class="${roe >= 30 ? 'profit-pos' : ''}">${roe.toFixed(1)}%</b>` : ''}</div>` : '';
+  const fund = (a.loanAvail != null || a.equity != null || a.fundNeeded != null) ? `<div class="fund-line">필요자금 <b>${fmtMoney(need)}</b> = 대출 ${fmtMoney(loan)} + 자기자본 ${fmtMoney(eq)}${gap !== 0 ? ` <span class="${gap > 0 ? 'profit-neg' : 'profit-pos'}">(${gap > 0 ? '부족 ' + fmtMoney(gap) : '여유 ' + fmtMoney(-gap)})</span>` : ''}${roe != null ? ` · 자기자본수익률 <b class="${roe >= 30 ? 'profit-pos' : ''}">${roe.toFixed(1)}%</b>` : ''}</div>` : '';
   return `<details class="fold"${n ? ' open' : ''}>
-    <summary>🧮 회계사 검토란 <b>${n ? n + '칸 작성' : '미작성'}</b></summary>
+    <summary>회계사 검토란 <b>${n ? n + '칸 작성' : '미작성'}</b></summary>
     <div class="acct-box">
       ${groups || '<div class="acct-empty">아직 작성된 항목이 없습니다. [매물 수정] → 회계사 검토란에서 채우세요.</div>'}
       ${fund}
@@ -1498,8 +1538,8 @@ function signal(kind, o) {
 }
 function sigBadge(kind, o) {
   const g = signal(kind, o);
-  const dot = { green: '🟢', yellow: '🟡', red: '🔴' }[g.s];
-  return `<span class="sig sig-${g.s}" title="딜 신호등 — 기준: 회수기간 24개월 이하 · 연수익률 30% 이상 · 인수배수 5배 이하 · 이상치 없음">${dot} ${g.label}</span>`;
+  const dot = `<i class="sig-dot sd-${g.s}"></i>`;
+  return `<span class="sig sig-${g.s}" title="딜 신호등 — 기준: 회수기간 24개월 이하 · 연수익률 30% 이상 · 인수배수 5배 이하 · 이상치 없음">${dot}${g.label}</span>`;
 }
 
 /* ---------- 목록 요약 패널 (빈 공간 활용) ---------- */
@@ -1527,13 +1567,13 @@ function renderBrandSummary(rows) {
     { label: '보류', count: cnt('보류'), color: '#f59e0b' },
   ];
   box.innerHTML = `<div class="ls-panel">
-    <div class="ls-h">📊 목록 요약 <span style="font-weight:600;color:var(--muted-fg)">· 현재 보이는 ${rows.length}개 기준</span></div>
+    <div class="ls-h">목록 요약 <span style="font-weight:600;color:var(--muted-fg)">· 현재 보이는 ${rows.length}개 기준</span></div>
     <div class="ls-tiles">
       <div class="ls-tile"><div class="lt">총 브랜드</div><div class="lv">${rows.length}<small> 개</small></div></div>
       <div class="ls-tile"><div class="lt">진행 중(협상·실사)</div><div class="lv">${inProg}<small> 개</small></div></div>
       <div class="ls-tile"><div class="lt">평균 인수배수</div><div class="lv">${avgMul == null ? '-' : avgMul.toFixed(1) + '배'}</div><div class="ls-sub">낮을수록 저평가</div></div>
       <div class="ls-tile"><div class="lt">희망양도가 합계</div><div class="lv" style="font-size:17px">${fmtMoney(totAsk)}<small> 원</small></div></div>
-      <div class="ls-tile"><div class="lt">딜 신호등</div><div class="lv" style="font-size:16px">🟢 ${sig('green')} · 🟡 ${sig('yellow')} · 🔴 ${sig('red')}</div></div>
+      <div class="ls-tile"><div class="lt">딜 신호등</div><div class="lv" style="font-size:15px"><i class="ml-dot sd-green"></i>${sig('green')} <i class="ml-dot sd-yellow" style="margin-left:10px"></i>${sig('yellow')} <i class="ml-dot sd-red" style="margin-left:10px"></i>${sig('red')}</div></div>
     </div>
     <div class="ls-bar-h">상태 분포</div>
     ${lsSegBar(statusParts)}
@@ -1551,12 +1591,12 @@ function renderListingSummary(rows) {
   const avgYp = yps.length ? yps.reduce((a, b) => a + b, 0) / yps.length : null;
   const totPrice = rows.reduce((s, l) => s + (Number(l.price) || 0) + (Number(l.premium) || 0), 0);
   const sigParts = [
-    { label: '🟢 우량', count: sig('green'), color: '#16a34a' },
-    { label: '🟡 보통·검토', count: sig('yellow'), color: '#eab308' },
-    { label: '🔴 위험', count: sig('red'), color: '#dc2626' },
+    { label: '우량', count: sig('green'), color: '#16a34a' },
+    { label: '보통·검토', count: sig('yellow'), color: '#eab308' },
+    { label: '위험', count: sig('red'), color: '#dc2626' },
   ];
   box.innerHTML = `<div class="ls-panel">
-    <div class="ls-h">📊 매물 요약 <span style="font-weight:600;color:var(--muted-fg)">· 현재 보이는 ${rows.length}건 기준</span></div>
+    <div class="ls-h">매물 요약 <span style="font-weight:600;color:var(--muted-fg)">· 현재 보이는 ${rows.length}건 기준</span></div>
     <div class="ls-tiles">
       <div class="ls-tile"><div class="lt">총 매물</div><div class="lv">${rows.length}<small> 건</small></div></div>
       <div class="ls-tile"><div class="lt">판매중</div><div class="lv">${cnt('판매중')}<small> 건</small></div></div>
@@ -1591,7 +1631,7 @@ function agingDays(o) {
 }
 function agingBadge(o) {
   const d = agingDays(o);
-  return d >= 14 ? ` <span class="sig sig-aging" title="${d}일간 댓글·자료·상태 변화 없음 — 접을지 판단 필요">🥶 ${d}일 정체</span>` : '';
+  return d >= 14 ? ` <span class="sig sig-aging" title="${d}일간 댓글·자료·상태 변화 없음 — 접을지 판단 필요">${d}일 정체</span>` : '';
 }
 function trustBadge(o) {
   const t = o.trust || '주장';
@@ -1649,15 +1689,15 @@ function renderBrands() {
   body.innerHTML = rows.map(b => {
     const m = brandMargin(b);
     const mCls = m == null ? '' : (m >= 0 ? 'profit-pos' : 'profit-neg');
-    const linked = DB.listings.filter(l => l.brandId === b.id).length;
+    const linked = liveListings().filter(l => l.brandId === b.id).length;
     const cn = b.comments?.length || 0;
     const dn = b.docs?.length || 0;
     return `<tr onclick="openBrandDetail('${b.id}')" style="cursor:pointer" title="클릭하면 상세·질문답변 창이 열립니다">
       <td data-label="법인명">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><b>${esc(b.corpName)}</b> ${sigBadge('brand', b)}</div>
-        <div class="sub" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px">${trustBadge(b)}${newBadge(b)}${agingBadge(b)}${cn ? `<span class="badge b-dd">💬 ${cn}</span>` : ''}${dn ? `<span class="badge b-review">📎 ${dn}</span>` : ''}${b.memo ? `<span title="${esc(b.memo)}">📝 ${esc(b.memo.length > 16 ? b.memo.slice(0, 16) + '…' : b.memo)}</span>` : ''}</div>
+        <div class="sub" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px">${trustBadge(b)}${newBadge(b)}${agingBadge(b)}${cn ? `<span class="badge b-dd">댓글 ${cn}</span>` : ''}${dn ? `<span class="badge b-review">자료 ${dn}</span>` : ''}${b.memo ? `<span title="${esc(b.memo)}">${esc(b.memo.length > 16 ? b.memo.slice(0, 16) + '…' : b.memo)}</span>` : ''}</div>
       </td>
-      <td>${esc(b.tradeName)}${linked ? `<div class="sub">🏪 매물 ${linked}건</div>` : ''}</td>
+      <td>${esc(b.tradeName)}${linked ? `<div class="sub">연결 매물 ${linked}건</div>` : ''}</td>
       <td data-label="업종">${esc(b.industry) || '-'}</td>
       <td data-label="개업일">${fmtDate(b.openDate)}<div class="sub">${yearsSince(b.openDate)}</div></td>
       <td class="num" data-label="지점수">${fmtNum(b.branches)}</td>
@@ -1758,16 +1798,50 @@ function openBrandDetail(id) {
     if (list) list.scrollTop = list.scrollHeight;
   }, 50);
 }
+
+/* ---------- M&A 평가 블록 (브랜드) ---------- */
+function mnaDetailHTML(b) {
+  const m = b.mna;
+  if (!m) return '';
+  const money = v => (v == null ? '-' : fmtMoney(v));
+  const kpi = [
+    ['순차입금', money(m.netDebt), m.netDebtNote || ''],
+    ['EBITDA (보고)', money(m.ebitdaReported), m.asOf ? m.asOf.slice(0, 4) + '년 기준' : ''],
+    ['EBITDA (정상화)', money(m.ebitdaNormalized), m.normNote || ''],
+    ['평가 상한 캡', money(m.ceiling), m.ceilingNote || ''],
+  ].map(([k, v, nt]) => `<div><div class="k">${esc(k)}</div><div class="v">${v}</div>${nt ? `<div class="n">${esc(nt)}</div>` : ''}</div>`).join('');
+  const adj = (m.adjustments || []).length ? `<div class="mna-sec"><h6>정상화 조정</h6><table class="mna-t">
+    <thead><tr><th>항목</th><th>연간 영향</th><th style="text-align:left">근거</th></tr></thead><tbody>
+    ${m.adjustments.map(a => `<tr><td>${esc(a.label)}</td><td class="${(a.man || 0) < 0 ? 'neg' : ''}">${a.man == null ? '-' : fmtMoney(a.man)}</td><td class="note">${esc(a.note || '')}</td></tr>`).join('')}
+    </tbody></table></div>` : '';
+  const met = (m.methods || []).length ? `<div class="mna-sec"><h6>평가 방법별 결과</h6><table class="mna-t">
+    <thead><tr><th>방법</th><th>기업가치(EV)</th><th>지분가치</th><th style="text-align:left">비고</th></tr></thead><tbody>
+    ${m.methods.map(x => `<tr><td>${esc(x.name)}</td><td>${money(x.ev)}</td><td class="${(x.equity || 0) < 0 ? 'neg' : ''}">${money(x.equity)}</td><td class="note">${esc(x.note || '')}</td></tr>`).join('')}
+    </tbody></table></div>` : '';
+  const band = (m.rangeLow != null || m.rangeHigh != null) ? `<div class="mna-sec"><h6>권고 협상 레인지</h6>
+    <div class="mna-band"><span class="bv">${money(m.rangeLow)} ~ ${money(m.rangeHigh)}</span>
+    ${m.rangeNote ? `<span class="bc">${esc(m.rangeNote)}</span>` : ''}</div></div>` : '';
+  const risk = (m.risks || []).length ? `<div class="mna-sec"><h6>핵심 리스크 · 선결 조건</h6>
+    <ul class="mna-risk">${m.risks.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>` : '';
+  const dt = m.dealStructure ? `<div class="mna-sec"><h6>인수 구조 권고</h6><div style="font-size:12.5px;color:var(--secondary-fg)">${esc(m.dealStructure)}</div></div>` : '';
+  return `<details class="fold" open><summary>M&A 기업가치 평가 <b>${m.methods ? m.methods.length + '개 방법' : ''}</b></summary>
+    <div class="mna-box">
+      <div class="mna-head"><h5>기업가치 평가 요약</h5><span class="asof">${m.asOf ? '기준일 ' + esc(m.asOf) : ''}</span></div>
+      <div class="mna-kpi">${kpi}</div>
+      ${band}${adj}${met}${dt}${risk}
+    </div></details>`;
+}
+
 function renderBrandDetail(id) {
   const b = DB.brands.find(x => x.id === id);
   if (!b) return;
   const m = brandMargin(b);
-  const linked = DB.listings.filter(l => l.brandId === id);
+  const linked = liveListings().filter(l => l.brandId === id);
   document.getElementById('detailBody').innerHTML = `
     <div class="detail-top">
       <div style="flex:1">
         <h2>${esc(b.corpName)}</h2>
-        <div class="detail-region">🏢 ${esc(b.tradeName)} ${b.industry ? '· ' + esc(b.industry) : ''} ${b.manager ? '· 담당 ' + esc(b.manager) : ''}</div>
+        <div class="detail-region">${esc(b.tradeName)} ${b.industry ? '· ' + esc(b.industry) : ''} ${b.manager ? '· 담당 ' + esc(b.manager) : ''}</div>
       </div>
       <div style="display:flex;gap:6px">${sigBadge('brand', b)} ${trustBadge(b)} ${statusBadgeBrand(b.status)}</div>
     </div>
@@ -1783,12 +1857,15 @@ function renderBrandDetail(id) {
     ${anomalyBoxHTML('brand', b)}
     ${nextActionHTML(b)}
     ${b.memo ? `<div class="detail-desc">${esc(b.memo)}</div>` : ''}
-    ${linked.length ? `<div class="detail-brand-link">🏪 연결 매물 ${linked.length}건: ${linked.map(l =>
+    ${linked.length ? `<div class="detail-brand-link">연결 매물 ${linked.length}건: ${linked.map(l =>
       `<a href="javascript:void(0)" onclick="openDetail('${l.id}')" style="color:var(--blue)">${esc(l.title)}</a>`).join(' · ')}</div>` : ''}
     <div style="display:flex;gap:8px;margin-bottom:18px">
-      <button class="btn ghost sm" onclick="openBrandForm('${b.id}')">✏ 브랜드 수정</button>
-      <button class="btn danger sm admin-only" onclick="deleteBrand('${b.id}')" style="display:${isAdmin() ? '' : 'none'}">🗑 브랜드 삭제</button>
+      <button class="btn ghost sm" onclick="openBrandForm('${b.id}')">브랜드 수정</button>
+      <button class="btn danger sm admin-only" onclick="deleteBrand('${b.id}')" style="display:${isAdmin() ? '' : 'none'}">브랜드 삭제</button>
     </div>
+    ${mnaDetailHTML(b)}
+    ${pnlDetailHTML(b)}
+    ${acctDetailHTML(b)}
     ${docsChatHTML('brand', b)}`;
   afterDetailRender('brand', id);
 }
@@ -1804,7 +1881,7 @@ function filteredListings() {
   const q = (document.getElementById('listingSearch').value || '').trim().toLowerCase();
   const st = document.getElementById('listingStatusFilter').value;
   const sg = (document.getElementById('listingSignalFilter') || {}).value || '';
-  return DB.listings.filter(l => {
+  return liveListings().filter(l => {
     if (st && l.status !== st) return false;
     if (sg && signal('listing', l).s !== sg) return false;
     if (!q) return true;
@@ -1826,18 +1903,18 @@ function renderListings() {
   if (sort === 'yieldDesc') rows.sort((a, b) => inf(yieldEff(b), 'desc') - inf(yieldEff(a), 'desc'));
   const grid = document.getElementById('listingGrid');
   const cntEl = document.getElementById('listingCount');
-  if (cntEl) cntEl.textContent = rows.length === DB.listings.length ? `${rows.length}건` : `${rows.length} / ${DB.listings.length}건`;
+  if (cntEl) cntEl.textContent = rows.length === liveListings().length ? `${rows.length}건` : `${rows.length} / ${liveListings().length}건`;
   document.getElementById('listingEmpty').style.display = rows.length ? 'none' : 'block';
   grid.innerHTML = rows.map(l => {
     const brand = DB.brands.find(b => b.id === l.brandId);
     const cn = l.comments?.length || 0;
     const imgs = (l.files || []).filter(f => (f.type || '').startsWith('image/'));
     return `<div class="l-card" onclick="openDetail('${l.id}')">
-      ${imgs.length ? `<div class="cover"><img id="cover-${l.id}" alt="" loading="lazy" onclick="event.stopPropagation();openLightbox('${imgs[0].id}')">${imgs.length > 1 ? `<span class="morec">📷 ${imgs.length}</span>` : ''}</div>` : ''}
+      ${imgs.length ? `<div class="cover"><img id="cover-${l.id}" alt="" loading="lazy" onclick="event.stopPropagation();openLightbox('${imgs[0].id}')">${imgs.length > 1 ? `<span class="morec">사진 ${imgs.length}</span>` : ''}</div>` : ''}
       <div class="head">
         <div>
           <div class="title">${esc(l.title)}${newBadge(l)}${agingBadge(l)}</div>
-          <div class="region">📍 ${esc(l.region) || '-'} ${l.industry ? '· ' + esc(l.industry) : ''}</div>
+          <div class="region">${esc(l.region) || '-'} ${l.industry ? '· ' + esc(l.industry) : ''}</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">${sigBadge('listing', l)} ${statusBadgeListing(l.status)}
           <label class="cmp" onclick="event.stopPropagation()"><input type="checkbox" ${compareSel.has(l.id) ? 'checked' : ''} onchange="toggleCompare('${l.id}')"> 비교</label>
@@ -1854,14 +1931,14 @@ function renderListings() {
         ${hasSalaryAdj(l) ? `<span class="k">실사장 회수 ★</span><span class="v">${fmtMonths(paybackEff(l))}</span>` : ''}
       </div>
       <div class="foot">
-        ${brand ? `🏢 ${esc(brand.tradeName)}` : ''}
+        ${brand ? `${esc(brand.tradeName)}` : ''}
         ${l.size ? `<span>${esc(String(l.size))}평${l.floor ? ' · ' + esc(l.floor) : ''}</span>` : (l.floor ? `<span>${esc(l.floor)}</span>` : '')}
-        ${(l.checks?.length || 0) ? `<span class="cmt">✅ ${l.checks.filter(c => c.done).length}/${l.checks.length}</span>` : ''}
-        ${(l.docs?.length || 0) ? `<span class="cmt">📎 ${l.docs.length}</span>` : ''}
-        ${(l.files?.length || 0) ? `<span class="cmt">🖼 ${l.files.length}</span>` : ''}
-        ${pnlHasData(l) ? `<span class="cmt" style="background:var(--primary-10);color:var(--primary)">💹</span>` : ''}
-        ${acctFilled(l) ? `<span class="cmt" style="background:var(--green-bg);color:var(--green-fg)">🧮 ${acctFilled(l)}</span>` : ''}
-        <span class="cmt ${cn ? 'hot' : ''}">💬 ${cn}</span>
+        ${(l.checks?.length || 0) ? `<span class="cmt">실사 ${l.checks.filter(c => c.done).length}/${l.checks.length}</span>` : ''}
+        ${(l.docs?.length || 0) ? `<span class="cmt">자료 ${l.docs.length}</span>` : ''}
+        ${(l.files?.length || 0) ? `<span class="cmt">파일 ${l.files.length}</span>` : ''}
+        ${pnlHasData(l) ? `<span class="cmt" style="background:var(--primary-10);color:var(--primary)">손익</span>` : ''}
+        ${acctFilled(l) ? `<span class="cmt" style="background:var(--green-bg);color:var(--green-fg)">회계 ${acctFilled(l)}</span>` : ''}
+        <span class="cmt ${cn ? 'hot' : ''}">댓글 ${cn}</span>
       </div>
     </div>`;
   }).join('');
@@ -1924,7 +2001,7 @@ function openCompare() {
     return vals.filter(v => v != null).length > 1 ? bi : -1;
   };
   document.getElementById('detailBody').innerHTML = `
-    <h2>⚖ 매물 비교 (${items.length})</h2>
+    <h2>매물 비교 (${items.length})</h2>
     <div class="table-wrap"><table class="cmp-table">
       <thead><tr><th>항목</th>${items.map(l => `<th onclick="openDetail('${l.id}')" title="클릭하면 상세로 이동">${esc(l.title)}</th>`).join('')}</tr></thead>
       <tbody>${rows.map(row => {
@@ -2031,12 +2108,12 @@ function renderDetail(id) {
     <div class="detail-top">
       <div style="flex:1">
         <h2>${esc(l.title)}</h2>
-        <div class="detail-region">📍 ${esc(l.region) || '-'} ${l.industry ? '· ' + esc(l.industry) : ''} ${l.floor ? '· ' + esc(l.floor) : ''}</div>
+        <div class="detail-region">${esc(l.region) || '-'} ${l.industry ? '· ' + esc(l.industry) : ''} ${l.floor ? '· ' + esc(l.floor) : ''}</div>
       </div>
       <div style="display:flex;gap:6px">${sigBadge('listing', l)} ${trustBadge(l)} ${statusBadgeListing(l.status)}</div>
     </div>
     <div class="detail-price">${fmtMoney(l.price)} <small>양도 희망가</small></div>
-    ${brand ? `<div class="detail-brand-link">🏢 연결 브랜드: <b>${esc(brand.tradeName)}</b> (${esc(brand.corpName)}) — 지점 ${fmtNum(brand.branches)}개 · 연매출 ${fmtMoney(brand.revenue)} · 영업이익 ${fmtMoney(brand.profit)}</div>` : ''}
+    ${brand ? `<div class="detail-brand-link">연결 브랜드: <b>${esc(brand.tradeName)}</b> (${esc(brand.corpName)}) — 지점 ${fmtNum(brand.branches)}개 · 연매출 ${fmtMoney(brand.revenue)} · 영업이익 ${fmtMoney(brand.profit)}</div>` : ''}
     <div class="detail-grid">
       <div class="cell"><div class="k">보증금</div><div class="v">${fmtMoney(l.deposit)}</div></div>
       <div class="cell"><div class="k">월세</div><div class="v">${fmtMoney(l.rent)}</div></div>
@@ -2057,8 +2134,8 @@ function renderDetail(id) {
     ${acctDetailHTML(l)}
     ${l.link ? `<div style="margin-bottom:14px;font-size:13px">🔗 <a href="${esc(l.link)}" target="_blank" rel="noopener" style="color:var(--blue)">원본 매물 링크 열기</a></div>` : ''}
     <div style="display:flex;gap:8px;margin-bottom:18px">
-      <button class="btn ghost sm" onclick="openListingForm('${l.id}')">✏ 매물 수정</button>
-      <button class="btn danger sm admin-only" onclick="deleteListing('${l.id}')" style="display:${isAdmin() ? '' : 'none'}">🗑 매물 삭제</button>
+      <button class="btn ghost sm" onclick="openListingForm('${l.id}')">매물 수정</button>
+      <button class="btn danger sm admin-only" onclick="deleteListing('${l.id}')" style="display:${isAdmin() ? '' : 'none'}">매물 삭제</button>
     </div>
     ${docsChatHTML('listing', l)}`;
   afterDetailRender('listing', id);
@@ -2162,7 +2239,7 @@ function renderPipeline() {
           <div class="m">${metric}</div>
           <div style="margin-top:3px">${sigBadge(kind, o)} ${trustBadge(o)}</div>
           ${o.nextAction ? `<div class="m ${isOverdue(o) ? 'profit-neg' : ''}" style="margin-top:3px">▸ ${esc(o.nextAction)}${o.nextDue ? ' · ~' + esc(o.nextDue.slice(5)) : ''}${isOverdue(o) ? ' ⏰' : ''}</div>` : ''}
-          ${checks.length ? `<div class="m">✅ ${checks.filter(c => c.done).length}/${checks.length}</div>` : ''}
+          ${checks.length ? `<div class="m">실사 ${checks.filter(c => c.done).length}/${checks.length}</div>` : ''}
           <div class="k-move" onclick="event.stopPropagation()">
             <button onclick="moveStage('${kind}','${o.id}',-1)">◀</button>
             <button onclick="moveStage('${kind}','${o.id}',1)">▶</button>
@@ -2173,7 +2250,7 @@ function renderPipeline() {
   document.getElementById('kanbanBrands').innerHTML =
     BRAND_STAGES.map(st => kCol(st, DB.brands.filter(b => (b.status || '검토중') === st), 'brand')).join('');
   document.getElementById('kanbanListings').innerHTML =
-    LISTING_STAGES.map(st => kCol(st, DB.listings.filter(l => (l.status || '판매중') === st), 'listing')).join('');
+    LISTING_STAGES.map(st => kCol(st, liveListings().filter(l => (l.status || '판매중') === st), 'listing')).join('');
 }
 
 /* ---------- 공유 자료 + 채팅 (브랜드·매물 공용) ---------- */
@@ -2264,7 +2341,7 @@ let _thumbUrls = [];
 function afterDetailRender(kind, id) {
   const o = ent(kind, id);
   if (!o) return;
-  if (kind === 'listing' && o.pnl) pnlSyncDom(id);
+  if (o.pnl) pnlSyncDom(id);
   // 이미지 썸네일 로드
   _thumbUrls.forEach(u => URL.revokeObjectURL(u)); _thumbUrls = [];
   (o.files || []).forEach(f => {
@@ -2356,7 +2433,7 @@ function openMail(kind, id, ids) {
     ? (list[0].kind === 'brand' ? list[0].o.corpName : list[0].o.title)
     : `매물 ${list.length}건`;
   const fileCnt = list.reduce((s, x) => s + (x.o.files || []).length, 0);
-  document.getElementById('mailTitle').textContent = '📧 ' + title + ' 자료 이메일';
+  document.getElementById('mailTitle').textContent = title + ' 자료 이메일';
   document.getElementById('mailTo').value = store.getItem(LS_EMAIL) || '';
   document.getElementById('mailSubject').value = '[원윌앤코x구름랩스] ' + title + ' 자료';
   const bodies = list.map(x => buildSummary(x.kind, x.o)).join('\n\n────────\n\n');
@@ -2405,7 +2482,7 @@ function docsChatHTML(kind, e) {
   const ckDone = cks.filter(c => c.done).length;
   return `
     <div class="chat-box">
-      <h4>💬 질문·댓글 <span class="n">${comments.length}</span></h4>
+      <h4>질문·댓글 <span class="n">${comments.length}</span></h4>
       <div class="chat-list" id="chatList">
         ${comments.length ? comments.map(c => `
           <div class="msg ${c.author === me ? 'mine' : ''}">
@@ -2424,11 +2501,11 @@ function docsChatHTML(kind, e) {
       </div>
     </div>
     <details class="fold"${cks.length && ckDone < cks.length ? ' open' : ''}>
-      <summary>✅ 실사 체크리스트 <b>${cks.length ? ckDone + '/' + cks.length : '없음'}</b></summary>
+      <summary>실사 체크리스트 <b>${cks.length ? ckDone + '/' + cks.length : '없음'}</b></summary>
       ${checksHTML(kind, e)}
     </details>
     <details class="fold">
-      <summary>📎 공유 자료 <b>${(e.docs || []).length}</b></summary>
+      <summary>공유 자료 <b>${(e.docs || []).length}</b></summary>
       <div class="docs-box" style="border-top:none;padding-top:6px">
         ${(e.docs || []).map(d => `
           <div class="doc-row">
@@ -2555,10 +2632,10 @@ function renderDash() {
   if (_ob) _ob.style.display = _empty ? 'block' : 'none';
   const totalRevenue = DB.brands.reduce((s, b) => s + (Number(b.revenue) || 0), 0);
   const totalComments = DB.listings.reduce((s, l) => s + (l.comments?.length || 0), 0);
-  const onSale = DB.listings.filter(l => l.status === '판매중' || l.status === '협상중' || l.status === '계약진행').length;
+  const onSale = liveListings().filter(l => l.status === '판매중' || l.status === '협상중' || l.status === '계약진행').length;
   const activeBrandValue = DB.brands.filter(b => ['검토중', '협상중', '실사중'].includes(b.status || '검토중')).reduce((s, b) => s + (Number(b.askPrice) || 0), 0);
-  const activeListingValue = DB.listings.filter(l => l.status !== '거래완료').reduce((s, l) => s + (Number(l.price) || 0), 0);
-  const paybacks = DB.listings.map(payback).filter(v => v != null);
+  const activeListingValue = liveListings().filter(l => l.status !== '거래완료').reduce((s, l) => s + (Number(l.price) || 0), 0);
+  const paybacks = liveListings().map(payback).filter(v => v != null);
   const avgPayback = paybacks.length ? paybacks.reduce((a, b) => a + b, 0) / paybacks.length : null;
   const allChecks = [...DB.brands, ...DB.listings].flatMap(o => o.checks || []);
   const ddPct = allChecks.length ? Math.round(allChecks.filter(c => c.done).length / allChecks.length * 100) : null;
@@ -2589,8 +2666,8 @@ function renderDash() {
   [...DB.brands.map(b => ['brand', b]), ...DB.listings.map(l => ['listing', l])].forEach(([k, o]) => { sc[signal(k, o).s]++; });
   document.getElementById('dashSignals').innerHTML = `
     <div class="s g" onclick="go('listings');document.getElementById('listingSignalFilter').value='green';renderListings()"><div class="n">${sc.green}</div><div class="l">🟢 우량</div></div>
-    <div class="s y"><div class="n">${sc.yellow}</div><div class="l">🟡 검토</div></div>
-    <div class="s r"><div class="n">${sc.red}</div><div class="l">🔴 위험</div></div>`;
+    <div class="s y"><div class="n">${sc.yellow}</div><div class="l">검토</div></div>
+    <div class="s r"><div class="n">${sc.red}</div><div class="l">위험</div></div>`;
 
   // 우량 딜 TOP (매물)
   const ranked = DB.listings.filter(l => l.status !== '거래완료').slice().sort((a, b) => {
