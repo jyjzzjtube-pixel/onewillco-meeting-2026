@@ -181,7 +181,7 @@ function gbar(s,reg,x,y,w,h){
   sectionBar(s,Rw.cmp,Rw.cmp.x,Rw.cmp.y,Rw.cmp.w,'인증서비스 활용 전후 비교');
   [['자영업자 1년 생존률','67%','99%','↑ 32%p','* 내일사장 인증 서비스 이용 건 기준'],
    ['양도양수 성공비율','47%','80%','↑ 33%p','* 내일사장 인증 서비스 이용 건 기준']].forEach(([k,a,b,d,cap],i)=>{
-    const y = Rw.cmp.y+0.54+i*0.60;
+    const y = Rw.cmp.y+0.58+i*0.66;
     tx(s,Rw.cmp,{x:Rw.cmp.x,y,w:2.60,h:0.30},k,T.body,{size:11,valign:'middle'});
     s.addText([{text:a,options:{fontSize:13,color:C.MUTE}},
                {text:'   →   ',options:{fontSize:11,color:C.MUTE}},
@@ -307,9 +307,10 @@ function gbar(s,reg,x,y,w,h){
               ['동네알바 (사람인)','모객','상시 배너 노출','saramin',0],
               ['포브스코리아 어워즈','신뢰도','중앙일보 주최 · 내일사장 주관','forbes',0],
               ['아프니까 사장이다','모객','회원 210만 대상 바이럴',null,0]];
-  const gw = (B.w-0.28*3)/4, gh = (B.h-0.56-0.26)/2;
+  const gw = (B.w-0.28*3)/4, gh = 1.62, GAP = 0.30;
+  const gy0 = B.y+0.56 + ((B.h-0.56)-(gh*2+GAP))/2;
   AL.forEach(([k,tag,v,lg,major],i)=>{
-    const x = B.x+(gw+0.28)*(i%4), y = B.y+0.56+(gh+0.26)*Math.floor(i/4);
+    const x = B.x+(gw+0.28)*(i%4), y = gy0+(gh+GAP)*Math.floor(i/4);
     rrect(s,at(B,{x,y,w:gw,h:gh},{kind:'card'}),major?C.BLUEBG:C.BLUEBG0,0.08);
     if(lg){
       // 로고 벽은 높이가 아니라 잉크 면적을 통일해야 광학 무게가 맞는다.
@@ -322,9 +323,9 @@ function gbar(s,reg,x,y,w,h){
     }
     const cw = G.textWidth(tag,8.5)+0.42;
     tagChip(s,B,x+gw-0.20-cw,y+0.16,tag,{bg:C.WHITE,color:C.BLUE});
-    tx(s,B,{x:x+0.20,y:y+0.54,w:gw-0.40,h:0.44},k,T.sub,{size:11.5});
-    hr(s,x+0.20,y+1.04,gw-0.40,C.RULE);
-    tx(s,B,{x:x+0.20,y:y+1.12,w:gw-0.40,h:0.52},v,T.cardtx,{size:9.3,color:C.MUTE});
+    tx(s,B,{x:x+0.20,y:y+0.52,w:gw-0.40,h:0.42},k,T.sub,{size:11.5});
+    hr(s,x+0.20,y+1.00,gw-0.40,C.RULE);
+    tx(s,B,{x:x+0.20,y:y+1.06,w:gw-0.40,h:0.42},v,T.cardtx,{size:9.3,color:C.MUTE});
   });
   s.addNotes('러너펍에 필요한 창업 수요는 이 제휴망 안에서 나옵니다.');
 }
@@ -350,7 +351,7 @@ function gbar(s,reg,x,y,w,h){
     const f = P(file), a = G.imgAspect(f);
     const iw = Math.min(c.w-0.20,2.34*a), ih = iw/a;
     rrect(s,at(c,{x:c.x,y:c.y+0.76,w:c.w,h:2.86},{kind:'card'}),C.WHITE,0.08);
-    s.addImage({path:f, ...img(c,{x:c.x+(c.w-iw)/2,y:c.y+0.86+(2.34-ih)/2,w:iw,h:ih},f)});
+    s.addImage({path:f, ...img(c,{x:c.x+(c.w-iw)/2,y:c.y+3.20-ih,w:iw,h:ih},f)});
     rect(s,at(c,{x:c.x,y:c.y+3.26,w:c.w,h:0.36},{kind:'cap'}),C.BLUE);
     tx(s,c,{x:c.x+0.08,y:c.y+3.26,w:c.w-0.16,h:0.36},cap,T.label,
       {color:C.WHITE,align:'center',valign:'middle'});
