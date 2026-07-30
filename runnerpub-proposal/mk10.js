@@ -113,7 +113,7 @@ function gbar(s,reg,x,y,w,h){
 
   const B = BODY('ir');
   const L = region('aL',SAFE.x,B.y,CUT-SAFE.x-0.46,B.h);
-  const RX = CUT+0.42, R = region('aR',RX,B.y,RIGHT-RX,B.h);
+  const RX = CUT+0.46, R = region('aR',RX,B.y,RIGHT-RX,B.h);
 
   sectionBar(s,L,L.x,L.y,L.w,'러너펍이 이미 갖춘 것');
   ['러너러너 앱 (예약 · 회원관리 · 정산 · 토너먼트)','본사 검증 점포 추천 체계',
@@ -133,7 +133,7 @@ function gbar(s,reg,x,y,w,h){
   // 장식용 그림 대신 이 장의 논지를 그대로 놓는다 — 접점에서 계약까지가 내일사장의 구간이다
   vr(s,R.x+0.13,R.y+1.58,1.22,C.BLUEP,0.020);
   [['접점','창업 수요가 상주하는 플랫폼'],
-   ['상담','등급 분류된 예비창업자 DB 5,114명'],
+   ['상담','예비창업자 DB 5,114명 · 상담 기록 499건'],
    ['계약','러너펍 가맹계약 체결']].forEach(([k,v],i)=>{
     const y = R.y+1.44+i*0.56;
     stepBadge(s,R,R.x,y+0.04,0.26,i+1);
@@ -178,7 +178,7 @@ function gbar(s,reg,x,y,w,h){
     foot(s,c,c.x,c.y+1.92,c.w,cap,8);
   });
 
-  sectionBar(s,Rw.cmp,Rw.cmp.x,Rw.cmp.y,Rw.cmp.w,'인증서비스 활용 전후 비교');
+  sectionBar(s,Rw.cmp,Rw.cmp.x,Rw.cmp.y,Rw.cmp.w,'인증 서비스 활용 전후 비교');
   [['자영업자 1년 생존율','67%','99%','↑ 32%p','* 내일사장 인증 서비스 이용 건 기준'],
    ['양도양수 성공비율','47%','80%','↑ 33%p','* 내일사장 인증 서비스 이용 건 기준']].forEach(([k,a,b,d,cap],i)=>{
     const y = Rw.cmp.y+0.58+i*0.66;
@@ -209,8 +209,8 @@ function gbar(s,reg,x,y,w,h){
   const R = region('hR',CUT+0.46,RY,RIGHT-(CUT+0.46),Y.band.b-RY);
 
   sectionBar(s,L,L.x,L.y,L.w,'연혁 및 인증 현황',{bg:C.WHITE});
-  const HIS = [['2022. 06 ~ 12','MVP 테스트',[['앱 다운로드 3만 돌파',C.NAVY],['매장등록 200건 · 인증매물 1,000건',C.NAVY]]],
-               ['2023. 01 ~','회사 설립',[['벤처기업 인증 · 기업부설연구소 설립',C.BLUE],['부동산중개방법 특허출원 3건',C.BLUE],['연 매출 2억원 달성',C.NAVY]]],
+  const HIS = [['2022. 06 ~ 12','MVP 테스트',[['앱 MVP 테스트 · 정식버전 출시 준비',C.NAVY],['매장등록 200건 · 인증매물 1,000건',C.NAVY]]],
+               ['2023. 01 ~','회사 설립',[['벤처기업 인증 · 기업부설연구소 설립',C.BLUE],['부동산중개방법 특허출원 3건',C.BLUE],['연 매출 2억원 · 앱 다운로드 3만 돌파',C.NAVY]]],
                ['2024. 01 ~','BM 다각화',[['초기창업패키지 · R&D 디딤돌사업 선정',C.BLUE],['KFA 공동사업단 설립 · 앱 8만 돌파',C.NAVY]]],
                ['2025','투자 유치',[['구글 창구 프로그램 선정',C.BLUE],['Seed 투자유치 (씨엔티테크—스테이션케이)',C.BLUE]]]];
   let hy = L.y+0.56;
@@ -225,14 +225,14 @@ function gbar(s,reg,x,y,w,h){
     hy += 0.11;
   });
 
-  sectionBar(s,R,R.x,R.y,R.w,'실무부터 경영까지 완비된 팀 구성',{bg:C.WHITE});
+  sectionBar(s,R,R.x,R.y,R.w,'실무부터 경영까지 완비된 팀 구성');
   hr(s,R.x,R.y+0.44,R.w,C.BLUE,0.020);
   const TEAM = [['박규태','대표이사','유통학 박사',
-                 ['현] 세종사이버대 외식창업프랜차이즈학 겸임교수','전] 이삭토스트 총괄사업부장 (COO)','전] SPC 파리바게뜨 가맹사업 본부']],
+                 ['현] 세종사이버대 외식창업프랜차이즈학 겸임교수','전] 이삭토스트 총괄사업부장 (COO)','전] SPC 파리바게뜨 가맹사업본부']],
                 ['김우곤','COO','유통학 박사 · 세종대학교 유통학과 겸임교수',
                  ['전] McDonald\'s · Subway International B.V','전] Delivery Hero Korea · CJ푸드빌 · SPC 외 15년']],
                 ['엄태관','팀장','프랜차이즈 경영학 석사',
-                 ['현] 학점은행 기관 운영교수','전] 아딸 가맹사업 본부 · 셀렉토커피 영업 팀장']],
+                 ['현] 학점은행 기관 운영교수','전] 아딸 가맹사업본부 · 셀렉토커피 영업팀장']],
                 ['김호병','팀장','공인중개사',
                  ['브랜드 개설 및 영업','전] 창업컨설팅 경력 5년 이상']]];
   let ty = R.y+0.58;
@@ -286,7 +286,7 @@ function gbar(s,reg,x,y,w,h){
   sectionBar(s,R,R.x,R.y+2.74,R.w,'진행 사례');
   rrect(s,at(R,{x:R.x,y:R.y+3.22,w:R.w,h:0.64},{kind:'card'}),C.BLUEBG,0.08);
   tx(s,R,{x:R.x+0.22,y:R.y+3.22,w:R.w-0.44,h:0.64},
-    '33떡볶이 강동역점 — 임대차 · 가맹 예약 완료 · 주간 실매출 1,500~2,150만원 기록',
+    '33떡볶이 강동역점 — 임대차 · 가맹 예약 완료 · 주간 실매출 2,150 / 1,500만원 2주 실측',
     T.sub,{size:12,valign:'middle'});
   foot(s,R,R.x,R.y+3.94,R.w,'※ 2025~2026 영업 수행 브랜드 기준 · 브랜드별 계약 체결 건수는 미팅 시 원장 기준으로 제시');
   s.addNotes('플랫폼 지표가 아니라 가맹을 판 실적입니다.');
@@ -295,7 +295,7 @@ function gbar(s,reg,x,y,w,h){
 /* ══════════════ 06 02 Capability — 전략적 제휴 현황 ══════════════ */
 {
   const s = page(6,'02','Capability');
-  head2(s,'소상공인 고객 확보를 위한\n[전략적 제휴] 현황');
+  head2(s,'예비창업자 접점을 넓히는\n[전략적 제휴] 현황');
 
   const B = BODY('ir');
   sectionBar(s,B,B.x,B.y,B.w,'러너펍 창업 수요 확보에 활용되는 제휴망');
@@ -352,7 +352,8 @@ function gbar(s,reg,x,y,w,h){
     const iw = Math.min(c.w-0.20,2.34*a), ih = iw/a;
     rrect(s,at(c,{x:c.x,y:c.y+0.76,w:c.w,h:2.86},{kind:'card'}),C.WHITE,0.08);
     s.addImage({path:f, ...img(c,{x:c.x+(c.w-iw)/2,y:c.y+3.20-ih,w:iw,h:ih},f)});
-    rect(s,at(c,{x:c.x,y:c.y+3.26,w:c.w,h:0.36},{kind:'cap'}),C.BLUE);
+    rrect(s,at(c,{x:c.x,y:c.y+3.26,w:c.w,h:0.36},{kind:'cap'}),C.BLUE,0.08);
+    rect(s,at(c,{x:c.x,y:c.y+3.26,w:c.w,h:0.18},{kind:'cap'}),C.BLUE);
     tx(s,c,{x:c.x+0.08,y:c.y+3.26,w:c.w-0.16,h:0.36},cap,T.label,
       {color:C.WHITE,align:'center',valign:'middle'});
     if(i<3) hr(s,c.x+c.w+0.04,c.y+2.18,0.18,C.MUTED,0.022);
@@ -382,7 +383,7 @@ function gbar(s,reg,x,y,w,h){
     ['점포개발 및 물건화','실측 · 견적까지 끝낸 브리핑 상태','개설 승인'],
     ['계약 주선','조건 협의 및 클로징 지원','가맹계약 체결'],
     ['인테리어 시공','공사주관 및 도급계약 수행 가능','시공 여부 · 수익 분배 협의'],
-    ['본사 유입 건','성공보수 대상 제외 · 리드 최초 유입 경로 기준',{v:'—',c:C.MUTE}],
+    ['본사 유입 건','성공보수 대상 제외 · 리드 최초 유입 경로 기준','유입 경로 본사 확인'],
   ],{rh:(tb.h-0.38)/7,fs:10.5});
 
   sectionBar(s,Rw.trk,Rw.trk.x,Rw.trk.y,Rw.trk.w,'영업 2트랙');
@@ -401,7 +402,7 @@ function gbar(s,reg,x,y,w,h){
 /* ══════════════ 09 03 Terms — 비교 · 결론 띠 ══════════════ */
 {
   const s = page(9,'03','Terms',true);
-  head2(s,'[직영 채용] · 일반 대행 ·\n내일사장 비교');
+  head2(s,'[직영 채용] · 일반 대행 · 내일사장\n세 가지 방식 비교');
 
   const B = BODY('full');
   sectionBar(s,B,B.x,B.y,B.w,'러너펍 가맹 개설 영업 방식 항목별 비교');
@@ -411,16 +412,16 @@ function gbar(s,reg,x,y,w,h){
   { const rh=(tb.h-0.38)/6;
     for(let i=1;i<6;i+=2) rect(s,at(tb,{x:tb.x,y:tb.y+0.38+rh*i,w:tb.w-cw,h:rh},{kind:'row'}),C.BLUEBG0); }
   table(s,tb,[{h:'',w:2.86},{h:'직영 채용',w:cw,a:'center'},{h:'일반 대행',w:cw,a:'center'},
-              {h:'내일사장 · 착수 시점 0원',w:cw,a:'center'}],[
-    ['착수 시점 비용',{v:'급여 · 4대보험',c:C.MUTE},{v:'착수금 발생',c:C.MUTE},{v:'0원',b:true,c:C.BLUE}],
-    ['미계약 건 원가',{v:'본사 부담',c:C.MUTE},{v:'본사 부담',c:C.MUTE},{v:'내일사장 부담',b:true,c:C.BLUE}],
-    ['창업자 모수',{v:'직접 모객',c:C.MUTE},{v:'대행사 규모에 따름',c:C.MUTE},{v:'앱 10만 · DB 5,114명',b:true,c:C.BLUE}],
-    ['브리핑 자료',{v:'직접 제작',c:C.MUTE},{v:'브랜드 자료 전달',c:C.MUTE},{v:'상권 · 손익 직접 산출',b:true,c:C.BLUE}],
-    ['준법 관리',{v:'담당자 역량',c:C.MUTE},{v:'대행사 재량',c:C.MUTE},{v:'시스템 강제',b:true,c:C.BLUE}],
-    ['본사 인력 증원',{v:'필요',c:C.MUTE},{v:'관리 인력 필요',c:C.MUTE},{v:'0명',b:true,c:C.BLUE}],
+              {h:'내일사장',w:cw,a:'center'}],[
+    ['착수 시점 비용',{v:'급여 · 4대보험',c:C.MUTE},{v:'착수금 발생',c:C.MUTE},{v:'0원',b:true,c:C.BLUEDK}],
+    ['미계약 건 원가',{v:'본사 부담',c:C.MUTE},{v:'본사 부담',c:C.MUTE},{v:'내일사장 부담',b:true,c:C.BLUEDK}],
+    ['창업자 모수',{v:'직접 모객',c:C.MUTE},{v:'대행사 규모에 따름',c:C.MUTE},{v:'앱 10만 · DB 5,114명',b:true,c:C.BLUEDK}],
+    ['브리핑 자료',{v:'직접 제작',c:C.MUTE},{v:'브랜드 자료 전달',c:C.MUTE},{v:'상권 · 손익 직접 산출',b:true,c:C.BLUEDK}],
+    ['준법 관리',{v:'담당자 역량',c:C.MUTE},{v:'대행사 재량',c:C.MUTE},{v:'시스템 강제',b:true,c:C.BLUEDK}],
+    ['본사 인력 증원',{v:'필요',c:C.MUTE},{v:'관리 인력 필요',c:C.MUTE},{v:'0명',b:true,c:C.BLUEDK}],
   ],{rh:(tb.h-0.38)/6});
   foot(s,B,B.x+2.86,B.y+B.h-0.26,B.w-2.86,
-    '※ 직영 채용 — 계약 성사 여부와 무관하게 급여 · 4대보험 매월 발생    ※ 일반 대행 — 착수금은 계약 실패 시에도 반환 없음');
+    '※ 직영 채용 — 계약 성사 여부와 무관하게 급여 · 4대보험 매월 발생    ※ 일반 대행 — 착수금 유무 및 반환 조건은 대행사별 계약에 따름');
 
   bandSentence(s,'미위임 시 채용 고정비와 미계약 건 원가 본사 부담 · 위임 시 [계약 성사 건에만 비용 발생]');
   s.addNotes('대안과 나란히 놓아야 위임이 계산됩니다.');
@@ -435,7 +436,7 @@ function gbar(s,reg,x,y,w,h){
   const L = region('cL',SAFE.x,B.y,6.20,B.h);
   const R = region('cR',SAFE.x+6.66,B.y,RIGHT-(SAFE.x+6.66),B.h);
 
-  sectionBar(s,L,L.x,L.y,L.w,'비용 발생 시점과 금액');
+  sectionBar(s,L,L.x,L.y,L.w,'항목별 발생 시점과 금액');
   const tb = region('tb',L.x,L.y+0.48,L.w,3.34);
   { const rh=(tb.h-0.38)/5;
     for(let i=1;i<5;i+=2) rect(s,at(tb,{x:tb.x,y:tb.y+0.38+rh*i,w:tb.w,h:rh},{kind:'row'}),C.BLUEBG0); }
@@ -503,25 +504,25 @@ function gbar(s,reg,x,y,w,h){
   tx(s,L,{x:L.x,y:L.y+2.96,w:L.w,h:0.44},
     '개설 기본비용 1,600만원 전액 할인 프로모션은 본사 정책 그대로 유지 · 성공보수는 가맹비 1,500만원 범위 안에서만 정산',
     T.body,{size:10,color:C.NAVY});
-  foot(s,L,L.x,L.y+3.58,L.w,'※ 러너펍 공개 가맹 안내 기준 시뮬레이션 · 실제 조건은 본사 정책에 따름');
+  foot(s,L,L.x,L.y+3.90,L.w,'※ 러너펍 공개 가맹 안내 기준 시뮬레이션 · 실제 조건은 본사 정책에 따름');
 
   sectionBar(s,R,R.x,R.y,R.w,'1개점 누적 본사 순수취 — 성공보수 차감 후',{bg:C.WHITE});
   [['12개월',2300],['24개월',4100],['36개월',5900]].forEach(([k,v],i)=>{
-    const y = R.y+0.54+i*0.42;
+    const y = R.y+0.58+i*0.48;
     tx(s,R,{x:R.x,y,w:0.96,h:0.28},k,T.body,{size:10.5,valign:'middle'});
     gbar(s,R,R.x+1.02,y+0.05,(R.w-2.62)*v/5900,0.18);
     tx(s,R,{x:R.x+R.w-1.52,y,w:1.52,h:0.28},v.toLocaleString()+'만원',T.glabel,
       {size:11,color:i===2?C.BLUE:C.NAVY,align:'right',valign:'middle'});
   });
-  sectionBar(s,R,R.x,R.y+1.86,R.w,'출점 규모별 36개월 누적 순수취',{bg:C.WHITE});
+  sectionBar(s,R,R.x,R.y+2.06,R.w,'출점 규모별 36개월 누적 순수취',{bg:C.WHITE});
   [['3개점',17700],['5개점',29500],['10개점',59000]].forEach(([k,v],i)=>{
-    const y = R.y+2.40+i*0.42;
+    const y = R.y+2.62+i*0.44;
     tx(s,R,{x:R.x,y,w:0.96,h:0.28},k,T.body,{size:10.5,valign:'middle'});
     gbar(s,R,R.x+1.02,y+0.05,(R.w-2.62)*v/59000,0.18);
     tx(s,R,{x:R.x+R.w-1.52,y,w:1.52,h:0.28},v.toLocaleString()+'만원',T.glabel,
       {size:11,color:i===2?C.BLUE:C.NAVY,align:'right',valign:'middle'});
   });
-  foot(s,R,R.x,R.y+3.68,R.w,'10개점 × 36개월 = 5억 9,000만원   ·   단위 : 만원');
+  foot(s,R,R.x,R.y+3.94,R.w,'10개점 × 36개월 = 5억 9,000만원   ·   단위 : 만원');
   s.addNotes('계약 시점에 이미 흑자입니다.');
 }
 
@@ -565,7 +566,7 @@ function gbar(s,reg,x,y,w,h){
 /* ══════════════ 13 04 Governance — 업종 이력 없음 ══════════════ */
 {
   const s = page(13,'04','Governance',true);
-  head2(s,'홀덤 업종 전담\n[영업 이력 없음]');
+  head2(s,'홀덤 업종\n[영업 이력 없음]');
 
   const B = BODY('ir');
   const L = region('nL',SAFE.x,B.y,4.72,B.h);
@@ -573,7 +574,7 @@ function gbar(s,reg,x,y,w,h){
 
   rrect(s,at(L,{x:L.x,y:L.y,w:L.w,h:1.62},{kind:'card'}),C.BLUEBG0,0.08);
   tagChip(s,L,L.x+0.20,L.y+0.16,'업종 경험 없음');
-  tx(s,L,{x:L.x+0.20,y:L.y+0.54,w:2.10,h:0.24},'홀덤 업종 전담 영업 이력',T.note,
+  tx(s,L,{x:L.x+0.20,y:L.y+0.54,w:2.10,h:0.24},'홀덤 업종 영업 이력',T.note,
     {size:9,color:C.MUTE,valign:'middle'});
   s.addText([{text:'0',options:{fontSize:32,bold:true,color:C.NAVY,charSpacing:-1.2}},
              {text:'건',options:{fontSize:13,bold:true,color:C.MUTE}}],
@@ -587,19 +588,19 @@ function gbar(s,reg,x,y,w,h){
   ['첫 구간 파일럿 운영','건수 · 기간 · 중단 시점 본사 단독 결정',
    '보완 장치 — 파일럿 · 주 단위 리포트 · 본사 승인 자료 전용',
    '러너펍 브랜드 및 러너러너 앱 본사 교육 이수 후 영업 투입'].forEach((v,i)=>{
-    const y = L.y+1.86+i*0.34;
+    const y = L.y+1.92+i*0.46;
     check(s,L,L.x,y+0.03,0.20);
     tx(s,L,{x:L.x+0.32,y,w:L.w-0.32,h:0.28},v,T.body,{size:11,valign:'middle'});
   });
-  foot(s,L,L.x,L.y+3.44,L.w,'※ 리브랜딩 트랙은 운영 중 점주 대상이며, 입지 · 손익 · 계약 절차는 업종과 무관');
+  foot(s,L,L.x,L.y+3.86,L.w,'※ 리브랜딩 트랙은 운영 중 점주 대상이며, 입지 · 손익 · 계약 절차는 업종과 무관');
 
   sectionBar(s,R,R.x,R.y,R.w,'파일럿 운영 기준 — 본사 결정 사항');
   const pt = region('pt',R.x,R.y+0.48,R.w,B.h-0.48);
   { const rh=(pt.h-0.38)/8;
     for(let i=1;i<8;i+=2) rect(s,at(R,{x:R.x,y:pt.y+0.38+rh*i,w:R.w,h:rh},{kind:'row'}),C.BLUEBG0); }
-  const PT = [['검증 기간','본사가 정하시는 기간 — 착수 전 별지 확정'],
-              ['목표 건수','본사가 정하시는 목표 — 착수 전 별지 확정'],
-              ['영업 범위','전국 또는 특정 권역 — 본사가 정하시는 범위'],
+  const PT = [['검증 기간','착수 전 별지로 기간 확정'],
+              ['목표 건수','착수 전 별지로 목표 건수 확정'],
+              ['영업 범위','전국 또는 특정 권역 중 선택'],
               ['평가 지표','신규 리드 수 · 상담 진행 수 · 계약 체결 건수'],
               ['보고','주 단위 리포트 — 활동 지표 및 단계별 파이프라인'],
               ['착수 조건','본사 승인 자료 확정 후 즉시 착수 · 착수금 없음'],
@@ -627,7 +628,7 @@ function gbar(s,reg,x,y,w,h){
   lead(s,'아래 다섯 가지만 정해 주시면 그대로 따릅니다.',false,11);
 
   const B = BODY('max');
-  [['전속 · 비전속','전속 여부 및 타 대행사 병행 여부'],
+  [['전속 · 비전속','전속 여부 · 타 대행사 병행 · 홀덤 동종 브랜드 영업 제한'],
    ['대상 지역','전국 또는 특정 권역 한정'],
    ['위임 기간','파일럿 기간 및 연장 조건'],
    ['직영 영업 병행','본사 직영 영업 병행 여부'],

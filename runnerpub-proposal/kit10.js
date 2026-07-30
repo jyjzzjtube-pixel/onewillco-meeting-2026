@@ -10,11 +10,11 @@ const A = '/home/user/onewillco-meeting-2026/runnerpub-proposal/assets';
    파랑 #2868F0 · 연파랑 #A8C0F8 · 틴트 #E8F0F8 */
 const C = {
   NAVY:'1E3457', NAVY2:'27405F', NAVYTEX:'3A5580',
-  BLUE:'2868F0', BLUEL:'6890F0', BLUEP:'A8C0F8',
+  BLUE:'2868F0', BLUEDK:'1A55CC', BLUEL:'6890F0', BLUEP:'A8C0F8',
   BLUEBG:'E7EFFA', BLUEBG2:'DCE7F8', BLUEBG0:'F4F7FD',
   RED:'E23B3B', REDBG:'FDECEC', YEL:'FFE96B',
   PAPER:'F8F8F8', GRAY:'EFF1F4', WHITE:'FFFFFF', INK_ON:'F7F9FC',
-  MUTE:'6C7891', MUTED:'A6B6D2', RULE:'DFE3EA', RULED:'35496B',
+  MUTE:'5C687F', MUTED:'A6B6D2', RULE:'DFE3EA', RULED:'35496B',
 };
 const F = '맑은 고딕';
 
@@ -209,7 +209,7 @@ module.exports = function make(p) {
     const w=G.textWidth(str,8.5)+0.42;
     rrect(s,at(reg,{x,y,w,h:0.24},{kind:'chip'}),o.bg||C.GRAY,0.06);
     tx(s,reg,{x:x+0.18,y,w:w-0.36,h:0.24},str,T.note,
-      {size:8.5,color:o.color||C.MUTE,valign:'middle'});
+      {size:8.5,color:(o.color===C.BLUE&&o.bg===C.BLUEBG)?C.BLUEDK:(o.color||C.MUTE),valign:'middle'});
     return w;
   }
   /* ── 요소 ── */

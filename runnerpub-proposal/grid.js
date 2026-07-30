@@ -265,7 +265,7 @@ function surfaceUnder(t) {
   }
   return best ? best.color : (slideBg[t.slide] || 'FFFFFF');
 }
-const MIN_CONTRAST = 3.0;
+const MIN_CONTRAST = 4.5;      // WCAG AA 본문 기준. 3.0 은 큰 글씨용이라 각주·표를 놓친다
 function contrastReport() {
   const bad = [];
   for (const t of placements) {
