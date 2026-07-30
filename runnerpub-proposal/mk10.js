@@ -182,14 +182,14 @@ function gbar(s,reg,x,y,w,h){
   [['자영업자 1년 생존율','67%','99%','↑ 32%p','* 내일사장 인증 서비스 이용 건 기준'],
    ['양도양수 성공비율','47%','80%','↑ 33%p','* 내일사장 인증 서비스 이용 건 기준']].forEach(([k,a,b,d,cap],i)=>{
     const y = Rw.cmp.y+0.58+i*0.66;
-    tx(s,Rw.cmp,{x:Rw.cmp.x,y,w:2.60,h:0.30},k,T.body,{size:11,valign:'middle'});
+    tx(s,Rw.cmp,{x:Rw.cmp.x,y,w:2.90,h:0.30},k,T.body,{size:11,valign:'middle'});
     s.addText([{text:a,options:{fontSize:13,color:C.MUTE}},
                {text:'   →   ',options:{fontSize:11,color:C.MUTE}},
                {text:b,options:{fontSize:24,bold:true,color:C.NAVY}}],
-      t({...at(Rw.cmp,{x:Rw.cmp.x+2.70,y:y-0.04,w:3.10,h:0.40},{kind:'fig',pt:24}),valign:'middle'}));
-    tx(s,Rw.cmp,{x:Rw.cmp.x+6.00,y:y-0.02,w:1.42,h:0.34},d,T.glabel,
+      t({...at(Rw.cmp,{x:Rw.cmp.x+3.028,y:y-0.04,w:2.80,h:0.40},{kind:'fig',pt:24}),valign:'middle'}));
+    tx(s,Rw.cmp,{x:Rw.cmp.x+6.056,y:y-0.02,w:1.60,h:0.34},d,T.glabel,
       {size:16,color:C.BLUE,valign:'middle'});
-    foot(s,Rw.cmp,Rw.cmp.x+7.66,y+0.03,Rw.cmp.w-7.66,cap,8.5);
+    foot(s,Rw.cmp,Rw.cmp.x+9.084,y+0.03,Rw.cmp.w-9.084,cap,8.5);
   });
   s.addNotes('모수를 새로 만드실 필요가 없습니다. 이 값은 이번 제안 이전에 확보돼 있습니다.');
 }
@@ -299,7 +299,7 @@ function gbar(s,reg,x,y,w,h){
 
   const B = BODY('ir');
   sectionBar(s,B,B.x,B.y,B.w,'러너펍 창업 수요 확보에 활용되는 제휴망');
-  const AL = [['SPC 플랫폼 개발 참여','모객','파리바게뜨 · 던킨 등 가맹점 6,000개',null,1],
+  const AL = [['SPC 플랫폼 개발 참여','신뢰도','파리바게뜨 · 던킨 등 가맹점 6,000개',null,1],
               ['KFA 공동사업단 공동설립','신뢰도','프랜차이즈 본사 1,400여개 대상 · 인증매장 · 위생교육','kfa',1],
               ['바로고 든든상점','모객','등록매장 18만 대상 배너 · 푸시 상호 노출','barogo',1],
               ['삼성웰스토리 365솔루션','모객','사업단 공동설립 · 브랜드인증관 입점 및 광고',null,0],
@@ -409,17 +409,18 @@ function gbar(s,reg,x,y,w,h){
   const tb = region('cb',B.x,B.y+0.48,B.w,B.h-0.80);
   const cw = (tb.w-2.86)/3;
   rrect(s,at(tb,{x:tb.x+2.86+cw*2,y:tb.y,w:cw,h:tb.h},{kind:'hl'}),C.BLUEBG,0.08);
-  { const rh=(tb.h-0.38)/6;
-    for(let i=1;i<6;i+=2) rect(s,at(tb,{x:tb.x,y:tb.y+0.38+rh*i,w:tb.w-cw,h:rh},{kind:'row'}),C.BLUEBG0); }
+  { const rh=(tb.h-0.38)/7;
+    for(let i=1;i<7;i+=2) rect(s,at(tb,{x:tb.x,y:tb.y+0.38+rh*i,w:tb.w-cw,h:rh},{kind:'row'}),C.BLUEBG0); }
   table(s,tb,[{h:'',w:2.86},{h:'직영 채용',w:cw,a:'center'},{h:'일반 대행',w:cw,a:'center'},
               {h:'내일사장',w:cw,a:'center'}],[
     ['착수 시점 비용',{v:'급여 · 4대보험',c:C.MUTE},{v:'착수금 발생',c:C.MUTE},{v:'0원',b:true,c:C.BLUEDK}],
     ['미계약 건 원가',{v:'본사 부담',c:C.MUTE},{v:'본사 부담',c:C.MUTE},{v:'내일사장 부담',b:true,c:C.BLUEDK}],
     ['창업자 모수',{v:'직접 모객',c:C.MUTE},{v:'대행사 규모에 따름',c:C.MUTE},{v:'앱 10만 · DB 5,114명',b:true,c:C.BLUEDK}],
+    ['점주 선별 기준',{v:'담당자 판단',c:C.MUTE},{v:'대행사 재량',c:C.MUTE},{v:'인·적성검사 결과 제출',b:true,c:C.BLUEDK}],
     ['브리핑 자료',{v:'직접 제작',c:C.MUTE},{v:'브랜드 자료 전달',c:C.MUTE},{v:'상권 · 손익 직접 산출',b:true,c:C.BLUEDK}],
     ['준법 관리',{v:'담당자 역량',c:C.MUTE},{v:'대행사 재량',c:C.MUTE},{v:'시스템 강제',b:true,c:C.BLUEDK}],
     ['본사 인력 증원',{v:'필요',c:C.MUTE},{v:'관리 인력 필요',c:C.MUTE},{v:'0명',b:true,c:C.BLUEDK}],
-  ],{rh:(tb.h-0.38)/6});
+  ],{rh:(tb.h-0.38)/7});
   foot(s,B,B.x+2.86,B.y+B.h-0.26,B.w-2.86,
     '※ 직영 채용 — 계약 성사 여부와 무관하게 급여 · 4대보험 매월 발생    ※ 일반 대행 — 착수금 유무 및 반환 조건은 대행사별 계약에 따름');
 
@@ -450,7 +451,7 @@ function gbar(s,reg,x,y,w,h){
   foot(s,L,L.x,L.y+3.90,L.w,'※ 성공보수는 부가가치세 별도');
 
   sectionBar(s,R,R.x,R.y,R.w,'할인 귀속과 해제 시 환수');
-  [['할인 귀속','창업자 네고 할인액 전액 내일사장 성공보수에서 차감 · 본사 수취액 불변'],
+  [['할인 귀속','할인액 전액 내일사장 성공보수에서 차감 · 본사 가맹비 수취 1,500만원 불변'],
    ['해제 시 환수','가맹계약 해제 · 환불 발생 시 성공보수 환수 기준을 착수 전 협의']].forEach(([k,v],i)=>{
     const y = R.y+0.48+i*0.66;
     rrect(s,at(R,{x:R.x,y,w:R.w,h:0.60},{kind:'card'}),C.BLUEBG0,0.06);

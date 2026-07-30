@@ -80,8 +80,8 @@ module.exports = function make(p) {
   function runsOnBlue(str){
     return str.split(/(\[[^\]]*\])/).filter(Boolean).map(seg =>
       seg.startsWith('[')
-        ? {text: seg.slice(1,-1), options:{color:C.YEL, bold:true}}
-        : {text: seg, options:{color:C.WHITE}});
+        ? {text: seg.slice(1,-1), options:{color:C.WHITE, bold:true}}
+        : {text: seg, options:{color:'C9DAFF'}});
   }
   /** 헤드라인 런 — [대괄호] 안을 BLUE 로 */
   function runs(str, dark){
@@ -168,7 +168,7 @@ module.exports = function make(p) {
   function bandSentence(s,str,tag){                 // 결론 띠 — 파란 그라데이션, 챕터 종료 장에만
     setBand('문장형');
     const r0=region('bleed',0,0,G.W,G.H);
-    grad(s,r0,{x:0,y:Y.band.y-0.10,w:G.W,h:Y.band.h+0.20},'gr_band.png',C.BLUE);
+    grad(s,r0,{x:0,y:Y.band.y-0.10,w:G.W,h:Y.band.h+0.20},'gr_band.png','1F4FBF');
     const r=region('band',SAFE.x,Y.band.y,SAFE.w,Y.band.h);
     let tw=0;
     if(tag){
