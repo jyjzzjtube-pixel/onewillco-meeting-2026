@@ -107,7 +107,7 @@ function gbar(s,reg,x,y,w,h){
   s.addImage({path:RPL, ...img(F,{x:SAFE.x+lw+0.72,y:MID-rh/2,w:rw,h:rh},RPL)});
   tx(s,F,{x:RIGHT-6.0,y:6.80,w:6.0,h:0.22},'수신  러너스튜디오(주) 귀중 · 대표 박경관',T.body,
     {size:10.5,color:C.INK_ON,align:'right',valign:'middle'});
-  tx(s,F,{x:RIGHT-6.0,y:7.04,w:6.0,h:0.22},'담당  지윤진 본부장 · jiyj@sajang.app',T.note,
+  tx(s,F,{x:RIGHT-6.0,y:7.04,w:6.0,h:0.22},'담당  지용관 본부장 · 010-3629-7778',T.note,
     {size:9.5,color:C.BLUEP,align:'right',valign:'middle'});
   s.addNotes('발신은 주식회사 내일사장입니다. 가맹 개설 영업을 전면 위임받겠다는 제안입니다.');
 }
@@ -744,7 +744,7 @@ function gbar(s,reg,x,y,w,h){
   s.addImage({path:CL, ...img(B,{x:B.x+(B.w-cl)/2,y:B.y+2.88,w:cl,h:clh},CL)});
   tx(s,B,{x:B.x,y:B.y+3.34,w:B.w,h:0.28},'내일부터 내 일이 사장이 되는 플랫폼',T.sub,
     {size:14,align:'center',valign:'middle'});
-  tx(s,B,{x:B.x,y:B.y+3.64,w:B.w,h:0.22},'담당  지윤진 본부장 · jiyj@sajang.app',T.body,
+  tx(s,B,{x:B.x,y:B.y+3.64,w:B.w,h:0.22},'담당  지용관 본부장 · 010-3629-7778',T.body,
     {size:10.5,bold:true,color:C.BLUE,align:'center',valign:'middle'});
   tx(s,B,{x:B.x,y:B.y+3.86,w:B.w,h:0.22},
     '수신  러너스튜디오(주) 귀중 · 대표 박경관   ·   서울 강남구 삼성로100길 12 제이타워 B2',T.note,
