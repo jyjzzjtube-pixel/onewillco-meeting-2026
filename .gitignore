@@ -10,3 +10,4 @@ Thumbs.db
 # 최종 배포본은 커밋에 싣는다 — 컨테이너가 재시작되면 무시된 파일은 복구되지 않아
 # 옛날 판을 전달하는 사고가 실제로 났다
 !runnerpub-proposal/가맹영업대행_제안서_내일사장.pptx
+!runnerpub-proposal/build_viewer10.py
