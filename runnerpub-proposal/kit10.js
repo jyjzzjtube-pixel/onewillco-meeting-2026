@@ -195,13 +195,15 @@ module.exports = function make(p) {
     });
     footer(s,true,false,false,C.BLUE);
   }
-  /** 회색 틴트 소제목 띠 — IR 의 섹션 헤더 어법 */
+  /** 소제목 — 내일사장 본덱 어법: 파란 체크 원 + 파란 볼드 라벨 + 얇은 밑줄.
+      회색 틴트 띠를 쓰던 v10 과 높이(0.34in)가 같아 아래 좌표는 그대로 유효하다. */
   function sectionBar(s,reg,x,y,w,str,o={}){
     const h=o.h||0.34;
-    rect(s,at(reg,{x,y,w,h},{kind:'hl'}),o.bg||C.GRAY);
-    rect(s,at(reg,{x,y,w:0.05,h},{kind:'hl'}),o.accent||C.BLUE);
-    tx(s,reg,{x:x+0.18,y,w:(o.labelW||w-0.30),h},str,T.sub,
-      {size:o.size||12.5,color:o.color||C.NAVY,valign:'middle'});
+    const d=Math.min(0.21,h-0.08);
+    check(s,reg,x,y+(h-d)/2,d);
+    tx(s,reg,{x:x+d+0.14,y,w:(o.labelW||w-d-0.20),h},str,T.sub,
+      {size:o.size||12.5,color:o.color||C.BLUEDK,valign:'middle'});
+    hr(s,x,y+h-0.012,w,C.RULE);
     return h;
   }
   /** 작은 회색 날짜/기간 칩 — IR 어법 */

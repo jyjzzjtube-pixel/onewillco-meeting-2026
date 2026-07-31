@@ -1,7 +1,8 @@
 /* 러너펍 가맹 개설 영업 전면 위임 제안 — 주식회사 내일사장
-   v9 · 내일사장 IR 어법 이식. 화이트 지배 + 옅은 그라데이션. 15장.
+   v11 · 내일사장 본덱 어법 이식(소제목 = 체크 원 + 파란 볼드 · 표 = 회색 라벨 열 + 파란 상하 테두리).
+   화이트 지배 + 옅은 그라데이션. 15장.
    · 헤드는 명사형 2행, 마침표 없음     · 리드는 08 · 15 두 장만
-   · 결론 띠는 챕터 종료 2장(02 · 10)만  · 초대형 수치는 04 한 장만
+   · 결론 띠는 챕터 종료 2장(02 · 10)만  · 초대형 수치는 03 한 장만
    · 노란 형광 0건 · 다크 면은 표지 하단 띠 하나 · 러닝 푸터 없음        */
 const NM = '/tmp/claude-0/-home-user-onewillco-meeting-2026/e45e1d59-bb0f-5971-8866-2e14a767d632/scratchpad/node_modules';
 const pptxgen = require(NM + '/pptxgenjs');
@@ -20,7 +21,7 @@ const RIGHT = SAFE.x + SAFE.w;                       // 12.583
 const FULL  = ()=>region('full',0,0,G.W,G.H);
 const GBAR  = P('gr_bar_h.png');
 
-const CHAPFIRST = {2:1,3:1,8:1,12:1};                // 영문 앵커는 챕터 첫 장만
+const CHAPFIRST = {2:1,3:1,9:1,13:1};                // 영문 앵커는 챕터 첫 장만
 /* 공통 — 지면 그라데이션 + 챕터 마크 */
 function page(no, chapNo, chapEn, gradient){
   const s = p.addSlide(); bg(s,C.WHITE);
@@ -47,30 +48,39 @@ function gbar(s,reg,x,y,w,h){
   setSlide(1);
 
   const TOP = 0.94, BOT = 5.30;                       // 좌우 두 단이 공유하는 상·하 기준선
-  const CAPH = 0.22, CAPGAP = 0.16;
-  const pf = P('cover_phones.png');
-  const ph = BOT - TOP - CAPGAP - CAPH, pw = ph*G.imgAspect(pf);
-  s.addImage({path:pf, ...img(F,{x:SAFE.x,y:TOP,w:pw,h:ph},pf)});
-  const RX = 5.40, RW = RIGHT-RX;
-  tx(s,F,{x:SAFE.x,y:BOT-CAPH,w:RX-SAFE.x-0.30,h:CAPH},'내일사장 앱 — 실매출 검증 · 인증 리포트',T.note,
-    {size:9,color:C.MUTE,valign:'middle'});
-
-  tx(s,F,{x:RX,y:TOP,w:RW,h:0.26},'러너펍 가맹 개설 영업 전면 위임',T.label,
+  const CAPH = 0.22;
+  /* 좌 : 제안 요지. 앱 목업(내일사장 자사 화면)은 이 제안의 주제가 아니므로 걷어냈다 */
+  const LX = SAFE.x, LW = 6.80;
+  tx(s,F,{x:LX,y:TOP,w:LW,h:0.26},'러너펍 가맹 개설 영업 전면 위임',T.label,
     {size:11,color:C.BLUE,cs:2.8,valign:'middle'});
-  hr(s,RX,1.34,1.60,C.BLUE,0.030);
-  tx(s,F,{x:RX,y:1.58,w:RW,h:0.88},'가맹영업대행 제안서',T.head,{size:46,ls:56,valign:'middle'});
-  tx(s,F,{x:RX,y:2.52,w:RW,h:0.54},
+  hr(s,LX,1.34,1.60,C.BLUE,0.030);
+  tx(s,F,{x:LX,y:1.58,w:LW,h:0.88},'가맹영업대행 제안서',T.head,{size:46,ls:56,valign:'middle'});
+  tx(s,F,{x:LX,y:2.52,w:LW,h:0.54},
     '러너펍이 갖춘 개설 구조에 내일사장이 확보한 창업 수요를 붙입니다.\n계약이 성사된 건에만 비용이 발생합니다.',
     T.lead,{size:11.5,color:C.MUTE});
-  hr(s,RX,3.20,RW,C.RULE);
-  tx(s,F,{x:RX,y:3.32,w:RW,h:0.24},'가맹계약 1건당 성공보수 (VAT 별도)',T.note,
+  hr(s,LX,3.20,LW,C.RULE);
+  tx(s,F,{x:LX,y:3.32,w:LW,h:0.24},'가맹계약 1건당 성공보수 (VAT 별도)',T.note,
     {size:9.5,color:C.MUTE,valign:'middle'});
   s.addText([{text:'1,000',options:{fontSize:42,bold:true,color:C.BLUE,charSpacing:-1.4}},
              {text:'만원',options:{fontSize:16,bold:true,color:C.BLUE}}],
-    t({...at(F,{x:RX,y:3.62,w:RW,h:0.80},{kind:'fig',pt:42}),valign:'middle'}));
-  tx(s,F,{x:RX,y:4.50,w:RW,h:0.28},'가맹비 1,500만원 − 성공보수 1,000만원 = 계약 시점 본사 순수취 +500만원',T.body,
+    t({...at(F,{x:LX,y:3.62,w:LW,h:0.80},{kind:'fig',pt:42}),valign:'middle'}));
+  tx(s,F,{x:LX,y:4.50,w:LW,h:0.28},'가맹비 1,500만원 − 성공보수 1,000만원 = 계약 시점 본사 순수취 +500만원',T.body,
     {size:11,bold:true,color:C.NAVY,valign:'middle'});
-  foot(s,F,RX,BOT-CAPH,RW,'※ 계약 체결 및 가맹비 입금 완료 건에만 청구하며, 착수금 · 월 고정비 · 광고비 없음 (러너펍 공개 가맹 안내 기준)',9);
+  foot(s,F,LX,BOT-CAPH,LW,'※ 계약 체결 및 가맹비 입금 완료 건에만 청구하며, 착수금 · 월 고정비 · 광고비 없음 (러너펍 공개 가맹 안내 기준)',9);
+
+  /* 우 : 제안 대상 업종 그대로 — 홀덤 라운지 매장 구성 도해 */
+  const RX = 7.95, RW = RIGHT-RX;
+  const cf = P('p11_pub.png');
+  const cw = RW-0.60, ch = cw/G.imgAspect(cf);
+  const panH = 0.30+ch+0.10+CAPH+0.22;
+  const blockH = 0.26+0.14+panH;
+  const RY = TOP + ((BOT-TOP)-blockH)/2;
+  tx(s,F,{x:RX,y:RY,w:RW,h:0.26},'제안 대상 업종  ·  RUNNER PUB 홀덤 라운지',T.label,
+    {size:10,color:C.BLUE,cs:1.4,align:'center',valign:'middle'});
+  rrect(s,at(F,{x:RX,y:RY+0.40,w:RW,h:panH},{kind:'card'}),C.BLUEBG0,0.06);
+  s.addImage({path:cf, ...img(F,{x:RX+0.30,y:RY+0.70,w:cw,h:ch},cf)});
+  tx(s,F,{x:RX+0.20,y:RY+0.80+ch,w:RW-0.40,h:CAPH},'가맹 개설 대상 매장 구성 — 홀덤 테이블 · 바 · 라운지',T.note,
+    {size:9,color:C.MUTE,align:'center',valign:'middle'});
 
   /* 다크 띠 — 제안 4행 요약 */
   const SUM = [['확보된 창업 수요','앱 10만 · 예비창업자 DB 5,114명'],
@@ -194,66 +204,153 @@ function gbar(s,reg,x,y,w,h){
   s.addNotes('모수를 새로 만드실 필요가 없습니다. 이 값은 이번 제안 이전에 확보돼 있습니다.');
 }
 
-/* ══════════════ 04 02 Capability — 연혁 · 팀 ══════════════ */
+/* ══════════════ 04 02 Capability — 회사 현황 · 연혁 ══════════════ */
 {
-  const CUT = 5.86;
-  const s = p.addSlide(); bg(s,C.WHITE);
-  grad(s,FULL(),{x:0,y:0,w:CUT,h:G.H},'gr_panel.png',C.BLUEBG0);
-  vr(s,CUT-0.010,0,G.H,C.RULE,0.010);
-  frame(s,4,'02');
-  head2(s,'[가맹 개설 · 영업]을 직접 수행한\n4인 중심의 팀 구성',{x:SAFE.x,w:5.00});
+  const s = page(4,'02','Capability');
+  head2(s,'프랜차이즈 본사와 일해 온 회사\n[내일사장] 현황 및 연혁');
 
   const B = BODY('ir');
-  const RY = 2.12;
-  const L = region('hL',SAFE.x,B.y,CUT-SAFE.x-0.46,B.h);
-  const R = region('hR',CUT+0.46,RY,RIGHT-(CUT+0.46),Y.band.b-RY);
+  const L = region('coL',SAFE.x,B.y,5.30,B.h);
+  const R = region('hisR',SAFE.x+5.72,B.y,RIGHT-(SAFE.x+5.72),B.h);
 
-  sectionBar(s,L,L.x,L.y,L.w,'연혁 및 인증 현황',{bg:C.WHITE});
-  const HIS = [['2022. 06 ~ 12','MVP 테스트',[['앱 MVP 테스트 · 정식버전 출시 준비',C.NAVY],['매장등록 200건 · 인증매물 1,000건',C.NAVY]]],
-               ['2023. 01 ~','회사 설립',[['벤처기업 인증 · 기업부설연구소 설립',C.BLUE],['부동산중개방법 특허출원 3건',C.BLUE],['연 매출 2억원 · 앱 다운로드 3만 돌파',C.NAVY]]],
-               ['2024. 01 ~','BM 다각화',[['초기창업패키지 · R&D 디딤돌사업 선정',C.BLUE],['KFA 공동사업단 설립 · 앱 8만 돌파',C.NAVY]]],
-               ['2025','투자 유치',[['구글 창구 프로그램 선정',C.BLUE],['Seed 투자유치 (씨엔티테크—스테이션케이)',C.BLUE]]]];
-  let hy = L.y+0.56;
-  HIS.forEach(([per,ttl,items])=>{
-    tagChip(s,L,L.x,hy,per,{bg:C.BLUEBG,color:C.BLUE});
-    tx(s,L,{x:L.x+1.46,y:hy-0.02,w:L.w-1.46,h:0.28},ttl,T.sub,{size:11,valign:'middle'});
-    hy += 0.28;
-    items.forEach(([v,col])=>{
-      tx(s,L,{x:L.x+0.12,y:hy,w:L.w-0.12,h:0.23},'· '+v,T.cardtx,{size:9.3,color:col,valign:'middle'});
-      hy += 0.23;
+  /* ── 좌 : 회사 현황 · 협력기관 (본덱 표 어법 — 회색 라벨 열 + 파란 상하 테두리) ── */
+  const LBW = 1.50;
+  function infoTable(reg,x,y,w,rowsIn,rh){
+    hr(s,x,y,w,C.BLUE,0.020);
+    let cy = y+0.020;
+    rowsIn.forEach(([k,v],i)=>{
+      rect(s,at(reg,{x,y:cy,w:LBW,h:rh},{kind:'cell'}),C.GRAY);
+      tx(s,reg,{x:x+0.10,y:cy,w:LBW-0.20,h:rh},k,T.body,
+        {size:10.5,bold:true,color:C.NAVY,align:'center',valign:'middle'});
+      tx(s,reg,{x:x+LBW+0.20,y:cy,w:w-LBW-0.28,h:rh},v,T.body,
+        {size:10.5,color:C.NAVY,valign:'middle'});
+      cy += rh;
+      if(i<rowsIn.length-1) hr(s,x+LBW,cy,w-LBW,C.RULE);
     });
-    hy += 0.11;
-  });
+    hr(s,x,cy,w,C.BLUE,0.020);
+    return cy+0.020;
+  }
 
-  sectionBar(s,R,R.x,R.y,R.w,'실무부터 경영까지 완비된 팀 구성');
-  hr(s,R.x,R.y+0.44,R.w,C.BLUE,0.020);
-  const TEAM = [['박규태','대표이사','유통학 박사',
-                 ['현] 세종사이버대 외식창업프랜차이즈학 겸임교수','전] 이삭토스트 총괄사업부장 (COO)','전] SPC 파리바게뜨 가맹사업본부']],
-                ['김우곤','COO','유통학 박사 · 세종대학교 유통학과 겸임교수',
-                 ['전] McDonald\'s · Subway International B.V','전] Delivery Hero Korea · CJ푸드빌 · SPC 외 15년']],
-                ['엄태관','팀장','프랜차이즈 경영학 석사',
-                 ['현] 학점은행 기관 운영교수','전] 아딸 가맹사업본부 · 셀렉토커피 영업팀장']],
-                ['김호병','팀장','공인중개사',
-                 ['브랜드 개설 및 영업','전] 창업컨설팅 경력 5년 이상']]];
-  let ty = R.y+0.58;
-  TEAM.forEach(([nm,pos,deg,cars],i)=>{
-    tx(s,R,{x:R.x,y:ty,w:1.16,h:0.28},nm,T.sub,{size:13,color:C.BLUE,valign:'middle'});
-    tx(s,R,{x:R.x+1.20,y:ty+0.03,w:1.16,h:0.24},pos,T.label,{color:C.NAVY,valign:'middle'});
-    tx(s,R,{x:R.x+2.46,y:ty+0.02,w:R.w-2.46,h:0.24},deg,T.cardtx,{size:9.3,color:C.MUTE,valign:'middle'});
-    cars.forEach((c,k)=>tx(s,R,{x:R.x+2.46,y:ty+0.28+k*0.23,w:R.w-2.46,h:0.23},c,T.cardtx,
-      {size:9.3,color:C.NAVY,valign:'middle'}));
-    ty += 0.32 + cars.length*0.23;
-    if(i<3){ hr(s,R.x,ty-0.05,R.w,C.RULE); ty += 0.10; }
+  sectionBar(s,L,L.x,L.y,L.w,'회사 현황');
+  let ly = infoTable(L,L.x,L.y+0.42,L.w,
+    [['회사명','주식회사 내일사장  ·  2023년 1월 설립'],
+     ['대표','박규태'],
+     ['소재지','경기도 하남시 조정대로 45 미사센텀비즈 922호']],0.44);
+
+  sectionBar(s,L,L.x,ly+0.30,L.w,'협력기관');
+  infoTable(L,L.x,ly+0.72,L.w,
+    [['관계사','씨엔티테크 (CNT TECH)'],
+     ['협력사','한국프랜차이즈산업협회 (KFA)'],
+     ['오픈 이노베이션','다날 · SPC 섹타나인 · 토스']],0.46);
+
+  /* ── 우 : 연혁 타임라인 (연도 알약 + 세로 레일) ── */
+  sectionBar(s,R,R.x,R.y,R.w,'연혁');
+  const HIS = [
+    ['2020년 ~','FC 자문사 설립 및 운영',[]],
+    ['2023년','플랫폼 개발',
+      ['내일사장 1.0 버전 출시 · 웹 버전 오픈',
+       '벤처기업 인증 · 기업부설연구소 설립',
+       '매물인증 기반 부동산 중개방법 특허출원 3건']],
+    ['2024년','BM모델 구축',
+      ['서브웨이 등 주요 프랜차이즈 약 20곳 브랜드인증관 입점',
+       '한국프랜차이즈산업협회 공동사업단 설립',
+       'SPC · 삼성웰스토리 · 다날 업무협약 체결',
+       '초기창업패키지 · R&D 디딤돌사업 선정']],
+    ['2025년','BM모델 고도화',
+      ['구글 우수 스타트업 선정 (Google 창구)',
+       'TIPS 선정 (중소벤처기업부)',
+       '디지털 이노베이션 IT플랫폼부문 대상 (과기정통부)']]];
+  const HY0 = 3.00, HHD = 0.32, HIT = 0.215, HGAP = 0.10, PW = 1.04;
+  const dots = [];
+  let hy = HY0;
+  HIS.forEach(([yr,ttl,items])=>{
+    dots.push(hy+HHD/2);
+    hy += HHD + items.length*HIT + HGAP;
   });
-  hr(s,R.x,ty+0.02,R.w,C.BLUE,0.020);
-  tx(s,R,{x:R.x,y:ty+0.12,w:R.w,h:0.24},
-    '그 외  천영식 CMO · 장수형 CTO · 김재현 팀장',T.cardtx,{size:9.3,color:C.MUTE,valign:'middle'});
-  s.addNotes('가맹 개설을 본사에서 직접 해 본 4인입니다.');
+  rail(s,R,R.x+0.09,HY0+0.06,dots[dots.length-1]-HY0+0.10,dots.map(d=>d),C.RULE);
+  hy = HY0;
+  HIS.forEach(([yr,ttl,items])=>{
+    pill(s,R,R.x+0.34,hy+0.025,yr,C.BLUE,C.WHITE,PW);
+    tx(s,R,{x:R.x+0.34+PW+0.16,y:hy,w:R.w-(0.34+PW+0.16),h:HHD},ttl,T.sub,
+      {size:12,color:C.NAVY,valign:'middle'});
+    hy += HHD;
+    items.forEach(v=>{
+      tx(s,R,{x:R.x+0.44,y:hy,w:R.w-0.44,h:HIT},'· '+v,T.cardtx,
+        {size:9.5,color:C.NAVY,valign:'middle'});
+      hy += HIT;
+    });
+    hy += HGAP;
+  });
+  s.addNotes('2023년 설립 이후 프랜차이즈 본사를 상대로 쌓아 온 이력입니다.');
 }
 
-/* ══════════════ 05 02 Capability — 수행 업무 · 수행 브랜드 ══════════════ */
+/* ══════════════ 05 02 Capability — 팀 ══════════════ */
 {
   const s = page(5,'02','Capability');
+  head2(s,'[세종대학교 겸임교수]들이 만든\n프랜차이즈 창업 지원 플랫폼');
+
+  const B = BODY('ir');
+  const CUTY = 4.86;
+  const L = region('ceoL',SAFE.x,B.y,5.30,CUTY-B.y);
+  const R = region('specR',SAFE.x+5.72,B.y,RIGHT-(SAFE.x+5.72),CUTY-B.y);
+  const D = region('cxoD',SAFE.x,5.06,SAFE.w,B.y2-5.06);
+
+  /* ── 좌 : 대표이사 ── */
+  sectionBar(s,L,L.x,L.y,L.w,'대표이사');
+  tx(s,L,{x:L.x,y:3.00,w:L.w,h:0.30},
+    [{text:'박규태  ',options:{color:C.BLUE}},{text:'CEO',options:{color:C.NAVY}}],
+    T.sub,{size:15,valign:'middle'});
+  tx(s,L,{x:L.x,y:3.32,w:L.w,h:0.24},'유통학 박사 · 세종사이버대 외식창업프랜차이즈학과 겸임교수',
+    T.cardtx,{size:9.8,color:C.MUTE,valign:'middle'});
+  ['현] (주)내일사장 대표이사',
+   '전] 중앙그룹 외식부문 신사업 팀장',
+   '전] 이삭토스트 총괄사업부장 (COO)',
+   '전] SPC 파리바게뜨 가맹사업본부'].forEach((v,i)=>
+    tx(s,L,{x:L.x,y:3.62+i*0.24,w:L.w,h:0.24},v,T.cardtx,{size:9.8,color:C.NAVY,valign:'middle'}));
+  hr(s,L.x,4.62,L.w,C.BLUE,0.020);
+  tx(s,L,{x:L.x,y:4.64,w:L.w,h:0.22},'대형 프랜차이즈 재직 11년  +  외식 시스템 구축 7년',
+    T.cardtx,{size:9.8,bold:true,color:C.NAVY,valign:'middle'});
+
+  /* ── 우 : 프랜차이즈 창업 Specialist 4분야 ── */
+  sectionBar(s,R,R.x,R.y,R.w,'프랜차이즈 창업 Specialist');
+  const SP = ['프랜차이즈 본부구축','창업 모객 · 매장 활성화 마케팅','가맹점 운영관리 (SV)','가맹영업 · 점포개발'];
+  const spw = (R.w-0.16)/2;
+  SP.forEach((v,i)=>{
+    const x = R.x+(spw+0.16)*(i%2), y = 3.02+(0.84+0.12)*Math.floor(i/2);
+    rrect(s,at(R,{x,y,w:spw,h:0.84},{kind:'card'}),i<2?C.BLUEBG:C.BLUEBG0,0.06);
+    tx(s,R,{x:x+0.16,y,w:spw-0.32,h:0.84},v,T.body,
+      {size:11,bold:true,align:'center',valign:'middle'});
+  });
+
+  /* ── 하 : C-Level 3인 ── */
+  hr(s,SAFE.x,4.96,SAFE.w,C.RULE);
+  const CXO = [
+    ['천영식','CMO','프랜차이즈 경영학 석사 · 창업마케팅 저서 다수',
+      ['현] 경기창조센터 마케팅 전임교수','전] 한촌 · 육수당 마케팅 본부장',
+       '전] 죠스떡볶이 · 바르다김선생 마케팅 팀장','전] 창업마케팅 와이즈컴퍼니 대표']],
+    ['김우곤','COO','유통학 박사 · 세종대학교 유통학과 겸임교수',
+      ['전] McDonald\'s · Subway International B.V','전] Delivery Hero Korea · 투썸플레이스 · 폴바셋',
+       '전] SPC 등 외식 프랜차이즈 15년']],
+    ['김준영','CSO','호텔관광경영학 박사 · 세종대학교 유통학과 겸임교수',
+      ['현] 한국외식협회 전문위원','전] 제너시스그룹 BBQ OSM팀 실무 관리자',
+       '전] 한국프랜차이즈학회 간사','전] 알파랩 2.0 수석연구원']]];
+  const cw = (D.w-0.48)/3;
+  CXO.forEach(([nm,pos,deg,cars],i)=>{
+    const x = D.x+(cw+0.24)*i;
+    if(i) vr(s,x-0.12,D.y+0.02,1.34,C.RULE,0.008);
+    tx(s,D,{x,y:D.y,w:cw,h:0.28},
+      [{text:nm+'  ',options:{color:C.BLUE}},{text:pos,options:{color:C.NAVY}}],
+      T.sub,{size:12.5,valign:'middle'});
+    tx(s,D,{x,y:D.y+0.30,w:cw,h:0.24},deg,T.cardtx,{size:9.3,color:C.MUTE,valign:'middle'});
+    cars.forEach((v,k)=>tx(s,D,{x,y:D.y+0.60+k*0.235,w:cw,h:0.235},v,T.cardtx,
+      {size:9.3,color:C.NAVY,valign:'middle'}));
+  });
+  s.addNotes('가맹 개설을 본사에서 직접 해 본 사람들이 만든 회사입니다.');
+}
+
+/* ══════════════ 06 02 Capability — 수행 업무 · 수행 브랜드 ══════════════ */
+{
+  const s = page(6,'02','Capability');
   head2(s,'[가맹영업] 수행 업무 3종\n및 수행 브랜드 현황');
 
   const B = BODY('ir');
@@ -292,9 +389,9 @@ function gbar(s,reg,x,y,w,h){
   s.addNotes('플랫폼 지표가 아니라 가맹을 판 실적입니다.');
 }
 
-/* ══════════════ 06 02 Capability — 전략적 제휴 현황 ══════════════ */
+/* ══════════════ 07 02 Capability — 전략적 제휴 현황 ══════════════ */
 {
-  const s = page(6,'02','Capability');
+  const s = page(7,'02','Capability');
   head2(s,'예비창업자 접점을 넓히는\n[전략적 제휴] 현황');
 
   const B = BODY('ir');
@@ -330,12 +427,12 @@ function gbar(s,reg,x,y,w,h){
   s.addNotes('러너펍에 필요한 창업 수요는 이 제휴망 안에서 나옵니다.');
 }
 
-/* ══════════════ 07 02 Capability — 근거 문서 (리드 허용 1) ══════════════ */
+/* ══════════════ 08 02 Capability — 근거 문서 (리드 허용 1) ══════════════ */
 {
   const s = p.addSlide(); bg(s,C.WHITE);
   grad(s,FULL(),{x:0,y:2.44,w:G.W,h:G.H-2.44},'gr_panel.png',C.BLUEBG0);
   hr(s,0,2.44,G.W,C.RULE,0.010);
-  frame(s,7,'02');
+  frame(s,8,'02');
   head(s,'결정 지연 구간별 [근거 문서] 제공');
   lead(s,'홈택스 신고자료 연동 · 검증 리포트 · 상권 분석 · 정보공개서 D-day까지 이미 운영 중인 화면',false,11);
 
@@ -365,9 +462,9 @@ function gbar(s,reg,x,y,w,h){
   s.addNotes('창업자가 결정을 미루는 자리마다 근거 문서를 내놓습니다.');
 }
 
-/* ══════════════ 08 03 Terms — 위임 범위 ══════════════ */
+/* ══════════════ 09 03 Terms — 위임 범위 ══════════════ */
 {
-  const s = page(8,'03','Terms');
+  const s = page(9,'03','Terms');
   head2(s,'발굴부터 클로징까지\n[전 과정 위임], 본사는 승인');
 
   const B = BODY('ir');
@@ -399,9 +496,9 @@ function gbar(s,reg,x,y,w,h){
   s.addNotes('본사는 승인만 하시면 됩니다.');
 }
 
-/* ══════════════ 09 03 Terms — 비교 · 결론 띠 ══════════════ */
+/* ══════════════ 10 03 Terms — 비교 · 결론 띠 ══════════════ */
 {
-  const s = page(9,'03','Terms',true);
+  const s = page(10,'03','Terms',true);
   head2(s,'[직영 채용] · 일반 대행 · 내일사장\n세 가지 방식 비교');
 
   const B = BODY('full');
@@ -428,9 +525,9 @@ function gbar(s,reg,x,y,w,h){
   s.addNotes('대안과 나란히 놓아야 위임이 계산됩니다.');
 }
 
-/* ══════════════ 10 03 Terms — 비용 · 정산 ══════════════ */
+/* ══════════════ 11 03 Terms — 비용 · 정산 ══════════════ */
 {
-  const s = page(10,'03','Terms');
+  const s = page(11,'03','Terms');
   head2(s,'[비용 발생] 시점과\n성공보수 정산 기준');
 
   const B = BODY('ir');
@@ -473,13 +570,13 @@ function gbar(s,reg,x,y,w,h){
   s.addNotes('청구는 계약이 체결되고 가맹비 입금이 확인된 뒤에만 발생합니다.');
 }
 
-/* ══════════════ 11 03 Terms — 회수 구조 ══════════════ */
+/* ══════════════ 12 03 Terms — 회수 구조 ══════════════ */
 {
   const CUT = 6.10;
   const s = p.addSlide(); bg(s,C.WHITE);
   grad(s,FULL(),{x:CUT,y:0,w:G.W-CUT,h:G.H},'gr_panelh.png',C.BLUEBG0);
   vr(s,CUT,0,G.H,C.RULE,0.010);
-  frame(s,11,'03');
+  frame(s,12,'03');
   head2(s,'계약 시점부터 흑자,\n[로열티 전액 순증]',{x:SAFE.x,w:5.10});
 
   const B = BODY('ir');
@@ -527,9 +624,9 @@ function gbar(s,reg,x,y,w,h){
   s.addNotes('계약 시점에 이미 흑자입니다.');
 }
 
-/* ══════════════ 12 04 Governance — 준법 통제 ══════════════ */
+/* ══════════════ 13 04 Governance — 준법 통제 ══════════════ */
 {
-  const s = page(12,'04','Governance');
+  const s = page(13,'04','Governance');
   head2(s,'사람이 아닌\n[시스템] 기반의 준법 통제');
 
   const B = BODY('ir');
@@ -564,9 +661,9 @@ function gbar(s,reg,x,y,w,h){
   s.addNotes('준법은 사람이 아니라 시스템이 강제합니다.');
 }
 
-/* ══════════════ 13 04 Governance — 업종 이력 없음 ══════════════ */
+/* ══════════════ 14 04 Governance — 업종 이력 없음 ══════════════ */
 {
-  const s = page(13,'04','Governance',true);
+  const s = page(14,'04','Governance',true);
   head2(s,'홀덤 업종\n[영업 이력 없음]');
 
   const B = BODY('ir');
@@ -612,18 +709,18 @@ function gbar(s,reg,x,y,w,h){
   s.addNotes('숨기지 않고 먼저 말씀드립니다. 검증 방법은 본사가 정하십니다.');
 }
 
-/* ══════════════ 14 Close — 결정 5건 · 담당 ══════════════ */
+/* ══════════════ 15 Close — 결정 5건 · 담당 ══════════════ */
 {
   const s = p.addSlide(); bg(s,C.WHITE);
   const F = FULL();
   grad(s,F,{x:0,y:0,w:G.W,h:G.H},'gr_page.png',C.WHITE);
-  setSlide(14);
+  setSlide(15);
   hr(s,SAFE.x,Y.topRule.y,SAFE.w,C.NAVY,0.014);
   const brow = region('brow',SAFE.x,Y.brow.y,SAFE.w,Y.brow.h);
   const BL = P('ns_logo.png'), bl = 1.10, blh = bl/G.imgAspect(BL);
   s.addImage({path:BL, ...img(brow,{x:RIGHT-bl,y:Y.brow.y+(Y.brow.h-blh)/2,w:bl,h:blh},BL)});
   { const ft = region('foot',SAFE.x,Y.foot.y,SAFE.w,Y.foot.h);
-    tx(s,ft,{x:RIGHT-1.2,y:Y.foot.y+0.02,w:1.2,h:0.22},'14',T.foot,
+    tx(s,ft,{x:RIGHT-1.2,y:Y.foot.y+0.02,w:1.2,h:0.22},'15',T.foot,
       {size:9,color:C.MUTE,align:'right',valign:'middle'}); }
   head(s,'본사가 정하시는 [결정 5건]');
   lead(s,'아래 다섯 가지만 정해 주시면 그대로 따릅니다.',false,11);
