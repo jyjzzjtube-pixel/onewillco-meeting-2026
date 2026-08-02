@@ -438,7 +438,7 @@ function gbar(s,reg,x,y,w,h){
 
   const B = BODY('max');
   const ST = [['STEP 1','p07_step1.png','홈택스 연동 실매출 확인'],
-              ['STEP 2','p07_step2.png','검증 리포트 제공'],
+              ['STEP 2','p07_step2_flat.png','검증 리포트 제공'],
               ['STEP 3','p07_area.png','상권 · 입지 출점 검토'],
               ['STEP 4','p07_dday.png','정보공개서 D-day 카운트']];
   const cs = split(B,4,0.26);
@@ -449,10 +449,11 @@ function gbar(s,reg,x,y,w,h){
     const iw = Math.min(c.w-0.20,2.34*a), ih = iw/a;
     rrect(s,at(c,{x:c.x,y:c.y+0.76,w:c.w,h:2.86},{kind:'card'}),C.WHITE,0.08);
     s.addImage({path:f, ...img(c,{x:c.x+(c.w-iw)/2,y:c.y+3.20-ih,w:iw,h:ih},f)});
-    rrect(s,at(c,{x:c.x,y:c.y+3.26,w:c.w,h:0.36},{kind:'cap'}),C.BLUE,0.08);
-    rect(s,at(c,{x:c.x,y:c.y+3.26,w:c.w,h:0.18},{kind:'cap'}),C.BLUE);
-    tx(s,c,{x:c.x+0.08,y:c.y+3.26,w:c.w-0.16,h:0.36},cap,T.label,
-      {color:C.WHITE,align:'center',valign:'middle'});
+    rrect(s,at(c,{x:c.x,y:c.y+3.26,w:c.w,h:0.36},{kind:'cap'}),C.BLUEBG,0.06);
+    rect(s,at(c,{x:c.x,y:c.y+3.26,w:c.w,h:0.18},{kind:'cap'}),C.BLUEBG);
+    rect(s,at(c,{x:c.x,y:c.y+3.26,w:0.05,h:0.36},{kind:'cap'}),C.BLUE);
+    tx(s,c,{x:c.x+0.13,y:c.y+3.26,w:c.w-0.21,h:0.36},cap,T.label,
+      {color:C.NAVY,align:'center',valign:'middle'});
     if(i<3) hr(s,c.x+c.w+0.04,c.y+2.18,0.18,C.MUTED,0.022);
   });
   sectionBar(s,B,B.x,B.y+3.74,B.w,'보유 도구',{h:0.30,labelW:1.0});
@@ -613,14 +614,17 @@ function gbar(s,reg,x,y,w,h){
       {size:11,color:i===2?C.BLUE:C.NAVY,align:'right',valign:'middle'});
   });
   sectionBar(s,R,R.x,R.y+2.06,R.w,'출점 규모별 36개월 누적 순수취',{bg:C.WHITE});
+  // 억 단위가 넘어가는 값은 만원으로만 적으면 자릿수를 세야 읽힌다. 억 + 만원으로 끊는다
+  const eok = (v)=> v>=10000 ? `${Math.floor(v/10000)}억 ${(v%10000).toLocaleString()}만원`
+                             : `${v.toLocaleString()}만원`;
   [['3개점',17700],['5개점',29500],['10개점',59000]].forEach(([k,v],i)=>{
     const y = R.y+2.62+i*0.44;
     tx(s,R,{x:R.x,y,w:0.96,h:0.28},k,T.body,{size:10.5,valign:'middle'});
-    gbar(s,R,R.x+1.02,y+0.05,(R.w-2.62)*v/59000,0.18);
-    tx(s,R,{x:R.x+R.w-1.52,y,w:1.52,h:0.28},v.toLocaleString()+'만원',T.glabel,
+    gbar(s,R,R.x+1.02,y+0.05,(R.w-2.96)*v/59000,0.18);
+    tx(s,R,{x:R.x+R.w-1.86,y,w:1.86,h:0.28},eok(v),T.glabel,
       {size:11,color:i===2?C.BLUE:C.NAVY,align:'right',valign:'middle'});
   });
-  foot(s,R,R.x,R.y+3.94,R.w,'10개점 × 36개월 = 5억 9,000만원   ·   단위 : 만원');
+  foot(s,R,R.x,R.y+3.94,R.w,'가맹비 1,500만원 + 월 로열티 150만원 × 36개월 − 성공보수 1,000만원 기준');
   s.addNotes('계약 시점에 이미 흑자입니다.');
 }
 
@@ -650,7 +654,7 @@ function gbar(s,reg,x,y,w,h){
   const gt = region('gt',Rw.tbl.x,Rw.tbl.y+0.48,Rw.tbl.w,Rw.tbl.h-0.48);
   { const rh=(gt.h-0.38)/6;
     for(let i=1;i<6;i+=2) rect(s,at(Rw.tbl,{x:Rw.tbl.x,y:gt.y+0.38+rh*i,w:Rw.tbl.w,h:rh},{kind:'row'}),C.BLUEBG0); }
-  const GV = [['정보공개서 · 계약서','본사 제공 · 내일사장은 전달 및 설명 보조'],
+  const GV = [['정보공개서 · 계약서','본사 제공 · 내일사장은 전달 및 설명 보조 · 인근가맹점 현황문서(법 제7조제2항) 동봉 확인'],
               ['법정 숙고기간','가맹사업법 제7조제3항 14일 준수 · 기간 단축 유도 금지'],
               ['예상매출 진술','구두 약속 금지 · 본사 승인 문구만 사용'],
               ['광고 · 상담 스크립트','본사 사전 승인 후 사용'],
