@@ -477,7 +477,7 @@ function gbar(s,reg,x,y,w,h){
   table(s,tb,[{h:'업무',w:2.70},{h:'내일사장 수행',w:5.80},{h:'본사 승인',w:tb.w-8.50}],[
     ['영업 조직 운영','가맹영업팀 운영 · 두 트랙 동시 영업',{v:'—',c:C.MUTE}],
     ['창업 마케팅','예비창업자 리드 확보 · 창업마케팅 집행','브랜드 자료 승인'],
-    ['창업 상담 및 브리핑','상권 · 손익 자료와 인·적성검사 결과로 결정 마무리','승인 문구 사용 · 점주 승인'],
+    ['창업 상담 및 브리핑','상권 · 손익 자료와 인·적성검사 결과로 결정 마무리','자료 서식 · 산출근거 · 점주 승인'],
     ['점포개발 및 물건화','실측 · 견적까지 끝낸 브리핑 상태','개설 승인'],
     ['계약 주선','조건 협의 및 클로징 지원','가맹계약 체결'],
     ['인테리어 시공','공사주관 및 도급계약 수행 가능','시공 여부 · 수익 분배 협의'],
@@ -515,7 +515,7 @@ function gbar(s,reg,x,y,w,h){
     ['미계약 건 원가',{v:'본사 부담',c:C.MUTE},{v:'본사 부담',c:C.MUTE},{v:'내일사장 부담',b:true,c:C.BLUEDK}],
     ['창업자 모수',{v:'직접 모객',c:C.MUTE},{v:'대행사 규모에 따름',c:C.MUTE},{v:'앱 10만 · DB 5,114명',b:true,c:C.BLUEDK}],
     ['점주 선별 기준',{v:'담당자 판단',c:C.MUTE},{v:'대행사 재량',c:C.MUTE},{v:'인·적성검사 결과 제출',b:true,c:C.BLUEDK}],
-    ['브리핑 자료',{v:'직접 제작',c:C.MUTE},{v:'브랜드 자료 전달',c:C.MUTE},{v:'상권 · 손익 직접 산출',b:true,c:C.BLUEDK}],
+    ['브리핑 자료',{v:'직접 제작',c:C.MUTE},{v:'브랜드 자료 전달',c:C.MUTE},{v:'상권 · 손익 산출 (본사 승인 서식)',b:true,c:C.BLUEDK}],
     ['준법 관리',{v:'담당자 역량',c:C.MUTE},{v:'대행사 재량',c:C.MUTE},{v:'시스템 강제',b:true,c:C.BLUEDK}],
     ['본사 인력 증원',{v:'필요',c:C.MUTE},{v:'관리 인력 필요',c:C.MUTE},{v:'0명',b:true,c:C.BLUEDK}],
   ],{rh:(tb.h-0.38)/7});
@@ -601,19 +601,19 @@ function gbar(s,reg,x,y,w,h){
   tx(s,L,{x:L.x,y:L.y+2.62,w:L.w,h:0.26},'이후 월 로열티 150만원 전액 본사 순증 — 개설 대가 추가 청구 없음',T.body,
     {size:11,valign:'middle'});
   tx(s,L,{x:L.x,y:L.y+2.96,w:L.w,h:0.44},
-    '개설 기본비용 1,600만원 전액 할인 프로모션은 본사 정책 그대로 유지 · 성공보수는 가맹비 1,500만원 범위 안에서만 정산',
+    '개설 기본비용 1,600만원 전액 할인 프로모션은 본사 정책 그대로 유지\n· 성공보수는 가맹비 1,500만원 범위 안에서만 정산',
     T.body,{size:10,color:C.NAVY});
   foot(s,L,L.x,L.y+3.90,L.w,'※ 러너펍 공개 가맹 안내 기준 시뮬레이션 · 실제 조건은 본사 정책에 따름');
 
-  sectionBar(s,R,R.x,R.y,R.w,'1개점 누적 본사 순수취 — 성공보수 차감 후',{bg:C.WHITE});
+  sectionBar(s,R,R.x,R.y,R.w,'1개점 누적 본사 순수취 — 막대 100% = 5,900만원',{bg:C.WHITE});
   [['12개월',2300],['24개월',4100],['36개월',5900]].forEach(([k,v],i)=>{
     const y = R.y+0.58+i*0.48;
     tx(s,R,{x:R.x,y,w:0.96,h:0.28},k,T.body,{size:10.5,valign:'middle'});
-    gbar(s,R,R.x+1.02,y+0.05,(R.w-2.62)*v/5900,0.18);
-    tx(s,R,{x:R.x+R.w-1.52,y,w:1.52,h:0.28},v.toLocaleString()+'만원',T.glabel,
+    gbar(s,R,R.x+1.02,y+0.05,(R.w-2.96)*v/5900,0.18);
+    tx(s,R,{x:R.x+R.w-1.86,y,w:1.86,h:0.28},v.toLocaleString()+'만원',T.glabel,
       {size:11,color:i===2?C.BLUE:C.NAVY,align:'right',valign:'middle'});
   });
-  sectionBar(s,R,R.x,R.y+2.06,R.w,'출점 규모별 36개월 누적 순수취',{bg:C.WHITE});
+  sectionBar(s,R,R.x,R.y+2.06,R.w,'출점 규모별 36개월 누적 — 막대 100% = 5억 9,000만원',{bg:C.WHITE});
   // 억 단위가 넘어가는 값은 만원으로만 적으면 자릿수를 세야 읽힌다. 억 + 만원으로 끊는다
   const eok = (v)=> v>=10000 ? `${Math.floor(v/10000)}억 ${(v%10000).toLocaleString()}만원`
                              : `${v.toLocaleString()}만원`;
@@ -656,7 +656,7 @@ function gbar(s,reg,x,y,w,h){
     for(let i=1;i<6;i+=2) rect(s,at(Rw.tbl,{x:Rw.tbl.x,y:gt.y+0.38+rh*i,w:Rw.tbl.w,h:rh},{kind:'row'}),C.BLUEBG0); }
   const GV = [['정보공개서 · 계약서','본사 제공 · 내일사장은 전달 및 설명 보조 · 인근가맹점 현황문서(법 제7조제2항) 동봉 확인'],
               ['법정 숙고기간','가맹사업법 제7조제3항 14일 준수 · 기간 단축 유도 금지'],
-              ['예상매출 진술','구두 약속 금지 · 본사 승인 문구만 사용'],
+              ['예상매출 · 손익 자료','본사 승인 서식 서면만 사용 · 구두 약속 금지 · 산출근거 본사 제출'],
               ['광고 · 상담 스크립트','본사 사전 승인 후 사용'],
               ['위반 확인 시','해당 건 영업 즉시 중단 및 본사 통보'],
               ['업종 인허가 · 게임물 기준','러너펍 본사 기준 그대로 적용 · 내일사장 독자 판단 및 안내 금지']];
@@ -682,7 +682,7 @@ function gbar(s,reg,x,y,w,h){
              {text:'건',options:{fontSize:13,bold:true,color:C.MUTE}}],
     t({...at(L,{x:L.x+0.20,y:L.y+0.80,w:1.90,h:0.60},{kind:'fig',pt:32}),valign:'middle'}));
   vr(s,L.x+2.42,L.y+0.54,0.86,C.RULE);
-  tx(s,L,{x:L.x+2.62,y:L.y+0.54,w:L.w-2.82,h:0.24},'본사가 정하시는 항목',T.note,
+  tx(s,L,{x:L.x+2.62,y:L.y+0.54,w:L.w-2.82,h:0.24},'파일럿 운영 조건',T.note,
     {size:9,color:C.MUTE,valign:'middle'});
   s.addText([{text:'8',options:{fontSize:32,bold:true,color:C.BLUE,charSpacing:-1.2}},
              {text:'건',options:{fontSize:13,bold:true,color:C.BLUE}}],
@@ -727,7 +727,7 @@ function gbar(s,reg,x,y,w,h){
     tx(s,ft,{x:RIGHT-1.2,y:Y.foot.y+0.02,w:1.2,h:0.22},'15',T.foot,
       {size:9,color:C.MUTE,align:'right',valign:'middle'}); }
   head(s,'본사가 정하시는 [결정 5건]');
-  lead(s,'아래 다섯 가지만 정해 주시면 그대로 따릅니다.',false,11);
+  lead(s,'착수 전 아래 다섯 가지만 정해 주시면, 파일럿 세부 운영 조건 8항목은 별지로 확정합니다.',false,11);
 
   const B = BODY('max');
   [['전속 · 비전속','전속 여부 · 타 대행사 병행 · 홀덤 동종 브랜드 영업 제한'],

@@ -29,6 +29,19 @@ def wrap(dr,txt,f,maxw):
         else: out.append(cur);cur=ch
     out.append(cur);return out
 
+def wrap_styled(dr,chars,f,maxw):
+    """wrap() 과 같은 규칙으로 끊되 글자마다 색을 달고 다닌다.
+       한 문단에 색이 다른 런이 섞이면(헤드라인 [강조]) 첫 런 색이 문단 전체를 먹던 버그를 막는다."""
+    out=[];cur=[];curtxt=''
+    for ch,c in chars:
+        if ch=='\n':
+            out.append(cur);cur=[];curtxt='';continue
+        if dr.textlength(curtxt+ch,font=f)<=maxw:
+            cur.append((ch,c));curtxt+=ch
+        else:
+            out.append(cur);cur=[(ch,c)];curtxt=ch
+    out.append(cur);return out
+
 import sys
 SRC=sys.argv[1] if len(sys.argv)>1 else 'runnerpub_v6.pptx'
 OUTD=sys.argv[2] if len(sys.argv)>2 else '.'
@@ -121,9 +134,12 @@ for i,slide in enumerate(prs.slides,1):
             if not runs: total+=6; plans.append(None); continue
             sz=max([(r.font.size.pt if r.font.size else 12) for r in runs])
             bold=any(bool(r.font.bold) for r in runs)
-            txt=''.join(r.text for r in runs)
             f0=fnt(sz,bold)
-            lines=wrap(dr,txt,f0,max(10,w-4))
+            chars=[]
+            for r in runs:
+                rc=rgb(r.font.color)
+                for ch in r.text: chars.append((ch,rc))
+            lines=wrap_styled(dr,chars,f0,max(10,w-4))
             lh=sz*SC/72*1.35
             plans.append((lines,f0,lh,runs,sz))
             total+=lh*len(lines)
@@ -133,18 +149,27 @@ for i,slide in enumerate(prs.slides,1):
         for pl,p in zip(plans,paras):
             if pl is None: cy+=6; continue
             lines,f0,lh,runs,sz=pl
-            col=None
+            dflt=None
             for r in runs:
                 c=rgb(r.font.color)
-                if c: col=c;break
-            col=col or '#333333'
+                if c: dflt=c;break
+            dflt=dflt or '#333333'
             al=p.alignment
             for ln_ in lines:
-                tw=dr.textlength(ln_,font=f0)
+                txt=''.join(ch for ch,_ in ln_)
+                tw=dr.textlength(txt,font=f0)
                 tx=x+2
                 if al==PP_ALIGN.CENTER: tx=x+(w-tw)/2
                 elif al==PP_ALIGN.RIGHT: tx=x+w-tw-2
-                dr.text((tx,cy),ln_,font=f0,fill=col)
+                seg=''; segc=None; cx=tx
+                for ch,c in ln_:
+                    c=c or dflt
+                    if segc is None: segc=c
+                    if c!=segc:
+                        dr.text((cx,cy),seg,font=f0,fill=segc)
+                        cx+=dr.textlength(seg,font=f0); seg=ch; segc=c
+                    else: seg+=ch
+                if seg: dr.text((cx,cy),seg,font=f0,fill=segc or dflt)
                 cy+=lh
     img.save(os.path.join(OUTD,f'p{i}.png'))
 print('rendered', len(prs.slides))
