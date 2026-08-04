@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>러너펍 가맹영업 파트너십 제안 — 내일사장</title>
+<style>
+@page { size: A4 portrait; margin: 0; }
+
+:root{
+  --ink:#12101F;          /* 심야 라운지 잉크 */
+  --ink-2:#3A3550;
+  --muted:#6E6885;        /* 보라 기운 섞은 중성색 */
+  --line:#E3DFF2;
+  --paper:#FFFFFF;
+  --tint:#F6F4FC;         /* 보라 편향 배경 */
+  --violet:#5B3DF5;       /* 러너펍 브랜드 */
+  --violet-d:#241A5C;
+  --gold:#B4832B;         /* 금액·수치 전용 */
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html,body{ background:#8C87A0; }
+body{
+  font-family:'Pretendard', sans-serif;
+  color:var(--ink);
+  font-size:10.2pt;
+  line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  font-feature-settings:"tnum" 0;
+}
+.sheet{
+  position:relative; width:210mm; height:297mm; overflow:hidden;
+  background:var(--paper); margin:0 auto; page-break-after:always;
+  padding:22mm 20mm 26mm; display:flex; flex-direction:column;
+}
+.pin{ margin-top:auto; }
+.sheet:last-child{ page-break-after:auto; }
+@media screen { .sheet{ margin:8mm auto; box-shadow:0 6px 30px rgba(0,0,0,.28); } }
+
+/* ============ 공통 타이포 ============ */
+.eyebrow{ display:flex; align-items:baseline; gap:9px; margin-bottom:11mm; }
+.eyebrow .no{
+  font-size:9.5pt; font-weight:800; color:var(--violet);
+  letter-spacing:.14em; font-variant-numeric:tabular-nums;
+}
+.eyebrow .rule{ flex:0 0 26px; height:1.6px; background:var(--violet); align-self:center; }
+.eyebrow .lb{ font-size:9.5pt; font-weight:700; color:var(--muted); letter-spacing:.13em; }
+
+h2.head{
+  font-size:26.5pt; font-weight:900; line-height:1.34; letter-spacing:-.032em;
+  color:var(--ink); text-wrap:balance; margin-bottom:5mm;
+}
+h2.head em{ font-style:normal; color:var(--violet); }
+p.deck{ font-size:11pt; color:var(--ink-2); line-height:1.78; max-width:150mm; margin-bottom:9mm; }
+p.body{ font-size:10.2pt; color:var(--ink-2); line-height:1.8; }
+.fine{ font-size:8.2pt; color:var(--muted); line-height:1.6; }
+
+/* ============ 표지 ============ */
+.cover{
+  background:
+    radial-gradient(120% 80% at 82% 12%, rgba(91,61,245,.42) 0%, rgba(91,61,245,0) 58%),
+    radial-gradient(90% 60% at 8% 96%, rgba(180,131,43,.16) 0%, rgba(180,131,43,0) 62%),
+    linear-gradient(168deg, #1B1440 0%, #14112A 46%, #0D0B17 100%);
+  color:#fff; padding:24mm 20mm 18mm;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+.cover .cardghost{
+  position:absolute; right:-24mm; top:52mm; width:118mm;
+  opacity:.10; transform:rotate(13deg);
+}
+.cover .top{ display:flex; align-items:flex-start; justify-content:space-between; }
+.cover .brandlogo{ width:46mm; opacity:.95; }
+.cover .stamp{
+  border:1.2px solid rgba(255,255,255,.34); border-radius:2mm;
+  padding:2.2mm 4mm; font-size:8pt; font-weight:700; letter-spacing:.16em; color:rgba(255,255,255,.82);
+}
+.cover .mid{ position:relative; z-index:2; margin-top:-14mm; }
+.cover .kick{
+  font-size:9pt; font-weight:800; letter-spacing:.24em; color:var(--gold);
+  margin-bottom:7mm;
+}
+.cover h1{
+  font-size:35pt; font-weight:900; line-height:1.3; letter-spacing:-.036em;
+  text-wrap:balance; margin-bottom:7mm;
+}
+.cover h1 .u{
+  background:linear-gradient(transparent 66%, rgba(91,61,245,.55) 66%);
+  padding:0 .5mm;
+}
+.cover .sub{
+  font-size:11.5pt; color:rgba(255,255,255,.72); line-height:1.8; max-width:132mm;
+}
+.cover .sub b{ color:#fff; font-weight:700; }
+
+.ticker{
+  position:relative; z-index:2;
+  border-top:1px solid rgba(255,255,255,.2); padding-top:6mm;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:6mm 4mm;
+}
+.ticker .t .v{
+  font-size:17pt; font-weight:900; letter-spacing:-.03em; color:#fff;
+  font-variant-numeric:tabular-nums; line-height:1.2;
+}
+.ticker .t .v i{ font-style:normal; font-size:10.5pt; font-weight:700; color:var(--gold); margin-left:1mm; }
+.ticker .t .k{ font-size:8.4pt; color:rgba(255,255,255,.6); margin-top:1mm; letter-spacing:.02em; }
+.cover .foot{
+  position:relative; z-index:2; display:flex; justify-content:space-between;
+  align-items:flex-end; font-size:9pt; color:rgba(255,255,255,.62); margin-top:9mm;
+}
+.cover .foot b{ display:block; color:#fff; font-size:11pt; font-weight:800; letter-spacing:-.01em; margin-bottom:.8mm; }
+
+/* ============ 진단 페이지 ============ */
+.diag{ display:grid; grid-template-columns:1fr 1fr; gap:5mm; margin-bottom:8mm; }
+.diagcard{
+  border:1px solid var(--line); border-radius:2.5mm; padding:8.5mm 7.5mm; background:var(--paper);
+}
+.diagcard .h{
+  font-size:8.6pt; font-weight:800; color:var(--violet); letter-spacing:.1em; margin-bottom:2.5mm;
+}
+.diagcard .big{
+  font-size:19pt; font-weight:900; letter-spacing:-.03em; color:var(--ink);
+  font-variant-numeric:tabular-nums; line-height:1.25;
+}
+.diagcard .big s{ color:var(--muted); text-decoration-thickness:1.5px; font-weight:700; font-size:13pt; }
+.diagcard .big .ar{ color:var(--gold); margin:0 1.5mm; font-weight:700; }
+.diagcard .d{ font-size:9.2pt; color:var(--muted); margin-top:2mm; line-height:1.65; }
+
+.gap{
+  background:var(--ink); color:#fff; border-radius:2.5mm; padding:9.5mm 9mm; margin-top:3mm;
+}
+.gap .q{ font-size:15pt; font-weight:800; letter-spacing:-.028em; line-height:1.5; text-wrap:balance; }
+.gap .q u{ text-decoration:none; color:#B9A6FF; }
+.gap .a{ font-size:9.8pt; color:rgba(255,255,255,.66); margin-top:3.5mm; line-height:1.72; }
+
+/* ============ 숫자 페이지 ============ */
+.metrics{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; border-top:1.6px solid var(--ink); }
+.metrics .m{
+  padding:7.5mm 4mm 7.5mm 0; border-bottom:1px solid var(--line);
+}
+.metrics .m:nth-child(3n+2){ padding-left:5mm; border-left:1px solid var(--line); }
+.metrics .m:nth-child(3n){ padding-left:5mm; border-left:1px solid var(--line); }
+.metrics .m .v{
+  font-size:24pt; font-weight:900; letter-spacing:-.045em; color:var(--violet-d);
+  font-variant-numeric:tabular-nums; line-height:1.14; white-space:nowrap;
+}
+.metrics .m .v i{ font-style:normal; font-size:11.5pt; color:var(--gold); font-weight:800; margin-left:.8mm; }
+.metrics .m .k{ font-size:9.4pt; font-weight:700; color:var(--ink); margin-top:2mm; }
+.metrics .m .s{ font-size:8.4pt; color:var(--muted); margin-top:.8mm; line-height:1.55; }
+
+.creds{ display:grid; grid-template-columns:1fr 1fr; gap:4mm; margin-top:6mm; }
+.cred{ background:var(--tint); border-radius:2.5mm; padding:6mm 6.5mm; }
+.cred .t{ font-size:9.6pt; font-weight:800; color:var(--violet-d); margin-bottom:1.5mm; }
+.cred .b{ font-size:9pt; color:var(--muted); line-height:1.68; }
+
+/* ============ 방식 페이지 ============ */
+.tracks{ display:grid; grid-template-columns:1fr 1fr; gap:5mm; margin-bottom:7mm; }
+.track{ border:1px solid var(--line); border-radius:2.5mm; overflow:hidden; }
+.track .tt{
+  background:var(--violet-d); color:#fff; padding:4mm 6mm; font-size:10.4pt; font-weight:800; letter-spacing:-.01em;
+}
+.track .tt span{ display:block; font-size:8.2pt; font-weight:600; color:rgba(255,255,255,.62); letter-spacing:.08em; margin-bottom:.6mm; }
+.track .tb{ padding:7.5mm 6.5mm; }
+.track li{ font-size:9.4pt; color:var(--ink-2); line-height:1.72; margin-bottom:4.2mm; list-style:none; padding-left:4.5mm; position:relative; }
+.track li:last-child{ margin-bottom:0; }
+.track li::before{ content:''; position:absolute; left:0; top:2.6mm; width:2mm; height:2mm; border-radius:50%; background:var(--violet); }
+
+.tools{ border-top:1.6px solid var(--ink); padding-top:5mm; display:grid; grid-template-columns:repeat(4,1fr); gap:4mm; }
+.tool .n{ font-size:8pt; font-weight:800; color:var(--gold); letter-spacing:.1em; margin-bottom:1.5mm; font-variant-numeric:tabular-nums; }
+.tool .t{ font-size:9.6pt; font-weight:800; color:var(--ink); margin-bottom:1.2mm; }
+.tool .d{ font-size:8.8pt; color:var(--muted); line-height:1.6; }
+
+/* ============ 시너지 페이지 ============ */
+.synergy{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:5mm; margin-bottom:7mm; }
+.sbox{ border:1.4px solid var(--line); border-radius:2.5mm; padding:8mm 6mm; text-align:center; }
+.sbox.left{ border-color:#CFC6F5; background:var(--tint); }
+.sbox .nm{ font-size:11pt; font-weight:900; color:var(--violet-d); letter-spacing:-.02em; }
+.sbox .rl{ font-size:8.2pt; font-weight:700; color:var(--violet); letter-spacing:.1em; margin-bottom:2mm; }
+.sbox .ds{ font-size:8.8pt; color:var(--muted); line-height:1.6; margin-top:2mm; }
+.plus{ font-size:16pt; font-weight:900; color:var(--gold); }
+
+.flow{ border:1px solid var(--line); border-radius:2.5mm; overflow:hidden; }
+.flow .fr{ display:grid; grid-template-columns:34mm 1fr; border-bottom:1px solid var(--line); }
+.flow .fr:last-child{ border-bottom:none; }
+.flow .fl{ background:var(--tint); padding:6.5mm 5mm; font-size:9.2pt; font-weight:800; color:var(--violet-d); }
+.flow .fv{ padding:6.5mm 6mm; font-size:9.4pt; color:var(--ink-2); line-height:1.68; }
+
+/* ============ 조건 페이지 ============ */
+.feebox{
+  background:var(--ink); color:#fff; border-radius:3mm; padding:9mm 10mm; margin-bottom:6mm;
+  display:flex; align-items:center; justify-content:space-between; gap:8mm;
+}
+.feebox .amt{ font-size:33pt; font-weight:900; letter-spacing:-.045em; line-height:1.05; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.feebox .amt small{ display:block; font-size:9.5pt; font-weight:700; color:var(--gold); letter-spacing:.06em; margin-top:2mm; }
+.feebox .txt{ font-size:9.8pt; color:rgba(255,255,255,.74); line-height:1.76; }
+.feebox .txt b{ color:#fff; }
+
+table.cond{ width:100%; border-collapse:collapse; font-size:9.4pt; }
+table.cond th{
+  background:var(--violet-d); color:#fff; font-weight:700; text-align:left;
+  padding:4.6mm 5mm; font-size:9pt; letter-spacing:.02em;
+}
+table.cond td{ border-bottom:1px solid var(--line); padding:5.4mm 5mm; color:var(--ink-2); vertical-align:middle; }
+table.cond tr:last-child td{ border-bottom:none; }
+table.cond td.k{ font-weight:800; color:var(--ink); }
+table.cond td.v{ font-weight:800; color:var(--violet); white-space:nowrap; }
+table.cond tbody tr:nth-child(even){ background:var(--tint); }
+
+.notes{ margin-top:6mm; }
+.notes .nrow{ display:flex; gap:3.5mm; margin-bottom:5.2mm; align-items:flex-start; }
+.notes .mk{ flex:0 0 auto; font-size:9pt; font-weight:900; color:var(--violet); line-height:1.7; }
+.notes .tx{ font-size:9.4pt; color:var(--ink-2); line-height:1.72; }
+.notes .tx b{ color:var(--ink); font-weight:800; }
+
+/* ============ 마무리 ============ */
+.steps4{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; margin:2mm 0 10mm; border-top:1.6px solid var(--ink); }
+.steps4 .s{ padding:9mm 5mm 9mm 0; }
+.steps4 .s:not(:first-child){ padding-left:5mm; border-left:1px solid var(--line); }
+.steps4 .s .n{ font-size:8.4pt; font-weight:900; color:var(--violet); letter-spacing:.12em; font-variant-numeric:tabular-nums; }
+.steps4 .s .t{ font-size:10.4pt; font-weight:800; color:var(--ink); margin-top:2mm; letter-spacing:-.015em; }
+.steps4 .s .d{ font-size:8.6pt; color:var(--muted); margin-top:1.2mm; line-height:1.6; }
+
+.closing{
+  border-top:1.6px solid var(--ink); padding-top:7mm; margin-top:auto;
+}
+.closing .msg{ font-size:14.5pt; font-weight:900; letter-spacing:-.03em; line-height:1.55; color:var(--ink); text-wrap:balance; }
+.closing .msg em{ font-style:normal; color:var(--violet); }
+.sign{ display:flex; justify-content:space-between; align-items:flex-end; margin-top:9mm; }
+.sign .co{ font-size:13pt; font-weight:900; color:var(--ink); letter-spacing:-.02em; }
+.sign .tg{ font-size:8.8pt; color:var(--muted); margin-top:1mm; letter-spacing:.04em; }
+.sign .dt{ font-size:9pt; color:var(--muted); text-align:right; line-height:1.7; }
+
+
+/* 해석 밴드 — 숫자를 러너펍의 언어로 번역 */
+.band{
+  background:var(--ink); color:#fff; border-radius:3mm; padding:7mm 8mm;
+}
+.band .bh{
+  font-size:8.6pt; font-weight:800; letter-spacing:.14em; color:var(--gold); margin-bottom:4.5mm;
+}
+.band .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:6mm; }
+.band .it .t{ font-size:10.4pt; font-weight:800; color:#fff; margin-bottom:1.8mm; letter-spacing:-.015em; }
+.band .it .d{ font-size:8.8pt; color:rgba(255,255,255,.66); line-height:1.7; }
+.band .one{ font-size:11.5pt; font-weight:800; line-height:1.62; letter-spacing:-.02em; text-wrap:balance; }
+.band .one u{ text-decoration:none; color:#B9A6FF; }
+
+/* 본사가 이미 갖춘 것 */
+.ready{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; border-top:1.6px solid var(--ink); }
+.ready .r{ padding:6.5mm 5mm 0 0; }
+.ready .r:not(:first-child){ padding-left:5.5mm; border-left:1px solid var(--line); }
+.ready .r .t{ font-size:9.8pt; font-weight:800; color:var(--ink); margin-bottom:1.5mm; letter-spacing:-.015em; }
+.ready .r .d{ font-size:8.7pt; color:var(--muted); line-height:1.66; }
+.readylb{ font-size:8.6pt; font-weight:800; letter-spacing:.13em; color:var(--muted); margin-bottom:3.5mm; }
+
+
+/* 마지막 요약 */
+.recap{ display:grid; grid-template-columns:repeat(3,1fr); gap:6mm; margin-top:12mm; }
+.rc{ border-top:2.4px solid var(--violet); padding-top:5mm; }
+.rc .k{ font-size:8.6pt; font-weight:800; letter-spacing:.12em; color:var(--muted); margin-bottom:2.5mm; }
+.rc .v{ font-size:22pt; font-weight:900; letter-spacing:-.04em; color:var(--violet-d); line-height:1.15; }
+.rc .v span{ font-size:12pt; color:var(--gold); margin-left:.6mm; }
+.rc .d{ font-size:8.8pt; color:var(--muted); line-height:1.68; margin-top:2.5mm; }
+
+
+/* 회수 구조 */
+.roi{ display:grid; grid-template-columns:0.95fr 1.05fr; gap:7mm; margin-top:2mm; }
+.calc{ border:1px solid var(--line); border-radius:2.5mm; padding:7mm 7.5mm; }
+.calc .hd{ font-size:8.8pt; font-weight:800; color:var(--violet); letter-spacing:.1em; margin-bottom:5mm; }
+.calc .row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:3.4mm; }
+.calc .row .k{ font-size:10pt; color:var(--ink-2); }
+.calc .row .v{ font-size:13pt; font-weight:800; font-variant-numeric:tabular-nums; }
+.calc .row .v small{ font-size:8.8pt; font-weight:600; color:var(--muted); margin-left:.8mm; }
+.calc .sum{ border-top:1px solid var(--line); margin-top:4.5mm; padding-top:4.5mm;
+  display:flex; justify-content:space-between; align-items:baseline; gap:4mm; }
+.calc .sum .k{ font-size:10pt; font-weight:800; }
+.calc .sum .v{ font-size:19pt; font-weight:900; color:var(--violet-d); font-variant-numeric:tabular-nums; letter-spacing:-.03em; }
+.calc .sum .v small{ font-size:10pt; font-weight:800; color:var(--gold); margin-left:.8mm; }
+.calc .nt{ font-size:9pt; color:var(--muted); line-height:1.65; margin-top:4.5mm; }
+
+.bars .hd{ font-size:8.8pt; font-weight:800; color:var(--muted); letter-spacing:.12em; margin-bottom:5.5mm; }
+.bars .b{ display:grid; grid-template-columns:20mm 1fr 22mm; align-items:center; gap:4mm; margin-bottom:5mm; }
+.bars .b .k{ font-size:9.6pt; font-weight:700; color:var(--ink-2); }
+.bars .b .track{ display:block; height:5.6mm; background:var(--tint); border-radius:1mm; overflow:hidden; }
+.bars .b .fill{ display:block; height:100%; background:var(--violet); border-radius:1mm; }
+.bars .b.last .fill{ background:var(--violet-d); }
+.bars .b .v{ font-size:12.5pt; font-weight:800; text-align:right; font-variant-numeric:tabular-nums; }
+.bars .b .v small{ font-size:8.6pt; font-weight:600; color:var(--muted); margin-left:.6mm; }
+.bars .b.last .v{ color:var(--violet-d); }
+.bars .nt{ font-size:9.4pt; color:var(--ink-2); margin-top:1mm; }
+
+.scale{ margin-top:9mm; border-top:1.6px solid var(--ink); padding-top:5.5mm; }
+.scale .lb{ font-size:8.8pt; font-weight:800; letter-spacing:.12em; color:var(--muted); margin-bottom:5mm; }
+.scale .g{ display:grid; grid-template-columns:repeat(4,1fr); gap:5mm; }
+.scale .c .n{ font-size:9.4pt; font-weight:800; color:var(--violet); margin-bottom:1.5mm; }
+.scale .c .v{ font-size:17pt; font-weight:900; color:var(--violet-d); letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums; line-height:1.15; }
+.scale .c .v small{ font-size:9.6pt; font-weight:800; color:var(--gold); margin-left:.6mm; }
+.scale .c .d{ font-size:8.4pt; color:var(--muted); margin-top:1.2mm; }
+
+/* 페이지 하단 러닝 푸터 */
+.runfoot{
+  position:absolute; left:20mm; right:20mm; bottom:10mm;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:7.6pt; color:var(--muted); letter-spacing:.06em;
+  border-top:1px solid var(--line); padding-top:2.5mm;
+}
+.runfoot .pg{ font-variant-numeric:tabular-nums; font-weight:700; }
+</style>
+</head>
+<body>
+
+<!-- ================= 1. 표지 ================= -->
+<section class="sheet cover">
+  <img class="cardghost" src="card.png" alt="">
+  <div class="top">
+    <img class="brandlogo" src="logo.png" alt="RUNNER PUB">
+    <div class="stamp">PARTNERSHIP PROPOSAL</div>
+  </div>
+
+  <div class="mid">
+    <div class="kick">가맹 개설 영업 · 모객 대행</div>
+    <h1>러너펍의 다음 매장을,<br><span class="u">10만 창업 수요</span> 위에서<br>열겠습니다.</h1>
+    <p class="sub">내일사장은 <b>생성형 AI 기반 창업 지원 플랫폼</b>이자 가맹영업 전문 조직입니다.<br>
+    이미 확보한 창업 수요와 제휴망 위에서 러너펍 가맹점을 개설합니다.</p>
+  </div>
+
+  <div>
+    <div class="ticker">
+      <div class="t"><div class="v">1,600<i>억원+</i></div><div class="k">누적 매물 거래 규모</div></div>
+      <div class="t"><div class="v">100,000<i>건+</i></div><div class="k">앱 누적 다운로드</div></div>
+      <div class="t"><div class="v">50,000<i>명+</i></div><div class="k">월간 활성 이용자 (MAU)</div></div>
+      <div class="t"><div class="v">10,000<i>건+</i></div><div class="k">누적 매물 등록</div></div>
+      <div class="t"><div class="v">2,000<i>건+</i></div><div class="k">누적 거래 성사</div></div>
+      <div class="t"><div class="v">80<i>개+</i></div><div class="k">B2B 제휴 브랜드·파트너</div></div>
+    </div>
+    <div class="foot">
+      <div><b>내일사장</b>점포 개발 · 가맹 영업 · 모객 전문</div>
+      <div style="text-align:right">러너스튜디오(주) 귀하<br>2026. 07</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. 왜 지금인가 ================= -->
+<section class="sheet">
+  <div class="eyebrow"><span class="no">01</span><span class="rule"></span><span class="lb">WHY NOW</span></div>
+  <h2 class="head">러너펍은 지금,<br><em>가장 공격적으로</em> 문을 열고 있습니다.</h2>
+  <p class="deck">공식 가맹 안내 기준으로 러너펍은 초기 개설 부담을 사실상 없애고, 계약에서 오픈까지의 기간도 최단 구간으로 압축해 두었습니다. 브랜드는 이미 확장 준비를 마쳤습니다.</p>
+
+  <div class="diag">
+    <div class="diagcard">
+      <div class="h">개설 기본비용</div>
+      <div class="big"><s>1,600만원</s><span class="ar">→</span>전액 할인</div>
+      <div class="d">오픈지원비·교육비·계약이행보증금·설계감리비를 면제하는 프로모션을 운영 중입니다.</div>
+    </div>
+    <div class="diagcard">
+      <div class="h">계약 → 오픈</div>
+      <div class="big">4<span style="font-size:13pt">~</span>6<span style="font-size:13pt;color:var(--gold)"> 주</span></div>
+      <div class="d">상권 검토부터 시공·교육·오픈 부스팅까지 단계별 지원 체계가 이미 갖춰져 있습니다.</div>
+    </div>
+  </div>
+
+  <div class="gap">
+    <div class="q">브랜드도, 시스템도, 조건도 준비되었습니다.<br>남은 변수는 <u>“누가, 얼마나 빠르게 창업자를 데려오는가”</u>입니다.</div>
+    <div class="a">가맹 확장의 병목은 대부분 상품이 아니라 영업 물량에서 생깁니다. 본사가 영업 인력을 직접 늘리면 고정비와 채용 리스크가 함께 늘어납니다. 내일사장은 <b style="color:#fff">고정비 없이</b> 그 물량을 외부에서 만들어 드립니다.</div>
+  </div>
+
+  <div class="pin">
+    <div class="readylb">본사가 이미 갖춘 것</div>
+    <div class="ready">
+      <div class="r"><div class="t">준법 운영 체계</div><div class="d">현금 환전 등 불법 요소를 배제하는 운영 기준과 정기 점검 체크리스트. 창업자가 가장 크게 걱정하는 지점을 이미 해소해 둔 브랜드입니다.</div></div>
+      <div class="r"><div class="t">본사 검증 점포 추천</div><div class="d">가맹 상담 → 본사 점포 추천 → 물색 → 확인 → 개점으로 이어지는 입지 필터링 체계가 운영되고 있습니다.</div></div>
+      <div class="r"><div class="t">러너러너 플랫폼</div><div class="d">예약·회원관리·정산·토너먼트 운영을 앱에서 처리합니다. 개설 이후의 운영 부담이 낮다는 점이 강력한 상담 무기입니다.</div></div>
+    </div>
+  </div>
+
+  <div class="runfoot"><span>내일사장 × 러너펍 가맹영업 파트너십 제안</span><span class="pg">02</span></div>
+</section>
+
+<!-- ================= 3. 내일사장이 가진 것 ================= -->
+<section class="sheet">
+  <div class="eyebrow"><span class="no">02</span><span class="rule"></span><span class="lb">WHAT WE BRING</span></div>
+  <h2 class="head">영업을 <em>0에서 시작하지 않습니다.</em></h2>
+  <p class="deck">내일사장은 이미 창업 수요와 거래 데이터가 모여 있는 플랫폼을 운영합니다. 러너펍은 이 위에 브랜드를 올리기만 하면 됩니다.</p>
+
+  <div class="metrics">
+    <div class="m"><div class="v">1,600<i>억원+</i></div><div class="k">누적 매물 거래 규모</div><div class="s">실제 계약 시장으로 연결된 거래 기준</div></div>
+    <div class="m"><div class="v">100,000<i>건+</i></div><div class="k">앱 누적 다운로드</div><div class="s">창업·양수 수요가 상주하는 채널</div></div>
+    <div class="m"><div class="v">50,000<i>명+</i></div><div class="k">월간 활성 이용자</div><div class="s">MAU 기준</div></div>
+    <div class="m"><div class="v">10,000<i>건+</i></div><div class="k">누적 매물 등록</div><div class="s">점포·상가 데이터베이스</div></div>
+    <div class="m"><div class="v">2,000<i>건+</i></div><div class="k">누적 거래 성사</div><div class="s">등록 → 상담 → 검증 → 계약</div></div>
+    <div class="m"><div class="v">60<i>%</i></div><div class="k">평균 리드타임 단축</div><div class="s">계약까지 걸리는 기간 기준</div></div>
+  </div>
+
+  <div class="creds">
+    <div class="cred">
+      <div class="t">세종대학교 겸임교수진이 만든 플랫폼</div>
+      <div class="b">무자격 컨설턴트의 불법·허위 중개로 인한 소상공인 피해를 예방하고, 검증된 창업 수요와 거래 데이터를 축적하는 것을 목표로 설립되었습니다.</div>
+    </div>
+    <div class="cred">
+      <div class="t">80개+ 브랜드가 이미 함께합니다</div>
+      <div class="b">프랜차이즈 본사 네트워크와 공인중개사 제휴망(리맥스코리아 등)을 통해 입점지와 창업 수요를 동시에 확보합니다.</div>
+    </div>
+  </div>
+
+  <div class="fine" style="margin-top:5mm">※ 상기 수치는 내일사장 플랫폼 누적 기준입니다.</div>
+
+  <div class="pin band" style="margin-top:6mm">
+    <div class="bh">이 숫자가 러너펍에 의미하는 것</div>
+    <div class="grid3">
+      <div class="it"><div class="t">모수를 새로 만들 필요가 없다</div><div class="d">창업을 검토 중인 수요가 이미 플랫폼 안에 있습니다. 러너펍은 그 앞에 놓이기만 하면 됩니다.</div></div>
+      <div class="it"><div class="t">상담이 아니라 거래 경험이다</div><div class="d">2,000건 이상을 실제 계약까지 끌고 간 조직입니다. 상담 단계에서 멈추지 않습니다.</div></div>
+      <div class="it"><div class="t">결정까지의 시간이 짧아진다</div><div class="d">AI 상권·손익 분석으로 창업자의 판단 근거를 앞당겨 리드타임을 줄입니다.</div></div>
+    </div>
+  </div>
+
+  <div class="runfoot"><span>내일사장 × 러너펍 가맹영업 파트너십 제안</span><span class="pg">03</span></div>
+</section>
+
+<!-- ================= 4. 어떻게 파는가 ================= -->
+<section class="sheet">
+  <div class="eyebrow"><span class="no">03</span><span class="rule"></span><span class="lb">HOW WE SELL</span></div>
+  <h2 class="head">두 개의 트랙으로<br><em>동시에</em> 물량을 만듭니다.</h2>
+  <p class="deck">신규 창업자만 기다리지 않습니다. 이미 홀덤펍을 운영 중인 점주를 러너펍으로 전환시키는 경로를 함께 가동해 계약 속도를 높입니다.</p>
+
+  <div class="tracks">
+    <div class="track">
+      <div class="tt"><span>TRACK A</span>신규 창업자</div>
+      <div class="tb"><ul>
+        <li>플랫폼에 상주하는 예비창업자 수요에 러너펍을 직접 노출</li>
+        <li>개설 기본비용 전액 할인·4~6주 오픈을 핵심 소구점으로 제시</li>
+        <li>AI 상권분석·손익 시뮬레이션으로 창업 확신을 만들어 클로징</li>
+      </ul></div>
+    </div>
+    <div class="track">
+      <div class="tt"><span>TRACK B</span>기존 홀덤펍 리브랜딩</div>
+      <div class="tb"><ul>
+        <li>개인 운영 홀덤펍 점주를 대상으로 러너펍 전환 제안</li>
+        <li>러너러너 앱 입점에 따른 유입·예약·노쇼 관리 효과를 소구</li>
+        <li>이미 운영 중인 점주이므로 의사결정이 빠른 즉시 전환형 리드</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="pin">
+  <div class="readylb">두 트랙을 동시에 굴리는 도구</div>
+  <div class="tools">
+    <div class="tool"><div class="n">01</div><div class="t">AI 상권분석</div><div class="d">입지 적합성과 상권 데이터를 보고서로 제시</div></div>
+    <div class="tool"><div class="n">02</div><div class="t">손익분석 (P&amp;L)</div><div class="d">예상 수익구조를 수치로 제시해 결정 지연 차단</div></div>
+    <div class="tool"><div class="n">03</div><div class="t">ERP · 리드관리</div><div class="d">상담부터 계약까지 파이프라인을 시스템으로 관리</div></div>
+    <div class="tool"><div class="n">04</div><div class="t">점포개발</div><div class="d">제휴 중개망을 통한 입지 물색·확보 지원</div></div>
+  </div>
+  <p class="body" style="margin-top:7mm">창업자가 결정을 미루는 이유는 대부분 정보 부족입니다. 내일사장은 <b style="color:var(--violet);font-weight:800">근거를 문서로 제시</b>해 그 지연을 끊습니다.</p>
+  </div>
+
+  <div class="runfoot"><span>내일사장 × 러너펍 가맹영업 파트너십 제안</span><span class="pg">04</span></div>
+</section>
+
+<!-- ================= 5. 시너지 ================= -->
+<section class="sheet">
+  <div class="eyebrow"><span class="no">04</span><span class="rule"></span><span class="lb">SYNERGY</span></div>
+  <h2 class="head">두 플랫폼이 만나면<br><em>유입이 양방향</em>이 됩니다.</h2>
+  <p class="deck">러너펍은 “플랫폼이 만드는 홀덤펍의 새로운 기준”을 내세우는 브랜드입니다. 내일사장 역시 플랫폼 기업입니다. 두 플랫폼은 서로 다른 수요를 붙잡고 있습니다.</p>
+
+  <div class="synergy">
+    <div class="sbox left">
+      <div class="rl">내일사장</div>
+      <div class="nm">창업 수요</div>
+      <div class="ds">매장을 <b>열려는</b> 사람<br>예비창업자 · 업종 전환 희망자</div>
+    </div>
+    <div class="plus">+</div>
+    <div class="sbox">
+      <div class="rl">러너러너</div>
+      <div class="nm">이용 수요</div>
+      <div class="ds">매장을 <b>찾는</b> 사람<br>홀덤펍 이용자 · 토너먼트 참가자</div>
+    </div>
+  </div>
+
+  <div class="flow">
+    <div class="fr"><div class="fl">개설 단계</div><div class="fv">내일사장 플랫폼의 창업 수요가 러너펍 가맹점으로 전환됩니다.</div></div>
+    <div class="fr"><div class="fl">운영 단계</div><div class="fv">개설된 매장은 러너러너 앱의 예약·회원관리·토너먼트 운영 체계 위에서 고객을 확보합니다.</div></div>
+    <div class="fr"><div class="fl">확산 단계</div><div class="fv">운영이 안정된 매장의 성과는 다음 창업자를 설득하는 레퍼런스가 되어 다시 개설로 이어집니다.</div></div>
+  </div>
+
+  <p class="body" style="margin-top:7mm">러너러너 앱은 리뉴얼 이후 토너먼트를 제외한 플랫폼 서비스 이용자가 <b style="color:var(--violet);font-weight:800">1.5배 증가</b>한 것으로 보도된 바 있습니다. 매장을 늘릴수록 앱의 밀도가 올라가고, 앱의 밀도는 다시 다음 가맹 상담의 설득 자료가 됩니다.</p>
+  <div class="fine" style="margin-top:3mm">※ 러너러너 앱 이용자 증가 수치는 언론 보도(IT비즈뉴스, 2024. 7. 4.) 기준입니다.</div>
+
+  <div class="pin band" style="margin-top:6mm">
+    <div class="one">러너펍은 매장을 <u>운영</u>하는 플랫폼을 가졌고,<br>내일사장은 매장을 <u>여는</u> 수요를 가졌습니다.<br>두 축이 붙는 순간 출점은 이벤트가 아니라 흐름이 됩니다.</div>
+  </div>
+
+  <div class="runfoot"><span>내일사장 × 러너펍 가맹영업 파트너십 제안</span><span class="pg">05</span></div>
+</section>
+
+<!-- ================= 6. 조건 ================= -->
+<section class="sheet">
+  <div class="eyebrow"><span class="no">05</span><span class="rule"></span><span class="lb">TERMS</span></div>
+  <h2 class="head">계약이 되지 않으면,<br><em>비용도 없습니다.</em></h2>
+
+  <div class="feebox">
+    <div class="amt">1,000<span style="font-size:19pt">만원</span><small>가맹계약 1건당 · 부가가치세 별도</small></div>
+    <div class="txt">가맹계약 체결과 가맹비 입금이 완료된 건에 대해서만 청구합니다.<br>
+    <b>착수금 · 월 고정비 · 광고비 등 그 외 비용은 일체 없습니다.</b><br>
+    본사는 영업 인력을 늘리지 않고도 출점 물량을 확보하게 됩니다.</div>
+  </div>
+
+  <table class="cond">
+    <thead><tr><th style="width:36%">내일사장 수취 성공보수</th><th style="width:22%">매장 광고 집행</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td class="k">1,000만원 전액 수취 시</td><td class="v">내일사장</td><td>수취액 중 <b>200만원</b>을 해당 매장의 LSM(지역 매장 마케팅) 광고비로 집행</td></tr>
+      <tr><td class="k">800만원 이하</td><td class="v">본사</td><td>본사가 해당 매장의 LSM 광고를 부담·집행</td></tr>
+      <tr><td class="k">800만원 초과 1,000만원 미만</td><td class="v">협의</td><td>집행 주체와 분담 비율을 양사 협의로 결정</td></tr>
+    </tbody>
+  </table>
+
+  <div class="notes pin">
+    <div class="nrow"><div class="mk">①</div><div class="tx"><b>창업자 네고는 내일사장 몫에서 부담합니다.</b> 창업비용·조건에 할인이 발생하더라도 그 할인액은 전액 내일사장의 성공보수에서 차감하며, 본사가 수취하는 금액과 조건에는 영향을 주지 않습니다.</div></div>
+    <div class="nrow"><div class="mk">②</div><div class="tx"><b>인테리어 시공은 내일사장이 진행할 수 있습니다.</b> 시공을 포함해 개설 과정에서 발생하는 추가 수익의 분배는 양사가 별도 협의하여 정합니다.</div></div>
+    <div class="nrow"><div class="mk">③</div><div class="tx"><b>영업은 본사 승인 자료로만 진행합니다.</b> 브랜드 소개서·창업비용 자료 등 본사가 승인한 자료만 사용하며, 러너펍의 준법 운영 기준을 그대로 따릅니다.</div></div>
+    <div class="nrow"><div class="mk">④</div><div class="tx"><b>진행 상황은 주 단위로 공유합니다.</b> 리드 현황과 상담 단계를 정기 리포트로 제출해, 본사가 파이프라인을 항상 확인할 수 있도록 합니다.</div></div>
+  </div>
+
+  <div class="runfoot"><span>내일사장 × 러너펍 가맹영업 파트너십 제안</span><span class="pg">06</span></div>
+</section>
+
+<!-- ================= 7. 회수 구조 ================= -->
+<section class="sheet">
+  <div class="eyebrow"><span class="no">06</span><span class="rule"></span><span class="lb">RETURN</span></div>
+  <h2 class="head">성공보수는 <em>가맹비 범위 안에서</em> 정산됩니다.</h2>
+  <p class="deck">본사가 추가로 지출하는 돈이 아닙니다. 계약 시점부터 이미 흑자이고, 이후 로열티는 전액 순증입니다.</p>
+
+  <div class="roi">
+    <div class="calc">
+      <div class="hd">계약 1건 · 계약 시점</div>
+      <div class="row"><span class="k">가맹비 (본사 수취)</span><span class="v">+1,500<small>만원</small></span></div>
+      <div class="row"><span class="k">성공보수 (내일사장)</span><span class="v" style="color:var(--muted)">−1,000<small>만원</small></span></div>
+      <div class="sum"><span class="k">계약 시점 본사 순수익</span><span class="v">+500<small>만원</small></span></div>
+      <div class="nt">성공보수를 지급하고도 계약 즉시 흑자입니다. 본사가 별도 예산을 편성할 필요가 없습니다.</div>
+    </div>
+
+    <div class="bars">
+      <div class="hd">이후 누적 본사 수익 (월 로열티 150만원 반영)</div>
+      <div class="b"><span class="k">계약 시점</span><span class="track"><span class="fill" style="width:8.5%"></span></span><span class="v">500<small>만원</small></span></div>
+      <div class="b"><span class="k">12개월</span><span class="track"><span class="fill" style="width:39%"></span></span><span class="v">2,300<small>만원</small></span></div>
+      <div class="b"><span class="k">24개월</span><span class="track"><span class="fill" style="width:69.5%"></span></span><span class="v">4,100<small>만원</small></span></div>
+      <div class="b last"><span class="k">36개월</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="v">5,900<small>만원</small></span></div>
+      <div class="nt">성공보수는 1회성이고, 로열티는 매월 반복됩니다. 출점이 쌓일수록 격차는 벌어집니다.</div>
+    </div>
+  </div>
+
+  <div class="scale">
+    <div class="lb">출점 규모별 · 36개월 누적 본사 수익 (성공보수 차감 후)</div>
+    <div class="g">
+      <div class="c"><div class="n">1개점</div><div class="v">5,900<small>만원</small></div><div class="d">성공보수 1,000만원 차감 후</div></div>
+      <div class="c"><div class="n">3개점</div><div class="v">1억 7,700<small>만원</small></div><div class="d">성공보수 3,000만원 차감 후</div></div>
+      <div class="c"><div class="n">5개점</div><div class="v">2억 9,500<small>만원</small></div><div class="d">성공보수 5,000만원 차감 후</div></div>
+      <div class="c"><div class="n">10개점</div><div class="v">5억 9,000<small>만원</small></div><div class="d">성공보수 1억원 차감 후</div></div>
+    </div>
+  </div>
+
+  <div class="pin">
+    <div class="band">
+      <div class="one">본사가 부담하는 것은 <u>가맹비의 일부</u>이고,<br>얻는 것은 <u>매장 하나의 생애 매출</u>입니다.</div>
+    </div>
+    <div class="fine" style="margin-top:4mm">※ 러너펍 공개 가맹 안내 기준(가맹비 1,500만원 / 월 로열티 150만원·부가세 별도) 시뮬레이션이며, 실제 조건은 본사 정책에 따릅니다.</div>
+  </div>
+
+  <div class="runfoot"><span>내일사장 × 러너펍 가맹영업 파트너십 제안</span><span class="pg">07</span></div>
+</section>
+
+<!-- ================= 8. 다음 단계 ================= -->
+<section class="sheet" style="display:flex; flex-direction:column;">
+  <div class="eyebrow"><span class="no">07</span><span class="rule"></span><span class="lb">NEXT STEP</span></div>
+  <h2 class="head">시작에 필요한 것은<br><em>결정 하나</em>입니다.</h2>
+  <p class="deck">계약 조건이 확정되면 곧바로 영업을 가동할 수 있습니다. 별도의 셋업 비용이나 준비 기간은 필요하지 않습니다.</p>
+
+  <div class="steps4">
+    <div class="s"><div class="n">STEP 01</div><div class="t">협의</div><div class="d">조건과 업무 범위 논의</div></div>
+    <div class="s"><div class="n">STEP 02</div><div class="t">조건 확정</div><div class="d">수수료 · 정산 기준 합의</div></div>
+    <div class="s"><div class="n">STEP 03</div><div class="t">브랜드 교육</div><div class="d">본사 상품·준법 기준 숙지</div></div>
+    <div class="s"><div class="n">STEP 04</div><div class="t">영업 가동</div><div class="d">리드 발굴 및 상담 개시</div></div>
+  </div>
+
+  <div class="recap">
+    <div class="rc"><div class="k">본사 리스크</div><div class="v">0<span>원</span></div><div class="d">계약이 성사된 건에만 비용이 발생합니다. 고정비도, 선투자도 없습니다.</div></div>
+    <div class="rc"><div class="k">영업 모수</div><div class="v">확보<span>됨</span></div><div class="d">창업 수요와 제휴망이 이미 플랫폼 안에 있습니다. 처음부터 만들지 않습니다.</div></div>
+    <div class="rc"><div class="k">가동 시점</div><div class="v">즉시<span> 가능</span></div><div class="d">조건만 확정되면 셋업 기간 없이 바로 상담을 시작합니다.</div></div>
+  </div>
+
+  <div class="closing">
+    <div class="msg">러너펍은 이미 확장할 준비를 마쳤습니다.<br><em>그 속도를 만드는 일</em>을 내일사장이 맡겠습니다.</div>
+    <div class="sign">
+      <div>
+        <div class="co">내일사장</div>
+        <div class="tg">점포 개발 · 가맹 영업 · 모객 전문</div>
+      </div>
+      <div class="dt">러너스튜디오(주) 귀하<br>2026. 07</div>
+    </div>
+  </div>
+
+  <div class="runfoot"><span>본 제안의 모든 조건은 협의를 통해 최종 확정됩니다.</span><span class="pg">08</span></div>
+</section>
+
+</body>
+</html>
