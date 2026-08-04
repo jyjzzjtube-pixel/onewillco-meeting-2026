@@ -354,38 +354,42 @@ function gbar(s,reg,x,y,w,h){
   head2(s,'주력은 [가맹영업대행]입니다\n투입 업무와 수행 브랜드')
 
   const B = BODY('ir');
-  const L = region('wL',SAFE.x,B.y,4.60,B.h);
-  const R = region('wR',SAFE.x+5.06,B.y,RIGHT-(SAFE.x+5.06),B.h);
+  /* 브랜드가 4개로 줄면서 좌우 2단이 한쪽으로 쏠린다.
+     업무는 위 3단, 브랜드는 아래 한 줄로 다시 잡는다 */
+  const WT = region('wT',SAFE.x,B.y,SAFE.w,2.62);
+  const WD = region('wD',SAFE.x,5.36,SAFE.w,B.y2-5.36);
 
-  sectionBar(s,L,L.x,L.y,L.w,'러너펍에 투입할 업무');
+  sectionBar(s,WT,WT.x,WT.y,WT.w,'러너펍에 투입할 업무');
+  const cw = (WT.w-0.48)/3;
   [['deal','가맹영업대행','주력',['예비창업자 모객 · 1차 상담 · 등급 분류','조건별 브랜드 매칭 및 미팅 주선','인·적성검사, 정보공개서 제공부터 계약 체결까지 절차 관리']],
    ['store','점포개발 · 물건화','주력',['보증금 · 권리금 · 월세 · 평수 수집','실측 · 현장사진 · 인테리어 견적 산출','즉시 브리핑 가능한 상태로 완성']],
    ['mega','창업 마케팅','선택',['블로그 · 네이버 플레이스 · 검색광고 · SNS','창업박람회 부스 · 사업설명회','매장 오픈 마케팅']]].forEach(([ic,k,tag,vs],i)=>{
-    const y = L.y+0.58+i*1.12;
-    icon(s,L,L.x,y+0.01,0.26,ic,false);
+    const x = WT.x+(cw+0.24)*i;
+    if(i) vr(s,x-0.12,WT.y+0.50,1.80,C.RULE,0.008);
+    icon(s,WT,x,WT.y+0.50,0.26,ic,false);
     const kw = G.textWidth(k,12.5)+0.10;
-    tx(s,L,{x:L.x+0.36,y,w:kw,h:0.26},k,T.sub,{size:12.5,valign:'middle'});
-    pill(s,L,L.x+0.36+kw,y+0.01,tag,tag==='주력'?C.BLUE:C.GRAY,tag==='주력'?C.WHITE:C.MUTE);
-    vs.forEach((v,j)=>tx(s,L,{x:L.x+0.36,y:y+0.30+j*0.24,w:L.w-0.36,h:0.24},'· '+v,T.cardtx,
-      {size:9.3,color:C.MUTE,valign:'middle'}));
+    tx(s,WT,{x:x+0.36,y:WT.y+0.49,w:kw,h:0.26},k,T.sub,{size:12.5,valign:'middle'});
+    pill(s,WT,x+0.36+kw,WT.y+0.50,tag,tag==='주력'?C.BLUE:C.GRAY,tag==='주력'?C.WHITE:C.MUTE);
+    vs.forEach((v,j)=>tx(s,WT,{x,y:WT.y+0.90+j*0.44,w:cw,h:0.42},'· '+v,T.cardtx,
+      {size:9.3,color:C.MUTE}));
   });
-  tx(s,L,{x:L.x,y:L.y+3.92,w:L.w,h:0.22},
-    '※ 창업 마케팅은 집행비 발생 선택 항목 · 성공보수 미포함 · 집행 여부 별도 협의',
+  tx(s,WT,{x:WT.x,y:WT.y+2.32,w:WT.w,h:0.22},
+    '※ 창업 마케팅은 집행비가 발생하는 선택 항목입니다. 성공보수에 포함되지 않으며, 집행 여부와 부담 주체는 별도 협의합니다.',
     T.note,{size:8.5,color:C.MUTE,valign:'middle'});
 
-  sectionBar(s,R,R.x,R.y,R.w,'2025~2026 영업 수행 브랜드',{labelW:3.4});
-  tx(s,R,{x:R.x+R.w-1.40,y:R.y+0.04,w:1.40,h:0.26},'외 18개',T.note,
+  sectionBar(s,WD,WD.x,WD.y,WD.w,'2025~2026 영업 수행 브랜드',{labelW:3.6});
+  tx(s,WD,{x:WD.x+WD.w-1.40,y:WD.y+0.04,w:1.40,h:0.26},'외 다수',T.note,
     {size:9,color:C.MUTE,align:'right',valign:'middle'});
-  const BR = ['33떡볶이','백소정','원앤원','투썸플레이스','명륜진사갈비','요아정',
-              '차알','밀본','오레노카츠','랑데자뷰','청년피자','셀렉토커피'];
-  const gr = region('br',R.x,R.y+0.52,R.w,2.10);
-  const bw = (gr.w-0.16*3)/4, bh = (gr.h-0.14*2)/3;
+  const BR = ['차알','오레노카츠','한촌설렁탕','33떡볶이'];
+  const bwd = (WD.w-0.24*3)/4;
   BR.forEach((b,i)=>{
-    const x = gr.x+(bw+0.16)*(i%4), y = gr.y+(bh+0.14)*Math.floor(i/4);
-    rrect(s,at(gr,{x,y,w:bw,h:bh},{kind:'card'}),C.BLUEBG0,0.05);
-    tx(s,gr,{x:x+0.08,y,w:bw-0.16,h:bh},b,T.body,{size:10.5,align:'center',valign:'middle'});
+    const x = WD.x+(bwd+0.24)*i;
+    rrect(s,at(WD,{x,y:WD.y+0.44,w:bwd,h:0.72},{kind:'card'}),C.BLUEBG0,0.06);
+    tx(s,WD,{x:x+0.10,y:WD.y+0.44,w:bwd-0.20,h:0.72},b,T.sub,{size:13,align:'center',valign:'middle'});
   });
-  foot(s,R,R.x,R.y+2.78,R.w,'※ 브랜드별 수행 범위와 계약 체결 건수는 미팅 시 원장 기준으로 제시합니다.');
+  tx(s,WD,{x:WD.x,y:WD.y+1.17,w:WD.w,h:0.22},
+    '※ 브랜드별 수행 범위와 계약 체결 건수는 미팅 시 원장 기준으로 제시합니다.',
+    T.note,{size:8.5,color:C.MUTE,valign:'middle'});
   s.addNotes('플랫폼 지표가 아니라 가맹을 판 실적입니다.');
 }
 
