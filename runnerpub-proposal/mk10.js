@@ -68,16 +68,15 @@ function gbar(s,reg,x,y,w,h){
     {size:11,bold:true,color:C.NAVY,valign:'middle'});
   foot(s,F,LX,BOT-CAPH,LW,'※ 계약 체결 및 가맹비 입금 완료 건에만 청구 · 착수금 · 월 고정비 · 광고비 없음',9);
 
-  /* 우 : 러너펍 실매장 (공식 사이트 히어로 이미지 레벨 보정). 라인아트 도해는 걷어냈다 */
+  /* 우 : 러너펍 실매장 (공식 사이트 히어로 이미지 레벨 보정).
+     사진이 스스로 말하는 내용을 글로 다시 적을 이유가 없어 캡션은 두지 않는다 */
   const RX = 7.36, RW = RIGHT-RX;
   const cf = P('cover_pub.png');
   const ch = RW/G.imgAspect(cf);
-  const RY = TOP + ((BOT-TOP)-(0.26+0.14+ch+0.10+CAPH))/2;
+  const RY = TOP + ((BOT-TOP)-(0.26+0.16+ch))/2;
   tx(s,F,{x:RX,y:RY,w:RW,h:0.26},'RUNNER PUB 홀덤 라운지',T.label,
     {size:10,color:C.BLUE,cs:1.4,align:'center',valign:'middle'});
-  s.addImage({path:cf, ...img(F,{x:RX,y:RY+0.40,w:RW,h:ch},cf)});
-  tx(s,F,{x:RX,y:RY+0.50+ch,w:RW,h:CAPH},'토너먼트 운영 · 파이널 테이블 · 바 라운지를 갖춘 실매장',T.note,
-    {size:9,color:C.MUTE,align:'center',valign:'middle'});
+  s.addImage({path:cf, ...img(F,{x:RX,y:RY+0.42,w:RW,h:ch},cf)});
 
   /* 다크 띠 — 제안 4행 요약 */
   const SUM = [['확보된 창업 수요','앱 10만 · 예비창업자 DB 5,114명'],
