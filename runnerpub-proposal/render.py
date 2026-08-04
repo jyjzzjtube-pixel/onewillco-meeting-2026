@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 import io, os
 
 EMU=914400.0
-SC=155           # px per inch
+SC=int(os.environ.get('RENDER_DPI','155'))   # px per inch
 W,H=int(13.333*SC), int(7.5*SC)
 FC={}
 def fnt(pt,bold):

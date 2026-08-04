@@ -50,7 +50,7 @@ function gbar(s,reg,x,y,w,h){
   const TOP = 0.94, BOT = 5.30;                       // 좌우 두 단이 공유하는 상·하 기준선
   const CAPH = 0.22;
   /* 좌 : 제안 요지. 앱 목업(내일사장 자사 화면)은 이 제안의 주제가 아니므로 걷어냈다 */
-  const LX = SAFE.x, LW = 6.80;
+  const LX = SAFE.x, LW = 6.30;
   tx(s,F,{x:LX,y:TOP,w:LW,h:0.26},'러너펍 가맹 개설 영업 전면 위임',T.label,
     {size:11,color:C.BLUE,cs:2.8,valign:'middle'});
   hr(s,LX,1.34,1.60,C.BLUE,0.030);
@@ -66,20 +66,17 @@ function gbar(s,reg,x,y,w,h){
     t({...at(F,{x:LX,y:3.62,w:LW,h:0.80},{kind:'fig',pt:42}),valign:'middle'}));
   tx(s,F,{x:LX,y:4.50,w:LW,h:0.28},'가맹비 1,500만원 − 성공보수 1,000만원 = 계약 시점 본사 순수취 +500만원',T.body,
     {size:11,bold:true,color:C.NAVY,valign:'middle'});
-  foot(s,F,LX,BOT-CAPH,LW,'※ 계약 체결 및 가맹비 입금 완료 건에만 청구하며, 착수금 · 월 고정비 · 광고비 없음 (러너펍 공개 가맹 안내 기준)',9);
+  foot(s,F,LX,BOT-CAPH,LW,'※ 계약 체결 및 가맹비 입금 완료 건에만 청구 · 착수금 · 월 고정비 · 광고비 없음',9);
 
-  /* 우 : 제안 대상 업종 그대로 — 홀덤 라운지 매장 구성 도해 */
-  const RX = 7.95, RW = RIGHT-RX;
-  const cf = P('p11_pub.png');
-  const cw = RW-0.60, ch = cw/G.imgAspect(cf);
-  const panH = 0.30+ch+0.10+CAPH+0.22;
-  const blockH = 0.26+0.14+panH;
-  const RY = TOP + ((BOT-TOP)-blockH)/2;
-  tx(s,F,{x:RX,y:RY,w:RW,h:0.26},'제안 대상 업종  ·  RUNNER PUB 홀덤 라운지',T.label,
+  /* 우 : 러너펍 실매장 (공식 사이트 히어로 이미지 레벨 보정). 라인아트 도해는 걷어냈다 */
+  const RX = 7.36, RW = RIGHT-RX;
+  const cf = P('cover_pub.png');
+  const ch = RW/G.imgAspect(cf);
+  const RY = TOP + ((BOT-TOP)-(0.26+0.14+ch+0.10+CAPH))/2;
+  tx(s,F,{x:RX,y:RY,w:RW,h:0.26},'RUNNER PUB 홀덤 라운지',T.label,
     {size:10,color:C.BLUE,cs:1.4,align:'center',valign:'middle'});
-  rrect(s,at(F,{x:RX,y:RY+0.40,w:RW,h:panH},{kind:'card'}),C.BLUEBG0,0.06);
-  s.addImage({path:cf, ...img(F,{x:RX+0.30,y:RY+0.70,w:cw,h:ch},cf)});
-  tx(s,F,{x:RX+0.20,y:RY+0.80+ch,w:RW-0.40,h:CAPH},'가맹 개설 대상 매장 구성 · 홀덤 테이블 · 바 · 라운지',T.note,
+  s.addImage({path:cf, ...img(F,{x:RX,y:RY+0.40,w:RW,h:ch},cf)});
+  tx(s,F,{x:RX,y:RY+0.50+ch,w:RW,h:CAPH},'토너먼트 운영 · 파이널 테이블 · 바 라운지를 갖춘 실매장',T.note,
     {size:9,color:C.MUTE,align:'center',valign:'middle'});
 
   /* 다크 띠 — 제안 4행 요약 */
@@ -209,8 +206,8 @@ function gbar(s,reg,x,y,w,h){
   head2(s,'프랜차이즈 본사와 일해 온 회사\n[내일사장] 현황 및 연혁');
 
   const B = BODY('ir');
-  const L = region('coL',SAFE.x,B.y,5.30,B.h);
-  const R = region('hisR',SAFE.x+5.72,B.y,RIGHT-(SAFE.x+5.72),B.h);
+  const L = region('coL',SAFE.x,B.y,5.90,B.h);
+  const R = region('hisR',SAFE.x+6.34,B.y,RIGHT-(SAFE.x+6.34),B.h);
 
   /* ── 좌 : 회사 현황 · 협력기관 (본덱 표 어법 — 회색 라벨 열 + 파란 상하 테두리) ── */
   const LBW = 1.50;
