@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>지윤진 신혼집 프로그램 — 전세·월세 매물 DB + 대출 계산기</title>
+<style>
+:root {
+  --navy:#1E2761; --navy-light:#2F3C7E; --ice:#CADCFC;
+  --accent:#F96167; --gold:#F9E795; --green:#2C5F2D; --moss:#97BC62;
+  --gray-50:#F8F9FA; --gray-100:#F2F2F2; --gray-200:#E5E5E5;
+  --gray-400:#999; --gray-700:#444; --gray-900:#1a1a1a;
+  --red:#C00000; --yellow:#FFC000; --naver:#03C75A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Malgun Gothic','맑은 고딕',-apple-system,sans-serif;
+  background:var(--gray-50); color:var(--gray-900); line-height:1.55; font-size:14px;
+}
+a{color:var(--navy);}
+
+/* Hero */
+.hero{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
+  color:white; padding:40px 32px; position:relative; overflow:hidden;
+}
+.hero::before{content:'';position:absolute;top:-50%;right:-10%;width:500px;height:500px;
+  background:radial-gradient(circle,rgba(249,97,103,0.2) 0%,transparent 70%);}
+.hero .badge{display:inline-block;background:var(--accent);color:white;padding:5px 14px;
+  border-radius:20px;font-size:12px;font-weight:bold;margin-bottom:14px;}
+.hero h1{font-size:30px;font-weight:900;margin-bottom:8px;line-height:1.25;position:relative;}
+.hero p{color:var(--ice);font-size:15px;position:relative;}
+
+.wrap{max-width:1280px;margin:0 auto;padding:24px 20px 80px;}
+
+/* Cards / panels */
+.panel{background:white;border:1px solid var(--gray-200);border-radius:12px;
+  padding:20px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.panel h2{font-size:18px;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.panel .sub{color:var(--gray-400);font-size:12.5px;margin-bottom:16px;}
+
+/* Form grid */
+.grid{display:grid;gap:12px;}
+.f-row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:11.5px;font-weight:700;color:var(--gray-700);letter-spacing:.3px;}
+input,select{font-family:inherit;font-size:13.5px;padding:8px 10px;border:1px solid var(--gray-200);
+  border-radius:7px;background:white;color:var(--gray-900);}
+input:focus,select:focus{outline:none;border-color:var(--navy-light);box-shadow:0 0 0 2px rgba(47,60,126,.12);}
+input[type=number]{width:110px;}
+.field.wide input{width:200px;}
+.field.sm input{width:78px;}
+
+button{font-family:inherit;cursor:pointer;border:none;border-radius:8px;font-weight:700;font-size:13.5px;
+  padding:9px 16px;transition:all .15s;}
+.btn-navy{background:var(--navy);color:white;}
+.btn-navy:hover{background:var(--navy-light);}
+.btn-accent{background:var(--accent);color:white;}
+.btn-accent:hover{filter:brightness(1.07);}
+.btn-naver{background:var(--naver);color:white;}
+.btn-naver:hover{filter:brightness(1.07);}
+.btn-ghost{background:var(--gray-100);color:var(--gray-700);}
+.btn-ghost:hover{background:var(--gray-200);}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px;}
+
+/* Naver link buttons */
+.naver-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.naver-links a{text-decoration:none;}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+.stat{background:white;border:1px solid var(--gray-200);border-radius:10px;padding:14px 16px;}
+.stat .k{font-size:11.5px;color:var(--gray-400);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.stat .v{font-size:22px;font-weight:900;color:var(--navy);margin-top:4px;}
+.stat .v small{font-size:13px;font-weight:700;color:var(--gray-400);}
+
+/* Table */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--gray-200);border-radius:12px;background:white;}
+table{border-collapse:collapse;width:100%;min-width:1180px;font-size:12.8px;}
+thead th{background:var(--navy);color:white;padding:11px 9px;text-align:left;font-weight:700;
+  white-space:nowrap;position:sticky;top:0;font-size:12px;}
+thead th small{display:block;font-weight:400;opacity:.7;font-size:10px;}
+tbody td{padding:9px;border-bottom:1px solid var(--gray-100);vertical-align:middle;}
+tbody tr:hover{background:#FAFBFF;}
+tbody tr:nth-child(even){background:#FCFCFE;}
+tbody tr:nth-child(even):hover{background:#FAFBFF;}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:800;white-space:nowrap;}
+.tag-jeonse{background:#E7EDFF;color:var(--navy);}
+.tag-wolse{background:#FFE9D6;color:#B45309;}
+.money{font-weight:800;color:var(--navy);white-space:nowrap;}
+.muted{color:var(--gray-400);}
+.cash{font-weight:900;color:var(--green);white-space:nowrap;}
+.loan{font-weight:800;color:var(--accent);white-space:nowrap;}
+.link-cell a{font-weight:700;text-decoration:none;color:var(--naver);}
+.link-cell a:hover{text-decoration:underline;}
+.row-actions{display:flex;gap:5px;}
+.empty{text-align:center;padding:50px 20px;color:var(--gray-400);}
+.empty b{display:block;color:var(--gray-700);font-size:15px;margin-bottom:6px;}
+
+/* loan rate input in row */
+.rate-in{width:54px;padding:4px 6px;font-size:12px;text-align:right;}
+.chk{transform:scale(1.15);accent-color:var(--green);cursor:pointer;}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(20,25,55,.55);z-index:500;
+  align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;}
+.modal-bg.open{display:flex;}
+.modal{background:white;border-radius:14px;width:100%;max-width:640px;padding:24px 26px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.modal h3{color:var(--navy);font-size:19px;margin-bottom:16px;}
+.modal .grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.modal .field{width:100%;}
+.modal .field input,.modal .field select{width:100%;}
+.modal .full{grid-column:1/-1;}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+.hint{font-size:11px;color:var(--gray-400);margin-top:3px;}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.toolbar .left{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.count-badge{background:var(--gray-100);color:var(--gray-700);padding:5px 12px;border-radius:20px;font-weight:800;font-size:12.5px;}
+
+details.note{margin-top:14px;background:#FFF8E1;border:1px solid var(--gold);border-radius:8px;padding:10px 14px;}
+details.note summary{cursor:pointer;font-weight:800;color:#8a6d00;font-size:12.5px;}
+details.note p{font-size:12px;color:var(--gray-700);margin-top:8px;line-height:1.6;}
+details.note code{background:#fff;padding:1px 5px;border-radius:4px;border:1px solid var(--gray-200);}
+
+@media(max-width:640px){
+  .hero h1{font-size:23px;} .field.wide input{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">신혼집 매물 관리 프로그램</span>
+  <h1>🏡 지윤진 신혼집 — 전세·월세 매물 DB</h1>
+  <p>네이버 부동산 필터 연동 · 임차조건 DB 관리 · 대출 한도/실현금 자동 계산</p>
+</header>
+
+<div class="wrap">
+
+  <!-- ===== 1. 네이버 부동산 필터 ===== -->
+  <section class="panel">
+    <h2>① 네이버 부동산 검색 필터 <span class="muted" style="font-size:12px;font-weight:400;">(직접 설정)</span></h2>
+    <p class="sub">지역·전월세·보증금·월세 조건을 설정하면, 아래 표(DB)의 매물도 같은 조건으로 자동 필터링되고 네이버 부동산 검색 페이지로 바로 이동합니다.</p>
+    <div class="f-row">
+      <div class="field wide">
+        <label>지역 (동/구/단지명)</label>
+        <input id="f-region" type="text" placeholder="예: 마포구 망원동 / 위례 / 동탄2">
+      </div>
+      <div class="field">
+        <label>임차 유형</label>
+        <select id="f-type">
+          <option value="all">전체</option>
+          <option value="전세">전세</option>
+          <option value="월세">월세</option>
+        </select>
+      </div>
+      <div class="field sm">
+        <label>보증금 최대<small class="hint" style="display:block">만원</small></label>
+        <input id="f-deposit" type="number" placeholder="40000" min="0" step="1000">
+      </div>
+      <div class="field sm">
+        <label>월세 최대<small class="hint" style="display:block">만원</small></label>
+        <input id="f-rent" type="number" placeholder="80" min="0" step="5">
+      </div>
+      <div class="field sm">
+        <label>방 최소</label>
+        <input id="f-rooms" type="number" placeholder="2" min="0" step="1">
+      </div>
+      <button class="btn-ghost" onclick="applyFilter()">표 필터 적용</button>
+      <button class="btn-ghost" onclick="resetFilter()">초기화</button>
+    </div>
+
+    <div class="naver-links" id="naver-links">
+      <a id="nv-mobile" class="btn-naver" target="_blank" rel="noopener">📱 네이버 부동산(모바일) 매물 검색</a>
+      <a id="nv-search" class="btn-ghost" target="_blank" rel="noopener">🔎 네이버 통합검색</a>
+      <a id="nv-pc" class="btn-ghost" target="_blank" rel="noopener">💻 네이버 부동산(PC)</a>
+    </div>
+
+    <details class="note">
+      <summary>ℹ️ 네이버 부동산 자동 매물수집이 안 되는 이유 / 사용법</summary>
+      <p>
+        네이버 부동산은 공식 공개 API가 없고 브라우저에서 직접 매물을 긁어오는 것은 차단(CORS)됩니다.
+        그래서 이 프로그램은 <b>① 설정한 필터로 네이버 검색 페이지를 바로 열고</b>,
+        거기서 마음에 든 매물의 주소(URL)를 복사해 <b>② 아래 "＋ 매물 추가"로 임차조건을 입력</b>하면
+        DB처럼 저장·비교·대출계산이 됩니다. 데이터는 이 브라우저에 자동 저장(localStorage)됩니다.
+        네이버 매물 상세페이지에서 <code>보증금/월세/관리비/공급·전용면적/방·욕실수</code>를 그대로 옮겨 적으면 됩니다.
+      </p>
+    </details>
+  </section>
+
+  <!-- ===== 2. 요약 통계 ===== -->
+  <div class="stats" id="stats"></div>
+
+  <!-- ===== 3. 매물 DB ===== -->
+  <section>
+    <div class="toolbar">
+      <div class="left">
+        <button class="btn-accent" onclick="openAdd()">＋ 매물 추가</button>
+        <span class="count-badge" id="count-badge">0건</span>
+        <select id="sort" onchange="render()" style="font-size:12.5px;">
+          <option value="added">정렬: 추가순</option>
+          <option value="deposit">정렬: 보증금↑</option>
+          <option value="cash">정렬: 필요현금↑</option>
+          <option value="rent">정렬: 월부담↑</option>
+          <option value="area">정렬: 실평수↓</option>
+        </select>
+      </div>
+      <div class="left">
+        <button class="btn-ghost btn-sm" onclick="loadSamples()">샘플 채우기</button>
+        <button class="btn-ghost btn-sm" onclick="exportJSON()">내보내기(JSON)</button>
+        <button class="btn-ghost btn-sm" onclick="document.getElementById('imp').click()">불러오기</button>
+        <input id="imp" type="file" accept="application/json" style="display:none" onchange="importJSON(event)">
+        <button class="btn-ghost btn-sm" onclick="clearAll()" style="color:var(--red)">전체삭제</button>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>단지/매물명<small>지역</small></th>
+            <th>유형</th>
+            <th>보증금<small>만원</small></th>
+            <th>월세<small>만원</small></th>
+            <th>관리비<small>만원</small></th>
+            <th>실평수<small>전용</small></th>
+            <th>방/욕실</th>
+            <th>대출</th>
+            <th>최대%<small>LTV</small></th>
+            <th>대출가능<small>만원</small></th>
+            <th>초기 필요현금<small>만원</small></th>
+            <th>월 고정비<small>월세+관리</small></th>
+            <th>원본</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- ===== Modal ===== -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <h3 id="modal-title">매물 추가</h3>
+    <div class="grid2">
+      <div class="field full">
+        <label>단지/매물명</label>
+        <input id="m-name" type="text" placeholder="예: 망원 한강아이파크 84A">
+      </div>
+      <div class="field">
+        <label>지역</label>
+        <input id="m-region" type="text" placeholder="마포구 망원동">
+      </div>
+      <div class="field">
+        <label>임차 유형</label>
+        <select id="m-type"><option value="전세">전세</option><option value="월세">월세</option></select>
+      </div>
+      <div class="field">
+        <label>보증금 (만원)</label>
+        <input id="m-deposit" type="number" min="0" step="100" placeholder="35000">
+      </div>
+      <div class="field">
+        <label>월세 (만원) · 전세는 0</label>
+        <input id="m-rent" type="number" min="0" step="1" placeholder="0">
+      </div>
+      <div class="field">
+        <label>관리비 (만원)</label>
+        <input id="m-mgmt" type="number" min="0" step="1" placeholder="15">
+      </div>
+      <div class="field">
+        <label>실평수 (전용, 평)</label>
+        <input id="m-area" type="number" min="0" step="0.1" placeholder="25.7">
+      </div>
+      <div class="field">
+        <label>방 갯수</label>
+        <input id="m-rooms" type="number" min="0" step="1" placeholder="3">
+      </div>
+      <div class="field">
+        <label>화장실 갯수</label>
+        <input id="m-baths" type="number" min="0" step="1" placeholder="2">
+      </div>
+      <div class="field">
+        <label>대출 가능 여부</label>
+        <select id="m-loan"><option value="1">가능</option><option value="0">불가</option></select>
+      </div>
+      <div class="field">
+        <label>최대 대출률 % (보증금 대비 LTV)</label>
+        <input id="m-rate" type="number" min="0" max="100" step="1" placeholder="80">
+      </div>
+      <div class="field full">
+        <label>네이버 부동산 원본 링크 (URL)</label>
+        <input id="m-link" type="url" placeholder="https://new.land.naver.com/...">
+      </div>
+    </div>
+    <p class="hint">대출가능금액 = 보증금 × 대출률% · 초기 필요현금 = 보증금 − 대출가능금액</p>
+    <div class="modal-foot">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-navy" onclick="saveListing()">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY='sinhon_listings_v1';
+const DEFAULT_RATE=80;            // 신혼부부 전세자금대출 통상 최대 LTV ~80% (기본값, 매물별 수정)
+let listings = load();
+let editId = null;
+
+function load(){ try{return JSON.parse(localStorage.getItem(KEY))||[];}catch(e){return [];} }
+function save(){ localStorage.setItem(KEY, JSON.stringify(listings)); }
+function uid(){ return 'L'+(listings.reduce((m,x)=>Math.max(m,+(''+x.id).replace(/\D/g,'')||0),0)+1); }
+
+/* ---------- 금액 포맷 ---------- */
+function won(man){ // 만원 단위 입력 → 보기 좋게
+  if(man==null||man==='') return '-';
+  const n=Number(man); if(!n) return '0';
+  if(n>=10000){ const eok=Math.floor(n/10000); const rest=n%10000;
+    return rest? `${eok}억 ${rest.toLocaleString()}` : `${eok}억`; }
+  return n.toLocaleString();
+}
+
+/* ---------- 계산 ---------- */
+function calc(x){
+  const dep=+x.deposit||0, rate=x.loan? (+x.rate||0):0;
+  const loanAmt=Math.round(dep*rate/100);
+  const cash=dep-loanAmt;
+  const monthly=(+x.rent||0)+(+x.mgmt||0);
+  return {loanAmt, cash, monthly};
+}
+
+/* ---------- 네이버 링크 ---------- */
+function buildNaverLinks(){
+  const region=(document.getElementById('f-region').value||'').trim();
+  const q=region || '아파트 전세';
+  const enc=encodeURIComponent(q);
+  document.getElementById('nv-mobile').href = `https://m.land.naver.com/search/result/${enc}`;
+  document.getElementById('nv-pc').href     = `https://new.land.naver.com/search?ms=&query=${enc}`;
+  const type=document.getElementById('f-type').value;
+  const kw = region + (type!=='all'? ' '+type : '') + ' 아파트';
+  document.getElementById('nv-search').href = `https://search.naver.com/search.naver?query=${encodeURIComponent(kw.trim())}`;
+}
+
+/* ---------- 필터 ---------- */
+let filter={region:'',type:'all',deposit:null,rent:null,rooms:null};
+function applyFilter(){
+  filter={
+    region:(document.getElementById('f-region').value||'').trim().toLowerCase(),
+    type:document.getElementById('f-type').value,
+    deposit:numOrNull('f-deposit'),
+    rent:numOrNull('f-rent'),
+    rooms:numOrNull('f-rooms'),
+  };
+  buildNaverLinks();
+  render();
+}
+function resetFilter(){
+  ['f-region','f-deposit','f-rent','f-rooms'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-type').value='all';
+  filter={region:'',type:'all',deposit:null,rent:null,rooms:null};
+  buildNaverLinks(); render();
+}
+function numOrNull(id){const v=document.getElementById(id).value;return v===''?null:Number(v);}
+
+function passFilter(x){
+  if(filter.region){
+    const hay=((x.name||'')+' '+(x.region||'')).toLowerCase();
+    if(!hay.includes(filter.region)) return false;
+  }
+  if(filter.type!=='all' && x.type!==filter.type) return false;
+  if(filter.deposit!=null && (+x.deposit||0)>filter.deposit) return false;
+  if(filter.rent!=null && (+x.rent||0)>filter.rent) return false;
+  if(filter.rooms!=null && (+x.rooms||0)<filter.rooms) return false;
+  return true;
+}
+
+/* ---------- 렌더 ---------- */
+function render(){
+  const rows=listings.filter(passFilter);
+  const sort=document.getElementById('sort').value;
+  rows.sort((a,b)=>{
+    const ca=calc(a),cb=calc(b);
+    switch(sort){
+      case 'deposit': return (+a.deposit||0)-(+b.deposit||0);
+      case 'cash': return ca.cash-cb.cash;
+      case 'rent': return ca.monthly-cb.monthly;
+      case 'area': return (+b.area||0)-(+a.area||0);
+      default: return 0;
+    }
+  });
+
+  const tb=document.getElementById('tbody');
+  if(!rows.length){
+    tb.innerHTML=`<tr><td colspan="14" class="empty"><b>매물이 없습니다</b>
+      위 "＋ 매물 추가"로 네이버에서 본 매물을 입력하거나, "샘플 채우기"로 예시를 확인하세요.</td></tr>`;
+  } else {
+    tb.innerHTML=rows.map(x=>{
+      const c=calc(x);
+      const link=x.link? `<span class="link-cell"><a href="${escapeAttr(x.link)}" target="_blank" rel="noopener">열기 ↗</a></span>`:'<span class="muted">-</span>';
+      return `<tr>
+        <td><b>${esc(x.name||'(이름없음)')}</b><br><span class="muted">${esc(x.region||'')}</span></td>
+        <td><span class="tag ${x.type==='전세'?'tag-jeonse':'tag-wolse'}">${x.type||'-'}</span></td>
+        <td class="money">${won(x.deposit)}</td>
+        <td>${(+x.rent)? `<span class="money">${(+x.rent).toLocaleString()}</span>`:'<span class="muted">0</span>'}</td>
+        <td>${(+x.mgmt)? (+x.mgmt).toLocaleString():'<span class="muted">-</span>'}</td>
+        <td>${x.area? esc(x.area)+'평':'<span class="muted">-</span>'}</td>
+        <td>${x.rooms||0}방 / ${x.baths||0}욕실</td>
+        <td style="text-align:center"><input type="checkbox" class="chk" ${x.loan?'checked':''} onchange="toggleLoan('${x.id}',this.checked)"></td>
+        <td>${x.loan? `<input class="rate-in" type="number" min="0" max="100" value="${x.rate??DEFAULT_RATE}" onchange="setRate('${x.id}',this.value)">%`:'<span class="muted">-</span>'}</td>
+        <td>${x.loan? `<span class="loan">${won(c.loanAmt)}</span>`:'<span class="muted">-</span>'}</td>
+        <td class="cash">${won(c.cash)}</td>
+        <td>${c.monthly? `<span class="money">${c.monthly.toLocaleString()}</span>`:'<span class="muted">0</span>'}</td>
+        <td>${link}</td>
+        <td><div class="row-actions">
+          <button class="btn-ghost btn-sm" onclick="openEdit('${x.id}')">수정</button>
+          <button class="btn-ghost btn-sm" style="color:var(--red)" onclick="del('${x.id}')">삭제</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
+
+  document.getElementById('count-badge').textContent=`${rows.length}건${rows.length!==listings.length?` / 전체 ${listings.length}`:''}`;
+  renderStats(rows);
+}
+
+function renderStats(rows){
+  const n=rows.length;
+  const avg=(arr)=>arr.length? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length):0;
+  const deps=rows.map(x=>+x.deposit||0);
+  const cashes=rows.map(x=>calc(x).cash);
+  const monthlies=rows.map(x=>calc(x).monthly);
+  const totalLoan=rows.reduce((a,x)=>a+calc(x).loanAmt,0);
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><div class="k">표시 매물</div><div class="v">${n}<small> 건</small></div></div>
+    <div class="stat"><div class="k">평균 보증금</div><div class="v">${won(avg(deps))}<small> 만원</small></div></div>
+    <div class="stat"><div class="k">평균 초기현금</div><div class="v" style="color:var(--green)">${won(avg(cashes))}<small> 만원</small></div></div>
+    <div class="stat"><div class="k">평균 월 고정비</div><div class="v">${avg(monthlies).toLocaleString()}<small> 만원</small></div></div>
+    <div class="stat"><div class="k">총 대출가능액</div><div class="v" style="color:var(--accent)">${won(totalLoan)}<small> 만원</small></div></div>`;
+}
+
+/* ---------- inline edits ---------- */
+function toggleLoan(id,on){ const x=listings.find(l=>l.id===id); if(!x)return; x.loan=on?1:0; if(on&&x.rate==null)x.rate=DEFAULT_RATE; save(); render(); }
+function setRate(id,v){ const x=listings.find(l=>l.id===id); if(!x)return; x.rate=Math.max(0,Math.min(100,Number(v)||0)); save(); render(); }
+
+/* ---------- CRUD ---------- */
+function openAdd(){
+  editId=null;
+  document.getElementById('modal-title').textContent='매물 추가';
+  ['name','region','deposit','rent','mgmt','area','rooms','baths','link'].forEach(f=>document.getElementById('m-'+f).value='');
+  document.getElementById('m-type').value='전세';
+  document.getElementById('m-loan').value='1';
+  document.getElementById('m-rate').value=DEFAULT_RATE;
+  document.getElementById('modal-bg').classList.add('open');
+}
+function openEdit(id){
+  const x=listings.find(l=>l.id===id); if(!x)return;
+  editId=id;
+  document.getElementById('modal-title').textContent='매물 수정';
+  document.getElementById('m-name').value=x.name||'';
+  document.getElementById('m-region').value=x.region||'';
+  document.getElementById('m-type').value=x.type||'전세';
+  document.getElementById('m-deposit').value=x.deposit??'';
+  document.getElementById('m-rent').value=x.rent??'';
+  document.getElementById('m-mgmt').value=x.mgmt??'';
+  document.getElementById('m-area').value=x.area??'';
+  document.getElementById('m-rooms').value=x.rooms??'';
+  document.getElementById('m-baths').value=x.baths??'';
+  document.getElementById('m-loan').value=x.loan?'1':'0';
+  document.getElementById('m-rate').value=x.rate??DEFAULT_RATE;
+  document.getElementById('m-link').value=x.link||'';
+  document.getElementById('modal-bg').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal-bg').classList.remove('open'); }
+function val(f){ return document.getElementById('m-'+f).value; }
+function saveListing(){
+  const obj={
+    name:val('name').trim(), region:val('region').trim(), type:val('type'),
+    deposit:numV('deposit'), rent:numV('rent'), mgmt:numV('mgmt'),
+    area:val('area').trim(), rooms:numV('rooms'), baths:numV('baths'),
+    loan:val('loan')==='1'?1:0, rate:numV('rate'), link:val('link').trim(),
+  };
+  if(!obj.name && !obj.region){ alert('단지/매물명 또는 지역은 입력해 주세요.'); return; }
+  if(editId){ Object.assign(listings.find(l=>l.id===editId),obj); }
+  else { obj.id=uid(); obj.added=listings.length; listings.push(obj); }
+  save(); closeModal(); render();
+}
+function numV(f){ const v=document.getElementById('m-'+f).value; return v===''?0:Number(v); }
+function del(id){ if(!confirm('이 매물을 삭제할까요?'))return; listings=listings.filter(l=>l.id!==id); save(); render(); }
+function clearAll(){ if(!confirm('모든 매물을 삭제합니다. 계속할까요?'))return; listings=[]; save(); render(); }
+
+/* ---------- import/export ---------- */
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(listings,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='sinhon_listings.json'; a.click(); URL.revokeObjectURL(a.href);
+}
+function importJSON(e){
+  const file=e.target.files[0]; if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ const data=JSON.parse(r.result);
+    if(Array.isArray(data)){ listings=data; save(); render(); alert('불러오기 완료'); }
+    else alert('형식이 올바르지 않습니다.'); }catch(err){alert('JSON 파싱 실패');} };
+  r.readAsText(file); e.target.value='';
+}
+
+/* ---------- 샘플 ---------- */
+function loadSamples(){
+  if(listings.length && !confirm('기존 매물에 샘플을 추가할까요?')) return;
+  const s=[
+    {name:'망원 한강아이파크 84A',region:'마포구 망원동',type:'전세',deposit:42000,rent:0,mgmt:18,area:'25.7',rooms:3,baths:2,loan:1,rate:80,link:'https://new.land.naver.com/'},
+    {name:'위례 그린파크 푸르지오',region:'성남 수정구 창곡동',type:'월세',deposit:10000,rent:90,mgmt:22,area:'24.9',rooms:3,baths:2,loan:1,rate:80,link:'https://new.land.naver.com/'},
+    {name:'동탄2 린스트라우스',region:'화성 동탄면',type:'전세',deposit:33000,rent:0,mgmt:14,area:'23.1',rooms:3,baths:2,loan:1,rate:80,link:'https://new.land.naver.com/'},
+    {name:'상도 두산위브 59',region:'동작구 상도동',type:'월세',deposit:5000,rent:120,mgmt:16,area:'17.4',rooms:2,baths:1,loan:0,rate:0,link:'https://new.land.naver.com/'},
+  ];
+  s.forEach(x=>{x.id=uid();x.added=listings.length;listings.push(x);});
+  save(); render();
+}
+
+/* ---------- utils ---------- */
+function esc(s){return (''+s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function escapeAttr(s){return (''+s).replace(/"/g,'&quot;');}
+
+/* init */
+['f-region','f-type'].forEach(id=>document.getElementById(id).addEventListener('input',buildNaverLinks));
+document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target.id==='modal-bg')closeModal();});
+buildNaverLinks();
+render();
+</script>
+</body>
+</html>
