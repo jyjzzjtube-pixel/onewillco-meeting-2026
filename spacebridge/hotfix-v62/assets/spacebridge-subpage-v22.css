@@ -1,0 +1,72 @@
+/* SpaceBridge shared subpage brand and action treatment v22 */
+
+.sb-brand-lockup,
+.site-header .brand {
+  display: flex;
+  align-items: center;
+  width: 210px;
+  min-width: 210px;
+  min-height: 48px;
+  line-height: 0;
+  text-decoration: none;
+  filter: drop-shadow(0 4px 9px rgba(14, 165, 233, 0.1));
+}
+
+.sb-brand-lockup svg,
+.site-header .brand svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 320 / 72;
+}
+
+.header-inner,
+.site-header .inner,
+.hwrap {
+  min-height: 72px;
+}
+
+.header-inner nav .cta,
+.header-home {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.quick-start-copy small {
+  display: block;
+  margin-top: 6px;
+  color: #65778c;
+  font-size:12px;
+  font-weight:600;
+}
+
+.actions .primary {
+  background-color:#087c91;background:#087c91;
+  border-color: #087c91;
+}
+
+@media (max-width: 620px) {
+  .sb-brand-lockup,
+  .site-header .brand {
+    width: 164px;
+    min-width: 164px;
+    min-height: 42px;
+  }
+
+  .header-inner,
+  .site-header .inner,
+  .hwrap {
+    min-height: 66px;
+  }
+}
+
+@media (max-width: 360px) {
+  .sb-brand-lockup,
+  .site-header .brand {
+    width: 146px;
+    min-width: 146px;
+  }
+}

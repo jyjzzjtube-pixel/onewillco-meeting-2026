@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>창업가이드 | 공간브릿지 — 상가 인테리어·창업 준비 정보</title>
+<meta name="description" content="상가 인테리어 비용, 포스·키오스크 선택, 매장 CCTV, 세무 기초까지 — 공간브릿지가 정리한 창업 준비 가이드.">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="창업가이드 | 공간브릿지">
+<meta property="og:description" content="상가 인테리어 비용, 포스·키오스크, CCTV, 세무 기초 — 창업 준비 가이드">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta property="og:image" content="{{BASE}}/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="공간브릿지 창업가이드" href="/rss.xml">
+<style>
+:root{--ink:#2B2A26;--sub:#75716A;--bg:#F7F5F1;--green:#1E3A2F;--copper:#B85C38;--line:#E5E1D8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;}
+.hwrap{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;}
+.logo{font-size:22px;font-weight:800;color:var(--green);text-decoration:none;letter-spacing:-.5px;}
+.logo b{color:var(--copper);}
+.hwrap nav a{color:var(--sub);text-decoration:none;font-size:14px;margin-left:18px;font-weight:600;}
+.hwrap nav a.cta{background:var(--copper);color:#fff;padding:8px 16px;border-radius:8px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 20px 80px;}
+h1{font-size:28px;font-weight:800;color:var(--green);letter-spacing:-.5px;}
+.sub{color:var(--sub);margin:6px 0 26px;font-size:15px;}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.tabs .tab{border:1px solid var(--line);background:#fff;border-radius:20px;padding:7px 16px;font-size:13px;font-weight:700;color:var(--sub);text-decoration:none;}
+.tabs .tab.on{background:var(--green);border-color:var(--green);color:#fff;}
+.list{display:flex;flex-direction:column;gap:12px;}
+.item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 22px;text-decoration:none;color:inherit;display:block;transition:box-shadow .15s;}
+.item:hover{box-shadow:0 4px 14px rgba(30,58,47,.1);}
+.item .cat{display:inline-block;font-size:11px;font-weight:800;color:var(--copper);background:#F6E8E0;border-radius:10px;padding:2px 10px;margin-bottom:6px;}
+.item h2{font-size:17px;font-weight:700;letter-spacing:-.3px;}
+.item .meta{font-size:12px;color:var(--sub);margin-top:6px;}
+.empty{color:var(--sub);text-align:center;padding:60px 0;}
+.cta-band{margin-top:40px;background:var(--green);border-radius:14px;padding:28px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.cta-band b{font-size:17px;}
+.cta-band a{background:var(--copper);color:#fff;text-decoration:none;font-weight:800;border-radius:10px;padding:12px 22px;font-size:14px;}
+@media(max-width:600px){.hwrap nav a:not(.cta){display:none;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <a class="logo" href="/">공간<b>브릿지</b></a>
+    <nav>
+      <a href="/#solution">서비스</a>
+      <a href="/calc.html">무료 계산기</a>
+      <a href="/guide.html">창업가이드</a>
+      <a class="cta" href="/#quote">견적문의</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+  <h1>창업가이드</h1>
+  <p class="sub">상가 계약부터 오픈까지 — 사장님이 가장 많이 묻는 것들을 정리했습니다.</p>
+  <div class="tabs">{{GUIDE_TABS}}</div>
+  <div class="list">{{GUIDE_ITEMS}}</div>
+  <div class="cta-band">
+    <b>읽다가 궁금한 게 생기셨나요? 실측·통합 견적은 무료입니다.</b>
+    <a href="/#quote">무료 견적 신청 →</a>
+  </div>
+</div>
+{{STICKY_CTA}}
+<script src="/track.js"></script>
+</body>
+</html>

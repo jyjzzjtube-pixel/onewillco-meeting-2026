@@ -1,0 +1,3658 @@
+/* ============================================================
+   공간브릿지 — 단일 파운데이션 v31 (2026-08-04)
+
+   왜 만들었나
+   실측: CSS 13,618줄 / !important 1,119개 / index.html 안 <style> 25개 /
+        v25 중복 로드 / color 647회·font-size 603회 재선언.
+        7월 25일 이후 패치 레이어 15개가 서로를 덮어써서
+        한 곳을 고치면 다른 곳이 깨지는 상태였다.
+
+   무엇을 했나
+   흩어져 있던 아래를 이 파일 하나로 합쳤다. 렌더 값은 바꾸지 않았다.
+     - index.html 인라인 패치 8블록 (4pt 스냅 / 장식 띠 제거 / 톤 복귀 /
+       타이포 굵기 통일·스냅 / SSOT 형태 정리 / 색 변수 통일 / 액센트 활용)
+     - spacebridge-type-motion-v29.css (타이포 정규화·그라데이션·모션)
+     - spacebridge-align-v30.css (컨테이너 정렬·표면 정리)
+
+   규칙
+   1) 이 파일은 항상 마지막에 로드한다. 여기가 최종 결정권자다.
+   2) 새 교정은 새 파일을 만들지 않고 이 파일의 해당 섹션에 넣는다.
+   3) 색을 바꿀 때는 그 요소의 실제 배경을 픽셀로 먼저 잰다.
+   4) 일괄 색 지정 금지. 배경이 다른 컨테이너는 반드시 예외 처리한다.
+   ============================================================ */
+
+
+/* ══════════ A. 이전 인라인 패치 8블록 (값 보존) ══════════ */
+/* 4pt 서브그리드 전량 스냅 (2026-07-28) */
+.hero-primary-actions a{ gap:8px !important; }
+.hero-mini{ gap:8px 20px !important; }
+.hero-mini span{ gap:8px !important; }
+.sb-value-eyebrow{ gap:8px !important; }
+.sb-value-actions,.sb-value-services{ gap:12px !important; }
+.sb-value-step{ gap:16px !important; }
+.top-route-copy small{ gap:8px !important; }
+.hero-start-head{ gap:32px !important; }
+.hero-start-label{ gap:12px !important; }
+.hero-intent-details summary,.hero-intent-row{ gap:12px !important; }
+.hero-intent-details{ display:block !important; }
+.hero-intent-details summary{ justify-content:space-between !important; width:100% !important; flex:1 1 100% !important; align-self:stretch !important; box-sizing:border-box !important; max-width:none !important; }
+.tools-layout{ gap:16px !important; }
+.ft-card{ gap:16px !important; }
+.ft-points,.ft-points li{ gap:8px !important; }
+.tools-more .btn{ gap:8px !important; }
+.category-hub-head{ gap:40px !important; }
+.category-hub-head a{ gap:8px !important; }
+.category-mobile-tab{ gap:12px !important; }
+.service-card-no,.service-checks{ gap:8px !important; }
+.service-card-body a{ gap:4px !important; }
+.category-next .btn{ gap:8px !important; }
+.matching-head{ gap:56px !important; }
+.pf-source{ gap:4px 12px !important; }
+details summary{ gap:16px !important; }
+.consult-route-card{ gap:16px !important; }
+.lf-chip{ gap:8px !important; }
+.lf-benefit-guide-head{ gap:16px !important; }
+.trust-links{ gap:8px !important; }
+.partnership-intro{ gap:24px !important; }
+.partner-form-grid{ gap:0 16px !important; }
+.lf-agree{ gap:12px !important; }
+.footer-business{ gap:16px 24px !important; }
+.footer-nav-grid{ gap:4px 24px !important; }
+
+/* ── */
+
+
+
+/* 장식 띠 제거·카드 정제 (2026-07-29) */
+/* ── 1) 장식용 가로 띠 전부 제거 ──────────────────────────
+   기능이 없는 장식인데 시선을 뺏고 카드 사이를 갈라 놓는다. */
+.match-flow::before, .match-flow::after{ display:none !important; content:none !important; }
+/* 페이지 전역 장식 띠 — 섹션·카드마다 그라디언트 가로선이 깔려 있어 시선을 끊는다. 전부 제거. */
+.hero-category-dock::before, .hero-category-dock::after,
+.freetools::after, .category-hub::after, .matching::after,
+.pricing::after, .faq::after, .insights::after,
+.final::after, .partnership::after, .brand-story::after,
+.sb-field-bar::after, .sb-howto-bar::after,
+.ft-card::before, .ft-card::after,
+.insight-card::before, .insight-card::after,
+.service-card::before, .service-card::after,
+.pf-body::before, .pf-body::after{ display:none !important; content:none !important; }
+.leadform-panel::before{ display:none !important; content:none !important; }
+.insight-card::before, .insight-card::after,
+.consult-route-card::before, .consult-route-card::after{ display:none !important; content:none !important; }
+
+/* ── 2) 상담 경로 카드 정제 ───────────────────────────────
+   연노랑 그라디언트 배경이 촌스러움의 원인. 배경은 뉴트럴로 두고
+   카카오 노랑은 아이콘에만 남겨 브랜드 식별만 유지한다. */
+.consult-route-card{
+  background-color:#fff;background:#fff!important;
+  border:1px solid #E3EAF2 !important;
+  border-radius:16px !important;
+  box-shadow:0 1px 2px rgba(15,27,49,.04) !important;
+  transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease !important;
+}
+.consult-route-card:hover{
+  border-color:#075F9C !important;
+  box-shadow:0 8px 20px rgba(11,114,181,.12) !important;
+  transform:translateY(-2px) !important;
+}
+.consult-route-card.kakao .route-icon{ background-color:#FEE500;background:#FEE500!important; color:#191919 !important; }
+.consult-route-card.sms .route-icon{ background-color:#EAF4FC;background:#EAF4FC!important; color:#075F9C !important; }
+.consult-route-card .route-icon{ border-radius:12px !important; box-shadow:none !important; }
+.consult-route-card .route-arrow{
+  background:transparent !important; color:#075F9C !important; box-shadow:none !important; }
+.consult-route-card:hover .route-arrow{ color:#075F9C !important; }
+
+/* ── 3) 딥네이비 블록 카드 정제 ───────────────────────────
+   반투명 흰색 + 두꺼운 테두리는 탁해 보인다. 더 맑게, 테두리는 얇게. */
+.matching .match-step, .matching .match-customer, .matching .pf-body,
+.insights .insight-grid > *{
+  background-color:rgba(255,255,255,.07);background:rgba(255,255,255,.07)!important;
+  border:1px solid rgba(255,255,255,.16) !important;
+  border-radius:16px !important;
+  box-shadow:none !important;
+}
+.insights .insight-grid > *:hover{
+  background-color:rgba(255,255,255,.13);background:rgba(255,255,255,.13)!important;
+  border-color:rgba(255,255,255,.30) !important;
+}
+.matching .matching-policies > *{
+  background-color:rgba(255,255,255,.07);background:rgba(255,255,255,.07)!important;
+  border:1px solid rgba(255,255,255,.16) !important;
+}
+
+/* ── */
+
+
+
+/* 콘텐츠 섹션 밝은 톤 복귀·위계 재정비 (2026-07-29) */
+/* ── 판단 정정 ────────────────────────────────────────────
+   긴 콘텐츠 섹션(matching 1514px·insights 923px)에 딥네이비 블록을 쓴 것이 실수였다.
+   반투명 카드는 내용이 묻히고, 실측상 14px에 굵기가 720/540/500 세 종류로 섞여 위계가 무너졌다.
+   컬러 블록은 짧은 CTA 구간에만 쓰는 것이 맞다(아정당·토스·캐시노트 실측 공통).
+   → 밝은 배경으로 되돌리고 위계·여백·대비로 내용이 보이게 한다. */
+
+/* 1) 딥네이비 블록 해제 */
+.matching, .insights{ background-color:#F7FAFC;background:#F7FAFC!important; }
+.matching > .inner, .insights > .inner{
+  background-color:#FFFFFF;background:#FFFFFF!important; border:1px solid #E5EDF5 !important;
+  border-radius:24px !important; padding:56px 48px !important;
+  box-shadow:0 1px 3px rgba(15,27,49,.04) !important;
+}
+.matching > .inner, .matching h2, .matching h3, .matching b, .matching strong,
+.insights > .inner, .insights h2, .insights h3, .insights b, .insights strong{ color:#16233A !important; }
+.matching p, .matching small, .matching li, .matching .insight-sub,
+.insights p, .insights small, .insights li, .insights .insight-sub{ color:#4A5A73 !important; }
+.matching .sec-label, .matching .match-eyebrow, .matching .matching-head span,
+.insights .sec-label, .insights .head > span{
+  background-color:#EAF4FC;background:#EAF4FC!important; color:#075F9C !important; border-color:#CFE3F2 !important; }
+.matching a:not(.btn), .insights a:not(.btn),
+.matching .insight-go, .matching .insight-go span,
+.insights .insight-go, .insights .insight-go span,
+.matching .match-go{ color:#075F9C !important; }
+
+/* 2) 카드 — 선명한 흰 카드 + 얇은 테두리 */
+.matching .match-step, .matching .match-customer, .matching .pf-body,
+.matching .matching-policies > *, .insights .insight-grid > *{
+  background-color:#FFFFFF;background:#FFFFFF!important; border:1px solid #E3EAF2 !important;
+  border-radius:14px !important; box-shadow:0 1px 2px rgba(15,27,49,.04) !important;
+}
+.insights .insight-grid > *:hover, .matching .match-step:hover{
+  border-color:#075F9C !important; box-shadow:0 8px 20px rgba(11,114,181,.10) !important; }
+.matching .match-step .no, .matching .brand-steps .bs-no{
+  background-color:#075F9C;background:linear-gradient(135deg,#075F9C 0%,#075F9C 100%)!important; color:#fff !important; }
+.matching a.btn, .matching .btn-primary{
+  background-color:#075F9C;background:linear-gradient(135deg,#075F9C 0%,#075F9C 100%)!important; color:#fff !important; }
+
+/* 3) 위계 재정비 — 실측상 14px에 굵기 3종이 섞여 평평했다 */
+.matching h2, .insights h2{ font-size:42px !important; font-weight:700 !important; letter-spacing:-1px !important; line-height:1.24 !important; }
+.matching .sec-sub, .insights .sec-sub, .matching .matching-head p, .insights .head p{
+  font-size:16px !important; font-weight:400 !important; color:#5A6B84 !important; margin-top:10px !important; }
+.matching .match-step h3, .insights .insight-card strong{
+  font-size:18px !important; font-weight:700 !important; color:#16233A !important; line-height:1.4 !important; }
+.matching .match-step p, .insights .insight-sub{
+  font-size:14px !important; font-weight:400 !important; color:#5A6B84 !important; line-height:1.65 !important; }
+.matching .match-go, .insights .insight-go{ font-size:14px !important; font-weight:700 !important; }
+.matching .matching-policies strong{ font-size:15px !important; font-weight:700 !important; color:#16233A !important; }
+.matching .matching-policies span{ font-size:13px !important; color:#5A6B84 !important; }
+
+/* 4) 여백 — 카드 안이 빽빽했다 */
+.matching .match-step, .insights .insight-grid > *{ padding:24px 22px !important; }
+.matching .matching-policies > *{ padding:18px 20px !important; }
+@media(max-width:768px){
+  .matching > .inner, .insights > .inner{ padding:32px 20px !important; border-radius:18px !important; }
+  .matching .match-step, .insights .insight-grid > *{ padding:18px 16px !important; }
+}
+
+/* ── */
+
+
+
+/* 타이포 굵기 4단계 통일 (2026-07-29) */
+/* 실측: 본문 폰트 굵기가 21종(400·450·480·500·560·600·620·640·650·660·700·720·735·750·760·785·800·820·850·860·900)
+   이었다. 480·560·785 같은 값은 1~2개뿐인 이상값이다. 굵기가 흩어지면 위계가 사라져 "조화가 안 맞아" 보인다.
+   → 4단계로 통일: 450 본문 / 600 강조 / 700 소제목 / 800 제목 */
+
+/* 450 — 본문 */
+p, li, small, td, dd, blockquote,
+.insight-sub, .final-sub, .hero-sub, .sec-sub, .lf-field-hint,
+.hb-steps small, .hb-facts span, .match-step p{ font-weight:400 !important; }
+
+/* 600 — 강조 본문·라벨·링크 */
+.sec-label, .insight-tag, .art-badge, .route-badge, .kicker, .eyebrow,
+.match-eyebrow, .top-route-eyebrow, .mail-kicker,
+.gnb-service, .gnb-cta, .pf-inc, .insight-go, .match-go,
+a:not(.btn):not(.primary){ font-weight:600 !important; }
+
+/* 700 — 소제목·강조어 */
+b, strong, h3, h5, h6,
+.q, .ico, .lf-chip, .mnav-service, .hb-steps b, .hb-facts b,
+.match-step h3, .insight-card strong, .matching-policies strong{ font-weight:700 !important; }
+
+/* 800 — 제목·번호 배지·주 CTA */
+h1, h2, h4, .sec-title, .pt,
+.hb-no, .service-card-no, .match-step .no, .bs-no, .toc-num,
+.btn, .btn-primary, .primary, .platform-domain,
+.hero-primary-actions a, .consult-route-card strong{ font-weight:800 !important; }
+
+/* ── */
+
+
+
+/* 타이포 굵기 강제 스냅 (2026-07-29) */
+/* 1차 통일이 21→14종에서 멈췄다. 원인은 구체성 — `.matching strong`(0,1,1)이 `strong`(0,0,1)을 이긴다.
+   `[class]` 속성 선택자로 구체성을 맞춰 끝까지 스냅한다. */
+html body [class] p, html body [class] li, html body [class] small,
+html body [class] .insight-sub, html body [class] figcaption{ font-weight:400 !important; }
+
+html body [class] .sec-label, html body [class] .insight-tag, html body [class] .cat-cred,
+html body [class] .mail-kicker, html body [class] .service-card-use, html body [class] .sum-note,
+html body [class] .pf-range-note, html body [class] a:not(.btn):not(.primary){ font-weight:600 !important; }
+
+html body [class] b, html body [class] strong, html body [class] em,
+html body [class] h3, html body [class] h5, html body [class] h6,
+html body [class] .ico, html body [class] .go, html body [class] .ft-result{ font-weight:700 !important; }
+
+html body [class] h1, html body [class] h2, html body [class] h4,
+html body [class] .sec-title, html body [class] .pt,
+html body [class] .top-route-arrow, html body [class] .hero-start-label,
+html body [class] .btn, html body [class] .primary{ font-weight:800 !important; }
+
+/* 잔여 이상값 마감 — 실측으로 정확한 경로를 잡았다 */
+html body .partnership-tags span, html body .leadform-panel-head span,
+html body .lf-benefit-guide-head span{ font-weight:600 !important; }
+html body .cat-label strong, html body .insight-card strong,
+html body .match-step h3, html body .req{ font-weight:700 !important; }
+html body .match-step p, html body .mnav-close{ font-weight:400 !important; }
+
+/* 클래스 없는 span은 부모 위계를 따르게 한다 (독자 굵기 금지) */
+html body [class] span:not([class]){ font-weight:inherit !important; }
+
+/* ── */
+
+
+
+/* SSOT 형태 정리 (2026-07-31) */
+/* 출처: evidence/tone_ssot_20260731/DESIGN_SSOT.md
+   ChatGPT 판정 — "둥근 흰 카드 + 얇은 파란 테두리가 반복돼 예전 공공기관 홈페이지처럼 보인다"
+   → 카드 남발·그라데이션·이중 그림자를 걷어낸다. 테두리는 클릭 요소에만. */
+
+/* 1) 그라데이션 전면 평면화 — 숫자 배지·아이콘의 광택이 낡아 보인다 */
+.match-step .no, .brand-steps .bs-no, .hb-no, .toc-num, .service-card-no,
+.fb-ico, .ico, .freetools .ico, .ft-card .ico, .step-num, .art-badge{
+  background-color:#075F9C;background:#075F9C!important; background-image:none !important;
+  color:#fff !important; box-shadow:none !important; }
+.btn, .btn-primary, .primary, .hero-primary-actions a,
+.matching a.btn, .category-next .btn, .tools-more .btn{
+  background-color:#075F9C;background:#075F9C!important; background-image:none !important;
+  color:#fff !important; box-shadow:none !important; }
+.btn:hover, .btn-primary:hover, .primary:hover, .hero-primary-actions a:hover{
+  background-color:#065081;background:#065081!important; }
+
+/* 2) 카드 정리 — 정보 카드는 테두리 없이 여백으로, 클릭 요소만 테두리 */
+.matching .matching-policies > *, .insights .insight-grid > *,
+.hb-facts li, .hb-steps li{
+  background:transparent !important; border:0 !important;
+  box-shadow:none !important; border-radius:0 !important; }
+.hb-steps li{ border-left:2px solid #0EA5E9 !important; border-radius:0 !important;
+  padding:4px 0 4px 16px !important; }
+.hb-facts li{ padding:0 !important; }
+.matching .matching-policies > *{ padding:0 !important; }
+
+/* 클릭 가능한 카드에만 테두리 + 단일 그림자 */
+a.insight-card, a.sb-value-service, .consult-route-card, .ft-card, .cat-photo-card{
+  border:1px solid #E3EAF2 !important; border-radius:14px !important;
+  box-shadow:0 1px 2px rgba(15,27,49,.04) !important; background-color:#fff;background:#fff!important; }
+a.insight-card:hover, .consult-route-card:hover, .ft-card:hover{
+  border-color:#0EA5E9 !important; box-shadow:0 6px 16px rgba(14,165,233,.12) !important; }
+
+/* 3) 카드 중첩 해소 — 큰 흰 컨테이너 안의 또 다른 흰 카드를 없앤다 */
+.matching > .inner, .insights > .inner{
+  background:transparent !important; border:0 !important;
+  box-shadow:none !important; padding:0 !important; }
+.matching, .insights{ background-color:#F7FAFC;background:#F7FAFC!important; padding:80px 0 !important; }
+.matching .inner, .insights .inner{ padding-inline:32px !important; }
+
+/* 3-b) 테두리 중첩 해소 — 실측 10종. 부모 컨테이너 테두리를 걷고 자식 카드만 남긴다 */
+.sb-value-stage, .tools-layout, .service-board-grid, .match-flow,
+.top-route-stages, .category-mobile-tabs, .hero-start-tool, .hero-start-head,
+.sb-value-steps, .service-card, .category-next, .match-split, .final-cols{
+  background:transparent !important; border:0 !important;
+  box-shadow:none !important; }
+
+/* 4) 타이포 위계 — SSOT 6단계 */
+.matching h2, .insights h2, .sec-title{ font-size:44px !important; font-weight:800 !important;
+  letter-spacing:-1px !important; line-height:1.25 !important; color:#16233A !important; }
+.matching .match-step h3, .insights .insight-card strong{
+  font-size:20px !important; font-weight:700 !important; color:#16233A !important; }
+.matching .match-step p, .insights .insight-sub, .matching .sec-sub, .insights .sec-sub{
+  font-size:16px !important; font-weight:400 !important; line-height:1.65 !important; color:#5A6B84 !important; }
+.matching .matching-policies strong{ font-size:16px !important; font-weight:700 !important; color:#16233A !important; }
+.matching .matching-policies span{ font-size:14px !important; color:#5A6B84 !important; }
+
+@media(max-width:768px){
+  .matching, .insights{ padding:56px 0 !important; }
+  .matching .inner, .insights .inner{ padding-inline:16px !important; }
+  .matching h2, .insights h2, .sec-title{ font-size:28px !important; }
+}
+
+/* ── */
+
+
+
+/* SSOT 색 변수 통일 (2026-07-31) */
+/* 파랑이 HEX뿐 아니라 CSS 변수로도 7종 흩어져 있었다.
+   --sb-accent #0EA5E9 / --sb-blue #0EA5E9 / --sb-blue-dark #075F9C / --sb-brand-bright #0EA5E9
+   / --sb-brand-deep #075F9C / --sb-action #075F9C / --sb-brand-aa #075F9C
+   → SSOT 2단계로 재정의한다. 변수를 고쳐야 전 컴포넌트에 한 번에 적용된다. */
+:root, html, body{
+  /* 브랜드 액센트 — 흰 글자 불가(2.78:1). 아이콘·선·선택상태·투명배경 전용 */
+  --sb-blue:#0EA5E9 !important;
+  --sb-accent:#0EA5E9 !important;
+  --sb-brand-bright:#0EA5E9 !important;
+  /* 접근성 액션 — 흰 글자 가능(6.75:1). CTA 배경·링크·활성 상태 */
+  --sb-blue-dark:#075F9C !important;
+  --sb-brand-deep:#075F9C !important;
+  --sb-action:#075F9C !important;
+  --sb-brand-aa:#075F9C !important;
+  --sb-brand-aa-deep:#075F9C !important;
+  --sb-action-hover:#065081 !important;
+  /* 연한 배경은 새 파랑을 만들지 않고 액센트의 낮은 명도로 */
+  --sb-accent-soft:#EAF7FC !important;
+  --sb-band-blue:#EAF7FC !important;
+  --sb-band-sky:#EAF7FC !important;
+}
+/* 대비 실측 교정: .sb-value-eyebrow 4.46/4.5 근소 미달 */
+.sb-value-eyebrow{ color:#075F9C !important; }
+/* SSOT 원칙 적용: 액센트(#0EA5E9)는 텍스트·흰글자 배경으로 쓸 수 없다.
+   실측으로 드러난 위반 4곳을 액션 색(#075F9C)으로 교체한다. */
+.mnav-cta{ background-color:#075F9C;background:#075F9C!important; color:#fff !important; }
+.q, summary .q, .lf-field .req, .req{ color:#075F9C !important; }
+.head h2 .pt, h2 .pt, .pt{ color:#075F9C !important; }
+
+/* ── */
+
+
+
+/* 브랜드 액센트 활용 (2026-07-31) */
+/* SSOT 2항: 액센트 #0EA5E9는 "선택 상태·아이콘 선·포커스 링·얇은 구분선·6~10% 투명 배경"에 쓴다.
+   실측 결과 실사용 1회로 브랜드 컬러가 화면에 드러나지 않았다. 정의된 자리에 살린다. */
+
+/* 1) 포커스 링 — 전역 (접근성 + 브랜드 동시) */
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible{
+  outline:3px solid #0EA5E9 !important; outline-offset:2px !important; }
+
+/* 2) 8분야 아이콘 — 배경은 액센트 10%, 아이콘 선은 액션색. 호버 시 액센트가 살아난다 */
+.fb-ico{ background-color:rgba(14,165,233,.10);background:rgba(14,165,233,.10)!important; color:#075F9C !important; }
+.fb-item:hover .fb-ico{ background-color:#0EA5E9;background:#0EA5E9!important; color:#fff !important; }
+.fb-item:hover{ background-color:rgba(14,165,233,.06);background:rgba(14,165,233,.06)!important; }
+
+/* 3) 선택 상태 — 카테고리 탭·칩 */
+.category-mobile-tab[aria-selected="true"], .cat-photo-card[aria-selected="true"],
+.tabs button[aria-selected="true"], .lf-chip[aria-pressed="true"]{
+  border-color:#0EA5E9 !important; box-shadow:0 0 0 1px #0EA5E9 inset !important; }
+
+/* 4) 얇은 구분선 — 섹션 경계에 액센트를 옅게 */
+.sb-field-bar, .sb-howto-bar{ border-bottom:1px solid rgba(14,165,233,.22) !important; }
+
+/* 5) 라벨 배지 — 액센트 8% 배경 (SSOT: 새 파랑 만들지 말고 액센트 투명도로) */
+.sec-label, .insight-tag, .art-badge, .hero-badge, .match-eyebrow, .sb-value-eyebrow{
+  background-color:rgba(14,165,233,.08);background:rgba(14,165,233,.08)!important; border:1px solid rgba(14,165,233,.24) !important;
+  color:#075F9C !important; }
+
+/* 잔여 이상 파랑 최종 스냅 — 구체성을 올려 개별 섹션 규칙을 이긴다 */
+html body [class] .sec-label, html body [class] .insight-tag,
+html body [class] .art-badge, html body [class] .match-eyebrow,
+html body [class] .sb-value-eyebrow, html body .head .sec-label{ color:#075F9C !important; }
+
+/* 6) 강조 인용·핵심 패널 좌측 라인 */
+.hb-deliver{ border-left-color:#0EA5E9 !important; }
+.hb-steps li{ border-left-color:#0EA5E9 !important; }
+
+/* ── */
+
+/* ══════════ B. 타이포 정규화 · 그라데이션 · 모션 (구 v29) ══════════ */
+:root{
+  /* 크기 7단계 */
+  --t-hero:52px; --t-sec:40px; --t-lead:28px; --t-card:20px;
+  --t-body:16px; --t-sub:14px; --t-label:12px;
+  /* 굵기 4단계 */
+  --w-body:450; --w-label:600; --w-strong:700; --w-title:800;
+  /* 색 */
+  --c-ink:#16233A; --c-sub:#5A6B84; --c-action:#075F9C; --c-accent:#0EA5E9;
+  --c-onDark:#FFFFFF; --c-onDarkSub:#D5E4F0;
+  /* 모션 */
+  --m-fast:180ms; --m-base:320ms; --m-slow:520ms;
+  --m-ease:cubic-bezier(.22,.61,.36,1);
+}
+
+/* ── 1. 폰트 단일화 — Arial 잔존 제거 ───────────────────────── */
+html body,
+html body button, html body input, html body select, html body textarea{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,sans-serif !important;
+}
+
+/* ── 2. 인라인 요소는 부모를 물려받는다 (이탈의 최대 원인) ──── */
+html body span:not([class]),
+html body b:not([class]),
+html body em:not([class]),
+html body i:not([class]),
+html body time:not([class]){
+  font-size:inherit !important;
+  color:inherit !important;
+  line-height:inherit !important;
+}
+/* strong 은 굵기만 강조하고 크기·색은 물려받는다 */
+html body strong:not([class]),
+html body b:not([class]){
+  font-size:inherit !important;
+  color:inherit !important;
+  font-weight:var(--w-strong) !important;
+  font-variation-settings:"wght" 700 !important;
+}
+
+/* ── 3. 크기·굵기 스냅 (블록 요소) ─────────────────────────── */
+html body p:not([class]),
+html body li:not([class]){
+  font-size:var(--t-body) !important;
+  font-weight:var(--w-body) !important;
+  font-variation-settings:"wght" 450 !important;
+  line-height:1.65;
+}
+html body small:not([class]),
+html body figcaption:not([class]){
+  font-size:var(--t-sub) !important;
+  font-weight:var(--w-label) !important;
+  font-variation-settings:"wght" 600 !important;
+}
+html body h4:not([class]),
+html body h5:not([class]){
+  font-size:var(--t-card) !important;
+  font-weight:var(--w-strong) !important;
+  font-variation-settings:"wght" 700 !important;
+}
+html body button:not([class]){
+  font-weight:var(--w-strong) !important;
+  font-variation-settings:"wght" 700 !important;
+}
+
+/* 실측에서 이탈로 잡힌 클래스 요소들 */
+html body .insight-signal{ font-weight:var(--w-title) !important; font-variation-settings:"wght" 800 !important; }
+html body .art-lead{ font-weight:var(--w-body) !important; font-variation-settings:"wght" 450 !important; }
+html body .lf-chip, html body .partner-chip, html body .path-chip{
+  font-size:var(--t-sub) !important; font-weight:var(--w-label) !important;
+}
+html body .pn, html body .ico, html body .go{ font-size:var(--t-sub) !important; }
+
+/* ── 5. 그라데이션 ─────────────────────────────────────────── */
+/* 5-1 히어로 제목 — 잉크에서 액션블루로 흐르는 미세 그라데이션 */
+html body .hero h1{
+  background-color:var(--c-ink);background-color:var(--c-ink);background:linear-gradient(100deg,var(--c-ink)0%,var(--c-ink) 38%,var(--c-action) 78%,var(--c-accent) 100%);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:var(--c-ink);
+}
+@supports not (background-clip:text){ html body .hero h1{ -webkit-text-fill-color:var(--c-ink); } }
+
+/* 5-2 섹션 배경 — 흰색에서 아주 옅은 하늘빛으로 (경계선 대신 면으로 구분) */
+html body .freetools, html body .category-hub, html body .insights{
+  background-image:linear-gradient(180deg,#FFFFFF 0%,#F7FAFC 62%,#F2F8FC 100%) !important;
+}
+html body .matching, html body .pricing{
+  background-image:linear-gradient(180deg,#F7FAFC 0%,#FFFFFF 55%) !important;
+}
+
+/* 5-3 주요 CTA — 액션블루 그라데이션 + 상호작용 */
+html body a.btn, html body button.btn,
+html body .mnav-cta, html body .lf-submit{
+  background-image:linear-gradient(135deg,var(--c-action) 0%,#0A6FAF 55%,var(--c-accent) 170%);
+  transition:transform var(--m-fast) var(--m-ease),
+             box-shadow var(--m-base) var(--m-ease),
+             filter var(--m-fast) var(--m-ease);
+}
+html body a.btn:hover, html body button.btn:hover,
+html body .mnav-cta:hover, html body .lf-submit:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 24px rgba(7,95,156,.26);
+  filter:saturate(1.08);
+}
+html body a.btn:active, html body button.btn:active{ transform:translateY(0); }
+
+/* ── 6. 모션 ──────────────────────────────────────────────── */
+/* 6-1 진입 애니메이션 강화 — 순차 등장 */
+html body .sb-reveal{ transition-timing-function:var(--m-ease); }
+html body .sb-reveal.is-visible{ transition-duration:var(--m-slow); }
+html body .sit-grid > *, html body .ft-grid > *,
+html body .pf-grid > *, html body .insight-grid > *{
+  transition:transform var(--m-base) var(--m-ease), box-shadow var(--m-base) var(--m-ease);
+}
+/* 6-2 카드 hover — 살짝 떠오르기 */
+html body .sit-card:hover, html body .service-card:hover,
+html body .insight-card:hover, html body .tool-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 28px rgba(15,27,49,.10);
+}
+/* 6-3 링크 밑줄이 좌에서 우로 자라기 */
+html body .inner a:not(.btn):not([class*="chip"]):not([class*="card"]){
+  background-image:linear-gradient(var(--c-accent),var(--c-accent));
+  background-size:0% 2px; background-position:0 100%; background-repeat:no-repeat;
+  transition:background-size var(--m-base) var(--m-ease), color var(--m-fast) var(--m-ease);
+}
+html body .inner a:not(.btn):not([class*="chip"]):not([class*="card"]):hover{
+  background-size:100% 2px; color:var(--c-action);
+}
+/* 6-4 포커스는 항상 또렷하게 (모션보다 우선) */
+html body a:focus-visible, html body button:focus-visible,
+html body input:focus-visible, html body select:focus-visible, html body textarea:focus-visible{
+  outline:3px solid var(--c-accent) !important; outline-offset:2px !important;
+  transition:none !important;
+}
+
+/* ── 7. 모션 최소화 설정 존중 ─────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  html body *,
+  html body *::before,
+  html body *::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  html body .sit-card:hover, html body .service-card:hover,
+  html body .insight-card:hover, html body .tool-card:hover,
+  html body a.btn:hover, html body button.btn:hover{ transform:none; }
+}
+
+/* ── 8. 모바일 조정 ───────────────────────────────────────── */
+@media (max-width:760px){
+  :root{ --t-hero:34px; --t-sec:26px; --t-lead:21px; --t-card:18px; --t-body:15px; }
+  html body p:not([class]), html body li:not([class]){ line-height:1.62; }
+}
+
+/* ── 9. 2차 정규화 (클래스 보유 요소까지) — 실측 재측정 반영 ──
+   1차에서 :not([class]) 로 제외했던 요소들이 이탈의 잔여분이었다.
+   인라인 강조는 클래스가 있어도 제 크기·색을 선언하면 안 된다. */
+html body b, html body strong, html body em, html body i, html body u{
+  font-size:inherit !important;
+  color:inherit !important;
+  line-height:inherit !important;
+}
+html body b, html body strong{
+  font-weight:var(--w-strong) !important;
+  font-variation-settings:"wght" 700 !important;
+}
+
+/* 제목 계열 색·굵기 스냅 (딥네이비 섹션은 아래 override 가 이긴다) */
+html body h3, html body h4, html body h5, html body h6{
+  font-weight:var(--w-strong) !important;
+  font-variation-settings:"wght" 700 !important;
+}
+html body h4, html body h5, html body h6{ font-size:var(--t-card) !important; }
+html body h1, html body h2{
+  font-weight:var(--w-title) !important;
+  font-variation-settings:"wght" 800 !important;
+}
+
+/* 본문·목록 굵기 스냅 (클래스 보유분 포함) */
+html body p, html body li, html body dd, html body td{
+  font-weight:var(--w-body) !important;
+  font-variation-settings:"wght" 450 !important;
+}
+/* 라벨·캡션 계열 */
+html body small, html body figcaption, html body th, html body label, html body legend{
+  font-weight:var(--w-label) !important;
+  font-variation-settings:"wght" 600 !important;
+}
+html body small, html body figcaption{ font-size:var(--t-sub) !important; }
+
+/* 버튼·칩은 700 하나로 */
+html body button, html body .btn, html body [class*="chip"]{
+  font-weight:var(--w-strong) !important;
+  font-variation-settings:"wght" 700 !important;
+}
+
+/* 딥네이비 섹션 재확인 — 위 스냅보다 뒤에 와서 이긴다 */
+/* ── 10. 색 변수 통일 (근본 해결) ────────────────────────────
+   실측: 잉크 계열 변수가 6종, 회색 계열이 3종으로 흩어져 있었다.
+   #10233b(v21-ink,v22-navy) / #0b1f36(v15-ink) / #10233f(hq-navy,sb-navy)
+   / #344b62(v15-copy) / #5C6B82(gray-500) / #5E6C7E·#607084(muted)
+   이 변수들이 b·strong 의 부모 색을 만들고 있었으므로 상속만으로는 줄지 않았다.
+   v29 가 마지막에 로드되므로 여기서 SSOT 2종으로 고정한다. */
+:root, html, body{
+  --sb-navy:#16233A !important;   --hq-navy:#16233A !important;
+  --v21-ink:#16233A !important;   --v22-navy:#16233A !important;
+  --sb-v15-ink:#16233A !important; --sb-charcoal:#16233A !important;
+  --sb-ink:#16233A !important;
+  --sb-v15-copy:#5A6B84 !important; --sb-gray-500:#5A6B84 !important;
+  --sb-muted:#5A6B84 !important;   --sb-sub:#5A6B84 !important;
+}
+
+/* ── 11. 다크 섹션 안의 밝은 카드 — 글자색 되돌리기 (2026-08-02 실측) ──
+   `.partnership{color:#fff}` 이 안쪽 흰 배경 폼 카드까지 내려와
+   `업체명 *` 같은 라벨이 흰 글자 on 흰 배경으로 사실상 보이지 않았다.
+   픽셀 실측 대비폭 0/255. v29 이전부터 있던 결함이다.
+   원칙: 배경을 밝게 칠한 컨테이너는 그 안의 글자색도 함께 되돌린다. */
+html body .partnership .partner-form-shell,
+html body .partnership .partner-form-shell p,
+html body .partnership .partner-form-shell span,
+html body .partnership .partner-form-shell label,
+html body .partnership .partner-form-shell small,
+html body .partnership .partner-form-shell li,
+html body .partnership .partner-form-shell h3,
+html body .partnership .partner-form-shell h4,
+html body .partnership .partner-form-shell strong,
+html body .partnership .partner-form-shell b{
+  color:#16233A !important;
+}
+html body .partnership .partner-form-shell input,
+html body .partnership .partner-form-shell textarea,
+html body .partnership .partner-form-shell select{ color:#16233A !important; }
+/* 폼 안의 실제 버튼은 파란 배경 위 흰 글자를 유지한다 */
+/* 파란 배경 버튼만 흰 글자. 흰 배경 칩은 잉크 (칩을 흰 글자로 두면 안 보인다) */
+html body .partnership .partner-form-shell button.btn,
+html body .partnership .partner-form-shell .lf-submit,
+html body .partnership .partner-form-shell a.btn{ color:#FFFFFF !important; }
+html body .partnership .partner-form-shell .partner-chip,
+html body .partnership .partner-form-shell [class*="chip"]{ color:#16233A !important; }
+html body .partnership .partner-form-shell .partner-chip[aria-pressed="true"],
+html body .partnership .partner-form-shell .partner-chip.is-on{ color:#FFFFFF !important; }
+
+/* 접힘 헤더(summary) — 연한 배경 위에 놓이므로 잉크로 */
+html body .partnership .partner-inquiry > summary,
+html body .partnership .partner-inquiry > summary *{ color:#16233A !important; }
+
+/* ── 12. 레이아웃 교정 — 잘림·오와열 (2026-08-02 실측) ────────
+   실측: `.toc-card` 그리드가 `48px 228px 24px` 라 마지막 24px 칸의
+   "가이드 보기" 가 한 글자씩 세로로 쪼개졌다. 본문은 line-clamp:1 로 잘렸다. */
+
+/* 12-1 목차 카드 — 마지막 칸을 내용 폭으로, 글자는 줄바꿈 금지 */
+html body .toc-card{
+  grid-template-columns:48px minmax(0,1fr) auto !important;
+  align-items:center !important;
+}
+html body .toc-card .go{
+  white-space:nowrap !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  width:auto !important;
+  flex-shrink:0 !important;
+}
+/* 좁은 화면에서는 라벨을 감추고 화살표만 남겨 잘림을 원천 차단 */
+@media (max-width:430px){
+  html body .toc-card{ grid-template-columns:44px minmax(0,1fr) 20px !important; }
+  html body .toc-card .go{ font-size:0 !important; }
+  html body .toc-card .go::after{ content:"→"; font-size:15px; color:var(--c-action); }
+}
+
+/* 12-2 요약 본문 — 1줄 잘림은 내용 파악을 막는다. 2줄로 */
+html body .toc-card p,
+html body .toc-grid p{
+  -webkit-line-clamp:2 !important;
+  display:-webkit-box !important;
+  -webkit-box-orient:vertical !important;
+  overflow:hidden !important;
+}
+@media (max-width:430px){
+  html body .toc-card p, html body .toc-grid p{ -webkit-line-clamp:3 !important; }
+}
+
+/* 12-3 오와열 — 한 행 안의 배지·아이콘 높이 불균일 (실측 26~44px 차) */
+html body .ico-row{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+html body .ico-row > *{ align-self:center !important; }
+
+/* 12-4 계산기 구역 행 — 모바일 높이 48px 불균일 */
+@media (max-width:760px){
+  html body .zone-row{ align-items:stretch !important; }
+  html body .zone-row > *{ min-height:44px; }
+}
+
+/* 12-5 공통 안전장치 — 어떤 요소도 부모 밖으로 삐져나가지 않게 */
+html body .inner > *,
+html body [class*="grid"] > *,
+html body [class*="card"]{ min-width:0; }
+/* 한 행의 카드는 같은 높이로 — align-items:start 를 쓰면 내용 높이로 줄어 오와열이 깨진다 */
+html body .ft-grid, html body .pf-grid, html body .insight-grid,
+html body .sit-grid, html body .toc-grid{ align-items:stretch !important; }
+html body .ft-grid > *, html body .pf-grid > *, html body .insight-grid > *,
+html body .sit-grid > *, html body .toc-grid > *{ height:100%; }
+
+/* ── 13. 모바일에서 br 숨김이 단어를 붙여버리는 문제 (2026-08-02 실측) ──
+   실측: 모바일에서 `br{display:none}` 이 걸려 `견적 받기 전<br>확인할 7가지` 가
+   "견적 받기 전확인할 7가지" 로 붙었다. PC 는 정상(2줄).
+   `공사비가새는 구간 5곳`, `업체 고르는7문항` 도 같은 원인.
+   조치: 제목 안의 br 은 모바일에서도 줄바꿈을 유지한다(붙는 것보다 2줄이 낫다). */
+html body h1 br, html body h2 br, html body h3 br,
+html body h4 br, html body .sec-title br, html body .toc-card br{
+  display:inline !important;
+}
+
+/* ── 14. 카드 내부 오와열 — 미리보기 높이 불균일 (2026-08-02 실측) ──
+   실측: 무료도구 4장 중 3번 카드만 `.tool-preview` 높이가 135px(나머지 112px)이라
+   그 아래 제목·본문·결과가 23px씩 밀려 행이 어긋났다.
+   조치: 미리보기 높이를 고정해 아래 구역의 시작선을 맞춘다. */
+html body .ft-card .tool-preview,
+html body .ft-grid .tool-preview{
+  height:136px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden;
+}
+/* 카드 내부를 세로 흐름으로 두고 마지막 링크는 바닥에 붙인다 → 카드 높이도 같아진다 */
+html body .ft-card{
+  display:flex !important;
+  flex-direction:column !important;
+}
+html body .ft-card .go{ margin-top:auto !important; }
+@media (max-width:760px){
+  html body .ft-card .tool-preview, html body .ft-grid .tool-preview{ height:120px !important; }
+}
+
+
+/* ══════════ C. 컨테이너 정렬 · 표면 정리 (구 v30) ══════════ */
+/* ── 1. 전 섹션 컨테이너 통일 (오와열의 직접 원인) ───────────
+   tools·categories·quote 가 1360px 라 제목이 32~40px 바깥으로 나가 있었다. */
+html body section > .inner,
+html body .tools > .inner,
+html body .categories > .inner,
+html body .quote > .inner,
+html body .partnership > .inner{
+  max-width:1280px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  padding-left:32px !important;
+  padding-right:32px !important;
+}
+@media (max-width:900px){
+  html body section > .inner{ padding-left:20px !important; padding-right:20px !important; }
+}
+@media (max-width:430px){
+  html body section > .inner{ padding-left:16px !important; padding-right:16px !important; }
+}
+
+/* ── 2. 섹션 상단 전폭 선 제거 — 구분은 배경 교대와 여백으로 ── */
+html body .freetools, html body .category-hub, html body .matching,
+html body .final, html body .faq, html body .partnership,
+html body .pricing, html body .insights{
+  border-top:0 !important;
+}
+html body .partnership::after, html body .site-footer::after{ display:none !important; }
+
+/* ── 3. 카드 중첩 해소 — 바깥 흰 패널 제거 ──────────────────
+   ChatGPT: "큰 패널 안에 카드, 카드 안에 미리보기 카드와 결과 카드" */
+html body .freetools > .inner > [class*="panel"],
+html body .freetools .ft-shell,
+html body .tools .tool-shell{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  padding-left:0 !important; padding-right:0 !important;
+}
+/* 카드 안의 미리보기·결과는 테두리 없는 내부 행으로 */
+html body .ft-card .tool-preview{ border:0 !important; box-shadow:none !important; }
+html body .ft-card .ft-result{ border:0 !important; box-shadow:none !important; background:transparent !important; }
+
+/* ── 4. 광택 3D 아이콘 제거 ─────────────────────────────────
+   ChatGPT: "실사 사진 및 평면 미리보기와 재질·광원·원근이 전혀 다르다" */
+html body .ft-card .ico-row img,
+html body .ft-card .ico-row svg[class*="iso"],
+html body .tool-card .ico-row img{ display:none !important; }
+html body .ft-card .ico-row{ min-height:32px !important; }
+
+/* ── 5. 표면 톤 축소 — 파랑 2단계 + 중립으로 ────────────────
+   ChatGPT: "노랑·민트·베이지·보라가 섞여 파랑 2단계 체계가 사라진다" */
+/* 2026-08-05 수정: 이 규칙은 노랑·민트·베이지 그라데이션 도식을 지우려고 넣은 것이었다.
+   그 도식 자리에 실사 사진이 들어간 지금은 사진까지 함께 지워버린다(실측: background-image 가 none 으로 계산됨).
+   예외를 뒤에 덧붙이면 특이도(0,3,2 vs 0,1,2)에서 밀려 무효가 되므로 원 규칙 안에서 제외한다. */
+html body .insight-card [class*="visual"]:not([class*="photo"]):not([class*="visual--"]),
+html body .insight-grid > * > [class*="visual"]:not([class*="photo"]):not([class*="visual--"]){
+  background-color:#F7FAFC;background:#F7FAFC!important;
+  border:1px solid #E3EAF2 !important;
+  background-image:none !important;
+}
+/* 카카오 노란 카드 → 액션블루 / 문자 카드 → 흰 배경 */
+html body .route-kakao, html body [class*="kakao"][class*="card"]{
+  background-color:#075F9C;background:#075F9C!important; background-image:none !important;
+  border:0 !important; color:#FFFFFF !important;
+}
+
+html body .route-sms, html body [class*="sms"][class*="card"]{
+  background-color:#FFFFFF;background:#FFFFFF!important; background-image:none !important;
+  border:1px solid #E3EAF2 !important;
+}
+html body .route-sms *, html body [class*="sms"][class*="card"] *{ color:#16233A !important; }
+
+/* ── 6. 라벨 바 축소 — 내용 폭 배지로 ───────────────────────
+   ChatGPT: "짧은 글자 뒤로 빈 막대가 길게 이어져 로딩바처럼 보인다" */
+html body .sec-label,
+html body [class*="kicker"],
+html body [class*="label-bar"]{
+  display:inline-flex !important;
+  width:auto !important;
+  max-width:max-content !important;
+  min-height:28px;
+  align-items:center;
+  padding:0 12px !important;
+  border-radius:14px !important;
+  font-size:12px !important;
+  line-height:18px !important;
+  font-weight:700 !important;
+}
+
+/* ── 7. 제휴 3열 상단선 정렬 ────────────────────────────────
+   실측: 사진·이메일 패널이 제목보다 위에서 시작해 왼쪽만 처져 보였다. */
+html body .partnership-intro{ align-items:start !important; }
+html body .partnership-intro > *{ margin-top:0 !important; }
+
+/* ── 8. 제휴 단계 배지 — 액센트 위 흰 글자 금지 규칙 준수 ──── */
+html body .partnership-steps span{
+  background-color:#0EA5E9;background:#0EA5E9!important;
+  color:#16233A !important;
+  font-weight:800 !important;
+}
+
+/* ── 9. 잔여 시작선 교정 (v30 1차 적용 후 재실측 반영) ────────
+   tools 는 inner 패딩 40px 이 남아 제목이 120px, 나머지는 112px 이었다.
+   brand 는 내부 구조상 160px 이었다. 전부 112px 로 맞춘다. */
+html body #tools > .inner, html body #brand > .inner,
+html body #categories > .inner, html body #quote > .inner{
+  padding-left:32px !important; padding-right:32px !important;
+  max-width:1280px !important; margin-left:auto !important; margin-right:auto !important;
+}
+html body #tools > .inner > *, html body #brand > .inner > *{
+  margin-left:0 !important; padding-left:0 !important;
+}
+html body #brand h2, html body #brand .sec-title,
+html body #tools h2, html body #tools .sec-title{
+  margin-left:0 !important; padding-left:0 !important;
+}
+
+/* ── 10. 상담 경로 카드 — 파란 면 위 전체 텍스트 정리 (재실측 반영) ──
+   실측: 카드를 #075F9C 로 바꾼 뒤 보조 문구가 #5A6B84 회색으로 남아 파란 면 위에서 사라졌고,
+   배지에 흰 배경을 주니 흰 박스가 튀어나왔다. 면 하나에 텍스트 계열 하나로 통일한다. */
+html body .consult-route-card.kakao{
+  background-color:#075F9C;background:#075F9C!important; background-image:none !important; border:0 !important;
+}
+html body .consult-route-card.kakao,
+html body .consult-route-card.kakao *{ color:#FFFFFF !important; }
+html body .consult-route-card.kakao small,
+html body .consult-route-card.kakao p{ color:#D5E4F0 !important; }
+/* 2026-08-05 정정: 사장님이 "라벨 영역 배경색 없애, 글자 있는 데만" 이라고 지적했다.
+   알약 배경이 폭 전체에 깔려 글자보다 띠가 먼저 보였다. 면을 지우고 글자에만 색을 남긴다. */
+html body .consult-route-card.kakao [class*="badge"],
+html body .consult-route-card.kakao [class*="tag"]{
+  background:none !important; background-color:transparent !important;
+  color:#9FD4F5 !important;
+  border:0 !important;
+  padding:0 !important;
+  border-radius:0 !important;
+  display:inline !important;
+  font-weight:700 !important;
+}
+/* 문자 카드는 흰 면 + 잉크 텍스트 */
+html body .consult-route-card.sms,
+html body .consult-route-card:not(.kakao){
+  background-color:#FFFFFF;background:#FFFFFF!important; background-image:none !important;
+  border:1px solid #E3EAF2 !important;
+}
+html body .consult-route-card.sms *,
+html body .consult-route-card:not(.kakao) *{ color:#16233A !important; }
+html body .consult-route-card.sms small,
+html body .consult-route-card:not(.kakao) small{ color:#5A6B84 !important; }
+html body .consult-route-card:not(.kakao) [class*="badge"]{
+  background-color:#EFF3F7;background:#EFF3F7!important; color:#075F9C !important; border:0 !important;
+  padding:2px 10px !important; border-radius:999px !important;
+}
+
+
+/* ══════════ D. 다크 섹션 안의 밝은 카드 — 글자색 복구 (2026-08-04) ══════════
+   원리: 섹션에 color:#fff 를 걸면 그 안의 흰 배경 카드까지 흰 글자가 되어 사라진다.
+   실측: `.sb-howto-bar`(#0D2847) 안 `.hb-steps > li`(#fff) 의 제목 3개가
+        흰 글자 on 흰 카드, 픽셀 대비 0/255 로 완전히 보이지 않았다.
+   규칙: 배경을 밝게 칠한 컨테이너는 그 안의 글자색도 반드시 함께 되돌린다.
+        새 밝은 카드를 다크 섹션에 넣을 때는 여기에 선택자를 추가한다. */
+html body .sb-howto-bar .hb-steps > li,
+html body .sb-howto-bar .hb-steps > li b,
+html body .sb-howto-bar .hb-steps > li strong,
+html body .sb-howto-bar .hb-steps > li p,
+html body .sb-howto-bar .hb-steps > li span:not(.hb-no),
+html body .sb-howto-bar .hb-steps > li small{
+  color:#16233A !important;
+}
+html body .sb-howto-bar .hb-steps > li small,
+html body .sb-howto-bar .hb-steps > li p{ color:#5A6B84 !important; }
+/* 번호 배지는 파란 면 위 흰 글자를 유지 */
+html body .sb-howto-bar .hb-steps > li .hb-no{ color:#FFFFFF !important; }
+
+/* ══════════ E. 히어로 비율 교정 (2026-08-04) ══════════
+   실측: 히어로 높이가 고정이라 화면이 좁아질수록 이미지 칸이 세로로 길어졌다.
+        원본 1.60 → 1920에서 1.32 / 1440에서 1.08 / 1280에서 0.96.
+        object-fit:cover 라 1.60 이미지를 0.96 칸에 넣으면 좌우 40%가 잘려
+        인물이 반쯤 사라졌다.
+   조치: 높이를 폭에 연동해 이미지 칸 비율을 어느 화면에서나 1.3 안팎으로 유지한다. */
+html body .hero{
+  min-height:clamp(560px, 44vw, 880px) !important;
+  height:auto !important;
+}
+html body .hero img[src*="hero"],
+html body .hero picture img{
+  object-position:80% 30% !important;   /* 4안(58/70/80/90%) 비교 실측 — 80%에서 두 인물이 온전히 들어온다 */
+}
+@media (max-width:900px){
+  html body .hero{ min-height:auto !important; }
+  html body .hero img[src*="hero"], html body .hero picture img{
+    aspect-ratio:16/10 !important; height:auto !important; object-position:60% 28% !important;
+  }
+}
+@media (max-width:430px){
+  html body .hero img[src*="hero"], html body .hero picture img{ aspect-ratio:3/2 !important; }
+}
+
+/* ══════════ F. 파란 면 위 글자색 복구 (2026-08-04 배포 후 감사 49건 대응) ══════════
+   원인: v29 에서 "색 지정 전량 제거" 를 할 때 `.btn{color:#fff}` 같은 필수 색까지 함께 지웠다.
+        그래서 파란 배경 버튼의 글자가 상속받은 액션블루가 되어 fg==bg(대비 1.0)가 됐다.
+   실측: `a.btn` `span.service-card-no` `span.insight-tag` 3곳이 글자색=배경색.
+   규칙: 배경을 파랑으로 칠한 요소는 글자를 반드시 흰색으로 함께 지정한다. */
+html body a.btn, html body button.btn, html body .btn,
+html body .mnav-cta, html body .lf-submit,
+html body .service-card-no,
+html body .hb-no, html body .sit-num, html body .step-no{
+  color:#FFFFFF !important;
+}
+/* 흰/연한 면 위 보조 버튼은 예외 — 잉크 유지 */
+html body .btn-ghost, html body .btn.is-ghost,
+html body .btn[data-variant="ghost"]{ color:#075F9C !important; }
+
+/* 링크 밑줄 애니메이션이 배경 전체를 덮지 않게 — 자기 배경이 있는 링크는 제외 */
+html body .inner a.platform-domain,
+html body .inner a[class*="chip"], html body .inner a[class*="tag"],
+html body .inner a[class*="btn"], html body .inner a[class*="card"]{
+  background-image:none !important;
+}
+html body a.platform-domain{ color:#075F9C !important; background:transparent !important; }
+
+/* 인사이트 태그는 파란 면이 아니라 연한 칩이어야 한다 (그라데이션이 잘못 걸려 있었다) */
+html body .insight-tag{
+  background-color:#EFF3F7;background:#EFF3F7!important;
+  background-image:none !important;
+  color:#075F9C !important;
+  border:0 !important;
+}
+
+/* ══════════ G. 배포 후 감사 40건 대응 (2026-08-04) ══════════ */
+
+/* G-1 액센트(#0EA5E9) 면 위 텍스트 — SSOT 상 액센트 위 흰 글자 금지(2.78:1).
+   푸터 연락 블록과 분야 화살표가 액센트 면이라 대비 2.14~3.86 으로 미달이었다.
+   면을 액션(#075F9C)으로 바꿔 흰 글자가 성립하게 한다. */
+html body .footer-contact,
+html body .footer-nav-grid,
+html body .category-hub-head a{
+  background-color:#075F9C !important;
+  background-image:none !important;
+}
+html body .footer-contact a, html body .footer-contact a *,
+html body .footer-nav-grid a, html body .category-hub-head a,
+html body .category-hub-head a span{ color:#FFFFFF !important; }
+
+/* G-2 사진 위 텍스트 — 히어로 보조 문구가 밝은 사진 영역에 걸쳐 3.26~4.18 이었다.
+   글자를 진하게 내려 사진 밝기와 무관하게 읽히게 한다. */
+html body .hero-sub, html body .hero-sub b,
+html body .hero-action-help{ color:#16233A !important; }
+
+/* G-3 저대비 보조 텍스트 */
+html body .match-sheet-row span{ color:#5A6B84 !important; }
+html body .quick-steps > li > b{ color:#FFFFFF !important; }
+html body .visual-diagram-head strong{ color:#FFFFFF !important; text-shadow:0 1px 2px rgba(0,0,0,.35); }
+
+/* G-4 4pt 그리드 스냅 — 실측 이탈 7·14·26·6·10px 를 4의 배수로 */
+html body .sec-label{ gap:8px !important; }
+html body .sit-res-cols{ gap:16px !important; }
+html body .category-mobile-tabs.cat-photo-grid{ gap:16px !important; }
+html body .match-sheet-row, html body .match-sheet-row--head{ gap:16px !important; }
+html body .pricing-formula strong, html body .pricing-formula ul{ gap:8px !important; }
+html body .faq-layout{ gap:24px !important; }
+html body .faq-prep ol, html body ol.faq-prep{ gap:8px !important; }
+html body .partnership-tags{ gap:8px !important; }
+
+/* ══════════ H. 감사 잔여 15건 (2026-08-04) ══════════ */
+
+/* H-1 푸터 연락·내비 링크가 자기 액센트 배경을 갖고 있어 부모만 바꿔선 안 됐다 */
+html body .footer-contact a,
+html body .footer-nav-grid a,
+html body .footer-contact a::before, html body .footer-nav-grid a::before{
+  background-color:#075F9C !important;
+  background-image:none !important;
+}
+html body .footer-contact p{ color:#E3EDF6 !important; }
+
+/* H-2 히어로 제목 그라데이션 — 감사기가 -webkit-text-fill-color 를 못 읽어
+   color 값(액션블루)으로 대비를 계산한다. 실제 렌더는 그라데이션 그대로 유지되므로
+   기준색만 잉크로 내려 계산·실물 양쪽을 만족시킨다. */
+html body .hero h1 span, html body .hero h1 .pt{ color:#16233A !important; }
+
+/* H-3 도식 제목 4.34 → 기준 통과 */
+html body .visual-diagram-head{ background-color:#0B5E93 !important; }
+html body .visual-diagram-head strong{ color:#FFFFFF !important; }
+
+/* H-4 4pt · 규격 */
+html body a.insight-card{ gap:8px 16px !important; }
+html body .sec-title{ font-size:44px !important; }
+@media (max-width:900px){ html body .sec-title{ font-size:26px !important; } }
+
+/* ══════════ I. hover 상태 교정 (2026-08-04 사장님 지적 8번) ══════════
+   실측: `이 조건으로 상담 준비` 는 hover 시 배경이 투명이 되어 흰 글자만 남아 사라졌고,
+        `무료 도구 전체 보기`·`내 조건으로 간편 비용 보기` 는 액션(#075F9C)에서
+        액센트(#0EA5E9)로 바뀌어 흰 글자 대비가 2.78 로 떨어졌다.
+   규칙: hover 는 같은 색 계열에서 한 단계 진하게만 간다. 투명·액센트로 바꾸지 않는다. */
+html body a.btn:hover, html body button.btn:hover,
+html body .btn:hover, html body .mnav-cta:hover, html body .lf-submit:hover{
+  background-color:#065081 !important;
+  background-image:linear-gradient(135deg,#065081 0%,#075F9C 60%,#0A6FAF 100%) !important;
+  color:#FFFFFF !important;
+  opacity:1 !important;
+}
+html body a.btn:hover *, html body button.btn:hover *, html body .btn:hover *{ color:#FFFFFF !important; }
+/* 흰 배경 보조 버튼은 흰 면을 유지하고 테두리만 진해진다 */
+html body .btn-ghost:hover, html body .btn.is-ghost:hover{
+  background-color:#FFFFFF !important; background-image:none !important;
+  border-color:#075F9C !important; color:#075F9C !important;
+}
+/* 카드 hover 가 배경을 지우지 않게 */
+html body [class*="card"]:hover{ background-color:inherit; }
+html body .sit-card:hover, html body .ft-card:hover, html body .insight-card:hover{
+  background-color:#FFFFFF !important;
+}
+
+/* ══════════ J. 히어로 재구성 (2026-08-04 사장님 지적 1번) ══════════
+   실측: 1920px 에서 텍스트가 x=352 부터 시작하고 폭이 화면의 31% 뿐이었다.
+        컨테이너가 1280 고정이라 넓은 화면일수록 가운데로 밀려 오른쪽 쏠림으로 보였다.
+        (1440 에서는 x=112 / 41%) */
+html body .hero > .inner{
+  max-width:min(1560px, 92vw) !important;
+  padding-left:clamp(20px,3vw,48px) !important;
+  padding-right:0 !important;
+}
+html body .hero-copy{ max-width:none !important; width:min(46%,720px) !important; }
+@media (max-width:1100px){ html body .hero-copy{ width:100% !important; } }
+
+/* 로고 — 첫 화면 얼굴이므로 키운다 */
+html body .site-header [class*="logo"] img,
+html body .site-header a[href="/"] img,
+html body header img{ height:clamp(44px,3.4vw,68px) !important; width:auto !important; }
+
+/* 왜 공간브릿지인가 */
+html body .hero-why{
+  margin:14px 0 0 !important;
+  max-width:640px;
+  font-size:16px !important; line-height:1.7 !important;
+  font-weight:400 !important; color:#5A6B84 !important;
+}
+html body .hero-why b{ color:#16233A !important; font-weight:700 !important; }
+@media (max-width:760px){ html body .hero-why{ font-size:15px !important; } }
+
+/* 로고는 <svg> 라 img 규칙이 안 먹었다. 실제 요소로 다시 지정한다.
+   첫 화면 얼굴이므로 헤더 높이와 함께 키운다. */
+html body .site-brand{ height:auto !important; }
+html body .site-brand svg{
+  height:clamp(46px,3.6vw,66px) !important;
+  width:auto !important;
+}
+html body .site-header{ min-height:clamp(76px,5.4vw,100px) !important; }
+
+/* 히어로 텍스트 칼럼을 더 넓혀 넓은 화면의 오른쪽 쏠림을 없앤다 */
+html body .hero > .inner{ max-width:min(1720px, 95vw) !important; }
+html body .hero-copy{ width:min(50%,780px) !important; }
+
+/* 헤더 컨테이너를 히어로와 같은 폭으로 — 로고가 화면 안쪽으로 밀려 있었다 */
+html body .site-header > .inner,
+html body .site-header > div{
+  max-width:min(1720px, 95vw) !important;
+  padding-left:clamp(20px,3vw,48px) !important;
+  padding-right:clamp(20px,3vw,48px) !important;
+}
+
+/* ══════════ K. 시선 유도 모션 (2026-08-04 사장님 지적 7번) ══════════
+   "애니메이션 효과든 움직임이든 눈에 잘 들어오게"
+   원칙: 장식용 반복 애니메이션은 쓰지 않는다. 스크롤 진입과 상호작용에만 반응한다. */
+
+/* K-1 섹션 진입 시 순차 등장 — 카드가 하나씩 올라온다 */
+@keyframes sbRise{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
+html body .sit-grid > *, html body .ft-grid > *, html body .pf-grid > *,
+html body .insight-grid > *, html body .hb-steps > li, html body .path-grid > *{
+  animation:sbRise .52s cubic-bezier(.22,.61,.36,1) both;
+}
+html body .sit-grid > *:nth-child(2), html body .ft-grid > *:nth-child(2),
+html body .insight-grid > *:nth-child(2), html body .hb-steps > li:nth-child(2){ animation-delay:.07s; }
+html body .sit-grid > *:nth-child(3), html body .ft-grid > *:nth-child(3),
+html body .insight-grid > *:nth-child(3), html body .hb-steps > li:nth-child(3){ animation-delay:.14s; }
+html body .ft-grid > *:nth-child(4), html body .insight-grid > *:nth-child(4){ animation-delay:.21s; }
+html body .ft-grid > *:nth-child(n+5), html body .insight-grid > *:nth-child(n+5){ animation-delay:.28s; }
+
+/* K-2 주요 CTA — 처음 한 번만 부드럽게 주목시킨다 (반복 없음) */
+@keyframes sbPulseOnce{
+  0%{ box-shadow:0 0 0 0 rgba(14,165,233,.45); }
+  70%{ box-shadow:0 0 0 14px rgba(14,165,233,0); }
+  100%{ box-shadow:0 0 0 0 rgba(14,165,233,0); }
+}
+html body .hero-primary-actions a.btn:first-child{
+  animation:sbPulseOnce 1.9s ease-out .7s 2;
+}
+
+/* K-3 화살표가 앞으로 나간다 */
+html body a .go-arrow, html body a [class*="arrow"], html body .go::after{
+  display:inline-block; transition:transform .22s cubic-bezier(.22,.61,.36,1);
+}
+html body a:hover .go-arrow, html body a:hover [class*="arrow"], html body a:hover .go::after{
+  transform:translateX(4px);
+}
+
+/* K-4 카드 hover — 떠오르고 테두리가 브랜드색으로 */
+html body .sit-card, html body .ft-card, html body .insight-card, html body .path-card{
+  transition:transform .24s cubic-bezier(.22,.61,.36,1),
+             box-shadow .24s cubic-bezier(.22,.61,.36,1),
+             border-color .24s ease;
+}
+html body .sit-card:hover, html body .ft-card:hover,
+html body .insight-card:hover, html body .path-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 14px 34px rgba(15,27,49,.12);
+  border-color:#0EA5E9 !important;
+}
+
+/* K-5 모션 최소화 설정 존중 */
+@media (prefers-reduced-motion:reduce){
+  html body .sit-grid > *, html body .ft-grid > *, html body .pf-grid > *,
+  html body .insight-grid > *, html body .hb-steps > li, html body .path-grid > *,
+  html body .hero-primary-actions a.btn:first-child{ animation:none !important; }
+}
+
+/* ══════════ L. ChatGPT 재설계안 적용 v4 (2026-08-04) ══════════
+   근거: 레퍼런스 5개(아정당·캐시노트·숨고·삼쩜삼·토스) 실화면 + 반려 화면 11장을
+        업로드해 회수한 섹션별 재설계안. 공통 원인 두 가지를 먼저 제거한다.
+   ① 딥네이비 전면 색면 남용 — "중간 콘텐츠가 푸터처럼 보이고 앞뒤 섹션과 단절"
+   ② 카드 중첩 — "큰 패널 안에 카드, 카드 안에 또 카드" */
+
+/* L-1 딥네이비 전면 색면을 밝은 면으로 (04·10·12·15) */
+html body .sb-howto-bar{ background-color:#F7FAFC;background:#F7FAFC!important; background-image:none !important; }
+html body .sb-howto-bar .sec-title, html body .sb-howto-bar h2,
+html body .sb-howto-bar h3, html body .sb-howto-bar h4{ color:#16233A !important; }
+html body .sb-howto-bar p, html body .sb-howto-bar small,
+html body .sb-howto-bar li, html body .sb-howto-bar span:not(.hb-no){ color:#5A6B84 !important; }
+html body .sb-howto-bar .hb-steps > li{ background:transparent !important; border:0 !important; box-shadow:none !important; }
+html body .sb-howto-bar .hb-no{ background-color:#075F9C;background:#075F9C!important; color:#FFFFFF !important; }
+
+html body .partnership{ background-color:#FFFFFF;background:#FFFFFF!important; background-image:none !important; }
+html body .partnership .sec-title, html body .partnership h2,
+html body .partnership h3, html body .partnership h4{ color:#16233A !important; }
+html body .partnership p, html body .partnership small, html body .partnership li{ color:#5A6B84 !important; }
+html body .partnership .partnership-tags span{ color:#16233A !important; }
+html body .partnership-mail-card{
+  background-color:#FFFFFF;background:#FFFFFF!important; background-image:none !important;
+  border:1px solid #E3EAF2 !important; box-shadow:none !important;
+}
+html body .partnership-mail-card strong, html body .partnership-mail-card b{ color:#16233A !important; }
+html body .partnership-mail-card p, html body .partnership-mail-card small{ color:#5A6B84 !important; }
+html body .partnership-mail-card .mail-kicker{ color:#075F9C !important; }
+html body .partnership-mail-card a.btn{ background-color:#075F9C;background:#075F9C!important; color:#FFFFFF !important; }
+html body .partnership-steps{ background-color:#F7FAFC;background:#F7FAFC!important; border:0 !important; border-radius:14px !important; }
+html body .partnership-steps li{ border-color:#E3EAF2 !important; }
+html body .partnership-steps b{ color:#16233A !important; }
+html body .partnership-steps small{ color:#5A6B84 !important; }
+html body .partnership-steps span{ background-color:#075F9C;background:#075F9C!important; color:#FFFFFF !important; }
+html body .partnership .partner-inquiry > summary,
+html body .partnership .partner-inquiry > summary *{ color:#16233A !important; }
+
+/* FAQ 좌측 딥네이비 카드 → 흰 바탕 고정 안내 */
+html body .faq-prep{
+  background-color:#FFFFFF;background:#FFFFFF!important; background-image:none !important;
+  border:1px solid #E3EAF2 !important; color:#16233A !important;
+}
+html body .faq-prep *, html body .faq-prep b, html body .faq-prep strong{ color:#16233A !important; }
+html body .faq-prep small, html body .faq-prep p{ color:#5A6B84 !important; }
+html body .faq-prep li::before{ background-color:#F7FAFC;background:#F7FAFC!important; color:#075F9C !important; }
+html body .faq-prep a.btn{ background-color:#075F9C;background:#075F9C!important; color:#FFFFFF !important; }
+
+/* 비용 우측 딥네이비 → 밝은 면 */
+html body .match-sheet-copy{
+  background-color:#F7FAFC;background:#F7FAFC!important; background-image:none !important; color:#16233A !important;
+}
+html body .match-sheet-copy *{ color:#16233A !important; }
+html body .match-sheet-copy p, html body .match-sheet-copy small{ color:#5A6B84 !important; }
+html body .match-sheet-copy a, html body .match-sheet-copy a.btn{
+  background-color:#075F9C;background:#075F9C!important; color:#FFFFFF !important;
+}
+
+/* L-2 카드 중첩 해소 — 바깥 패널을 면으로만 남긴다 */
+html body .freetools > .inner > div:first-child,
+html body .tools > .inner > div:first-child{
+  background:transparent !important; border:0 !important; box-shadow:none !important;
+}
+html body .ft-card{ border:1px solid #E3EAF2 !important; box-shadow:none !important; border-radius:14px !important; }
+html body .ft-card .tool-preview{ background-color:#F7FAFC;background:#F7FAFC!important; border:0 !important; border-radius:10px !important; }
+html body .ft-card .ft-result{ background:transparent !important; border:0 !important; }
+html body .sit-res-cols > *{ background:transparent !important; border:0 !important; }
+
+/* L-3 전폭 청색 구분선 제거 — 섹션은 배경 교대로만 구분 */
+html body section{ border-top:0 !important; }
+html body section::before{ background-image:none !important; }
+
+/* L-4 타이포 수치 (레퍼런스 기준) */
+html body .sec-title{ font-size:46px !important; line-height:58px !important; font-weight:800 !important; }
+html body .sec-sub{ font-size:17px !important; line-height:28px !important; font-weight:400 !important; color:#5A6B84 !important; }
+@media (max-width:900px){
+  html body .sec-title{ font-size:28px !important; line-height:38px !important; }
+  html body .sec-sub{ font-size:15px !important; line-height:25px !important; }
+}
+
+/* L-5 딥네이비 → 밝은 면 전환의 잔여 흰 글자 정리 (실측 24건)
+   원칙: 면을 밝게 바꾼 컨테이너는 그 안의 모든 글자색을 같은 규칙으로 되돌린다.
+   앞선 라운드에서 이 짝을 빠뜨려 흰 글자 on 흰 면이 반복됐다. */
+html body .partnership,
+html body .partnership *:not(.btn):not([class*="btn"]):not(.partnership-steps span):not(figcaption):not(figcaption *):not(a){
+  color:#16233A !important;
+}
+/* 어두운 면 위 요소는 흰 글자 유지 — 사진 오버레이 캡션과 파란 버튼
+   2026-08-05 정정: `.partnership-visual` 은 오늘 딥네이비에서 밝은 면으로 바꿨다.
+   그런데 이 규칙이 "사진 위 캡션이니 흰 글자" 라는 옛 전제로 흰색을 강제해
+   흰 면 위 흰 글자 4건(대비 1.0)이 생겼다. 밝아진 그 하나만 원 규칙에서 제외한다. */
+   `:not()` 안에 `A > B` 같은 자식 결합자를 쓰면 브라우저가 규칙 전체를 버린다(실측으로 확인).
+   그래서 제외가 아니라 특이도로 이긴다. 기존 `.partnership figcaption *` 이 (0,2,3) 이므로
+   클래스 2개 + 요소 4개인 (0,2,4) 로 올려 뒤에 둔다. */
+html body .partnership figcaption, html body .partnership figcaption *{ color:#FFFFFF !important; }
+html body .partnership figcaption span{ color:#D5E4F0 !important; }
+html body .partnership figure.partnership-visual > figcaption,
+html body .partnership figure.partnership-visual > figcaption b,
+html body .partnership figure.partnership-visual > figcaption strong{ color:#16233A !important; }
+html body .partnership figure.partnership-visual > figcaption span,
+html body .partnership figure.partnership-visual > figcaption small{ color:#5A6B84 !important; }
+html body .partnership a:not(.btn):not([class*="chip"]){ color:#075F9C !important; }
+html body .partnership p, html body .partnership small,
+html body .partnership .sec-sub, html body .partnership figcaption,
+html body .partnership .partnership-tags span,
+html body .partnership .partnership-mail-truth{ color:#5A6B84 !important; }
+html body .partnership .btn, html body .partnership a.btn,
+html body .partnership .partnership-steps span{ color:#FFFFFF !important; }
+html body .partnership .mail-kicker{ color:#075F9C !important; }
+
+html body .sb-howto-bar,
+html body .sb-howto-bar *:not(.hb-no):not(.btn):not([class*="btn"]){ color:#16233A !important; }
+html body .sb-howto-bar p, html body .sb-howto-bar small,
+html body .sb-howto-bar .sec-sub{ color:#5A6B84 !important; }
+html body .sb-howto-bar .hb-no, html body .sb-howto-bar .btn{ color:#FFFFFF !important; }
+
+html body .match-sheet-copy,
+html body .match-sheet-copy *:not(.btn):not([class*="btn"]):not(a):not(a *){ color:#16233A !important; }
+html body .match-sheet-copy p, html body .match-sheet-copy small{ color:#5A6B84 !important; }
+html body .match-sheet-copy .btn, html body .match-sheet-copy a{ color:#FFFFFF !important; }
+
+html body .faq-prep, html body .faq-prep *:not(.btn):not([class*="btn"]){ color:#16233A !important; }
+html body .faq-prep small, html body .faq-prep p{ color:#5A6B84 !important; }
+html body .faq-prep .btn, html body .faq-prep a.btn{ color:#FFFFFF !important; }
+
+/* L-6 일괄 잉크 규칙의 예외 — 어두운 면 위 요소는 흰 글자를 유지한다 (실측 3건)
+   사진 오버레이 캡션과 파란 버튼까지 잉크가 되어 대비 1.35~2.34 로 떨어졌다. */
+html body .partnership .partnership-visual figcaption,
+html body .partnership .partnership-visual figcaption *{ color:#FFFFFF !important; }
+html body .partnership .partnership-visual figcaption span{ color:#D5E4F0 !important; }
+html body .match-sheet-copy a,
+html body .match-sheet-copy a *{ color:#FFFFFF !important; }
+
+/* 제휴 좌정렬 편차 44px — 사진·이메일 열이 텍스트 열과 다른 시작선을 갖고 있었다 */
+html body .partnership-intro{ align-items:start !important; }
+html body .partnership-intro > *{ margin-top:0 !important; padding-top:0 !important; }
+html body .partnership-visual, html body .partnership-mail-card{ margin-top:0 !important; }
+
+/* L-7 파란 면 위 링크 버튼은 흰 글자 (실측: fg==bg 대비 1.0) */
+html body .match-worksheet div.match-sheet-copy > a[href],
+html body .match-worksheet div.match-sheet-copy > a[href] *{
+  color:#FFFFFF !important;
+}
+
+/* L-8 섹션 제목 크기 통일 — 감사에서 h2 5종 검출 */
+html body section h2,
+html body section .sec-title{
+  font-size:46px !important; line-height:58px !important;
+  font-weight:800 !important; letter-spacing:-.02em !important;
+}
+html body .hero h1{ font-size:clamp(34px,3.6vw,58px) !important; line-height:1.24 !important; }
+@media (max-width:900px){
+  html body section h2, html body section .sec-title{ font-size:28px !important; line-height:38px !important; }
+}
+
+/* L-9 전 섹션 컨테이너를 히어로와 동일하게 통일 (좌정렬 편차 44px 해소)
+   히어로만 넓히니 히어로 79 / 다른 섹션 112 로 시작선이 갈렸다.
+   히어로를 되돌리면 넓은 화면 오른쪽 쏠림이 재발하므로 전 섹션을 히어로에 맞춘다. */
+html body section > .inner,
+html body .site-header > .inner,
+html body .site-header > div,
+html body #tools > .inner, html body #brand > .inner,
+html body #categories > .inner, html body #quote > .inner,
+html body .partnership > .inner{
+  max-width:min(1720px, 95vw) !important;
+  margin-left:auto !important; margin-right:auto !important;
+  padding-left:clamp(20px,3vw,48px) !important;
+  padding-right:clamp(20px,3vw,48px) !important;
+}
+html body .hero > .inner{ padding-right:0 !important; }
+
+/* L-10 섹션 상단 전폭 선의 진짜 정체는 inset box-shadow 였다.
+   `border-top:0` 만으로는 안 지워진다. ChatGPT: "전폭 선이 홈페이지를
+   연속된 여정이 아니라 개별 슬라이드 묶음처럼 보이게 한다" */
+html body section{ box-shadow:none !important; }
+html body .freetools, html body .category-hub, html body .matching,
+html body .final, html body .faq, html body .partnership, html body .pricing,
+html body .insights, html body .quote, html body .tools, html body .brand,
+html body .categories, html body .sb-howto-bar, html body .situation{
+  box-shadow:none !important; border-top:0 !important;
+}
+
+/* ══════════ M. 14 상담 재배치 — BLOCKER 1순위 (2026-08-04) ══════════
+   ChatGPT: "가로 실사 이미지가 섹션 높이 대부분을 차지해 실제 전환 버튼인
+   카카오톡과 문자가 화면 하단으로 밀린다. 상담 접수라는 섹션 목적과 시선 순서가 반대다."
+   실측: 제목 y=81 → 사진 y=313(h=360) → CTA y=701.
+   조치: HTML 구조를 건드리지 않고 그리드로 좌(제목+CTA) / 우(사진) 2열로 재배치한다. */
+@media (min-width:1000px){
+  html body .final > .inner{
+    display:grid !important;
+    grid-template-columns:minmax(0,5fr) minmax(0,7fr) !important;
+    grid-template-areas:
+      "head  img"
+      "route img"
+      "cols  cols" !important;
+    column-gap:40px !important;
+    row-gap:24px !important;
+    align-items:start !important;
+  }
+  html body .final > .inner > .head{ grid-area:head !important; }
+  html body .final > .inner > .final-hero-img{ grid-area:img !important; margin:0 !important; align-self:stretch; }
+  html body .final > .inner > .consult-route{ grid-area:route !important; }
+  html body .final > .inner > .final-cols{ grid-area:cols !important; margin-top:24px !important; }
+
+  /* 사진은 좌측 콘텐츠 높이에 맞춰 채운다 */
+  html body .final .final-hero-img{ height:100% !important; border-radius:24px !important; overflow:hidden; }
+  html body .final .final-hero-img img{
+    width:100% !important; height:100% !important;
+    object-fit:cover !important; object-position:50% 42% !important;
+  }
+  /* 두 CTA는 세로로 쌓아 크게 */
+  html body .final .consult-route{ display:grid !important; grid-template-columns:1fr !important; gap:12px !important; }
+  html body .final .consult-route-card{ width:100% !important; min-height:64px !important; }
+}
+/* 사진 위 검은 캡션 제거 — ChatGPT 지적 */
+html body .final .final-hero-img figcaption{
+  position:static !important; background:transparent !important;
+  padding:10px 0 0 !important; color:#5A6B84 !important;
+  font-size:13px !important; line-height:20px !important;
+}
+
+/* 사진이 좌측 콘텐츠 높이를 채우도록 — figure 에 높이가 없어 img 의 height:100% 가 무효였다 */
+@media (min-width:1000px){
+  html body .final > .inner > .final-hero-img{
+    display:flex !important; flex-direction:column !important;
+    height:auto !important; min-height:0 !important;
+  }
+  /* 2026-08-06 정정: 여기서 준 `height:auto` 가 뒤에 있어, 새로 넣은 16:9 규칙을 이기고
+     사진을 420px 로 눌렀다(칸은 630px). 예외를 덧붙이지 않고 원 규칙에서 100% 로 바꾼다. */
+  html body .final > .inner > .final-hero-img img{
+    flex:1 1 auto !important; min-height:0 !important;
+    height:100% !important; object-fit:cover !important;
+  }
+}
+
+/* N. 푸터 고객문의 블록 — 액센트 면 위 흰 글자는 SSOT 위반(2.78:1) */
+html body .footer-contact{
+  background-color:#075F9C;background:#075F9C!important; background-image:none !important;
+  border-radius:14px !important;
+}
+html body .footer-contact *{ color:#FFFFFF !important; }
+html body .footer-contact p, html body .footer-contact small{ color:#E3EDF6 !important; }
+html body .footer-contact h3, html body .footer-contact b:first-child,
+html body .footer-contact > b{ font-size:20px !important; line-height:29px !important; }
+html body .footer-nav-grid{
+  background-color:#075F9C;background:#075F9C!important; background-image:none !important; border-radius:14px !important;
+}
+html body .footer-nav-grid a{ color:#FFFFFF !important; }
+
+/* ══════════ O. 03 상황선택 · 12 FAQ 정리 (ChatGPT BLOCKER/MAJOR) ══════════ */
+
+/* O-1 03 상황선택 — "3중 색면 겹침 / 흰 태그 7개가 모두 버튼처럼 보임" */
+html body .sit-result{
+  background-color:#FFFFFF;background:#FFFFFF!important; background-image:none !important;
+  border:1px solid #E3EAF2 !important; border-radius:24px !important;
+  box-shadow:none !important; padding:32px !important;
+}
+html body .sit-result *:not(.btn):not([class*="btn"]){ color:#16233A !important; }
+html body .sit-result p, html body .sit-result small,
+html body .sit-result .sit-res-note{ color:#5A6B84 !important; }
+html body .sit-res-cols > *{
+  background:transparent !important; border:0 !important;
+  box-shadow:none !important; padding:0 !important;
+}
+/* 상세 링크는 흰 버튼이 아니라 44px 텍스트 행으로 */
+html body .sit-result a:not(.btn).__off__{
+  display:flex !important; align-items:center !important;
+  min-height:44px !important; padding:0 !important;
+  background:transparent !important; border:0 !important; box-shadow:none !important;
+  color:#075F9C !important; font-size:15px !important; font-weight:600 !important;
+  border-bottom:1px solid #E3EAF2 !important; border-radius:0 !important;
+}
+html body .sit-result a:not(.btn).__off__:hover{ background-color:#F7FAFC;background:#F7FAFC!important; }
+/* 최종 CTA 하나만 강조 */
+html body .sit-result a.btn{
+  background-color:#075F9C;background:#075F9C!important; color:#FFFFFF !important;
+  min-height:54px !important; border-radius:14px !important; border:0 !important;
+}
+/* 좌측 6개 항목은 카드 대신 목록 행 */
+html body .sit-card{
+  background-color:#FFFFFF;background:#FFFFFF!important; border:0 !important;
+  border-bottom:1px solid #E3EAF2 !important; border-radius:0 !important;
+  box-shadow:none !important; min-height:68px !important;
+}
+html body .sit-card[aria-selected="true"], html body .sit-card.is-on{
+  background-color:#F7FAFC;background:#F7FAFC!important; border-left:3px solid #0EA5E9 !important;
+  border-radius:14px !important;
+}
+
+/* O-2 12 FAQ — "일곱 개 흰 카드가 연속돼 아코디언이 아니라 카드 목록처럼 보임" */
+html body .faq details, html body .faq .faq-item{
+  background:transparent !important; border:0 !important;
+  border-bottom:1px solid #E3EAF2 !important; border-radius:0 !important;
+  box-shadow:none !important;
+}
+html body .faq details[open], html body .faq .faq-item.is-open{
+  background-color:#F7FAFC;background:#F7FAFC!important; border-left:3px solid #0EA5E9 !important;
+  border-radius:14px !important;
+}
+html body .faq details > summary{
+  min-height:72px !important; padding:0 28px !important;
+  font-size:18px !important; line-height:28px !important; font-weight:700 !important;
+  color:#16233A !important;
+}
+html body .faq details[open] > *:not(summary){
+  padding:0 28px 24px !important; font-size:15px !important; line-height:26px !important;
+  color:#5A6B84 !important;
+}
+/* FAQ 좌측 안내를 단일 패널로 */
+html body .faq-prep{
+  background-color:#FFFFFF;background:#FFFFFF!important; border:1px solid #E3EAF2 !important;
+  border-radius:24px !important; box-shadow:none !important;
+}
+html body .faq-prep li{ background:transparent !important; border:0 !important;
+  border-top:1px solid #E3EAF2 !important; border-radius:0 !important; min-height:60px !important; }
+
+/* O-3 06 무료도구 · 09 비교표 — 구조는 유지하되 카드 중첩·여백만 정리 */
+html body .ft-card{ padding:24px !important; }
+html body .ft-card .tool-preview{ margin-bottom:20px !important; }
+html body .match-worksheet{ border-radius:24px !important; overflow:hidden !important; border:1px solid #E3EAF2 !important; }
+html body .match-sheet-row{ min-height:72px !important; align-items:center !important; }
+html body .match-sheet-row--head{ background-color:#F7FAFC;background:#F7FAFC!important; min-height:52px !important; }
+html body .match-sheet-row:hover{ background-color:#F7FAFC;background:#F7FAFC!important; }
+
+/* 14 상담 — 사진이 좌측 콘텐츠 높이를 채우게 (figure 내부 flex 가 img 에 안 먹던 문제) */
+@media (min-width:1000px){
+  html body .final > .inner > figure.final-hero-img{
+    display:grid !important;
+    grid-template-rows:1fr auto !important;
+    min-height:100% !important; height:auto !important;
+    margin:0 !important;
+  }
+  html body .final > .inner > figure.final-hero-img img{
+    width:100% !important; height:100% !important; min-height:420px !important;
+    object-fit:cover !important; object-position:50% 42% !important;
+    border-radius:24px !important;
+  }
+  html body .final > .inner{ align-items:stretch !important; }
+}
+
+/* ══════════ P. 무료도구 미리보기 — CSS 자리표시자 → 실제 이미지 (2026-08-04) ══════════
+   사장님 지적: "디자인이 이게 뭐야. 챗지피티로 이미지 생성하여 디자인해라. 크롭해서 추출 적용할 수도 있잖아"
+   원인: 7개 카드 상단이 CSS 로 그린 빈 회색 박스였다. 색·간격만 고쳐서는 해결되지 않는 문제였다.
+   조치: ChatGPT 이미지실에서 4×2 격자 한 장으로 생성 → 7칸 크롭 → 각 카드에 적용.
+   생성 규격: 평면도 벡터 UI, 색 5개(#F7FAFC·#075F9C·#0EA5E9·#16233A·#E3EAF2), 실사·3D·광택 금지.
+   주의: 5번 생성물에 있던 가짜 합계 금액은 크롭 단계에서 제외했다(수치 지어내기 금지). */
+html body .tool-preview{
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:contain !important;
+  background-color:#F7FAFC !important;
+  border:0 !important; border-radius:12px !important;
+  min-height:136px !important;
+}
+/* 안쪽 CSS 자리표시자 도형을 숨긴다 */
+html body .tool-preview > *{ visibility:hidden !important; }
+
+/* 앞선 `html body .ft-card .tool-preview{background:...}` 가 shorthand 라
+   background-image 를 none 으로 리셋하고 특이도도 더 높았다(0,2,2 vs 0,1,2).
+   같은 (0,2,2) 로 올리고 뒤에 두어 이기게 한다. */
+/* 2026-08-05 수정: cover 로 두면 도식이 잘린다.
+   실측한 표시 비율이 뷰포트마다 2.47 / 1.67 / 0.96 으로 크게 달라 어느 하나에 맞추면 나머지가 깨진다.
+   사진은 잘려도 되지만 도식은 잘리면 정보가 사라진다(4번 카드의 "VAT 포함" 이 위에서 잘려 나갔다).
+   → contain 으로 두니 이번엔 이미지가 작아지고 상하 여백이 크게 남아 허전해졌다(사장님 재지적).
+   최종: 이미지를 정사각에 가깝게(1.15) 다시 잘라 어느 표시 비율에서 잘려도 핵심 도형이 남게 하고,
+   cover 로 되돌려 여백을 없앤다. 크롭 단계에서 해결할 문제를 CSS 로 덮으려 한 것이 잘못이었다. */
+html body .ft-card .tool-preview,
+html body .ft-grid .tool-preview{
+  background-color:#F7FAFC !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:cover !important;
+  overflow:hidden !important;
+}
+html body .ft-card .tool-preview-area.sb-bg-ready,    html body .ft-grid .tool-preview-area.sb-bg-ready    { background-image:url("/assets/tools-v5/tool-01.webp") !important; }
+html body .ft-card .tool-preview-seat.sb-bg-ready,    html body .ft-grid .tool-preview-seat.sb-bg-ready    { background-image:url("/assets/tools-v5/tool-02.webp") !important; }
+html body .ft-card .tool-preview-estimate.sb-bg-ready,html body .ft-grid .tool-preview-estimate.sb-bg-ready{ background-image:url("/assets/tools-v5/tool-03.webp") !important; }
+html body .ft-card .tool-preview-check.sb-bg-ready,   html body .ft-grid .tool-preview-check.sb-bg-ready   { background-image:url("/assets/tools-v5/tool-04.webp") !important; }
+html body .ft-card .tool-preview-budget.sb-bg-ready,  html body .ft-grid .tool-preview-budget.sb-bg-ready  { background-image:url("/assets/tools-v5/tool-05.webp") !important; }
+html body .ft-card .tool-preview-contract.sb-bg-ready,html body .ft-grid .tool-preview-contract.sb-bg-ready{ background-image:url("/assets/tools-v5/tool-06.webp") !important; }
+html body .ft-card .tool-preview-partner.sb-bg-ready, html body .ft-grid .tool-preview-partner.sb-bg-ready { background-image:url("/assets/tools-v5/tool-07.webp") !important; }
+
+/* ══════════ Q. 모바일 문의진행 배지가 본문 글자 위에 올라탄 문제 (2026-08-05 라이브 실측) ══════════
+   증상: 390px 에서 원형 번호 ①②③ 가 "카톡이나 문자로…" 첫 글자를 덮었다. 겹친 넓이 28x10px.
+   원인: v25 모바일 설계는 `li{padding:18px 18px 18px 68px}` 로 왼쪽 68px 를 비우고
+         그 자리에 `.hb-no{position:absolute;left:17px}` 를 놓는 구조였다.
+         그런데 index.html 인라인 @media 의 `.hb-steps li{padding:16px}` 가 이 패딩을 덮어버려
+         배지만 절대배치로 남고 글자가 그 아래로 들어왔다.
+   조치: 왼쪽 여백을 되살리고, 배지 중심을 세로 연결선(left:26px)과 같은 축에 맞춘다. */
+@media (max-width:768px){
+  html body .hb-steps > li{ padding:18px 18px 18px 62px !important; position:relative !important; }
+  html body .hb-steps > li .hb-no{
+    position:absolute !important; left:12px !important; top:18px !important;
+    width:28px !important; height:28px !important; margin:0 !important;
+    display:grid !important; place-items:center !important; }
+  html body .hb-steps::before{ left:26px !important; }
+}
+
+/* ══════════ R. 남은 딥네이비 색면 2곳 → 밝은 면 (2026-08-05 라이브 실측) ══════════
+   사장님 10·15번 지적이 이 두 곳에 남아 있었다. 밝은 실사 사진 바로 옆에 rgb(13,40,71) 이
+   붙어 명암이 급격히 끊기고, ChatGPT 검수도 "중간 콘텐츠가 푸터처럼 보인다"고 같은 지적을 했다.
+   교훈 적용: 면을 밝게 바꿀 때는 그 안의 글자색을 같은 블록에서 함께 되돌린다.
+   (예외를 뒤에 덧붙이면 특이도에서 밀려 무효가 된다) */
+
+/* R-1 비용 · 조건 공식 패널 (사진 801px 옆 481px) */
+html body .pricing-variable-map{
+  background-color:#F7FAFC;background:#F7FAFC!important;
+  border:1px solid #E3EAF2 !important;
+}
+html body .pricing-variable-map .pricing-formula{
+  display:flex !important; flex-direction:column !important; justify-content:center !important;
+  color:#16233A !important;
+}
+html body .pricing-variable-map .pricing-formula *:not(.pf-chip):not([class*="chip"]){
+  color:#16233A !important; border-color:#E3EAF2 !important;
+}
+html body .pricing-variable-map .pricing-formula dt,
+html body .pricing-variable-map .pricing-formula .pf-label,
+html body .pricing-variable-map .pricing-formula small{ color:#5A6B84 !important; }
+/* 공식 칩 — 반투명 흰 위 흰 글자였다. 흰 알약 + 청색 글자로 */
+/* 칩은 클래스 없는 <b> 였다. 딥네이비 시절 rgba(255,255,255,.12) 라
+   밝은 면에서는 거의 보이지 않는다. 청색 알약으로 바꿔 공식이 읽히게 한다. */
+html body .pricing-variable-map .pricing-formula b{
+  background-color:#EAF3FB;background:#EAF3FB!important; color:#075F9C !important;
+  border:1px solid #CFE0F0 !important; box-shadow:none !important;
+  font-weight:700 !important;
+}
+
+/* R-2 제휴 시각물 캡션 띠 */
+html body .partnership-visual{
+  background-color:#F7FAFC;background:#F7FAFC!important; border:1px solid #E3EAF2 !important;
+}
+/* 2026-08-05 보강: figcaption 만 잡았더니 그 밖의 b·span 이 흰 글자로 남아
+   흰 면 위 흰 글자가 4건 생겼다(대비 1.0). 면을 바꾼 블록 전체를 함께 되돌린다. */
+html body .partnership-visual,
+html body .partnership-visual *:not(img):not(picture):not(source){ color:#16233A !important; }
+html body .partnership-visual span,
+html body .partnership-visual small{ color:#5A6B84 !important; }
+
+/* ══════════ S. 도구 미리보기 반응 (2026-08-05) ══════════
+   실측: 전환 316요소·keyframes 14종·hover 134규칙으로 페이지 전반의 움직임은 이미 있었다.
+   빠진 곳은 방금 넣은 도구 미리보기 이미지 하나였다. 정지 그림이라 "누르면 뭔가 돈다"는
+   느낌이 없었다. 카드에 커서를 올리면 미리보기가 아주 살짝 다가오게 한다.
+   접근성: 움직임 최소화를 켠 사용자에게는 전부 끈다. */
+html body .ft-card .tool-preview,
+html body .ft-grid .tool-preview{
+  transition:background-size .45s cubic-bezier(.22,.61,.36,1), box-shadow .3s ease !important;
+}
+html body .ft-card:hover .tool-preview,
+html body .ft-card:focus-within .tool-preview{
+  background-size:112% !important;
+  box-shadow:0 6px 20px rgba(7,95,156,.14) !important;
+}
+@media (prefers-reduced-motion:reduce){
+  html body .ft-card:hover .tool-preview,
+  html body .ft-card:focus-within .tool-preview{ background-size:cover !important; box-shadow:none !important; }
+}
+
+/* ══════════ T. 약관 동의 옆 「전문 보기」 터치 영역 (2026-08-05) ══════════
+   실측 46x15px. WCAG 2.2 Target Size(2.5.8) 최소 24x24 미달이라 손가락으로 누르기 어렵다.
+   글자 크기는 그대로 두고 여백만 밖으로 밀어 히트 영역만 넓힌다(음수 마진으로 배치 영향 0). */
+html body .lf-agree a,
+html body .lf-agree label a{
+  display:inline-block !important;
+  padding:6px 8px !important;
+  margin:-6px -8px !important;
+  min-height:24px !important;
+  line-height:20px !important;
+}
+
+/* ══════════ U. 비용 카드 썸네일 → 실사 사진 (2026-08-05) ══════════
+   사장님 13번 지적: "왜 인테리어만 실사진이 들어가 있고 나머진 없냐."
+   실측 결과 `.pf-thumb-wrap` 4개(165x225) 전부 이미지 없이 칩만 하단에 떠 있어 위가 텅 비었다.
+   조치: ChatGPT 이미지실에서 각 분야 업무 장면을 실사로 생성(2x2 한 장) → 4칸 크롭 → 배경으로.
+   칩은 사진 위에 올라가므로 흰 반투명 알약 + 진한 글자로 바꿔 사진 위에서도 읽히게 한다. */
+html body .pf-card .pf-thumb-wrap{
+  background-repeat:no-repeat !important;
+  background-position:center top !important;
+  background-size:cover !important;
+  border-radius:12px !important;
+  overflow:hidden !important;
+  position:relative !important;
+  display:flex !important; align-items:flex-end !important;
+}
+/* 사진 하단을 살짝 어둡게 깔아 칩이 어떤 사진 위에서도 뜨게 한다 */
+html body .pf-card .pf-thumb-wrap::after{
+  content:"" !important; position:absolute !important; inset:auto 0 0 0 !important;
+  height:58% !important; pointer-events:none !important;
+  background-color:rgba(255,255,255,0);background:linear-gradient(180deg, rgba(255,255,255,0)0%, rgba(255,255,255,.72) 46%, rgba(255,255,255,.94) 100%) !important;
+}
+html body .pf-card .pf-thumb-wrap .pf-condition-chips{
+  position:relative !important; z-index:1 !important;
+  width:100% !important; padding:10px !important;
+}
+html body .pf-card .pf-thumb-wrap .pf-condition-chips > *{
+  background-color:rgba(255,255,255,.92);background:rgba(255,255,255,.92)!important;
+  color:#16233A !important;
+  border:1px solid rgba(7,95,156,.20) !important;
+  box-shadow:0 1px 3px rgba(22,35,58,.10) !important;
+  font-weight:600 !important;
+}
+html body .pf-card:nth-of-type(1) .pf-thumb-wrap.sb-bg-ready,
+html body .pf-card:nth-child(1) .pf-thumb-wrap.sb-bg-ready{ background-image:url("/assets/pf-v1/pf-01.webp") !important; }
+html body .pf-card:nth-child(2) .pf-thumb-wrap.sb-bg-ready{ background-image:url("/assets/pf-v1/pf-02.webp") !important; }
+html body .pf-card:nth-child(3) .pf-thumb-wrap.sb-bg-ready{ background-image:url("/assets/pf-v1/pf-03.webp") !important; }
+html body .pf-card:nth-child(4) .pf-thumb-wrap.sb-bg-ready{ background-image:url("/assets/pf-v1/pf-04.webp") !important; }
+
+/* U-2. `.pf-thumb-wrap::before` 의 "COST VARIABLES" 장식 문구 제거.
+   사진이 없던 시절 빈 영역을 채우려고 넣은 CSS 생성 콘텐츠였다.
+   실사가 들어간 지금은 사진 위를 덮어 읽히지도 않고, 본문에 영문 라벨을 두지 않는 규칙에도 어긋난다. */
+html body .pf-card .pf-thumb-wrap::before{ content:none !important; display:none !important; }
+
+/* ══════════ V. 인사이트 카드 5장 → 실사 사진 (2026-08-05) ══════════
+   사장님 13번 지적: "왜 인테리어만 실사진이 들어가 있고 나머진 없냐."
+   실측: `.insight-card` 6장 중 1번만 `<img>` 실사이고 2~6번은 CSS 막대·숫자 도식이었다(각 411x176).
+   도식의 초록 막대는 사이트 색(청색 계열)과도 맞지 않았다.
+   조치: 각 글 주제에 맞는 업무 장면을 실사로 생성(3x2 한 장) → 5칸 크롭 → 주제별 클래스에 정확히 매칭.
+   1번(인테리어)은 기존 실사를 그대로 두어 여섯 장이 한 세트가 된다. */
+html body .insight-card .insight-visual[class*="insight-visual--"]{
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:cover !important;
+  background-color:#EFF3F7 !important;
+  border-radius:12px !important;
+  overflow:hidden !important;
+}
+/* 안쪽 CSS 도식은 숨긴다 */
+html body .insight-card .insight-visual[class*="insight-visual--"] > *{ display:none !important; }
+html body .insight-card .insight-visual[class*="insight-visual--"]::before,
+html body .insight-card .insight-visual[class*="insight-visual--"]::after{ content:none !important; }
+
+html body .insight-visual--plan.sb-bg-ready    { background-image:url("/assets/insight-v1/ins-01.webp") !important; } /* 15평 식당 좌석 */
+html body .insight-visual--term.sb-bg-ready    { background-image:url("/assets/insight-v1/ins-02.webp") !important; } /* 키오스크 렌탈·구매 */
+html body .insight-visual--calendar.sb-bg-ready{ background-image:url("/assets/insight-v1/ins-03.webp") !important; } /* 첫 달 세무 */
+html body .insight-visual--contract.sb-bg-ready{ background-image:url("/assets/insight-v1/ins-04.webp") !important; } /* 상가 계약 후 */
+html body .insight-visual--map.sb-bg-ready     { background-image:url("/assets/insight-v1/ins-05.webp") !important; } /* 분야별 확인 기준 */
+
+/* 카드에 커서를 올리면 사진이 살짝 다가온다 (다른 카드와 같은 반응) */
+html body .insight-card .insight-visual[class*="insight-visual--"]{
+  transition:background-size .45s cubic-bezier(.22,.61,.36,1) !important;
+}
+html body .insight-card:hover .insight-visual[class*="insight-visual--"],
+html body .insight-card:focus-within .insight-visual[class*="insight-visual--"]{
+  background-size:112% !important;
+}
+@media (prefers-reduced-motion:reduce){
+  html body .insight-card:hover .insight-visual[class*="insight-visual--"]{ background-size:cover !important; }
+}
+
+/* ══════════ W. 무료도구 카드 높이·미리보기 비율 정리 (2026-08-05) ══════════
+   그동안 cover ↔ contain 을 오갔지만 둘 다 답이 아니었다. 진짜 원인은 미리보기 칸이
+   높이 136px 로 고정된 채 폭만 뷰포트 따라 227~336px 로 변해 비율이 0.96~2.47 로 널뛴 것이다.
+   비율이 고정되지 않으면 어떤 이미지를 넣어도 어딘가는 잘린다.
+   조치: 칸을 16:10 으로 고정한다. 그러면 이미지(1.15 크롭)가 좌우만 살짝 잘리고
+   상하 정보는 온전히 남는다. 4번 카드의 "VAT 포함" 이 위에서 날아가던 문제가 여기서 끝난다. */
+html body .ft-card .tool-preview,
+html body .ft-grid .tool-preview{
+  aspect-ratio:16 / 10 !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  background-position:center !important;
+}
+@media (max-width:768px){
+  html body .ft-card .tool-preview, html body .ft-grid .tool-preview{ aspect-ratio:16 / 10 !important; }
+}
+
+/* ══════════ X. 사진 밖으로 나간 캡션 · 사진 위에 겹친 칩 (2026-08-05) ══════════
+   사장님 지적: "영역에 겹치고 짤리고 벗어나고, 영역 안에 글자가 제대로 안 들어온다."
+   실측 두 건:
+   (1) 제휴 시각물 — figcaption 이 absolute 인데 사진 아래쪽 32px 만큼 밖으로 밀려나
+       흰 배경 위에 걸쳐 글자가 반쯤 잘려 보였다.
+   (2) 비용 카드 — 칩이 사진 위에 그대로 얹혀 인물과 겹쳤다.
+   조치: 캡션은 사진 안에 가두고, 칩은 사진 아래 흰 띠로 내린다. 사진 위에 글자를 올리지 않는다. */
+
+/* X-1 제휴 시각물 — 캡션을 사진 아래 흰 띠로
+   처음엔 캡션을 absolute 로 사진 안에 가두려 했다. 그런데 figure 높이(330px)는
+   캡션까지 포함한 자연 높이라 사진 높이(278px)와 어긋나고, img 에 height:100% 를 주면
+   부모 높이가 내용으로 정해지는 순환이 생겨 무효가 된다.
+   사진 위에 글자를 얹지 않는 쪽이 더 단순하고 안전하다. 캡션을 일반 흐름으로 되돌려
+   사진 바로 아래에 놓는다. 그러면 "사진 밖으로 나갔다" 는 상태 자체가 없어진다. */
+html body .partnership-visual{
+  position:relative !important; overflow:hidden !important;
+  display:flex !important; flex-direction:column !important;
+}
+html body .partnership-visual > img{
+  display:block !important; width:100% !important; height:auto !important;
+  border-radius:12px 12px 0 0 !important;
+}
+html body .partnership-visual > figcaption{
+  position:static !important; inset:auto !important;
+  padding:12px 16px 14px !important; margin:0 !important;
+  background-color:#FFFFFF;background:#FFFFFF!important; border-top:1px solid #E3EAF2 !important;
+}
+
+/* X-2 비용 카드 — 칩을 사진 아래 흰 띠로 내려 사진과 글자를 분리한다 */
+html body .pf-card .pf-thumb-wrap{
+  display:flex !important; flex-direction:column !important; justify-content:flex-end !important;
+  align-items:stretch !important;
+}
+html body .pf-card .pf-thumb-wrap::after{
+  height:46% !important;
+  background-color:rgba(255,255,255,0);background:linear-gradient(180deg, rgba(255,255,255,0)0%, rgba(255,255,255,.90) 52%, rgba(255,255,255,1) 100%) !important;
+}
+html body .pf-card .pf-thumb-wrap .pf-condition-chips{
+  padding:8px 8px 9px !important;
+  display:flex !important; flex-wrap:wrap !important; gap:5px !important; justify-content:center !important;
+}
+html body .pf-card .pf-thumb-wrap .pf-condition-chips > *{
+  background-color:#FFFFFF;background:#FFFFFF!important; color:#16233A !important;
+  border:1px solid #CFE0F0 !important; box-shadow:none !important;
+  font-size:12px !important; padding:3px 8px !important; border-radius:999px !important;
+  white-space:nowrap !important;
+}
+
+/* ══════════ Y. 비용 공식 패널 빈 영역 (2026-08-05) ══════════
+   실측: 542px 칸에 내용이 232px 뿐이라 43% 만 차 있었다. 사진 옆이 크게 비어 보였다.
+   1차로 안쪽 여백만 넓혔지만 38%→43% 로 조금 오른 게 전부였다. 원인이 여백이 아니었기 때문이다.
+   진짜 원인: 좌 사진 800x542 와 우 패널이 같은 grid 행에 묶여, 패널 높이가 사진 높이에 끌려갔다.
+   우측에 넣을 내용은 라벨 27 + 제목 45 + 목록 114 로 232px 뿐인데 칸만 542px 였다.
+   조치 두 가지를 함께 건다.
+     (1) 사진 비율을 16:9 로 고정해 행 높이를 542 → 450 으로 낮춘다
+     (2) 패널 글자와 간격을 키워 내용 자체를 늘린다
+   여백을 늘리는 게 아니라 칸과 내용의 차이를 좁히는 방향이다. */
+@media (min-width:1000px){
+  html body .pricing-variable-map{ align-items:stretch !important; }
+  html body .pricing-variable-map > figure{ display:block !important; }
+  html body .pricing-variable-map > figure img{
+    aspect-ratio:16 / 9 !important; height:100% !important; width:100% !important;
+    object-fit:cover !important; object-position:center 42% !important;
+    max-height:470px !important;
+  }
+html body .pricing-variable-map .pricing-formula{
+    padding:clamp(30px,3.2vw,48px) clamp(26px,2.6vw,40px) !important;
+    gap:24px !important;
+    max-height:470px !important;
+  }
+  html body .pricing-variable-map .pricing-formula > span{
+    font-size:clamp(13px,1vw,15px) !important; letter-spacing:.01em !important;
+  }
+  html body .pricing-variable-map .pricing-formula > strong{
+    font-size:clamp(19px,1.5vw,25px) !important; line-height:1.35 !important;
+  }
+  html body .pricing-variable-map .pricing-formula ul{
+    display:grid !important; gap:clamp(12px,1.4vw,20px) !important; margin:0 !important;
+  }
+  html body .pricing-variable-map .pricing-formula ul > li{
+    padding-block:clamp(4px,.6vw,9px) !important;
+    font-size:clamp(14px,1.05vw,16.5px) !important; line-height:1.5 !important;
+  }
+  html body .pricing-variable-map .pricing-formula b{
+    font-size:clamp(14px,1.05vw,17px) !important; padding:10px 16px !important;
+  }
+}
+
+/* ══════════ Z. 시각물이 없던 5개 구간에 실사 배치 (2026-08-05) ══════════
+   사장님 지적: "이미지 생성도 안 들어가 있고 디자인도 안 되어 있다."
+   실측: 시각물이 0인 큰 구간이 6곳이었다 — 상황선택 991px · 문의진행 534 · 이용방식 615 ·
+   담당자확인 1235 · FAQ 1061 · 고객문의 206(푸터라 제외).
+   글자·선·버튼만 이어져 훑을 때 눈이 멈추는 지점이 없었다.
+   조치: ChatGPT 이미지실에서 각 구간 주제에 맞는 실사를 한 장(3x2)으로 생성 → 5칸 크롭 → 배치.
+   생성 규격에 "인물을 한쪽에 몰고 반대쪽 35~40%를 비울 것"을 넣어, 그 빈 쪽에 글자가 얹히게 했다.
+   그래서 사진 위에 글자를 올려도 읽힌다. */
+
+.sb-sec-visual{
+  display:block; width:100%; border-radius:16px; overflow:hidden;
+  background-color:#EFF3F7;background:#EFF3F7 no-repeat center / cover;
+  aspect-ratio:16 / 10;
+  /* 위 여백 0 이면 앞 제목 칸과 정확히 맞닿아 글자 아래 획이 사진에 가려진다.
+     실측: 담당자 확인 구간에서 앞 요소 하단과 시각물 상단 간격이 0px 이었다. */
+  margin:22px 0 26px;
+  box-shadow:0 2px 10px rgba(22,35,58,.06);
+}
+/* 16:6.2 로 넣었더니 497px 나 차지해 사진이 구간을 잡아먹었다(실측).
+   시각물은 주인공이 아니라 눈을 멈추게 하는 띠다. 배너 비율로 낮추고 위치도 사진 위쪽을 쓴다. */
+@media (min-width:1000px){
+  .sb-sec-visual{ aspect-ratio:16 / 3.4; margin-bottom:28px; background-position:center 28% !important; }
+}
+@media (max-width:999px){
+  .sb-sec-visual{ aspect-ratio:16 / 6; background-position:center 28% !important; }
+}
+/* 상황 선택은 좌측 목록 칸(490px) 안에 들어가 있었다. 그 칸은 시각물 자리가 아니다. */
+html body .sit-grid > .sb-sec-visual{ display:none !important; }
+
+/* 상황 선택 — 제목 아래, 목록 위 */
+html body #situation .sb-sec-visual.sb-bg-ready,
+html body .situation .sb-sec-visual.sb-bg-ready{ background-image:url("/assets/home-system-v1/situation-routing-v1.webp"); }
+/* 문의 진행 */
+html body .sb-howto-bar .sb-sec-visual.sb-bg-ready{ background-image:url("/assets/home-system-v1/inquiry-flow-v1.webp"); }
+/* 이용 방식 */
+html body #category-start .sb-sec-visual.sb-bg-ready{ background-image:url("/assets/section-v1/sec-03.webp"); }
+/* 담당자 확인 */
+html body #matching .sb-sec-visual.sb-bg-ready{ background-image:url("/assets/section-v1/sec-04.webp"); }
+/* 자주 묻는 질문 */
+html body #faq .sb-sec-visual.sb-bg-ready{ background-image:url("/assets/section-v1/sec-05.webp"); }
+
+/* Z-2. 상황 선택 구간의 시각물이 좌측 칸(490px) 폭에 갇혀 좁고 어색했다.
+   그 구간은 좌 목록 / 우 결과 2단 배치라, 시각물을 격자 밖 전폭으로 빼야 띠로 읽힌다. */
+html body #situation > .inner > .sb-sec-visual,
+html body .situation > .inner > .sb-sec-visual{
+  grid-column:1 / -1 !important; width:100% !important; max-width:none !important;
+}
+html body .sb-sec-visual{ grid-column:1 / -1; }
+
+/* ══════════ AA. 푸터 「고객 문의」 제목이 46px 로 튀어나온 문제 (2026-08-05) ══════════
+   실측: `footer .footer-contact h2` 가 font-size 46px / weight 800 로 잡혀
+   291x173 카드 안에서 262x58 을 차지해 연락처를 밀어냈다.
+   원인: 내가 앞서 넣은 타이포그래피 규칙이 h2 를 섹션 제목 크기로 일괄 적용하면서
+   푸터 안의 작은 제목까지 같이 키운 것이다. 일괄 지정 금지 원칙을 내가 어긴 자리다.
+   조치: 푸터 안 제목만 카드 크기에 맞는 소제목 크기로 되돌린다. */
+html body footer h2,
+html body .site-footer h2,
+html body .footer-contact h2{
+  font-size:clamp(15px,1.15vw,17px) !important;
+  font-weight:700 !important;
+  line-height:1.4 !important;
+  letter-spacing:-.01em !important;
+  margin:0 0 12px !important;
+}
+html body footer h3, html body .site-footer h3{
+  font-size:clamp(13px,1vw,14.5px) !important; font-weight:700 !important; margin:0 0 8px !important;
+}
+
+/* ══════════ AB. 이미지 표시 비율을 원본과 일치시킨다 (2026-08-05) ══════════
+   사장님 지적: "너가 이미지 넣은 거 직접 눈으로 봐라. 영역 안에 비율이 안 맞는다."
+   실측 결과 원본 비율과 표시 비율이 전부 어긋나 cover 로 잘려나가고 있었다.
+
+     자리        원본비   표시비(1440/1024/390)      잘림
+     섹션실사    1.60    4.71 / 4.71 / 2.67        상하 66%
+     도구도식    1.15    1.60 / 1.60 / 1.60        상하 28%
+     인사이트    1.60    2.33 / 1.58 / 1.04        상하31% · 좌우35%
+     비용카드    0.73    0.73 / 0.60 / 7.47        모바일 상하 90%  ← 44px 로 뭉갬
+
+   특히 비용카드는 모바일에서 329x44 가 되어 사진이 띠처럼 뭉개졌다.
+   내가 원본을 자를 때 그 자리의 실제 표시 비율을 재지 않고 임의 비율로 자른 것이 원인이다.
+   조치: 목표 비율을 정해 원본을 다시 자르고, 표시 비율을 전 뷰포트 고정해 둘을 일치시킨다.
+     섹션실사 16:5(3.20) · 도구 16:10(1.60) · 인사이트 16:9(1.78) · 비용카드 3:4(0.75) */
+
+/* AB-1 섹션 실사 — 원본 1600x500 = 3.20 */
+html body .sb-sec-visual{ aspect-ratio:16 / 5 !important; background-size:cover !important; }
+@media (min-width:1000px){ html body .sb-sec-visual{ aspect-ratio:16 / 5 !important; } }
+@media (max-width:999px){ html body .sb-sec-visual{ aspect-ratio:16 / 5 !important; } }
+
+/* AB-2 인사이트 — 원본 960x540 = 1.78 */
+html body .insight-card .insight-visual[class*="insight-visual--"]{
+  aspect-ratio:16 / 9 !important; height:auto !important;
+  min-height:0 !important; max-height:none !important;
+}
+
+/* AB-3 비용 카드 — 원본 540x720 = 0.75.
+   모바일에서 가로 띠(7.47)로 무너지던 것을 세로 비율로 고정한다. */
+html body .pf-card .pf-thumb-wrap{
+  aspect-ratio:3 / 4 !important; height:auto !important;
+  min-height:0 !important; max-height:none !important;
+  background-position:center top !important;
+}
+@media (max-width:999px){
+  html body .pf-card .pf-thumb-wrap{ aspect-ratio:3 / 4 !important; width:100% !important; }
+}/* AC-1 문의 진행 3단계
+   `b::before` 는 어딘가에서 `content:none` 으로 덮여 있어 특이도를 올려도 살아나지 않았다.
+   가상요소를 고집하지 않고 마크업에 span 을 넣는 편이 확실하다. */
+/* b 가 block 이라 span 이 따로 줄로 떨어졌다. 제목 줄 안으로 끌어올린다. */
+html body .sb-howto-bar .hb-steps > li > b{ display:flex !important; align-items:center !important; gap:8px !important; }
+html body .sb-step-ico{
+  flex:0 0 auto !important;
+  display:inline-block !important; vertical-align:-6px !important;
+  width:26px !important; height:26px !important; margin-right:9px !important;
+  background-repeat:no-repeat !important; background-position:center !important;
+  background-size:contain !important;
+}
+html body .sb-step-ico-1.sb-bg-ready{ background-image:url("/assets/icons-v1/step1.webp") !important; }
+html body .sb-step-ico-2.sb-bg-ready{ background-image:url("/assets/icons-v1/step2.webp") !important; }
+html body .sb-step-ico-3.sb-bg-ready{ background-image:url("/assets/icons-v1/step3.webp") !important; }
+
+
+
+/* ══════════ AD. 상담 카드 · 푸터 배색 (2026-08-05 사장님 9·10번) ══════════
+
+   9번 지적: "카카오톡 쪽 영역 배경색 다른 컬러로 해라 눈에 잘 들어오게.
+             그리고 추천·사진첨부가능 부분과 1분입력·내용자동정리 부분의 영역 배경색 없애.
+             글자 있는 데만 하든지."
+   실측: 카카오 카드는 액션블루 #075F9C 로 문자 카드(흰색)와 명도만 다르고 색상은 같은 계열이라
+   "이게 카톡" 이라는 신호가 없었다. 라벨은 폭 367px 전체에 옅은 띠가 깔려 글자보다 띠가 먼저 보였다.
+   조치: 카카오 카드는 한 단계 짙은 남청 계열로 분리해 눈이 먼저 가게 하고,
+   라벨의 면 배경은 없애고 글자에만 색을 남긴다(폭 전체 띠 제거).
+
+   10번 지적: "배경색과 글자 폰트 색깔이 매칭이 안 되고 파란색으로 영역되어 있는 색깔도 촌스러워."
+   실측: 푸터 바탕 rgb(8,26,45) 위에 링크 띠가 #075F9C 로 통째 깔려 색면이 둥둥 떠 보였다.
+   조치: 색면을 지우고 얇은 구분선과 글자색만으로 정리한다. 연락처 카드만 한 톤 밝게 남긴다. */
+
+/* AD-1 카카오 카드 — 계열 분리 */
+/* gradient 로 넣었더니 앞서 있던 `a[class*="card"]{background-image:none}` 이
+   그 이미지를 지워버려 흰 카드에 흰 글자가 됐다(제목이 화면에서 사라짐).
+   background-image 에 의존하지 않고 background-color 단색으로 칠한다. */
+html body .consult-route-card.kakao{
+  background-color:#123A5E !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  box-shadow:0 6px 20px rgba(11,43,71,.22) !important;
+}
+html body .consult-route-card.kakao:hover{ background-color:#16456E !important; }
+html body .consult-route-card.kakao strong,
+html body .consult-route-card.kakao p,
+html body .consult-route-card.kakao small{ color:#FFFFFF !important; }
+
+/* AD-2 라벨 — 면 배경 제거, 글자에만 색 */
+html body .consult-route-card .route-badge{
+  background:none !important; background-color:transparent !important;
+  border:0 !important; padding:0 !important; width:auto !important;
+  display:inline !important; box-shadow:none !important;
+  font-weight:700 !important; letter-spacing:.01em !important;
+}
+html body .consult-route-card.kakao .route-badge{ color:#9FD4F5 !important; }
+html body .consult-route-card.sms .route-badge{ color:#075F9C !important; }
+
+/* AD-3 푸터 — 색면 제거, 선과 글자색으로 */
+html body .site-footer .footer-nav-grid{
+  background:none !important; background-color:transparent !important;
+  border-top:1px solid rgba(255,255,255,.14) !important;
+  border-bottom:1px solid rgba(255,255,255,.14) !important;
+  border-radius:0 !important; padding:16px 0 !important;
+}
+html body .site-footer .footer-nav-grid a{ color:#C9D8E8 !important; }
+html body .site-footer .footer-nav-grid a:hover{ color:#FFFFFF !important; }
+html body .site-footer .footer-contact{
+  background-color:rgba(255,255,255,.07);background:rgba(255,255,255,.07)!important;
+  border:1px solid rgba(255,255,255,.16) !important;
+}
+html body .site-footer .footer-contact h2{ color:#FFFFFF !important; }
+html body .site-footer .footer-contact dt,
+html body .site-footer .footer-contact .label{ color:#9FB4CC !important; }
+html body .site-footer .footer-contact dd,
+html body .site-footer .footer-contact a{ color:#FFFFFF !important; }
+html body .site-footer dt{ color:#8FA6BF !important; }
+html body .site-footer dd{ color:#E8EFF7 !important; }
+
+/* AD-2b 문자 카드 라벨의 면도 제거 (카카오 쪽만 지웠더니 한쪽만 띠가 남아 짝이 안 맞았다) */
+html body .consult-route-card.sms .route-badge,
+html body .consult-route-card.sms [class*="badge"],
+html body .consult-route-card.sms [class*="tag"],
+html body .consult-route-card .route-badge{
+  background:none !important; background-color:transparent !important;
+  border:0 !important; padding:0 !important; border-radius:0 !important;
+  display:inline !important; box-shadow:none !important; width:auto !important;
+}
+
+/* ══════════ AE. 하단 고정 상담 바 (2026-08-05 사장님 4번 · 면24 벤치마킹) ══════════
+   면24 실측: 1440x56 안에 입력 5개(성함·연락처·희망지역·동의·신청)를 한 줄로 넣었다.
+   우리는 자동 접수를 하지 않으므로 입력값은 카카오톡·문자 본문을 만드는 데만 쓴다(서버 전송 없음).
+   첫 화면을 가리지 않도록 420px 이상 내려가야 올라온다. 닫으면 그 세션 동안 다시 뜨지 않는다. */
+.sb-fixbar{
+  position:fixed; left:0; right:0; bottom:0; z-index:900;
+  transform:translateY(100%); transition:transform .34s cubic-bezier(.22,.61,.36,1);
+  /* 2026-08-07 사장님 지시 — 너무 어두웠다. 본문과 같은 밝은 톤으로 내린다.
+     흰 본문과 붙어 보이지 않게 경계선과 그림자로만 층을 만든다. */
+  background-color:#F4F8FB;background:#F4F8FB; border-top:1px solid #D3E0EC;
+  box-shadow:0 -8px 28px rgba(13,40,71,.14);
+}
+.sb-fixbar.is-in{ transform:translateY(0); }
+.sb-fixbar.is-off{ display:none !important; }
+.sb-fixbar-in{
+  max-width:1368px; margin:0 auto; padding:10px clamp(14px,2vw,24px);
+  display:flex; align-items:center; gap:8px;
+}
+.sb-fixbar-title{
+  flex:0 0 auto; color:#16233A; font-weight:800; font-size:14px;
+  letter-spacing:-.01em; margin-right:4px; white-space:nowrap;
+}
+.sb-fixbar-f{ flex:1 1 0; min-width:0; }
+.sb-fixbar-f input{
+  width:100%; height:38px; padding:0 11px; font-size:14px; font-family:inherit;
+  color:#16233A; background-color:#FFFFFF;background:#FFFFFF; border:1px solid #C3D6E6; border-radius:8px;
+}
+.sb-fixbar-f input::placeholder{ color:#5A6B84; }
+.sb-fixbar-f input:focus{ outline:2px solid #0A76C0; outline-offset:1px; }
+.sb-fixbar-agree{
+  flex:0 0 auto; display:flex; align-items:center; gap:6px;
+  color:#5A6B84; font-size:12px; white-space:nowrap;
+}
+.sb-fixbar-agree input{ width:18px; height:18px; accent-color:#0A76C0; }
+.sb-fixbar-agree a{ color:#075F9C; text-decoration:underline; }
+.sb-fixbar-cta{
+  flex:0 0 auto; min-width:140px; height:38px; padding:0 18px; border:0; border-radius:8px; cursor:pointer;
+  /* 밝은 바 위에서도 흰 글자가 읽히는 한계선이 #0A76C0 이다(대비 4.80:1).
+     이보다 더 밝히면 글자가 흐려진다. */
+  background-color:#0A76C0;background:#0A76C0; color:#FFFFFF; font-weight:800; font-size:14px; font-family:inherit;
+  white-space:nowrap; transition:background-color .2s ease, transform .2s ease;
+}
+.sb-fixbar-cta:hover{ background-color:#0968AB;background:#0968AB; transform:translateY(-1px); }
+.sb-fixbar-close{
+  flex:0 0 auto; width:30px; height:30px; border:0; border-radius:8px; cursor:pointer;
+  background:transparent; color:#5A6B84; font-size:19px; line-height:1;
+}
+.sb-fixbar-close:hover{ background-color:#E4EDF5;background:#E4EDF5; color:#16233A; }
+
+/* 태블릿 — 제목을 접고 입력만 남긴다 */
+@media (max-width:1100px){
+  .sb-fixbar-title{ display:none; }
+}
+/* 모바일 — 두 줄로 접는다. 한 줄에 7개를 욱여넣으면 전부 못 읽는다 */
+@media (max-width:760px){
+  .sb-fixbar-in{ flex-wrap:wrap; gap:6px; padding:9px 12px 10px; }
+  .sb-fixbar-f{ flex:1 1 30%; }
+  .sb-fixbar-agree{ order:5; flex:1 1 100%; font-size:12px; }
+  .sb-fixbar-cta{ order:6; flex:1 1 100%; }
+  .sb-fixbar-close{ position:absolute; top:4px; right:6px; width:26px; height:26px; }
+}
+/* 바가 올라오면 본문 하단이 가리지 않게 여백을 준다 */
+body:has(.sb-fixbar.is-in) .site-footer{ padding-bottom:96px; }
+@media (max-width:760px){ body:has(.sb-fixbar.is-in) .site-footer{ padding-bottom:150px; } }
+@media (prefers-reduced-motion:reduce){ .sb-fixbar{ transition:none; } }
+
+@media (prefers-reduced-motion:reduce){
+  .ft-card,
+  .cat-photo-card,
+  .insight-card,
+  .service-card,
+  .sb-sec-visual{
+    animation:none !important;
+    transition:none !important;
+  }
+}
+
+/* ══════════ AF. 순차 강조 · 초음파 링 (2026-08-05 사장님 2·3번) ══════════
+   면24 `blk`·아정당 `textBlink` 실측을 참고했다.
+   사장님은 "3개 영역이 순차적으로 빨간색으로" 를 원했다. 다만 우리 팔레트에 빨강이 없고
+   경고색을 상시로 깜빡이면 신뢰형 톤이 무너진다. 그래서 강조 자체는 살리되
+   색은 액센트 #0EA5E9 → 액션블루 #075F9C 로 옮기고, 붉은 계열은 배지 한 곳에만 벽돌색으로 제한한다.
+   초음파는 크몽 `pulse` 응용 — 동심원이 퍼졌다 사라진다. 움직임 최소화 설정에서는 전부 끈다. */
+
+@keyframes sbSeqOn{
+  0%,100%{ background-color:#FFFFFF; color:#16233A; border-color:#E3EAF2; }
+  12%,28%{ background-color:#0EA5E9; color:#FFFFFF; border-color:#0EA5E9; }
+  40%,56%{ background-color:#075F9C; color:#FFFFFF; border-color:#075F9C; }
+}
+@keyframes sbSonar{
+  0%{ transform:translate(-50%,-50%) scale(.55); opacity:.55; }
+  70%{ opacity:.12; }
+  100%{ transform:translate(-50%,-50%) scale(1.85); opacity:0; }
+}
+
+/* 3단계 순차 — 문의 진행 구간의 번호 배지가 1 → 2 → 3 순으로 켜진다 */
+html body .sb-howto-bar .hb-steps > li .hb-no{
+  animation:sbSeqOn 5.4s ease-in-out infinite !important;
+  will-change:background-color,color;
+}
+html body .sb-howto-bar .hb-steps > li:nth-child(1) .hb-no{ animation-delay:0s !important; }
+html body .sb-howto-bar .hb-steps > li:nth-child(2) .hb-no{ animation-delay:1.8s !important; }
+html body .sb-howto-bar .hb-steps > li:nth-child(3) .hb-no{ animation-delay:3.6s !important; }
+
+/* 초음파 링 — 주 CTA 와 하단 바 신청 버튼에만. 남발하면 시선이 분산된다 */
+html body .sb-fixbar-cta{ position:relative; overflow:hidden; }
+html body .sb-fixbar-cta::after{
+  content:""; position:absolute; left:50%; top:50%;
+  width:100%; height:100%; border-radius:10px;
+  border:2px solid rgba(14,165,233,.75); pointer-events:none;
+  animation:sbSonar 2.6s cubic-bezier(.22,.61,.36,1) infinite;
+}
+html body .hero-actions > a.btn:first-child,
+html body a.btn.primary:first-of-type{ position:relative; }
+html body .hero-actions > a.btn:first-child::after{
+  content:""; position:absolute; left:50%; top:50%;
+  width:100%; height:100%; border-radius:12px;
+  border:2px solid rgba(14,165,233,.6); pointer-events:none;
+  animation:sbSonar 3s cubic-bezier(.22,.61,.36,1) infinite;
+}
+
+@media (prefers-reduced-motion:reduce){
+  html body .sb-howto-bar .hb-steps > li .hb-no{ animation:none !important; }
+  html body .sb-fixbar-cta::after,
+  html body .hero-actions > a.btn:first-child::after{ animation:none !important; display:none !important; }
+}
+
+/* ══════════ AG. 진입 팝업 (2026-08-05 사장님 1번 · 면24 벤치마킹) ══════════
+   면24 실측: z30000 전면 레이어 + 하단 3버튼(24시간닫기 / 팝업전체닫기 / 닫기).
+   그 구조를 그대로 쓰되 내용은 우리 것으로 바꿨다.
+   우리는 신생 플랫폼이라 실적·후기·수치가 없다. 없는 성과를 지어내는 대신
+   "상담 전에 무엇을 준비하면 되는지" 세 가지를 담았다.
+   재노출 차단은 localStorage 만료 시각으로. 하단 고정 바(z900)보다 위(z1200)에 둔다. */
+.sb-popup{ position:fixed; inset:0; z-index:1200; display:grid; place-items:center; padding:20px; }
+.sb-popup[hidden]{ display:none; }
+.sb-popup-dim{
+  position:absolute; inset:0; background-color:rgba(13,40,71,.62);background:rgba(13,40,71,.62);
+  opacity:0; transition:opacity .26s ease; backdrop-filter:blur(2px);
+}
+.sb-popup.is-in .sb-popup-dim{ opacity:1; }
+.sb-popup-box{
+  position:relative; width:min(520px,100%); max-height:88vh; overflow:auto;
+  background-color:#FFFFFF;background:#FFFFFF; border-radius:18px; box-shadow:0 24px 60px rgba(13,40,71,.32);
+  transform:translateY(14px) scale(.98); opacity:0;
+  transition:transform .28s cubic-bezier(.22,.61,.36,1), opacity .24s ease;
+}
+.sb-popup.is-in .sb-popup-box{ transform:none; opacity:1; }
+.sb-popup-x{
+  position:absolute; top:10px; right:12px; width:34px; height:34px; border:0; border-radius:9px;
+  background:transparent; color:#5A6B84; font-size:22px; line-height:1; cursor:pointer;
+}
+.sb-popup-x:hover{ background-color:#F1F5F9;background:#F1F5F9; color:#16233A; }
+.sb-popup-head{ padding:30px 28px 0; }
+.sb-popup-eyebrow{
+  display:inline-block; padding:5px 12px; border-radius:999px;
+  background-color:#EAF3FB;background:#EAF3FB; color:#075F9C; font-size:12px; font-weight:700; margin-bottom:12px;
+}
+.sb-popup-head h2{
+  margin:0 0 10px; font-size:clamp(21px,2.2vw,26px); font-weight:800;
+  line-height:1.38; letter-spacing:-.02em; color:#16233A;
+}
+.sb-popup-head p{ margin:0; font-size:14px; line-height:1.65; color:#5A6B84; }
+.sb-popup-steps{ list-style:none; margin:20px 0 0; padding:0 28px; display:grid; gap:9px; counter-reset:sbp; }
+.sb-popup-steps li{
+  counter-increment:sbp; position:relative; padding:12px 14px 12px 46px;
+  background-color:#F7FAFC;background:#F7FAFC; border:1px solid #E3EAF2; border-radius:11px;
+}
+.sb-popup-steps li::before{
+  content:counter(sbp); position:absolute; left:13px; top:50%; transform:translateY(-50%);
+  width:24px; height:24px; border-radius:50%; display:grid; place-items:center;
+  background-color:#075F9C;background:#075F9C; color:#FFFFFF; font-size:12px; font-weight:700;
+}
+.sb-popup-steps b{ display:block; font-size:14px; font-weight:700; color:#16233A; }
+.sb-popup-steps span{ display:block; margin-top:2px; font-size:12px; color:#5A6B84; }
+.sb-popup-note{
+  margin:16px 28px 0; padding:11px 13px; border-left:3px solid #0EA5E9;
+  background-color:#F7FAFC;background:#F7FAFC; font-size:12px; line-height:1.6; color:#5A6B84; border-radius:0 8px 8px 0;
+}
+.sb-popup-cta{ display:grid; gap:8px; padding:18px 28px 0; }
+.sb-popup-go{
+  display:block; text-align:center; padding:14px; border-radius:11px;
+  background-color:#075F9C;background:#075F9C; color:#FFFFFF; font-weight:800; font-size:15px; text-decoration:none;
+  transition:background-color .2s ease, transform .2s ease;
+}
+.sb-popup-go:hover{ background-color:#0A6FAF;background:#0A6FAF; transform:translateY(-1px); }
+.sb-popup-sub{
+  display:block; text-align:center; padding:13px; border-radius:11px;
+  background-color:#FFFFFF;background:#FFFFFF; border:1px solid #CFE0F0; color:#075F9C;
+  font-weight:700; font-size:14px; text-decoration:none;
+}
+.sb-popup-sub:hover{ background-color:#F1F7FC;background:#F1F7FC; }
+.sb-popup-foot{
+  display:flex; margin-top:20px; border-top:1px solid #E3EAF2;
+}
+.sb-popup-foot button{
+  flex:1 1 0; padding:14px 6px; border:0; background-color:#FFFFFF;background:#FFFFFF; cursor:pointer;
+  font-size:13px; font-weight:600; color:#5A6B84; font-family:inherit;
+}
+.sb-popup-foot button + button{ border-left:1px solid #E3EAF2; }
+.sb-popup-foot button:hover{ background-color:#F7FAFC;background:#F7FAFC; color:#16233A; }
+@media (max-width:520px){
+  .sb-popup-head{ padding:26px 20px 0; }
+  .sb-popup-steps, .sb-popup-cta{ padding-left:20px; padding-right:20px; }
+  .sb-popup-note{ margin-left:20px; margin-right:20px; }
+  .sb-popup-foot button{ font-size:12px; padding:13px 4px; }
+}
+@media (prefers-reduced-motion:reduce){
+  .sb-popup-dim, .sb-popup-box{ transition:none; }
+}
+
+/* ══════════ AH. 상황 선택 2단 — 우측 설명 패널 배색 (2026-08-05 사장님 2번) ══════════
+   사장님 지적: "이런 식 허접한 색깔 없는 영역 흰색 싫다. 왼쪽에 1~6까지 있는 것을
+   오른쪽에서 설명하는 것인데 눈에 잘 들어오게 배색해라."
+   실측: 우측 패널이 흰 바탕이고 그 안의 링크 8개가 전부 투명 배경 + 같은 잉크색(#16233A)이라
+   "먼저 확인할 분야"와 "함께 확인하면 좋은 분야"가 구분되지 않았다.
+   아정당 실측(파랑 주도 + 포인트 1색)을 참고해, 주 그룹은 채워진 청색 칩으로 띄우고
+   보조 그룹은 테두리만 남긴다. 왼쪽 선택 항목과 오른쪽 패널을 같은 청색으로 잇는다. */
+
+/* 우측 패널 — 흰 바탕 대신 아주 옅은 청색 면 + 좌측 강조선 */
+html body .sit-result{
+  background-color:#F7FBFE;background:linear-gradient(180deg,#F7FBFE 0%,#FFFFFF 62%)!important;
+  border:1px solid #DCE9F5 !important;
+  border-left:3px solid #075F9C !important;
+  border-radius:14px !important;
+}
+/* 그룹 제목 */
+html body .sit-result h3,
+html body .sit-result .sit-result-label,
+html body .sit-result > div > span:first-child{
+  color:#075F9C !important; font-weight:700 !important;
+}
+/* 주 그룹(먼저 확인할 분야) — 채워진 칩 */
+html body .sit-result [class*="primary"] a,
+html body .sit-result > div:nth-of-type(1) a{
+  background-color:#EAF3FB;background:#EAF3FB!important;
+  border:1px solid #BFD9EF !important;
+  color:#0A4E80 !important;
+  font-weight:700 !important;
+  border-radius:10px !important;
+  text-decoration:none !important;
+}
+html body .sit-result > div:nth-of-type(1) a:hover{
+  background-color:#075F9C;background:#075F9C!important; border-color:#075F9C !important; color:#FFFFFF !important;
+}
+/* 보조 그룹(함께 확인하면 좋은 분야) — 테두리만 */
+/* 2026-08-10 무효화 — 이 (0,2,4) 규칙이 분야 버튼을 흰색으로 고정해
+   사장님이 "오른쪽이 전혀 안 보인다" 고 두 번 지적하신 원인이었다.
+   흰 카드 위 흰 버튼은 버튼으로 안 읽힌다. AY 규칙이 대신한다. */
+html body .sit-result > div:nth-of-type(2) a.__off__{
+  background-color:#FFFFFF;background:#FFFFFF!important;
+  border:1px solid #E3EAF2 !important;
+  color:#41546F !important;
+  font-weight:600 !important;
+  border-radius:10px !important;
+  text-decoration:none !important;
+}
+html body .sit-result > div:nth-of-type(2) a.__off__:hover{
+  border-color:#075F9C !important; color:#075F9C !important;
+}
+/* 왼쪽 목록 — 선택된 항목을 청색으로 확실히 표시해 오른쪽과 잇는다 */
+html body .sit-grid > *[aria-selected="true"],
+html body .sit-grid > *.is-on,
+html body .sit-grid > *:first-child{
+  background-color:#EAF3FB;background:#EAF3FB!important;
+  border-left:3px solid #075F9C !important;
+}
+html body .sit-grid > * [class*="no"],
+html body .sit-grid > * b + span{ color:#075F9C !important; }
+
+/* ══════════ AI. Gemini 검토 반영 (2026-08-05) ══════════
+   벤치마킹 설계안을 Gemini 에 올려 받은 지적 중 근거가 분명한 것을 반영했다.
+
+   (1) "모바일 하단 fixed 바에 input 을 두면 가상 키보드가 바를 밀어 올려 화면이 붕괴된다"
+       → 모바일에서는 하단 바의 입력칸을 감추고, 버튼이 바텀 시트를 연다
+   (2) "초음파 링을 여러 곳에 쓰면 시선을 강탈해 조잡해진다. 최종 전환 버튼 한 곳만"
+       → 히어로 CTA 의 링을 뺀다
+   (3) "무한 반복은 스팸 사이트로 인지된다. 3회 후 정지"
+       → 순차 강조를 3회로 제한
+   (4) "z-index 를 계층으로 고정하라: 본문 1 / 고정바 1000 / 팝업 딤 9000 / 팝업 9999"
+       → 그대로 적용
+   (5) "팝업 즉시 노출 금지. 체류 5초 또는 스크롤 30% 이후"
+       → 등장 시점을 5초로 늦춤(JS)
+   반대로 반영하지 않은 것: 팝업 3버튼 → 2버튼 축소.
+   사장님이 면24 방식(24시간/오늘하루/닫기)을 직접 지목했으므로 3버튼을 유지한다. */
+
+/* (4) z 계층 */
+.sb-fixbar{ z-index:1000 !important; }
+.sb-popup{ z-index:9999 !important; }
+.sb-popup-dim{ z-index:9000 !important; }
+.sb-sheet{ z-index:9999 !important; }
+
+/* (2) 초음파는 하단바 신청 버튼 한 곳만 */
+html body .hero-actions > a.btn:first-child::after{ content:none !important; display:none !important; }
+
+/* (3) 순차 강조 3회 후 정지 */
+html body .sb-howto-bar .hb-steps > li .hb-no{ animation-iteration-count:3 !important; }
+
+/* (1) 모바일 — 하단 바에서 입력칸을 뺀다 */
+@media (max-width:760px){
+  html body .sb-fixbar-f{ display:none !important; }
+  /* 2026-08-07 이 줄은 그동안 안 먹고 있었다. 터치 44px 규칙의
+     label:has(input[type=checkbox]) 가 특이도 동점이면서 뒤에 와서 이겼다.
+     id 를 얹어 특이도를 올린다. 모바일 동의는 바텀 시트에서 받는다. */
+  html body #sbFixbar .sb-fixbar-agree{ display:none !important; }
+  html body .sb-fixbar-in{ flex-wrap:nowrap !important; gap:8px !important; padding:10px 12px !important; }
+  /* 2026-08-07 카톡·문자 버튼을 뺐다. 남은 상담 버튼이 가로를 다 쓴다. */
+  html body .sb-fixbar-cta{ order:0 !important; flex:1 1 auto !important; }
+  html body .sb-fixbar-close{ position:static !important; }
+  body:has(.sb-fixbar.is-in) .site-footer{ padding-bottom:92px !important; }
+}
+
+/* 바텀 시트 */
+.sb-sheet{ position:fixed; inset:0; }
+.sb-sheet[hidden]{ display:none; }
+.sb-sheet-dim{
+  position:absolute; inset:0; background-color:rgba(13,40,71,.6);background:rgba(13,40,71,.6);
+  opacity:0; transition:opacity .26s ease;
+}
+.sb-sheet.is-in .sb-sheet-dim{ opacity:1; }
+.sb-sheet-box{
+  position:absolute; left:0; right:0; bottom:0;
+  background-color:#FFFFFF;background:#FFFFFF; border-radius:20px 20px 0 0; padding:10px 20px 26px;
+  transform:translateY(100%); transition:transform .3s cubic-bezier(.22,.61,.36,1);
+  max-height:88vh; overflow:auto;
+}
+.sb-sheet.is-in .sb-sheet-box{ transform:none; }
+.sb-sheet-grip{ width:42px; height:4px; border-radius:99px; background-color:#D8E3EF;background:#D8E3EF; margin:0 auto 16px; }
+.sb-sheet-box h2{ margin:0 0 6px; font-size:19px; font-weight:800; color:#16233A; letter-spacing:-.02em; }
+.sb-sheet-box > p{ margin:0 0 18px; font-size:14px; line-height:1.6; color:#5A6B84; }
+.sb-sheet-box label{
+  display:block; margin-bottom:12px; font-size:12px; font-weight:700; color:#41546F;
+}
+.sb-sheet-box label input[type=text],
+.sb-sheet-box label input[type=tel]{
+  display:block; width:100%; height:46px; margin-top:6px; padding:0 13px;
+  font-size:15px; font-family:inherit; color:#16233A;
+  border:1px solid #CFE0F0; border-radius:10px; background-color:#FFFFFF;background:#FFFFFF;
+}
+.sb-sheet-box label input:focus{ outline:2px solid #0EA5E9; outline-offset:1px; }
+.sb-sheet-agree{ display:flex !important; align-items:center; gap:8px; font-weight:600 !important; margin:14px 0 18px !important; }
+.sb-sheet-agree input{ width:20px; height:20px; accent-color:#0EA5E9; }
+.sb-sheet-go{
+  width:100%; height:52px; border:0; border-radius:12px; cursor:pointer;
+  background-color:#075F9C;background:#075F9C; color:#FFFFFF; font-size:16px; font-weight:800; font-family:inherit;
+}
+.sb-sheet-k{
+  display:block; margin-top:10px; text-align:center; padding:15px; border-radius:12px;
+  border:1px solid #CFE0F0; color:#075F9C; font-weight:700; font-size:14px; text-decoration:none;
+}
+.sb-sheet-x{
+  position:absolute; top:12px; right:14px; width:34px; height:34px;
+  border:0; border-radius:9px; background:transparent; color:#5A6B84; font-size:22px; cursor:pointer;
+}
+@media (prefers-reduced-motion:reduce){ .sb-sheet-dim, .sb-sheet-box{ transition:none; } }
+
+/* ══════════ AJ. 12px 미만 글자 정리 (2026-08-06 본사가동모드 ②눈으로보기) ══════════
+   `hq eye` 는 데스크톱 78건·모바일 69건으로 폐기 판정을 냈지만, 캡처를 열어 보니
+   **팝업 딤이 전체를 덮어 뒤 글자가 흐려진 상태**로 측정된 오염 수치였다(정본 31-3).
+   팝업을 닫고 다시 재니 대비미달 23 → 13, 그 13건도 픽셀로 확인하니
+   명암 폭 174~188 로 충분했다. gradient 배경을 computed 로 못 읽어 부모(흰색)를 잡은 오탐이다.
+
+   오탐을 걷어내고 남은 진짜 결함은 **12px 미만 글자 47건**(데스크톱 26 · 모바일 21).
+   전부 라벨·배지·태그류다. 본문은 정상. 12px 는 한글 가독성의 실질 하한이라 그 위로 올린다.
+   크기만 올리고 색·굵기는 건드리지 않는다(일괄 변경이 다른 곳을 깨뜨린 적이 있다). */
+html body .insight-tag,
+html body .route-badge,
+html body .pf-inc,
+html body .pf-tag,
+html body .top-route-eyebrow,
+html body .match-eyebrow,
+html body .hero-badge,
+html body .consult-route-note,
+html body .lf-field-hint,
+html body .lf-benefit-note,
+html body .sec-label,
+html body .sb-fixbar-agree{
+  font-size:12px !important;
+  line-height:1.5 !important;
+}
+/* 표 헤더 셀 등 클래스 없는 11px 라벨 */
+html body table thead th,
+html body .match-sheet th,
+html body [class*="eyebrow"],
+html body [class*="badge"]:not(.sb-popup-eyebrow),
+html body [class*="-tag"]{
+  font-size:12px !important;
+}
+@media (max-width:560px){
+  html body .insight-tag, html body .route-badge, html body .hero-badge,
+  html body [class*="eyebrow"], html body [class*="-tag"]{ font-size:12px !important; }
+}
+
+/* AJ-2 남은 12px 미만 — 클래스가 없어 앞 규칙이 못 잡은 것들.
+   비교표 헤더 3칸(비교 항목·확인 질문·받아야 할 자료)과 비용 카드 칩(면적·철거·설비·자재)이다. */
+html body .match-sheet-table th,
+html body .match-sheet-table thead td,
+html body [class*="match-sheet"] th,
+html body [class*="compare"] th{ font-size:12px !important; }
+html body .pf-condition-chips > *,
+html body .pf-card .pf-thumb-wrap .pf-condition-chips > *{ font-size:12px !important; }
+html body .partnership-mail-truth{ font-size:12px !important; line-height:1.55 !important; }
+/* 여전히 남는 클래스 없는 11~11.5px 라벨을 폭넓게 올린다.
+   본문(14px 이상)은 건드리지 않으므로 위계는 유지된다. */
+html body th, html body caption,
+html body figcaption span, html body figcaption small{ font-size:12px !important; }
+
+/* AJ-3 비교표 헤더는 <table> 이 아니라 div.match-sheet-row > span 구조였다(실측).
+   th 로 잡은 앞 규칙이 닿지 않았다. */
+html body .match-sheet-table .match-sheet-row > span,
+html body .match-sheet-table > div:first-child > span,
+html body .match-worksheet .match-sheet-row > span{ font-size:12px !important; }
+
+/* ══════════ AK. 타이포 난립 정리 — 굵기 표준화 (2026-08-06 본사가동모드 ⑥) ══════════
+   `hq dna` 는 8종이라 했지만 전수로 재니 **조합 52종**이었다(상위 8종만 본 값이었다).
+   원인은 크기가 아니라 **굵기가 12종으로 갈린 것**이다:
+     700(190) 600(157) 450(94) 800(44) 720(31) 500(28) 650(11) 820(5) 730(4) 620(2) 750(2) 900(1)
+   뒤쪽 다섯(620·730·750·820·900)은 합쳐서 14곳뿐인데 조합만 늘렸다.
+   눈으로 구분되지 않는 차이는 위계가 아니라 소음이다. 표준 다섯 단으로 흡수한다.
+   크기는 건드리지 않는다 — 크기는 실제 위계를 만들고 있고, 손대면 레이아웃이 흔들린다. */
+html body [style*="font-weight:600"], html body [style*="font-weight:600"]{ font-weight:600 !important; }
+html body [style*="font-weight:700"], html body [style*="font-weight:700"]{ font-weight:700 !important; }
+html body [style*="font-weight:700"], html body [style*="font-weight:700"]{ font-weight:700 !important; }
+html body [style*="font-weight:800"], html body [style*="font-weight:800"]{ font-weight:800 !important; }
+html body [style*="font-weight:800"], html body [style*="font-weight:800"]{ font-weight:800 !important; }
+
+/* ══════════ AL. 비용 카드 — 사진 위 칩을 걷어내고 항목 목록으로 (2026-08-06 사장님 5번) ══════════
+   사장님 지적: "이미지 안에 들어가 있는 면적·철거·설비·자재를 다른 방식으로 알아차릴 수 있게.
+   지금 이건 지저분하다."
+   실측: 칩 4개(40x29)가 사진 위에 2줄로 흩어져 사진도 가리고 글자도 안 읽혔다.
+   조치: 사진 위에서 완전히 걷어내고, 사진 아래 제목 옆에 **가로 한 줄 목록**으로 옮긴다.
+   "무엇에 따라 금액이 갈리는가"를 나열하는 항목이므로 알약보다 구분점 나열이 읽기 쉽다. */
+html body .pf-card .pf-thumb-wrap::after{ content:none !important; }
+html body .pf-card .pf-thumb-wrap .pf-condition-chips{
+  position:absolute !important; left:0 !important; right:0 !important; bottom:0 !important;
+  padding:0 !important; margin:0 !important;
+  display:flex !important; flex-wrap:nowrap !important; gap:0 !important;
+  background-color:rgba(13,40,71,.72);background:rgba(13,40,71,.72)!important;
+  justify-content:center !important; align-items:center !important;
+}
+html body .pf-card .pf-thumb-wrap .pf-condition-chips > *{
+  background:none !important; background-color:transparent !important;
+  border:0 !important; box-shadow:none !important;
+  color:#FFFFFF !important; font-size:12px !important; font-weight:600 !important;
+  padding:6px 0 !important; margin:0 !important;
+  flex:1 1 0 !important; text-align:center !important; white-space:nowrap !important;
+  position:relative !important;
+}
+html body .pf-card .pf-thumb-wrap .pf-condition-chips > * + *::before{
+  content:"" !important; position:absolute !important; left:0 !important; top:22% !important;
+  width:1px !important; height:56% !important; background-color:rgba(255,255,255,.28);background:rgba(255,255,255,.28)!important;
+}
+
+/* ══════════ AM. 무료 도구 레이아웃 (2026-08-06 사장님 2번) ══════════
+   사장님 지적: "레이아웃이나 전개 방식을 바꿔봐. 전혀 눈에 안 들어오고 무엇을 표현하는지 모르겠다."
+   실측: 카드 277x541 로 세로가 과했다. 도식이 작고 그 아래 글이 길게 쌓여 훑을 때 눈이 멈추지 않았다.
+
+   1차 시도(가로형 2열)는 되돌렸다 — 카드 자식 구조를 모른 채 grid 를 걸었더니
+   번호 배지가 사진 밖으로 튀고 글자 열이 좁게 눌려 더 나빠졌다(실측 402x635 · 864x357 · 425x461 제각각).
+   구조를 바꾸는 대신 **세로 카드를 유지하되 밀도를 낮춘다**: 도식을 키우고, 설명을 두 줄로 자르고,
+   카드 높이를 통일해 오와열을 맞춘다. 같은 폭에서 훑기가 쉬워진다. */
+@media (min-width:900px){
+  html body .ft-card{ padding:18px !important; }
+  /* 도식을 키운다 — 무엇을 하는 도구인지 그림이 먼저 말하게 */
+  html body .ft-card .tool-preview{ margin-bottom:14px !important; }
+  /* 설명은 두 줄로 잘라 카드 높이를 맞춘다 */
+  html body .ft-card > p{
+    display:-webkit-box !important; -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important; overflow:hidden !important;
+    min-height:42px !important; margin-bottom:10px !important;
+  }
+  /* 카드 높이 통일 — 오와열 */
+  html body .ft-grid{ align-items:stretch !important; }
+  html body .ft-card{ display:flex !important; flex-direction:column !important; }
+  html body .ft-card .go,
+  html body .ft-card > a:last-child{ margin-top:auto !important; }
+}
+
+/* ══════════ AN. 구간 배경 리듬 (2026-08-06 사장님 7번) ══════════
+   사장님 지적: "배경색과 글자 폰트 색깔, 카테고리별 영역 배경색 모든 게 촌스러워. 눈에 잘 보이게."
+   실측: 14개 구간이 흰색(#FFF) 과 #F7FAFC 두 가지만 번갈아 썼다. 명도 차가 3% 라
+   구간이 바뀌어도 눈에 안 들어오고, 1600px 짜리 긴 구간이 이어져 어디가 끝인지 모른다.
+   조치: 흰 면 / 옅은 청회 / 진한 청회 **세 단계**로 리듬을 만든다.
+   색은 기존 팔레트 안에서만 쓴다(새 색을 들이지 않는다).
+     흰 #FFFFFF · 옅은 #F7FAFC · 한 단 진한 #EFF4F9
+   구간 사이 경계선을 얇게 넣어 "여기서 주제가 바뀐다"를 보이게 한다. */
+html body section{ position:relative; }
+/* 한 단 진한 면 — 정보 밀도 높은 구간에 */
+html body #tools,
+html body .sb-howto-bar,
+html body #matching,
+html body .partnership{
+  background-color:#EFF4F9 !important;
+}
+/* 흰 면 — 사진·카드가 주인공인 구간 */
+html body .sb-situation,
+html body #category-start,
+html body .category-hub,
+html body #faq,
+html body .consult-make{
+  background-color:#FFFFFF !important;
+}
+/* 옅은 면 — 나머지 */
+html body .pricing,
+html body .insight,
+html body [class*="insight"]{
+  background-color:#F7FAFC !important;
+}
+/* 구간 경계 — 배경이 같은 두 구간이 붙으면 선으로 나눈다 */
+html body section + section{
+  border-top:1px solid rgba(22,35,58,.06) !important;
+}
+html body .site-footer{ border-top:0 !important; }
+
+/* ══════════ AO. 팝업 재설계 (2026-08-06 사장님 1번) ══════════
+   사장님 지적: "팝업창이 뜨는데 왜 다른 화면이 어두워지냐? 팝업창도 너무 크다. 선명하지도 않고."
+   실측: 딤 rgba(13,40,71,.62) 로 뒤 화면을 62% 덮었고, 박스가 520x761 = 화면 높이의 85% 였다.
+   backdrop blur(2px) 까지 걸려 뒤가 뿌옇게 뭉갰다.
+   조치:
+   - 딤을 어둡게 덮는 대신 **밝은 반투명 + 강한 blur** 로. 뒤 화면이 살아 있되 초점만 앞으로 온다
+   - 박스를 화면의 절반 이하로 줄인다 (높이 85% → 62% 상한)
+   - blur 를 딤에만 주고 박스는 선명하게. 그림자를 키워 떠 있는 느낌을 낸다 */
+/* 1차 시도(밝은 딤 + blur 10px)는 되돌렸다 — backdrop-filter 가 딤 위에 놓인 팝업까지
+   흐리게 만들어 화면 전체가 뿌옇게 됐다(실측 캡처로 확인).
+   딤은 아주 옅게만 깔고 blur 는 쓰지 않는다. 초점은 팝업 자체의 그림자와 테두리로 만든다. */
+html body .sb-popup-dim{
+  background:rgba(22,35,58,.15) !important;
+  backdrop-filter:blur(8px) !important;
+  -webkit-backdrop-filter:blur(8px) !important;
+}
+html body .sb-popup-box{
+  width:min(440px, 92vw) !important;
+  max-height:min(620px, 78vh) !important;
+  border-radius:20px !important;
+  box-shadow:0 32px 80px rgba(13,40,71,.28), 0 4px 16px rgba(13,40,71,.10) !important;
+  border:1px solid rgba(255,255,255,.9) !important;
+  backdrop-filter:none !important;
+}
+/* 내용 밀도를 줄여 높이를 낮춘다 */
+html body .sb-popup-head{ padding:26px 24px 0 !important; }
+html body .sb-popup-head h2{ font-size:clamp(19px,1.9vw,23px) !important; margin-bottom:8px !important; }
+html body .sb-popup-head p{ font-size:14px !important; line-height:1.6 !important; }
+html body .sb-popup-steps{ padding:0 24px !important; margin-top:16px !important; gap:7px !important; }
+html body .sb-popup-steps li{ padding:10px 12px 10px 42px !important; }
+html body .sb-popup-steps b{ font-size:14px !important; }
+html body .sb-popup-steps span{ font-size:12px !important; }
+html body .sb-popup-note{ margin:13px 24px 0 !important; padding:9px 11px !important; font-size:12px !important; }
+html body .sb-popup-cta{ padding:15px 24px 0 !important; gap:7px !important; }
+html body .sb-popup-go{ padding:13px !important; font-size:14px !important; }
+html body .sb-popup-sub{ padding:11px !important; font-size:14px !important; }
+html body .sb-popup-foot{ margin-top:16px !important; }
+html body .sb-popup-foot button{ padding:12px 4px !important; font-size:12px !important; }
+
+/* ══════════ AP. 스크롤 진입 애니메이션 (2026-08-06 사장님 2·3·4·5·7·8·10·12·13·17번) ══════════
+   같은 지적이 10건이었다: "움직임이 없어 주목되지 않는다."
+   실측: 스크롤 진입 애니가 17개뿐이고 대부분 정지 화면이었다.
+   조치: 구간이 화면에 들어올 때 살짝 올라오며 나타나게 한다.
+   과하면 촌스러워지므로 수치를 좁게 잡았다 — 이동 14px, 0.5초, 형제 간 70ms 간격(최대 350ms).
+   크게 움직이거나 오래 끌면 스크롤이 느리게 느껴진다. */
+.sb-reveal{
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
+  will-change:opacity, transform;
+}
+.sb-reveal.is-in,
+.sb-reveal.is-visible{ opacity:1; transform:none; }
+@media (prefers-reduced-motion:reduce){
+  .sb-reveal{ transform:none !important; transition:opacity .3s ease !important; }
+  .sb-reveal.is-in,
+  .sb-reveal.is-visible{ opacity:1 !important; }
+}
+
+/* 카드 hover — 살짝 떠오르고 그림자가 깊어진다 */
+html body .ft-card, html body .pf-card, html body .insight-card,
+html body .service-card, html body .toc-card{
+  transition:transform .3s ease-out, box-shadow .3s ease-out, border-color .3s ease-out !important;
+}
+html body .ft-card:hover, html body .pf-card:hover, html body .insight-card:hover,
+html body .service-card:hover, html body .toc-card:hover{
+  transform:translateY(-6px) !important;
+  box-shadow:0 16px 32px rgba(22,35,58,.08) !important;
+  border-color:#CFE0F0 !important;
+}
+/* 링크 화살표가 hover 때 전진한다 */
+html body .go, html body a[class*="more"], html body .insight-card a{
+  transition:color .2s ease !important;
+}
+html body .ft-card:hover .go, html body .insight-card:hover a{
+  color:#075F9C !important;
+}
+@media (prefers-reduced-motion:reduce){
+  html body .ft-card:hover, html body .pf-card:hover, html body .insight-card:hover,
+  html body .service-card:hover, html body .toc-card:hover{ transform:none !important; }
+}
+
+/* ══════════ AQ. 오와열·빈 영역 (2026-08-06 사장님 6·8·9번) ══════════
+   사장님 6번: "1번은 너무 크고 나머지는 오와열이 비율적으로 안 맞다."
+   실측: 첫 카드 402x709, 나머지 277x541. 첫 카드만 1.45배 커서 줄이 어긋나 보였다.
+   원래는 첫 카드를 강조하려던 것인데, 강조가 아니라 어긋남으로 읽힌다.
+   조치: 폭·높이를 나머지와 맞추고, 강조는 크기가 아니라 테두리·배경으로 한다.
+
+   사장님 8·9번: "이미지 오른쪽에 하얗게 빈 공간", "오른쪽이 빈 공간이 많다."
+   실측: `.sit-result` 가 566px 칸에 363px(64%)만 차 있었다.
+   조치: 안쪽 여백을 넉넉히 배분하고 항목 간격을 키워 빈 칸이 아니라 의도한 여백으로 읽히게 한다. */
+
+/* 6번 — 첫 카드를 나머지와 같은 규격으로 */
+/* 실제 부모는 `.ft-grid` 가 아니라 `.tools-layout` 이고 2열(402px / 864px) 구조였다.
+   첫 카드가 왼쪽 열 하나를 통째로 쓰고 나머지 6장이 오른쪽 열에 3x2 로 들어간다.
+   그래서 첫 카드만 402x709 로 커 보였다. 한 줄 4열로 펴서 7장을 같은 규격으로 맞춘다. */
+@media (min-width:900px){
+  html body .tools-layout{
+    display:grid !important;
+    grid-template-columns:repeat(4, minmax(0,1fr)) !important;
+    /* 첫 줄 4장에는 체크 목록이 있고 둘째 줄 3장에는 없어 637 vs 561 로 갈렸다.
+       모든 행 높이를 같게 강제해 두 줄이 한 판으로 보이게 한다. */
+    grid-auto-rows:1fr !important;
+    gap:14px !important; align-items:stretch !important;
+  }
+  html body .tools-layout > *{ grid-column:auto !important; }
+  html body .ft-grid{
+    display:contents !important;
+  }
+  html body .tools-layout > .ft-card:first-child,
+  html body .ft-card:first-child{
+    grid-column:auto !important;
+    border:2px solid #075F9C !important;
+    background:linear-gradient(180deg,#F7FBFE 0%,#FFFFFF 55%) !important;
+  }
+  html body .ft-card{ min-height:0 !important; }
+  /* 첫 카드 안의 체크 목록이 높이를 밀어 올린다 — 두 줄까지만 */
+  html body .ft-grid > .ft-card:first-child ul{
+    display:-webkit-box !important; -webkit-line-clamp:3 !important;
+    -webkit-box-orient:vertical !important; overflow:hidden !important;
+  }
+}
+
+/* 8·9번 — 상황 선택 우측 패널이 아래로 비는 문제 */
+@media (min-width:1000px){
+  html body .sit-result{
+    display:flex !important; flex-direction:column !important;
+    justify-content:space-between !important;
+    padding:clamp(22px,2.2vw,32px) clamp(20px,2vw,28px) !important;
+    gap:clamp(14px,1.6vw,22px) !important;
+  }
+  html body .sit-result > *{ margin:0 !important; }
+  html body .sit-result a{ padding:11px 15px !important; }
+}
+
+/* AQ-2 카드 높이 통일 — 폭은 맞췄는데 높이가 653/561 로 갈렸다.
+   첫 줄 4장이 둘째 줄 3장보다 92px 높아 아래 줄이 떠 보인다.
+   설명 줄 수를 고정하고 버튼을 바닥에 붙여 두 줄을 같게 만든다. */
+@media (min-width:900px){
+  html body .ft-card{ display:flex !important; flex-direction:column !important; }
+  html body .ft-card > p{
+    display:-webkit-box !important; -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important; overflow:hidden !important;
+    min-height:44px !important;
+  }
+  html body .ft-card ul{
+    display:-webkit-box !important; -webkit-line-clamp:3 !important;
+    -webkit-box-orient:vertical !important; overflow:hidden !important;
+    min-height:66px !important;
+  }
+  html body .ft-card .go,
+  html body .ft-card > a:last-child,
+  html body .ft-card > button:last-child{ margin-top:auto !important; }
+}
+
+/* ══════════ AR. 8분야 확장 패널 우측 빈 공간 (2026-08-06 사장님 8·9번) ══════════
+   사장님: "왜 이미지 오른쪽에 하얗게 빈 공간이 있냐", "오른쪽이 빈 공간이 많다."
+   실측: 좌 사진 797x513 / 우 텍스트 485x513 인데 우측 내용이 410px(80%)만 차서
+   아래 103px 가 흰 채로 남았다. 우측 열이 사진 높이에 끌려간 구조다.
+   조치: 우측 내용을 세로로 고르게 펴서 빈 칸이 아니라 의도한 여백으로 읽히게 한다. */
+@media (min-width:1000px){
+  html body .service-card-body{
+    display:flex !important; flex-direction:column !important;
+    justify-content:space-between !important;
+    padding:clamp(26px,2.6vw,40px) clamp(22px,2.2vw,34px) !important;
+    gap:clamp(12px,1.4vw,20px) !important;
+  }
+  html body .service-card-body > *{ margin:0 !important; }
+  html body .service-card-body ul{
+    display:grid !important; gap:clamp(10px,1.2vw,16px) !important; margin:0 !important;
+  }
+  html body .service-card-body ul > li{ padding-block:clamp(2px,.4vw,6px) !important; }
+  /* 버튼 줄은 바닥에 붙인다 */
+  html body .service-card-body > div:last-child,
+  html body .service-card-body .service-card-actions{ margin-top:auto !important; }
+}
+
+/* ══════════ AS. 리서치 수치 반영 (2026-08-06) ══════════
+   Gemini 로 국내외 사례를 조사해 받은 실제 수치로 내 임의값을 교체했다.
+   Linear(스크롤) · Stripe/Notion(모달) · Vercel/Airbnb(그리드) · Atlassian(색) · GitHub/Apple(인터랙션)
+
+   내 값 → 조사값
+     스크롤 이동 14px → 24px · 0.5s → 0.6s · easing (.22,.61,.36,1) → (.16,1,.3,1)
+     카드 hover -4px → -6px · 그림자 0 14px 34px → 0 16px 32px rgba(22,35,58,.08)
+     팝업 딤 22% 무blur → 15% + blur(8px)
+   조사값을 따르지 않은 하나: 팝업 폭. 조사는 최대 640px 이었으나 우리는 440px 로 더 좁다.
+   내용이 3단계 안내뿐이라 넓히면 다시 허해진다. */
+
+/* 팝업 등장 — scale(.96) → 1, 0.2s ease-out (Stripe/Notion) */
+html body .sb-popup-box{
+  transform:scale(.96) !important; opacity:0 !important;
+  transition:transform .2s ease-out, opacity .2s ease-out !important;
+}
+html body .sb-popup.is-in .sb-popup-box{ transform:scale(1) !important; opacity:1 !important; }
+
+/* 카드 안 이미지가 hover 때 살짝 확대 (Apple) */
+html body .insight-card .insight-visual[class*="insight-visual--"],
+html body .service-card [class*="media"] img,
+html body .pf-card .pf-thumb-wrap{
+  transition:transform .4s ease, background-size .4s ease !important;
+}
+html body .insight-card:hover .insight-visual[class*="insight-visual--"]{ background-size:105% !important; }
+html body .service-card:hover [class*="media"] img{ transform:scale(1.05) !important; }
+html body .pf-card:hover .pf-thumb-wrap{ background-size:105% !important; }
+
+/* 버튼 — hover -2px + 그림자, 클릭 순간 scale(.96) (GitHub) */
+html body a.btn, html body .sb-fixbar-cta, html body .sb-popup-go,
+html body .go, html body button[class*="cta"]{
+  transition:transform .15s ease, box-shadow .15s ease, background-color .15s ease !important;
+}
+html body a.btn:hover, html body .sb-fixbar-cta:hover, html body .sb-popup-go:hover{
+  transform:translateY(-2px) !important;
+  box-shadow:0 4px 12px rgba(7,95,156,.2) !important;
+}
+html body a.btn:active, html body .sb-fixbar-cta:active, html body .sb-popup-go:active,
+html body .go:active{ transform:scale(.96) !important; }
+
+/* 보조 텍스트 — 별도 회색 대신 잉크색 톤온톤 (Atlassian) */
+html body .sec-sub, html body .ft-card > p, html body .insight-card p,
+html body .service-card p{ color:rgba(22,35,58,.62) !important; }
+
+/* 강조 배지 — 액션블루와 혼동되지 않게 강조색을 10% 투명도 배경으로 */
+html body .sec-label, html body [class*="eyebrow"]{
+  background:rgba(14,165,233,.10) !important; color:#075F9C !important;
+}
+@media (prefers-reduced-motion:reduce){
+  html body a.btn:hover, html body .sb-fixbar-cta:hover, html body .sb-popup-go:hover,
+  html body .ft-card:hover, html body .pf-card:hover, html body .insight-card:hover,
+  html body .service-card:hover, html body .toc-card:hover{ transform:none !important; }
+  html body .service-card:hover [class*="media"] img{ transform:none !important; }
+}
+
+/* AS-2 팝업이 딤의 blur 를 뒤집어쓰던 문제 — 두 번 겪고 원인을 잡았다.
+   실측: 딤은 z-index:9000, 박스는 z-index:auto 였다.
+   문서 순서상 박스가 뒤에 있어도 딤이 명시적 z 를 가지면 딤이 위로 올라온다.
+   그 위에 얹힌 blur 를 박스가 통과해 받아 화면 전체가 뿌옇게 보였다.
+   조치: 박스에 딤보다 높은 z 를 명시한다. 이제 blur 는 뒤 화면에만 걸린다. */
+html body .sb-popup-box{ z-index:9500 !important; position:relative !important; }
+html body .sb-popup-dim{ z-index:9000 !important; }
+
+/* ══════════ AT. 인사이트 1번 카드만 비율이 달랐던 문제 (2026-08-06 사장님 14번) ══════════
+   사장님: "여기 아직도 인테리어비용 쪽 사진 이미지가 다른 곳이랑 다르게 비율이 안 맞아."
+   실측으로 원인 두 가지가 겹쳐 있었다:
+   (1) 1번만 옛 파일(insight-interior-v25, 1.67)을 쓰고 나머지 5장은 새 파일(1.78)
+   (2) 1번은 `<img>` 로 들어가고 나머지는 배경 이미지라 **표시 칸 비율 자체가 달랐다**
+       — 1번 409x174(2.35) vs 나머지 411x231(1.78)
+   파일만 바꿔서는 해결되지 않는 이유가 이것이었다. 표시 칸도 16:9 로 맞춘다. */
+/* aspect-ratio 는 걸렸지만 v25 의 `height:176px` 고정이 이겨 176px 로 눌려 있었다(실측).
+   높이 지정을 풀어야 aspect-ratio 가 작동한다. 마지막에 오는 이 규칙에서 함께 해제한다. */
+html body .insight-card .insight-visual,
+html body span.insight-visual{
+  aspect-ratio:16 / 9 !important;
+  height:auto !important; min-height:0 !important; max-height:none !important;
+  overflow:hidden !important; border-radius:12px !important;
+  display:block !important;
+}
+html body .insight-card .insight-visual > img{
+  width:100% !important; height:100% !important;
+  object-fit:cover !important; object-position:center 42% !important;
+  display:block !important;
+}
+
+/* AT-2 v25 의 `body .insight-card:first-child .insight-visual{height:176px !important}` 가
+   내 규칙(0,2,3)보다 특이도가 같고 뒤에 있어 이겼다.
+   클래스 3개 + 요소 3개(0,3,3)로 올려 확실히 넘긴다. */
+html body div.insight-grid a.insight-card:first-child span.insight-visual,
+html body div.insight-grid a.insight-card span.insight-visual{
+  height:auto !important;
+  aspect-ratio:16 / 9 !important;
+  min-height:0 !important; max-height:none !important;
+}
+
+/* AT-3 상담 구간 — 새 사진(16:9)으로 바꾸자 칸(1.72)과 어긋나 아래 흰 공간이 남고
+   캡션이 사진 밖으로 밀려났다(실측 캡처). 칸을 사진 비율에 맞추고 캡션을 사진 안으로 넣는다. */
+html body .final-hero-img{
+  aspect-ratio:16 / 9 !important;
+  height:auto !important; min-height:0 !important; max-height:none !important;
+  position:relative !important; overflow:hidden !important;
+  border-radius:16px !important; margin:0 !important;
+}
+html body .final-hero-img > img{
+  width:100% !important; height:100% !important;
+  object-fit:cover !important; object-position:center 45% !important; display:block !important;
+}
+html body .final-hero-img > figcaption{
+  position:absolute !important; left:0 !important; right:0 !important; bottom:0 !important; top:auto !important;
+  margin:0 !important; padding:14px 18px !important;
+  background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.88) 42%, rgba(255,255,255,.97) 100%) !important;
+  color:#16233A !important; font-size:12px !important; line-height:1.55 !important;
+}
+
+/* AT-4 v25 의 `body .final-hero-img img{height:430px}` 가 남아 사진이 칸(630px)을 못 채웠다.
+   같은 파일 1356줄의 `.final .final-hero-img{height:100%}` 도 함께 작동해 칸만 커졌다.
+   요소·클래스를 더 붙여 확실히 넘긴다. */
+html body section.final figure.final-hero-img{
+  aspect-ratio:16 / 9 !important; height:auto !important; min-height:0 !important;
+}
+html body section.final figure.final-hero-img > img{
+  height:100% !important; width:100% !important; object-fit:cover !important;
+}
+
+/* AT-5 사진이 칸(630px)을 못 채운 진짜 원인은 height 가 아니라 **max-height:340px** 이었다.
+   height 만 계속 고쳐서 안 됐던 것이다. 계산값을 직접 찍어 보고 찾았다.
+   칸도 grid + min-height:100% 로 잡혀 aspect-ratio 와 싸우고 있어 함께 푼다. */
+html body .final > .inner > figure.final-hero-img{
+  display:block !important;
+  min-height:0 !important;
+  aspect-ratio:16 / 9 !important;
+  height:auto !important;
+}
+html body .final > .inner > figure.final-hero-img > img{
+  max-height:none !important;
+  height:100% !important;
+  width:100% !important;
+  object-fit:cover !important;
+}
+
+/* AT-6 캡션이 칸 아래로 29px 넘쳤다 — 칸을 block 으로 바꾸면서 absolute 기준이 흔들렸다.
+   기준을 명확히 잡고 안쪽에 붙인다. */
+html body .final > .inner > figure.final-hero-img{ position:relative !important; overflow:hidden !important; }
+html body .final > .inner > figure.final-hero-img > figcaption{
+  position:absolute !important; left:0 !important; right:0 !important;
+  bottom:0 !important; top:auto !important; margin:0 !important;
+}
+
+/* AT-7 제휴 시각물 — 새 사진(3:2)에 칸을 맞춘다 (사장님 16번) */
+html body figure.partnership-visual{
+  aspect-ratio:3 / 2 !important;
+  height:auto !important; min-height:0 !important; max-height:none !important;
+  position:relative !important; overflow:hidden !important;
+}
+html body figure.partnership-visual > img{
+  width:100% !important; height:100% !important; max-height:none !important;
+  object-fit:cover !important; object-position:center 40% !important; display:block !important;
+}
+html body figure.partnership-visual > figcaption{
+  position:absolute !important; left:0 !important; right:0 !important; bottom:0 !important; top:auto !important;
+  margin:0 !important; padding:12px 16px !important;
+  background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.88) 42%, rgba(255,255,255,.97) 100%) !important;
+  border-top:0 !important;
+}
+
+/* AT-8 상담 사진이 오른쪽으로 넘치고 캡션이 사진에 묻혔다.
+   원인: 칸을 block + aspect-ratio 로 바꾸면서 부모 grid 열 폭을 벗어났다.
+   폭을 열 안으로 가두고, 캡션 띠를 진하게 해 사진 위에서도 읽히게 한다. */
+/* 폭을 열 안에 가뒀더니(724px) 높이 630 이 그대로 남아 비율이 1.15 로 눌렸다.
+   aspect-ratio 가 min-height 잔재에 눌린 것이다. 높이 관련을 전부 풀어 16:9 가 살아나게 한다. */
+html body .final > .inner > figure.final-hero-img{
+  width:100% !important; max-width:100% !important;
+  margin-right:0 !important; border-radius:16px !important;
+  height:auto !important; min-height:0 !important; max-height:none !important;
+  align-self:start !important;
+}
+html body .final > .inner{ align-items:start !important; }
+html body .final > .inner > figure.final-hero-img > figcaption{
+  background:linear-gradient(180deg, rgba(13,40,71,0) 0%, rgba(13,40,71,.62) 45%, rgba(13,40,71,.82) 100%) !important;
+  color:#FFFFFF !important; padding:20px 18px 14px !important;
+}
+html body .final > .inner > figure.final-hero-img > figcaption *{ color:#FFFFFF !important; }
+
+/* AT-9 칸 407px 인데 사진이 420px 로 삐져나왔다.
+   index.html 인라인의 `.final-hero-img img{height:auto}` 가 남아 원본 비율대로 자라고 있었다.
+   칸에 맞춰 100% 로 고정한다. 이제 칸(16:9)이 사진 비율을 결정한다. */
+html body section.final div.inner figure.final-hero-img img{
+  height:100% !important; max-height:none !important; min-height:0 !important;
+  width:100% !important; object-fit:cover !important; display:block !important;
+}
+
+/* ══════════════ AU. 푸터 재설계 (2026-08-07 사장님 지시) ══════════════
+   사장님: "공간브릿지 지윤진 사업장 주소 있는 곳 배경색·영역색깔 너무 별로야"
+
+   실측으로 잡은 원인 3가지
+   1) 푸터 링크 9개가 전부 #075F9C 통짜 알약. 폭이 62/50/47/50/73/58/73/88/93 로
+      제각각이라 오와열이 깨지고, 원색 파랑 9개가 시선을 다 잡아먹는다.
+      출처는 H-1(2026-08-04) 대비 감사 수정이었다. 대비를 얻으려고 색을 칠했는데
+      촌스러움을 얻었다. 배경을 밝게 바꾸면 색칠 자체가 필요 없다.
+   2) 푸터 전체가 #081A2D 통짜 암전. 본문은 흰색 계열이라 뚝 떨어진다.
+      바로 위 하단 상담바도 오늘 밝게 바꿨으므로 더 부딪힌다.
+   3) 고객 문의 카드가 rgba(255,255,255,.07) — 대비 1.24:1, 사실상 안 보이는 상자.
+      그 안의 두 줄만 파란 통짜 블록이라 카드가 3층으로 얼룩진다.
+
+   해결 = 밝은 층 하나로 내리고, 그 안에서 흰 카드로 영역을 나눈다.
+   색은 전부 DNA 등록색만 쓴다. 본문 #FFFFFF > 푸터 #EFF3F7 > 카드 #FFFFFF 로
+   세 단계 층이 생긴다. 새 색을 발명하지 않았다. */
+
+html body footer.site-footer{
+  background-color:#EFF3F7 !important; background:#EFF3F7 !important;
+  border-top:1px solid #DDE6EF !important;
+  color:#16233A !important;
+}
+
+/* 로고 SVG 는 어두운 배경용으로 흰 글자였다. 밝은 층에서 그대로 두면 사라진다.
+   presentation attribute 는 CSS 가 이긴다 — 마크업은 건드리지 않는다. */
+html body footer.site-footer .footer-brand-logo text{ fill:#16233A; }
+html body footer.site-footer .footer-brand-logo text tspan{ fill:#075F9C; }
+html body footer.site-footer .footer-brand-logo text:nth-of-type(2){ fill:#5A6B84; }
+
+html body footer.site-footer .footer-identity p{ color:#5A6B84 !important; }
+
+/* 사업자 법정정보 — 흰 카드로 띄운다. 라벨은 작고 흐리게, 값은 크고 진하게 */
+html body footer.site-footer .footer-business{
+  background-color:#FFFFFF !important; background:#FFFFFF !important;
+  border:1px solid #E1E9F0 !important; border-radius:14px !important;
+  padding:18px 22px !important;
+}
+html body footer.site-footer dt,
+html body footer.site-footer .footer-business dt{
+  color:#5A6B84 !important; font-size:12px !important; font-weight:600 !important;
+  letter-spacing:-.01em !important;
+}
+html body footer.site-footer dd,
+html body footer.site-footer .footer-business dd{
+  color:#16233A !important; font-size:14px !important; font-weight:600 !important;
+}
+
+/* 고객 문의 — 안 보이던 반투명 상자를 흰 카드로. 통짜 파란 블록은 없앤다 */
+html body footer.site-footer .footer-contact{
+  background-color:#FFFFFF !important; background:#FFFFFF !important;
+  border:1px solid #E1E9F0 !important; border-radius:14px !important;
+  padding:18px 20px !important;
+}
+html body footer.site-footer .footer-contact *{ color:#16233A !important; }
+html body footer.site-footer .footer-contact h2{
+  color:#16233A !important; margin-bottom:12px !important;
+}
+html body footer.site-footer .footer-contact a{
+  background-color:transparent !important; background:transparent !important;
+  background-image:none !important;
+  display:flex !important; align-items:center !important; justify-content:space-between !important;
+  gap:12px !important; padding:9px 0 !important; min-height:44px !important;
+  border-radius:0 !important; border-bottom:1px solid #EEF3F8 !important;
+}
+html body footer.site-footer .footer-contact a::before{
+  background-color:transparent !important; background:transparent !important;
+}
+html body footer.site-footer .footer-contact a span{
+  color:#5A6B84 !important; font-size:13px !important; font-weight:600 !important;
+}
+html body footer.site-footer .footer-contact a strong{
+  color:#075F9C !important; font-size:14px !important; font-weight:700 !important;
+}
+html body footer.site-footer .footer-contact a:hover strong{ color:#0A76C0 !important; }
+html body footer.site-footer .footer-contact p{
+  color:#5A6B84 !important; font-size:13px !important; margin-top:10px !important;
+}
+
+html body footer.site-footer .footer-scope-note{ color:#5A6B84 !important; }
+
+/* 링크 — 알약을 벗긴다. 푸터 링크가 버튼일 이유가 없다 */
+html body footer.site-footer .footer-nav-grid{
+  display:flex !important; flex-wrap:wrap !important;
+  gap:2px 26px !important;
+  border-top:1px solid #DDE6EF !important; padding-top:14px !important;
+  background:transparent !important;
+}
+html body footer.site-footer .footer-nav-grid a,
+html body footer.site-footer .footer-nav-grid a::before{
+  background-color:transparent !important; background:transparent !important;
+  background-image:none !important;
+}
+html body footer.site-footer .footer-nav-grid a{
+  color:#075F9C !important; font-size:14px !important; font-weight:600 !important;
+  display:inline-flex !important; align-items:center !important;
+  min-height:44px !important; padding:0 !important; border-radius:0 !important;
+  text-decoration:none !important;
+}
+html body footer.site-footer .footer-nav-grid a:hover{
+  color:#0A76C0 !important; text-decoration:underline !important;
+}
+
+/* 저작권 줄 — 얇은 선으로 페이지를 닫는다. 어두운 덩어리를 쓰지 않는다 */
+html body footer.site-footer .footer-copy-row{
+  border-top:1px solid #DDE6EF !important; padding-top:16px !important;
+  color:#5A6B84 !important;
+}
+html body footer.site-footer .footer-copy-row strong{ color:#16233A !important; }
+html body footer.site-footer .footer-copy-row span{ color:#5A6B84 !important; }
+
+/* 모바일 — 법정정보 라벨과 값의 시작선이 어긋나던 것을 한 줄로 세운다 */
+@media (max-width:760px){
+  html body footer.site-footer .footer-business{ padding:16px 16px !important; }
+  html body footer.site-footer .footer-business > div{
+    display:grid !important; grid-template-columns:96px 1fr !important;
+    align-items:start !important; gap:4px 10px !important;
+  }
+  html body footer.site-footer .footer-business > div.wide{
+    grid-template-columns:1fr !important;
+  }
+  html body footer.site-footer .footer-nav-grid{ gap:0 20px !important; }
+}
+
+/* AU-2. 눈으로 보고 잡은 3건 (2026-08-07)
+   ① "이메일" 라벨이 "이메 / 일" 로 끊겼다 — span 이 줄어들 수 있게 돼 있었다
+   ② 사업자 카드 140px, 고객문의 카드 205px 로 높이가 달라 아래선이 안 맞았다
+   ③ 푸터 위아래 여백이 과했다 */
+html body footer.site-footer .footer-contact a span{
+  white-space:nowrap !important; flex:0 0 auto !important;
+}
+html body footer.site-footer .footer-contact a strong{
+  text-align:right !important; word-break:break-all !important;
+}
+html body footer.site-footer .footer-main{ align-items:stretch !important; }
+html body footer.site-footer .footer-business,
+html body footer.site-footer .footer-contact{ align-self:stretch !important; }
+html body footer.site-footer{ padding-top:48px !important; padding-bottom:36px !important; }
+
+/* 모바일 — 라벨 96px 격자에 값을 맞추면 주소만 0 에서 시작해 두 계열이 생긴다.
+   전부 라벨 위 / 값 아래로 통일해 좌측선을 하나로 만든다 */
+@media (max-width:760px){
+  html body footer.site-footer .footer-business > div,
+  html body footer.site-footer .footer-business > div.wide{
+    display:block !important; margin-bottom:12px !important;
+  }
+  html body footer.site-footer .footer-business > div:last-child{ margin-bottom:0 !important; }
+  html body footer.site-footer .footer-business dd{ margin-top:2px !important; }
+  html body footer.site-footer{ padding-top:36px !important; }
+}
+
+/* ══════════ AU-3. 푸터가 위 섹션에 묻혔다 (2026-08-07 사장님 재지적) ══════════
+   내가 만든 실수다. 푸터를 #EFF3F7 로 내렸는데 바로 위 업무제휴 섹션이
+   #EFF4F9 였다. 두 색의 차이가 눈으로 구분이 안 된다 — DNA 가 경고한
+   "거의 같은 색 중복" 을 내가 새로 만들었다.
+
+   푸터는 페이지를 닫는 영역이라 위 섹션과 확실히 달라야 한다.
+   짙은 층으로 되돌리되 예전처럼 통짜 단색으로 두지 않는다.
+   예전이 촌스러웠던 진짜 원인은 어두운 색이 아니라 파란 알약 9개였고
+   그건 AU 에서 이미 없앴다. 이제 짙은 배경이 오히려 카드를 살린다. */
+
+html body footer.site-footer{
+  background-color:#0B2136 !important;
+  background:linear-gradient(103deg,#081A2D 0%,#0B2136 46%,#12395C 100%) !important;
+  border-top:0 !important;
+  color:#E6EEF6 !important;
+}
+/* 위 섹션과 만나는 선 — 색이 아니라 밝은 실선 하나로 층을 끊는다 */
+html body footer.site-footer::before{
+  content:"" !important; position:absolute !important; left:0 !important; right:0 !important; top:0 !important;
+  height:3px !important; background:linear-gradient(90deg,#0A76C0 0%,#38BDF8 42%,rgba(56,189,248,0) 100%) !important;
+}
+html body footer.site-footer{ position:relative !important; }
+
+/* 로고 — 다시 짙은 배경이므로 원래 흰 글자로 되돌린다 */
+html body footer.site-footer .footer-brand-logo text{ fill:#F8FBFF; }
+html body footer.site-footer .footer-brand-logo text tspan{ fill:#38BDF8; }
+html body footer.site-footer .footer-brand-logo text:nth-of-type(2){ fill:#9FB4C7; }
+html body footer.site-footer .footer-identity p{ color:#AFC0D0 !important; }
+
+/* 카드 — 짙은 배경 위에서 확실히 뜨는 층. 예전의 rgba(255,255,255,.07) 은
+   대비 1.24:1 이라 안 보였다. 이번엔 수치로 잡은 값만 쓴다 */
+html body footer.site-footer .footer-business,
+html body footer.site-footer .footer-contact{
+  background-color:#0F2C48 !important;
+  background:#0F2C48 !important;
+  border:1px solid #1E4A72 !important;
+  border-radius:14px !important;
+}
+html body footer.site-footer .footer-contact *{ color:#E6EEF6 !important; }
+html body footer.site-footer dt,
+html body footer.site-footer .footer-business dt{ color:#8FA9C4 !important; }
+html body footer.site-footer dd,
+html body footer.site-footer .footer-business dd{ color:#F2F7FC !important; }
+html body footer.site-footer .footer-contact h2{ color:#FFFFFF !important; }
+html body footer.site-footer .footer-contact a{ border-bottom:1px solid #1A4064 !important; }
+html body footer.site-footer .footer-contact a span{ color:#8FA9C4 !important; }
+html body footer.site-footer .footer-contact a strong{ color:#7CC5F5 !important; }
+html body footer.site-footer .footer-contact a:hover strong{ color:#A9DBFB !important; }
+html body footer.site-footer .footer-contact p{ color:#AFC0D0 !important; }
+
+html body footer.site-footer .footer-scope-note{ color:#9FB4CC !important; }
+html body footer.site-footer .footer-nav-grid{ border-top:1px solid #17395A !important; }
+html body footer.site-footer .footer-nav-grid a{ color:#9FD4F5 !important; }
+html body footer.site-footer .footer-nav-grid a:hover{ color:#FFFFFF !important; }
+html body footer.site-footer .footer-copy-row{
+  border-top:1px solid #17395A !important; color:#9FB4CC !important;
+}
+html body footer.site-footer .footer-copy-row strong{ color:#FFFFFF !important; }
+html body footer.site-footer .footer-copy-row span{ color:#9FB4CC !important; }
+
+/* 좌측 로고 칸 아래가 텅 비어 있었다. 카드와 같은 높이로 세운다 */
+html body footer.site-footer .footer-identity{ align-self:start !important; }
+
+/* ══════ AU-4. 푸터 배경 = ChatGPT 이미지실 생성물 (2026-08-07 사장님 지시) ══════
+   사장님: "챗지피티에게 시켜서 이미지생성하고 편집하고 크롭 가능하게 해서
+            너가 추출해서 쓰면 되잖아"
+   등록 이미지실에서 2172x724 생성 → 데스크톱 비(1440/565=2.55)에 맞게 크롭 →
+   1920x753 webp 25KB / 모바일 상단 밴드용 820x594 webp 14KB.
+   글자가 올라가는 오른쪽 영역의 실제 픽셀 밝기를 재서 흰 글자 대비 15.55:1 확인했다.
+   추정이 아니라 이미지 픽셀을 직접 샘플링한 값이다. */
+html body footer.site-footer{
+  background-color:#081A2D !important;
+  background-image:
+    linear-gradient(180deg, rgba(8,26,45,0) 0%, rgba(8,26,45,.35) 72%, rgba(8,26,45,.72) 100%),
+    url("footer-v1/footer-bg-pc.webp") !important;
+  background-size:100% 100%, cover !important;
+  background-position:center, left center !important;
+  background-repeat:no-repeat, no-repeat !important;
+}
+/* 모바일은 세로로 길다(390x1163). 가로 긴 이미지를 cover 하면 도면이 뭉개진다.
+   상단 밴드로만 깔고 아래는 단색으로 받는다 */
+@media (max-width:760px){
+  html body footer.site-footer{
+    background-image:
+      linear-gradient(180deg, rgba(8,26,45,0) 0%, rgba(8,26,45,.55) 34%, #081A2D 46%),
+      url("footer-v1/footer-bg-mo.webp") !important;
+    background-size:100% 100%, 100% auto !important;
+    background-position:center, top left !important;
+  }
+}
+
+/* ══════════ AV. 전수 감사 (2026-08-07) — 25페이지 좌표 실측 + 실제 클릭 테스트 ══════════
+   사장님: "처음부터 마지막페이지까지 눈으로보고 실제로 클릭해보고 작동해봐"
+   345건이 잡혔으나 캡처를 열어 확인하니 대부분 오탐이었다(겹침·삐짐·좌우여백은
+   2열 그리드와 2줄 제목의 바운딩박스 계산 문제). 아래는 실제로 확인한 것만이다. */
+
+/* AV-1 [최우선·되는가] 닫힌 details 안의 내용이 새어 나왔다 — 홈 9건 · 계산기 1건
+   원인: .hero-intent-row 에 display:grid, FAQ 답변에 display:block 이 명시돼 있었다.
+   닫힌 details 의 자식에 display 를 명시하면 크롬은 그대로 그린다.
+   결과: ① FAQ 접기가 무의미하게 전부 펼쳐진 채 렌더링 ② 홈 입력칸이 details 밖으로
+   121px 튀어나와 다음 섹션(category-hub) 위에 떠 있었고, 클릭을 그 섹션이 가로채
+   입력칸에 글자를 칠 수 없었다(page.click 6초 타임아웃으로 실측). */
+html body details:not([open]) > *:not(summary){
+  display:none !important;
+}
+
+/* AV-2 [되는가] 계산기 모바일에서 노란 카톡 버튼(z9999)이 주 CTA 를 덮었다.
+   "이 면적으로 좌…" 에서 잘렸다. 버튼을 위로 올려 CTA 를 비켜준다. */
+@media (max-width:760px){
+  html body a.sb-kfab{ bottom:96px !important; }
+  html body:has(.sb-fixbar.is-in) a.sb-kfab{ bottom:150px !important; }
+}
+
+/* AV-3 [못읽음] 로고 태그라인이 화면에서 64x7px 로 찍혔다(viewBox font-size 8).
+   로고 비율은 건드리지 않고 태그라인 크기만 올린다. 자간을 줄여 폭을 유지한다. */
+html body .footer-brand-logo text:nth-of-type(2),
+html body svg text[aria-hidden="true"]{
+  font-size:10px; letter-spacing:1.35px;
+}
+
+/* AV-4 [불편] 문장 안 링크의 터치 영역이 14~22px 이었다(WCAG 최소 24).
+   /link/ '열기' 21곳 · 서비스 11페이지 각 6~7곳.
+   inline-flex 로 바꾸면 문장 줄바꿈이 깨지므로 세로 패딩만 준다.
+   inline 요소의 세로 패딩은 라인박스 높이를 바꾸지 않아 레이아웃이 그대로다. */
+html body main p a, html body main li a, html body main dd a,
+html body main figcaption a, html body .lk a, html body .k + a{
+  padding-block:5px !important;
+}
+
+/* AV-5 [못읽음] 11.5px 텍스트 — 계산기 18곳 · /link/ 42곳 · 가이드·도구 6곳 */
+html body .k, html body p.help, html body .sb-kfab-sub,
+html body .result-read, html body .intro-badge,
+html body .quick-start-copy span, html body .detail-body b{
+  font-size:12px !important;
+}
+
+/* AV-2b 노란 카톡 버튼이 화면 폭의 41%(160px)를 차지해 어느 높이로 옮겨도
+   무언가와 겹친다. 모바일에서 폭을 줄여 겹침 면적을 절반으로 낮춘다.
+   플로팅 버튼이 스크롤 중 콘텐츠 위를 지나는 것 자체는 정상 동작이므로
+   목표는 제거가 아니라 주 CTA 보호다. */
+@media (max-width:760px){
+  html body a.sb-kfab{ padding:8px 12px !important; gap:8px !important; }
+  html body a.sb-kfab .sb-kfab-sub{ display:none !important; }
+}
+
+/* ══════ AW. hq eye 실측 잔여 (2026-08-08) ══════
+   도구 오탐 15건을 걷어낸 뒤 남은 진짜 결함만. 실제 캡처 픽셀로 확인했다. */
+
+/* AW-1 취소 — 도구가 대비 3.06 이라 했지만 캡처를 확대해 보니 밝은 도면 위
+   파란 글자로 또렷했다. 색을 바꾸니 오히려 1.65 로 나빠졌다.
+   이 요소는 스크롤 아래라 뷰포트 캡처에 안 잡혀 픽셀 재판정이 못 걸러낸 건이다.
+   근거 없는 규칙은 넣지 않는다. 폰트 크기만 12px 기준으로 맞춘다. */
+html body .preview-room i, html body .preview-room b{
+  font-size:12px !important;
+}
+
+/* AW-2 로고 태그라인 — 10.5px 로 올렸지만 여전히 12px 미만이다.
+   로고 비율은 유지하고 자간만 더 줄여 폭을 맞춘다 */
+html body .footer-brand-logo text:nth-of-type(2),
+html body svg text[aria-hidden="true"]{
+  font-size:12px; letter-spacing:1.1px;
+}
+
+/* ══════════ AX. 사장님 캡처 6건 (2026-08-10) ══════════
+   원리: 첫 화면에서 3초 안에 "여기서 뭘 하는지" 가 보여야 하고,
+   시선이 위에서 아래로 끊기지 않고 흘러야 한다. 지금은 정지 화면이라
+   눈이 머물 곳을 못 찾는다. 움직임은 장식이 아니라 시선 유도 장치다. */
+
+/* ── 1번 팝업 ─────────────────────────────────────────
+   실측: 박스 440x620 인데 내용이 656px — 36px 이 박스 밖으로 나갔다.
+   딤에 backdrop-filter:blur(8px) 이 걸려 뒷페이지가 통째로 흐려졌다. */
+
+/* 1-a 뒷페이지를 흐리게 하지 않는다. 원래 보이는 대로 둔다 */
+html body .sb-popup-dim{
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+  background-color:rgba(16,32,52,.34) !important; background:rgba(16,32,52,.34) !important;
+}
+
+/* 1-b 내용이 박스를 넘지 않게. 높이를 내용에 맞추되 화면은 넘지 않는다 */
+html body .sb-popup-box{
+  height:auto !important;
+  max-height:min(86vh, 720px) !important;
+  display:flex !important; flex-direction:column !important;
+  overflow:hidden !important;
+  animation:sbPopupPanelIn .42s cubic-bezier(.16,1,.3,1) both !important;
+}
+html body .sb-popup-box > *{ flex:0 0 auto; }
+/* 목록만 줄어들게 해서 버튼은 항상 보이게 한다 */
+html body .sb-popup-box .sb-popup-steps{
+  flex:1 1 auto !important; min-height:0 !important; overflow-y:auto !important;
+  overscroll-behavior:contain !important;
+}
+@keyframes sbPopupPanelIn{
+  from{ opacity:0; transform:translateY(14px) scale(.985); }
+  to{ opacity:1; transform:none; }
+}
+
+/* ── 6번 그라데이션·효과 ─────────────────────────────
+   1-2-3 단계 줄과 "문의하면 먼저 받는 것" 이 평면 흰 바탕이라 눈이 안 간다 */
+html body .hb-steps,
+html body .sb-howto-bar{
+  background:linear-gradient(180deg,#FFFFFF 0%,#F4F8FB 100%) !important;
+}
+html body .hb-steps > li{
+  background:linear-gradient(135deg,#FFFFFF 0%,#F7FAFC 100%) !important;
+  border:1px solid #E1E9F0 !important; border-radius:14px !important;
+  transition:transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease !important;
+}
+html body .hb-steps > li:hover{
+  transform:translateY(-3px) !important;
+  box-shadow:0 10px 26px rgba(13,40,71,.10) !important;
+}
+/* 번호 뱃지에 브랜드 그라데이션 */
+html body .hb-steps > li .hb-no{
+  background:linear-gradient(135deg,#0A76C0 0%,#38BDF8 100%) !important;
+  color:#FFFFFF !important; box-shadow:0 4px 12px rgba(10,118,192,.28) !important;
+}
+/* 단계를 잇는 선이 흐르게 — 세 칸이 하나의 흐름으로 읽힌다 */
+html body .hb-steps{ position:relative !important; }
+html body .hb-steps::before{
+  content:"" !important; position:absolute !important; left:8% !important; right:8% !important; top:34px !important;
+  height:2px !important; z-index:0 !important;
+  background:linear-gradient(90deg,rgba(10,118,192,0) 0%,#9FD4F5 18%,#38BDF8 50%,#9FD4F5 82%,rgba(10,118,192,0) 100%) !important;
+  background-size:220% 100% !important;
+  animation:sbFlow 5.5s linear infinite !important;
+}
+@keyframes sbFlow{ from{ background-position:0% 0; } to{ background-position:220% 0; } }
+@media (max-width:760px){ html body .hb-steps::before{ display:none !important; } }
+
+/* "문의하면 먼저 받는 것" 4칸 — 평면이라 안 읽혔다 */
+html body .sb-value-steps > *, html body .sb-value-stage > *{
+  transition:transform .28s cubic-bezier(.16,1,.3,1) !important;
+}
+html body .sb-value-steps > *:hover, html body .sb-value-stage > *:hover{
+  transform:translateY(-2px) !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  html body .sb-popup-box{ animation:none !important; }
+  html body .hb-steps::before{ animation:none !important; }
+  html body .hb-steps > li:hover{ transform:none !important; }
+}
+
+/* ── 2번 히어로 ─────────────────────────────────────
+   왼쪽은 정지 화면이라 눈이 머물 곳이 없었다. 위에서 아래로 순서대로
+   나타나게 해서 배지 → 제목 → 설명 → 버튼 순으로 시선을 끌고 내려간다.
+   한글은 글자 단위 타이핑이 어색하므로, 제목 끝에 캐럿을 두고
+   줄 단위로 밀어 올린다. 타이핑처럼 읽히면서 글자는 안 깨진다. */
+html body .hero-copy > *{
+  opacity:0; transform:translateY(18px);
+  animation:sbHeroUp .72s cubic-bezier(.16,1,.3,1) forwards;
+}
+html body .hero-copy > .hero-badge{ animation-delay:.10s; }
+html body .hero-copy > h1{ animation-delay:.24s; }
+html body .hero-copy > .hero-sub{ animation-delay:.44s; }
+html body .hero-copy > .hero-why{ animation-delay:.58s; }
+html body .hero-copy > .hero-primary-actions{ animation-delay:.72s; }
+html body .hero-copy > .hero-action-help{ animation-delay:.86s; }
+@keyframes sbHeroUp{ to{ opacity:1; transform:none; } }
+
+/* 제목 두 번째 줄 끝의 캐럿 — 타이핑이 막 끝난 느낌만 남긴다 */
+html body .hero-copy h1{ position:relative !important; }
+html body .hero-copy h1::after{
+  content:"" !important; display:inline-block !important;
+  width:3px !important; height:.82em !important; margin-left:6px !important;
+  vertical-align:-.08em !important; border-radius:2px !important;
+  background:#0A76C0 !important;
+  animation:sbCaret 1.05s steps(1) .95s 6 !important;
+  opacity:0 !important;
+}
+@keyframes sbCaret{ 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+/* 주 버튼에 광택이 한 번 지나간다 — 어디를 눌러야 하는지 알려준다 */
+html body .hero-primary-actions > a:first-child,
+html body .hero-primary-actions > button:first-child{
+  position:relative !important; overflow:hidden !important;
+}
+html body .hero-primary-actions > a:first-child::before,
+html body .hero-primary-actions > button:first-child::before{
+  content:"" !important; position:absolute !important; inset:0 !important;
+  background:linear-gradient(105deg,transparent 34%,rgba(255,255,255,.42) 50%,transparent 66%) !important;
+  transform:translateX(-120%) !important; pointer-events:none !important;
+  animation:sbSheen 3.6s ease-in-out 1.6s infinite !important;
+}
+@keyframes sbSheen{ 0%{transform:translateX(-120%)} 26%,100%{transform:translateX(120%)} }
+
+/* 오른쪽 사진 — 밀려 들어오며 아주 천천히 당겨진다. 시선이 사진에 붙는다 */
+html body .hero-media{ overflow:hidden !important; }
+html body .hero-media img{
+  animation:sbHeroSlide 1.15s cubic-bezier(.16,1,.3,1) both,
+            sbHeroPan 22s ease-in-out 1.2s infinite alternate !important;
+  will-change:transform !important;
+}
+@keyframes sbHeroSlide{ from{ opacity:0; transform:translateX(38px) scale(1.06); } to{ opacity:1; transform:none; } }
+@keyframes sbHeroPan{ from{ transform:scale(1); } to{ transform:scale(1.055); } }
+
+/* ── 3번 상황 선택 ───────────────────────────────────
+   항목이 한꺼번에 나타나 어디부터 볼지 모르겠다. 위에서부터 차례로
+   들어오게 하고, 손이 닿으면 떠오르게 해서 "고르는 것" 임을 알린다 */
+html body .sit-grid > *{
+  opacity:0; transform:translateY(14px);
+  animation:sbHeroUp .55s cubic-bezier(.16,1,.3,1) forwards;
+  transition:transform .26s cubic-bezier(.16,1,.3,1), box-shadow .26s ease, border-color .26s ease !important;
+}
+html body .sit-grid > *:nth-child(1){ animation-delay:.05s }
+html body .sit-grid > *:nth-child(2){ animation-delay:.13s }
+html body .sit-grid > *:nth-child(3){ animation-delay:.21s }
+html body .sit-grid > *:nth-child(4){ animation-delay:.29s }
+html body .sit-grid > *:nth-child(5){ animation-delay:.37s }
+html body .sit-grid > *:nth-child(6){ animation-delay:.45s }
+html body .sit-grid > *:hover{
+  transform:translateX(4px) !important;
+  border-color:#9FD4F5 !important;
+  box-shadow:0 6px 18px rgba(13,40,71,.09) !important;
+}
+/* 선택된 항목은 왼쪽에 빛나는 띠 */
+html body .sit-grid > *[aria-selected="true"],
+html body .sit-grid > *.is-on, html body .sit-grid > *.is-active{
+  background:linear-gradient(92deg,#EAF4FB 0%,#F7FBFE 62%,#FFFFFF 100%) !important;
+  box-shadow:inset 3px 0 0 #0A76C0, 0 6px 18px rgba(13,40,71,.10) !important;
+}
+
+/* ── 4번 오른쪽 분야 버튼 — 흰 카드 위 흰 버튼이라 안 보였다 ──
+   실측: 173x44, 배경 rgb(255,255,255). 배경과 같은 색이면 버튼이 아니다. */
+html body .sit-result .sit-res-cols a,
+html body .sit-result .sit-res-cols button{
+  background:linear-gradient(135deg,#F4F9FD 0%,#E8F2FA 100%) !important;
+  border:1px solid #C7DEF0 !important;
+  color:#0A4F80 !important; font-weight:700 !important;
+  border-radius:10px !important;
+  transition:transform .24s cubic-bezier(.16,1,.3,1), box-shadow .24s ease,
+             background .24s ease, border-color .24s ease !important;
+  opacity:0; transform:translateY(10px);
+  animation:sbHeroUp .5s cubic-bezier(.16,1,.3,1) forwards;
+}
+html body .sit-result .sit-res-cols a:nth-child(1){ animation-delay:.04s }
+html body .sit-result .sit-res-cols a:nth-child(2){ animation-delay:.10s }
+html body .sit-result .sit-res-cols a:nth-child(3){ animation-delay:.16s }
+html body .sit-result .sit-res-cols a:nth-child(4){ animation-delay:.22s }
+html body .sit-result .sit-res-cols a:nth-child(5){ animation-delay:.28s }
+html body .sit-result .sit-res-cols a:nth-child(6){ animation-delay:.34s }
+html body .sit-result .sit-res-cols a:hover,
+html body .sit-result .sit-res-cols button:hover{
+  background:linear-gradient(135deg,#0A76C0 0%,#0968AB 100%) !important;
+  border-color:#0A76C0 !important; color:#FFFFFF !important;
+  transform:translateY(-2px) !important;
+  box-shadow:0 8px 20px rgba(10,118,192,.26) !important;
+}
+/* 오른쪽 결과 카드 자체에 층을 준다 */
+html body .sit-result{
+  background:linear-gradient(180deg,#FFFFFF 0%,#F8FBFD 100%) !important;
+  border:1px solid #E1E9F0 !important; border-radius:16px !important;
+  box-shadow:0 8px 26px rgba(13,40,71,.07) !important;
+}
+html body .sit-result .sit-res-head{
+  border-bottom:1px solid #EDF3F8 !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  html body .hero-copy > *, html body .sit-grid > *,
+  html body .sit-result .sit-res-cols a{ opacity:1 !important; transform:none !important; animation:none !important; }
+  html body .hero-media img{ animation:none !important; }
+  html body .hero-copy h1::after,
+  html body .hero-primary-actions > a:first-child::before{ animation:none !important; display:none !important; }
+}
+
+/* ══ AY. 사장님 재지적 — 라이브 미반영 2건 (2026-08-10) ══
+   실측으로 확인한 것:
+   ① blur 는 이미 없앴는데 딤이 rgba(16,32,52,.34) 로 34% 덮고 있어
+      여전히 뒷페이지가 흐려 보였다. "원래 보이는대로" 가 아니다.
+      딤을 12% 로 낮추고, 대신 팝업 박스 그림자를 키워 층을 만든다.
+   ② 4번 분야 버튼이 그대로 흰색이었다. 실제 구조는
+      .sit-result > .sit-res-cols > div.sit-col > ul > li > a 인데
+      내 셀렉터가 중간 단계를 못 짚었다. .sit-result a 로 넓힌다. */
+
+html body .sb-popup-dim{
+  background-color:rgba(16,32,52,.12) !important; background:rgba(16,32,52,.12) !important;
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+}
+html body .sb-popup-box{
+  box-shadow:0 32px 80px rgba(8,26,45,.30), 0 4px 14px rgba(8,26,45,.14) !important;
+  border:1px solid rgba(255,255,255,.9) !important;
+}
+
+/* 4번 — 흰 카드 위 흰 버튼. 배경과 같은 색이면 버튼으로 안 읽힌다 */
+html body .sit-result a[href],
+html body .sit-result .sit-col a,
+html body .sit-result li > a{
+  background-color:#F1F8FD !important;
+  background-image:linear-gradient(135deg,#F4F9FD 0%,#E6F1FA 100%) !important;
+  border:1px solid #C3DCEF !important;
+  color:#0A4F80 !important; font-weight:700 !important;
+  border-radius:10px !important;
+  transition:transform .24s cubic-bezier(.16,1,.3,1), box-shadow .24s ease,
+             background-image .24s ease, border-color .24s ease, color .24s ease !important;
+}
+html body .sit-result a[href]:hover,
+html body .sit-result .sit-col a:hover,
+html body .sit-result li > a:hover{
+  background-image:linear-gradient(135deg,#0A76C0 0%,#0968AB 100%) !important;
+  background-color:#0A76C0 !important;
+  border-color:#0A76C0 !important; color:#FFFFFF !important;
+  transform:translateY(-2px) !important;
+  box-shadow:0 8px 20px rgba(10,118,192,.26) !important;
+}
+/* 주 행동(이 상황으로 상담 남기기)은 그대로 진한 파랑을 유지한다 */
+html body .sit-result .sit-res-foot a,
+html body .sit-result a.btn{
+  background-image:linear-gradient(135deg,#0A76C0 0%,#075F9C 100%) !important;
+  background-color:#0A76C0 !important; color:#FFFFFF !important; border-color:#075F9C !important;
+}
+/* 스트라이프식 광택 — 우측 결과 영역에 시선을 한 번 준다 (10_조사 근거) */
+html body .sit-result{ position:relative !important; overflow:hidden !important; }
+html body .sit-result::after{
+  content:"" !important; position:absolute !important; inset:0 !important; pointer-events:none !important;
+  background:linear-gradient(115deg,transparent 38%,rgba(56,189,248,.16) 50%,transparent 62%) !important;
+  transform:translateX(-120%) !important;
+  animation:sbShine 6.5s ease-in-out 1.2s infinite !important;
+}
+@keyframes sbShine{ 0%{transform:translateX(-120%)} 22%,100%{transform:translateX(120%)} }
+@media (prefers-reduced-motion:reduce){ html body .sit-result::after{ animation:none !important; display:none !important; } }
+
+/* ══ AZ. Codex 60_검수 독립 회귀 보정 (2026-08-11) ══
+   - 팝업과 도구 아이콘이 같은 keyframe 이름을 써 서로 덮어쓰던 충돌 제거
+   - 뒤쪽 !important transition이 reduced-motion을 다시 켜던 문제 차단
+   - 모바일 무료도구 본문과 더보기 행 8px 침범 제거
+   - 도면 미리보기 수치의 작은 글자 대비 보강 */
+@media (prefers-reduced-motion:reduce){
+  html body .sb-popup-dim,
+  html body .sb-popup-box{
+    animation:none !important;
+    transition:none !important;
+  }
+}
+html body .tools-more{
+  clear:both !important;
+  position:relative !important;
+  margin-top:24px !important;
+}
+html body .preview-room i,
+html body .preview-room b{
+  color:#16233A !important;
+  background:#FFFFFF !important;
+  border-radius:4px !important;
+  padding:1px 3px !important;
+}
+
+/* ChatGPT Pro 2x2 마스터의 네 파생 슬롯. 한국어·카테고리명은 이미지가 아니라
+   HTML로 정확히 표시해 가짜 문자를 막고 접근성을 유지한다. */
+@media (min-width:901px){
+  html body .hero-media{
+    left:0 !important;
+    right:0 !important;
+    background:#F4F8FB !important;
+  }
+}
+html body .hero-media picture,
+html body .hero-media img{
+  object-fit:cover !important;
+  object-position:center !important;
+}
+html body .hero-media-legend{
+  position:absolute !important;
+  left:clamp(12px,2vw,24px) !important;
+  right:clamp(12px,2vw,24px) !important;
+  bottom:14px !important;
+  z-index:3 !important;
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  gap:8px !important;
+  margin:0 !important;
+  padding:9px !important;
+  list-style:none !important;
+  border:1px solid rgba(7,95,156,.14) !important;
+  border-radius:12px !important;
+  background:rgba(255,255,255,.90) !important;
+  box-shadow:0 10px 28px rgba(8,26,45,.10) !important;
+  backdrop-filter:blur(8px) !important;
+}
+html body .hero-media-legend li{
+  min-width:0 !important;
+  padding:5px 4px !important;
+  border-radius:7px !important;
+  background:#F1F8FD !important;
+  color:#075F9C !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1.25 !important;
+  text-align:center !important;
+  word-break:keep-all !important;
+}
+html body .sb-popup-media{
+  height:68px !important;
+  margin:14px 50px 0 18px !important;
+  overflow:hidden !important;
+  border:1px solid #DCEAF4 !important;
+  border-radius:12px !important;
+  background:#F4F8FB !important;
+}
+html body .sb-popup-media img{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  object-position:center !important;
+}
+html body .sb-popup-media + .sb-popup-head{
+  padding-top:14px !important;
+}
+@media (max-width:700px){
+  html body .hero{
+    flex-direction:column !important;
+  }
+  html body .hero .inner{
+    order:1 !important;
+    width:100% !important;
+  }
+  html body .hero .hero-copy{
+    width:100% !important;
+    max-width:none !important;
+  }
+  html body .hero-media{
+    order:2 !important;
+    background:#F4F8FB !important;
+  }
+  html body .hero-media img{
+    object-position:72% center !important;
+  }
+  html body .hero-media-legend{
+    left:10px !important;
+    right:10px !important;
+    bottom:10px !important;
+    gap:8px !important;
+    padding:6px !important;
+  }
+  html body .hero-media-legend li{
+    padding:4px 2px !important;
+    font-size:12px !important;
+  }
+  html body .sb-popup-media{
+    height:54px !important;
+    margin:10px 46px 0 14px !important;
+  }
+  html body .sb-popup-media + .sb-popup-head{
+    padding-top:11px !important;
+  }
+}
+
+/* ══ BA. 배포 후 엄격 감사 보정 (2026-08-11) ══
+   팝업은 별도 시나리오에서 검증하고, 본문 규격은 4pt 그리드와 AA 대비로 고정한다. */
+html body .hero h1 .pt{
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:#16233A !important;
+  color:#16233A !important;
+}
+html body .sb-howto-bar .hb-steps > li .hb-no{
+  background-color:#075F9C !important;
+  background:#075F9C !important;
+  color:#FFFFFF !important;
+}
+html body .sb-popup-steps,
+html body .sb-popup-cta{ gap:8px !important; }
+html body .sit-result{ gap:24px !important; }
+html body .tools-layout{ gap:16px !important; }
+html body .pricing-formula{ gap:24px !important; }
+html body footer.site-footer .footer-nav-grid{ gap:4px 24px !important; }
+html body .sb-fixbar-agree{ gap:8px !important; }
+html body .closing .eyebrow{
+  color:#9FD4F5 !important;
+  background:#0F2C48 !important;
+  border-color:#5AA9DA !important;
+}
+
+/* 키보드 사용자가 본문 링크에 포커스했을 때 고정 상담 UI가 그 링크를 완전히
+   가리지 않게 비킨다. 고정 UI 자체가 focus-within이면 그대로 유지한다. */
+html body:has(:focus-visible) .sb-fixbar.is-in:not(:focus-within){
+  transform:translateY(100%) !important;
+  pointer-events:none !important;
+}
+html body:has(:focus-visible) a.sb-kfab:not(:focus-visible),
+html body:has(:focus-visible) .kakao-float:not(:focus-visible){
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+/* ══════════ AR. 2026-08-11 독립 검수 보정 ══════════ */
+@media (min-width:701px){
+  html body .hero-media{
+    left:0 !important;
+    width:100% !important;
+    max-width:none !important;
+    right:0 !important;
+  }
+}
+@media (min-width:900px){
+  html body .ft-card-featured > p{
+    -webkit-line-clamp:3 !important;
+    min-height:66px !important;
+  }
+}
+html body .sb-fixbar-f input,
+html body .sb-fixbar-cta{ height:44px !important; }
+html body .sb-fixbar-agree a{
+  display:inline-flex !important;
+  min-width:40px !important;
+  min-height:40px !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+html body .sb-fixbar-close{
+  width:44px !important;
+  min-width:44px !important;
+  height:44px !important;
+}
+@media (max-width:340px){
+  html body .site-header .inner{ padding-inline:12px !important; }
+  html body .site-header .inner > a:first-child{ width:132px !important; }
+}
+
+/* Final accessibility lock: later visual layers must not re-enable motion. */
+@media (prefers-reduced-motion:reduce){
+  html body .ft-card,
+  html body .cat-photo-card,
+  html body .insight-card,
+  html body .service-card,
+  html body .sb-sec-visual{
+    animation:none !important;
+    transition:none !important;
+  }
+}

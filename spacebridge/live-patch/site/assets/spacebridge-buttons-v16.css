@@ -1,0 +1,625 @@
+/* SpaceBridge Button System v16
+   One brand language, clear action priority and reliable mobile targets. */
+:root {
+  --sb-btn-radius:10px;
+  --sb-btn-height:54px;
+  --sb-btn-ink:#0b2138;
+  --sb-btn-copy:#29455d;
+  --sb-btn-line:#a9c8d8;
+  --sb-btn-line-strong:#74abc2;
+  --sb-btn-primary:linear-gradient(135deg,#075b86 0%,#0679a9 54%,#087f6c 100%);
+  --sb-btn-primary-hover:linear-gradient(135deg,#064c73 0%,#056b98 50%,#087561 100%);
+  --sb-btn-secondary:linear-gradient(145deg,#ffffff 0%,#f2f9fc 100%);
+  --sb-btn-kakao:linear-gradient(135deg,#ffea00 0%,#ffe11a 58%,#f4cf00 100%);
+  --sb-btn-sms:linear-gradient(135deg,#eaf7fc 0%,#d7f0f9 100%);
+  --sb-btn-shadow:0 8px 18px rgba(8,60,87,.12),inset 0 1px 0 rgba(255,255,255,.72);
+  --sb-btn-shadow-primary:0 11px 24px rgba(6,96,137,.25),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(3,55,80,.22);
+  --sb-btn-shadow-hover:0 15px 30px rgba(6,96,137,.30),inset 0 1px 0 rgba(255,255,255,.26);
+  --sb-btn-ring:0 0 0 4px rgba(6,121,169,.20),0 10px 24px rgba(6,96,137,.18);
+}
+
+/* Every command keeps a stable footprint and a readable Korean label. */
+:where(
+  .btn,
+  .gnb .gnb-cta,
+  .mobile-head-cta,
+  .mnav-panel a.mnav-cta,
+  .hero-primary-actions a,
+  .hero-intent-row button,
+  .hero-start-actions a,
+  .tools-layout .ft-card .go,
+  .category-hub-head > a,
+  .category-mobile-tab,
+  #categories .service-card a,
+  .consult-route-card,
+  .lf-chip,
+  .lf-timechip,
+  .lf-primary,
+  .lf-sublink,
+  .lf-copybtn,
+  .partner-open-btn,
+  .partner-chip,
+  .partner-submit,
+  .partnership-mail-card a,
+  .partner-inquiry > summary,
+  .site-footer .footer-contact-actions a,
+  .sb-sticky a
+) {
+  box-sizing:border-box;
+  font-family:var(--font-kr,"Pretendard Variable",Pretendard,sans-serif);
+  font-weight:800;
+  font-variation-settings:"wght" 800;
+  letter-spacing:0;
+  line-height:1.28;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  transition:
+    transform 170ms cubic-bezier(.2,.8,.2,1),
+    border-color 160ms ease,
+    background-color 160ms ease,
+    background-position 240ms ease,
+    color 160ms ease,
+    box-shadow 180ms ease;
+}
+
+:where(
+  .btn,
+  .gnb .gnb-cta,
+  .mobile-head-cta,
+  .mnav-panel a.mnav-cta,
+  .hero-primary-actions a,
+  .hero-intent-row button,
+  .hero-start-actions a,
+  .lf-primary,
+  .lf-sublink,
+  .lf-copybtn,
+  .partner-open-btn,
+  .partner-submit,
+  .partnership-mail-card a,
+  .site-footer .footer-contact-actions a,
+  .sb-sticky a
+) {
+  min-height:var(--sb-btn-height);
+  border-radius:var(--sb-btn-radius);
+  white-space:normal;
+}
+
+:where(a,button,summary):focus-visible {
+  outline:3px solid rgba(255,255,255,.96);
+  outline-offset:2px;
+  box-shadow:var(--sb-btn-ring) !important;
+}
+
+:where(button,a)[aria-disabled="true"],
+:where(button):disabled {
+  cursor:not-allowed;
+  opacity:.58;
+  filter:saturate(.62);
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+/* Primary conversion actions: dark enough for white text across the gradient. */
+:where(
+  .btn-primary,
+  .gnb .gnb-cta,
+  .mobile-head-cta,
+  .mnav-panel a.mnav-cta,
+  .hero-primary-actions a:first-child,
+  .hero-intent-row button,
+  .hero-start-actions a:first-child,
+  .lf-primary,
+  .partner-submit,
+  .category-next .btn
+) {
+  border:1px solid rgba(3,70,100,.36);
+  background:var(--sb-btn-primary);
+  background-size:150% 100%;
+  color:#fff;
+  box-shadow:var(--sb-btn-shadow-primary);
+  text-shadow:0 1px 1px rgba(2,34,51,.34);
+}
+
+.gnb .gnb-cta {
+  min-height:46px;
+  padding-inline:19px;
+  font-size:14px;
+}
+
+.hero-primary-actions a:first-child {
+  min-width:190px;
+  padding-inline:24px;
+  font-size:16px;
+}
+
+.mobile-head-cta {
+  border-radius:10px;
+  box-shadow:0 6px 14px rgba(6,96,137,.20),inset 0 1px 0 rgba(255,255,255,.26);
+}
+
+/* Secondary commands are visible without competing with the primary CTA. */
+:where(
+  .btn-ghost-green,
+  .hero-primary-actions a:not(:first-child),
+  .hero-start-actions a:not(:first-child),
+  .tools-more .btn,
+  .lf-copybtn,
+  .partner-open-btn,
+  .site-footer .footer-contact-actions .footer-sms
+) {
+  border:1px solid var(--sb-btn-line);
+  background:var(--sb-btn-secondary);
+  color:var(--sb-btn-ink);
+  box-shadow:var(--sb-btn-shadow);
+  text-shadow:0 1px 0 #fff;
+}
+
+.btn-ghost-green {
+  padding-inline:20px;
+  color:#3F5265;
+}
+
+/* The first decision grid is itself a set of large image buttons. */
+.hero-start-service {
+  cursor:pointer;
+  border-width:1px 1px 1px 4px;
+  border-color:var(--sb-v15-line);
+  border-inline-start-color:var(--category);
+  box-shadow:0 6px 16px rgba(11,31,54,.08),inset 0 1px 0 rgba(255,255,255,.88);
+  transition:transform 180ms cubic-bezier(.2,.8,.2,1),border-color 160ms ease,box-shadow 180ms ease;
+}
+
+.hero-start-service[aria-pressed="true"] {
+  border-color:var(--category);
+  border-inline-start-color:var(--category);
+  background:linear-gradient(145deg,#fff 0%,color-mix(in srgb,var(--category-soft) 72%,white) 100%);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--category) 30%,white),0 13px 25px rgba(11,31,54,.14);
+}
+
+.hero-start-service[aria-pressed="true"] .hero-service-copy strong {
+  color:var(--c-ink);
+}
+
+/* Tool links finish with a consistent action rail instead of faint text. */
+.tools-layout .ft-card .go {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+  min-height:44px;
+  margin-top:auto;
+  padding:9px 11px;
+  border:1px solid #b7d3df;
+  border-radius:10px;
+  background:linear-gradient(145deg,#fff 0%,#eaf7fb 100%);
+  color:#3F5265;
+  font-size:14px;
+  box-shadow:inset 0 1px 0 #fff;
+}
+
+.tools-layout .ft-card-featured .go {
+  min-height:56px;
+  padding-inline:18px;
+  border-color:rgba(3,69,99,.28);
+  background:var(--sb-btn-primary);
+  background-size:150% 100%;
+  color:#fff;
+  font-size:14px;
+  text-shadow:0 1px 1px rgba(2,34,51,.32);
+  box-shadow:var(--sb-btn-shadow-primary);
+}
+
+.tools-more .btn {
+  min-width:190px;
+}
+
+/* Category tabs communicate selectable, selected and focused states. */
+.category-hub-head > a {
+  min-height:44px;
+  padding:0 13px;
+  border:1px solid #b8d4e1;
+  border-radius:10px;
+  background:linear-gradient(145deg,#fff 0%,#edf7fb 100%);
+  color:#3F5265;
+  box-shadow:0 5px 13px rgba(11,31,54,.07),inset 0 1px 0 #fff;
+  text-decoration:none;
+}
+
+.category-mobile-tab {
+  cursor:pointer;
+  min-height:74px;
+  padding:11px 14px;
+  border:1px solid var(--sb-v15-line);
+  border-block-end:3px solid color-mix(in srgb,var(--tab-accent) 42%,white);
+  border-radius:10px;
+  background:linear-gradient(145deg,#fff 0%,#f4f9fb 100%);
+  color:var(--sb-btn-ink);
+  font-size:14px;
+  box-shadow:0 5px 14px rgba(11,31,54,.07),inset 0 1px 0 #fff;
+}
+
+.category-mobile-tab[aria-selected="true"] {
+  border-color:color-mix(in srgb,var(--tab-accent) 66%,white);
+  border-block-end-color:var(--tab-accent);
+  background:linear-gradient(145deg,#fff 0%,color-mix(in srgb,var(--tab-accent) 15%,white) 100%);
+  color:var(--c-ink);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tab-accent) 22%,white),0 11px 22px rgba(11,31,54,.12);
+}
+
+#categories .service-card a {
+  min-height:52px;
+  padding:0 15px;
+  border:1px solid color-mix(in srgb,var(--category) 38%,#b8d3df);
+  border-radius:10px;
+  background:linear-gradient(135deg,#fff 0%,color-mix(in srgb,var(--category-soft) 82%,white) 100%);
+  color:var(--c-ink);
+  box-shadow:0 5px 13px rgba(11,31,54,.07),inset 0 1px 0 #fff;
+}
+
+.category-next .btn {
+  min-width:190px;
+  font-size:14px;
+}
+
+/* Consultation routes have distinct channel identities and equal affordance. */
+.consult-route-card {
+  position:relative;
+  min-height:128px;
+  border-radius:10px;
+  box-shadow:0 9px 22px rgba(11,31,54,.11),inset 0 1px 0 rgba(255,255,255,.82);
+}
+
+.consult-route-card.kakao {
+  border-color:#dec300;
+  background:linear-gradient(135deg,#fffbe0 0%,#ffed67 54%,#ffe335 100%);
+}
+
+.consult-route-card.sms {
+  border-color:#77bad3;
+  background:var(--sb-btn-sms);
+}
+
+.consult-route-card strong {
+  color:var(--sb-btn-ink);
+  font-weight:800;
+  font-variation-settings:"wght" 860;
+}
+
+.consult-route-card .route-icon {
+  border:1px solid rgba(11,31,54,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.56),0 5px 12px rgba(11,31,54,.10);
+}
+
+.consult-route-card .route-arrow {
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border:1px solid rgba(11,31,54,.11);
+  border-radius:50%;
+  background:rgba(255,255,255,.62);
+  color:var(--sb-btn-ink);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+/* Form selectors look like controls, not decorative cards. */
+.lf-chip,
+.partner-chip {
+  cursor:pointer;
+  min-height:48px;
+  border:1px solid #bfd3df;
+  border-radius:10px;
+  background:linear-gradient(145deg,#fff 0%,#f8fbfc 100%);
+  color:var(--sb-btn-copy);
+  box-shadow:inset 0 1px 0 #fff;
+}
+
+.lf-chip::before {
+  content:'';
+  display:grid;
+  place-items:center;
+  width:19px;
+  height:19px;
+  flex:0 0 19px;
+  border:1.5px solid #6c8799;
+  border-radius:10px;
+  background:#fff;
+  color:#fff;
+  font-size:12px;
+  font-weight:800;
+  line-height:1;
+  box-shadow:inset 0 1px 1px rgba(11,31,54,.05);
+}
+
+.lf-chip.active,
+.lf-chip[aria-pressed="true"],
+.partner-chip.active {
+  border-color:#0780b2;
+  background:linear-gradient(145deg,#fff 0%,#e1f3fa 100%);
+  color:#14324F;
+  box-shadow:inset 0 0 0 1px rgba(6,121,169,.16),0 7px 15px rgba(6,96,137,.10);
+}
+
+.lf-chip.active::before,
+.lf-chip[aria-pressed="true"]::before {
+  content:'\2713';
+  border-color:#0679a9;
+  background:#0679a9;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+.lf-timechip {
+  cursor:pointer;
+  min-width:58px;
+  min-height:46px;
+  border:1px solid #bfd3df;
+  border-radius:10px;
+  background:linear-gradient(145deg,#fff 0%,#f5fafc 100%);
+  color:var(--sb-btn-copy);
+  box-shadow:inset 0 1px 0 #fff;
+}
+
+.lf-timechip.active,
+.lf-timechip[aria-pressed="true"] {
+  border-color:#087cab;
+  background:linear-gradient(145deg,#e7f6fb 0%,#d9f1f8 100%);
+  color:#14324F;
+  box-shadow:inset 0 0 0 1px rgba(6,121,169,.14),0 6px 14px rgba(6,96,137,.09);
+}
+
+.leadform-actions {
+  gap:10px;
+}
+
+.leadform-actions > a,
+.leadform-actions > button {
+  min-height:58px;
+  padding:9px 12px;
+  border-radius:10px;
+  font-size:14px;
+}
+
+.leadform-actions .lf-primary {
+  border:1px solid rgba(3,70,100,.36);
+  background:var(--sb-btn-primary);
+  background-size:150% 100%;
+  color:#fff;
+  box-shadow:var(--sb-btn-shadow-primary);
+  text-shadow:0 1px 1px rgba(2,34,51,.34);
+}
+
+.leadform-actions .lf-sublink.kko {
+  border:1px solid #d8bf00;
+  background:var(--sb-btn-kakao);
+  color:#14324F;
+  box-shadow:0 9px 19px rgba(147,125,0,.16),inset 0 1px 0 rgba(255,255,255,.62);
+  text-shadow:0 1px 0 rgba(255,255,255,.44);
+}
+
+.leadform-actions .lf-copybtn {
+  border:1px solid var(--sb-btn-line);
+  background:var(--sb-btn-secondary);
+  color:var(--sb-btn-ink);
+  box-shadow:var(--sb-btn-shadow);
+}
+
+/* Partnership actions use the same hierarchy on a darker surface. */
+.partnership-mail-card a {
+  border:1px solid rgba(255,255,255,.82);
+  border-radius:10px;
+  background:linear-gradient(145deg,#fff 0%,#e7f5fa 100%);
+  color:#14324F;
+  box-shadow:0 10px 22px rgba(1,25,38,.24),inset 0 1px 0 #fff;
+  text-shadow:0 1px 0 #fff;
+}
+
+.partner-inquiry > summary {
+  cursor:pointer;
+  min-height:64px;
+  border:1px solid var(--sb-btn-line);
+  border-radius:10px;
+  background:linear-gradient(145deg,#fff 0%,#eaf6fa 100%);
+  color:var(--sb-btn-ink);
+  box-shadow:var(--sb-btn-shadow);
+}
+
+.partner-inquiry[open] > summary {
+  border-color:#6eafc8;
+  background:linear-gradient(145deg,#eaf7fb 0%,#dff2f7 100%);
+  box-shadow:0 8px 18px rgba(6,96,137,.12),inset 0 0 0 1px rgba(6,121,169,.12);
+}
+
+.partner-submit {
+  min-height:56px;
+  padding-inline:22px;
+  font-size:14px;
+}
+
+.trust-links a {
+  min-height:44px;
+}
+
+/* These labels describe eligible fields; they must not impersonate buttons. */
+.partnership-tags span {
+  min-height:0;
+  padding:4px 0;
+  border:0;
+  background:transparent;
+  color:#3F5265;
+  box-shadow:none;
+}
+
+.partnership-tags span::before {
+  content:'';
+  width:6px;
+  height:6px;
+  flex:0 0 6px;
+  border-radius:50%;
+  background:#0a8a73;
+}
+
+/* Footer and sticky actions remain recognizable in repeated use. */
+.site-footer .footer-contact-actions a {
+  min-height:50px;
+  border-radius:10px;
+  font-size:14px;
+}
+
+.site-footer .footer-contact-actions .footer-kakao,
+.sb-sticky .kko {
+  border:1px solid #d6bd00;
+  background:var(--sb-btn-kakao);
+  color:#14324F;
+  box-shadow:0 8px 17px rgba(147,125,0,.14),inset 0 1px 0 rgba(255,255,255,.60);
+  text-shadow:0 1px 0 rgba(255,255,255,.42);
+}
+
+.site-footer .footer-contact-actions .footer-sms {
+  border-color:#96c7da;
+  background:var(--sb-btn-sms);
+  color:#3F5265;
+}
+
+.sb-sticky .cta {
+  border:1px solid rgba(3,70,100,.30);
+  background:var(--sb-btn-primary);
+  color:#fff;
+  text-shadow:0 1px 1px rgba(2,34,51,.30);
+}
+
+@media (hover:hover) and (pointer:fine) {
+  :where(
+    .btn-primary,
+    .gnb .gnb-cta,
+    .mobile-head-cta,
+    .mnav-panel a.mnav-cta,
+    .hero-primary-actions a:first-child,
+    .hero-intent-row button,
+    .hero-start-actions a:first-child,
+    .lf-primary,
+    .partner-submit,
+    .category-next .btn
+  ):hover {
+    transform:translateY(-2px);
+    background:var(--sb-btn-primary-hover);
+    background-position:100% 0;
+    box-shadow:var(--sb-btn-shadow-hover);
+  }
+
+  :where(
+    .btn-ghost-green,
+    .hero-primary-actions a:not(:first-child),
+    .hero-start-actions a:not(:first-child),
+    .tools-more .btn,
+    .lf-copybtn,
+    .partner-open-btn,
+    .site-footer .footer-contact-actions .footer-sms
+  ):hover {
+    transform:translateY(-2px);
+    border-color:#6eacc5;
+    background:linear-gradient(145deg,#fff 0%,#e5f4f9 100%);
+    color:#14324F;
+    box-shadow:0 12px 24px rgba(8,60,87,.16),inset 0 1px 0 #fff;
+  }
+
+  .hero-start-service:hover,
+  .category-mobile-tab:hover,
+  .consult-route-card:hover,
+  .lf-chip:hover,
+  .lf-timechip:hover,
+  .partner-chip:hover,
+  #categories .service-card a:hover,
+  .category-hub-head > a:hover,
+  .partner-inquiry > summary:hover {
+    transform:translateY(-2px);
+    box-shadow:0 13px 25px rgba(11,31,54,.14),inset 0 1px 0 rgba(255,255,255,.84);
+    text-decoration:none;
+  }
+
+  .tools-layout .ft-card:hover .go,
+  .tools-layout .ft-card:focus-visible .go {
+    transform:translateX(3px);
+    border-color:#78b5cc;
+  }
+
+  .leadform-actions .lf-sublink.kko:hover,
+  .site-footer .footer-contact-actions .footer-kakao:hover,
+  .sb-sticky .kko:hover {
+    transform:translateY(-2px);
+    border-color:#bca300;
+    background:linear-gradient(135deg,#ffef35 0%,#ffe000 100%);
+    box-shadow:0 13px 24px rgba(147,125,0,.20),inset 0 1px 0 rgba(255,255,255,.62);
+  }
+
+  .partnership-mail-card a:hover {
+    transform:translateY(-2px);
+    border-color:#fff;
+    background:linear-gradient(145deg,#fff 0%,#d8f0f6 100%);
+    box-shadow:0 14px 27px rgba(1,25,38,.30),inset 0 1px 0 #fff;
+  }
+}
+
+:where(
+  .btn,
+  .gnb .gnb-cta,
+  .mobile-head-cta,
+  .hero-primary-actions a,
+  .hero-intent-row button,
+  .hero-start-actions a,
+  .lf-primary,
+  .lf-sublink,
+  .lf-copybtn,
+  .partner-submit,
+  .partnership-mail-card a,
+  .site-footer .footer-contact-actions a
+):active {
+  transform:translateY(1px) scale(.995);
+  box-shadow:inset 0 2px 5px rgba(4,43,64,.18);
+}
+
+@media (max-width:700px) {
+  :root { --sb-btn-height:52px; }
+
+  body.sb-sticky-active .mobile-head-cta {
+    visibility:hidden;
+    opacity:0;
+    pointer-events:none;
+  }
+
+  .gnb .gnb-cta { min-height:44px; }
+  .hero-primary-actions a:first-child { min-width:0; font-size:14px; }
+  .tools-layout .ft-card .go { min-height:44px; font-size:14px; }
+  .tools-layout .ft-card-featured .go { min-height:54px; font-size:14px; }
+  .tools-more .btn { width:100%; min-width:0; }
+  .category-hub-head > a { width:max-content; max-width:100%; }
+  .category-mobile-tab { min-height:70px; padding:9px; font-size:12px; }
+  #categories .service-card a { min-height:50px; }
+  .consult-route-card { min-height:112px; }
+  .consult-route-card .route-arrow { width:32px; height:32px; }
+  .lf-chip,
+  .partner-chip { min-height:48px; font-size:14px; }
+  .leadform-actions > a,
+  .leadform-actions > button { min-height:56px; font-size:14px; }
+  .partner-submit { width:100%; }
+}
+
+@media (max-width:360px) {
+  .partnership-mail-card strong {
+    max-width:100%;
+    font-size:16px;
+    line-height:1.4;
+    white-space:nowrap;
+    overflow-wrap:normal;
+  }
+
+  .category-mobile-tab { min-height:72px; padding:8px; font-size:12px; }
+  .category-mobile-tab .service-icon { width:32px; height:32px; }
+  .lf-chip { padding-inline:9px; font-size:12px; }
+  .lf-chip::before { width:18px; height:18px; flex-basis:18px; }
+  .leadform-actions > a,
+  .leadform-actions > button { min-height:54px; padding-inline:7px; font-size:12px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  :where(a,button,summary) { transition:none !important; }
+}

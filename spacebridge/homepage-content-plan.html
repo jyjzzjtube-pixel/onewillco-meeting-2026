@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공간브릿지 — 홈페이지 구성안 & 콘텐츠 기획서</title>
+<style>
+:root {
+  --navy: #1E2761;
+  --navy-light: #2F3C7E;
+  --ice: #CADCFC;
+  --accent: #F96167;
+  --gold: #F9E795;
+  --green: #2C5F2D;
+  --moss: #97BC62;
+  --gray-50: #F8F9FA;
+  --gray-100: #F2F2F2;
+  --gray-200: #E5E5E5;
+  --gray-400: #999;
+  --gray-700: #444;
+  --gray-900: #1a1a1a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: 'Malgun Gothic', '맑은 고딕', -apple-system, sans-serif;
+  background: var(--gray-50); color: var(--gray-900);
+  line-height: 1.7; font-size: 15px;
+}
+.sidebar {
+  position: fixed; top:0; left:0; width:240px; height:100vh;
+  background: var(--navy); color:white; padding:24px 16px; overflow-y:auto; z-index:100;
+}
+.sidebar h2 { color:var(--ice); font-size:14px; margin-bottom:16px; padding-bottom:12px; border-bottom:2px solid var(--accent); }
+.sidebar a { display:block; color:rgba(255,255,255,0.8); text-decoration:none; padding:8px 12px; font-size:13px; border-radius:4px; margin-bottom:2px; transition:all .2s; }
+.sidebar a:hover { background:var(--accent); color:white; transform:translateX(4px); }
+.sidebar .group { font-size:11px; color:var(--ice); opacity:.6; margin:14px 0 4px 8px; text-transform:uppercase; letter-spacing:1px; }
+.main { margin-left:240px; }
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color:white; padding:70px 60px; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-50%; right:-10%; width:600px; height:600px;
+  background: radial-gradient(circle, rgba(249,97,103,0.2) 0%, transparent 70%);
+}
+.hero .badge { display:inline-block; background:var(--accent); color:white; padding:6px 16px; border-radius:20px; font-size:12px; font-weight:bold; margin-bottom:24px; }
+.hero h1 { font-size:36px; font-weight:900; margin-bottom:12px; line-height:1.3; }
+.hero p.sub { font-size:17px; color:var(--ice); }
+.hero .meta { display:flex; gap:32px; margin-top:28px; font-size:13px; color:var(--ice); }
+.section { padding:50px 60px; max-width:1080px; }
+.section h2 { font-size:26px; color:var(--navy); margin-bottom:20px; display:flex; align-items:center; gap:12px; }
+.section h2 .num { background:var(--navy); color:white; width:36px; height:36px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.section h3 { font-size:18px; color:var(--navy-light); margin:28px 0 12px; }
+.section p { margin-bottom:12px; color:var(--gray-700); }
+.card { background:white; border:1px solid var(--gray-200); border-radius:12px; padding:24px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+.card h4 { color:var(--navy); font-size:16px; margin-bottom:8px; }
+.callout { background:#FFF8E7; border-left:4px solid var(--gold); padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0; }
+.callout.red { background:#FDECEC; border-left-color:var(--accent); }
+.callout.green { background:#EFF5EC; border-left-color:var(--moss); }
+.callout strong { color:var(--navy); }
+table { width:100%; border-collapse:collapse; margin:16px 0; background:white; font-size:14px; }
+th { background:var(--navy); color:white; padding:10px 14px; text-align:left; font-size:13px; }
+td { padding:10px 14px; border-bottom:1px solid var(--gray-200); vertical-align:top; }
+tr:nth-child(even) td { background:var(--gray-50); }
+.tag { display:inline-block; background:var(--ice); color:var(--navy); font-size:11px; font-weight:bold; padding:2px 10px; border-radius:10px; margin-right:4px; }
+.tag.hot { background:var(--accent); color:white; }
+.checklist li { list-style:none; padding:8px 0 8px 30px; position:relative; border-bottom:1px dashed var(--gray-200); color:var(--gray-700); }
+.checklist li::before { content:'✓'; position:absolute; left:4px; color:var(--moss); font-weight:bold; }
+/* 와이어프레임 */
+.wire {
+  background:white; border:2px solid var(--navy); border-radius:12px;
+  margin-bottom:20px; overflow:hidden;
+}
+.wire .wire-head {
+  background:var(--navy); color:white; padding:10px 20px; font-size:13px; font-weight:bold;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.wire .wire-head .goal { font-weight:normal; color:var(--ice); font-size:12px; }
+.wire .wire-body { padding:20px 24px; }
+.wire .copy {
+  background:var(--gray-50); border:1px dashed var(--gray-400); border-radius:8px;
+  padding:14px 18px; margin:10px 0; font-size:14px;
+}
+.wire .copy .label { font-size:11px; color:var(--accent); font-weight:bold; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px; }
+.wire .copy .h { font-size:17px; font-weight:bold; color:var(--navy); line-height:1.5; }
+.wire ul { margin:8px 0 0 20px; color:var(--gray-700); font-size:14px; }
+.sitemap { display:flex; gap:10px; flex-wrap:wrap; margin:16px 0; }
+.sitemap .node {
+  background:white; border:2px solid var(--navy-light); border-radius:10px;
+  padding:12px 16px; min-width:150px; flex:1;
+}
+.sitemap .node .t { font-weight:bold; color:var(--navy); font-size:14px; }
+.sitemap .node .d { font-size:12px; color:var(--gray-700); margin-top:4px; }
+.sitemap .node.hot { border-color:var(--accent); background:#FFF5F5; }
+.pillar { display:flex; gap:12px; flex-wrap:wrap; margin:16px 0; }
+.pillar .p {
+  flex:1; min-width:200px; background:white; border-radius:12px; padding:18px;
+  border-top:5px solid var(--navy);
+}
+.pillar .p.a { border-top-color:var(--accent); }
+.pillar .p.b { border-top-color:var(--navy-light); }
+.pillar .p.c { border-top-color:var(--moss); }
+.pillar .p.d { border-top-color:var(--gold); }
+.pillar .p .pct { font-size:26px; font-weight:900; color:var(--navy); }
+.pillar .p .t { font-weight:bold; color:var(--navy); margin:4px 0; }
+.pillar .p .d2 { font-size:13px; color:var(--gray-700); }
+.footer { padding:30px 60px; color:var(--gray-400); font-size:12px; border-top:1px solid var(--gray-200); }
+@media (max-width:900px) {
+  .sidebar { display:none; }
+  .main { margin-left:0; }
+  .hero, .section, .footer { padding-left:24px; padding-right:24px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h2>공간브릿지<br>기획설계서</h2>
+  <div class="group">Part A. 홈페이지</div>
+  <a href="#concept">1. 브랜드 컨셉 정의</a>
+  <a href="#sitemap">2. 사이트맵</a>
+  <a href="#wireframe">3. 메인 페이지 설계</a>
+  <a href="#subpage">4. 서브 페이지 설계</a>
+  <a href="#tech">5. 기술·SEO 요건</a>
+  <div class="group">Part B. 콘텐츠</div>
+  <a href="#pillars">6. 콘텐츠 필러 전략</a>
+  <a href="#calendar">7. 첫 4주 콘텐츠 캘린더</a>
+  <a href="#tone">8. 톤앤매너·운영 규칙</a>
+</nav>
+
+<div class="main">
+
+<div class="hero">
+  <span class="badge">기획설계서 · 에이전시 표준</span>
+  <h1>공간브릿지 홈페이지 구성안<br>&amp; 인스타·블로그 콘텐츠 기획</h1>
+  <p class="sub">"공간을 만들고, 운영까지 잇는다" — 창업 원스톱 플랫폼의 실행 설계 문서</p>
+  <div class="meta">
+    <div>작성일: 2026. 7. 4.</div>
+    <div>문서 버전: v1.0</div>
+    <div>연계 문서: 고객 유입·검색 경로 연구 보고서</div>
+  </div>
+</div>
+
+<!-- ============ PART A ============ -->
+
+<div class="section" id="concept">
+  <h2><span class="num">1</span>브랜드 컨셉 정의</h2>
+  <p>홈페이지와 콘텐츠 전체를 관통하는 한 문장을 먼저 고정합니다. 이 문장이 흔들리면 페이지도 콘텐츠도 흔들립니다.</p>
+  <div class="card">
+    <h4>브랜드 코어</h4>
+    <table>
+      <tr><th style="width:160px">항목</th><th>정의</th></tr>
+      <tr><td><strong>브랜드 에센스</strong></td><td>"공간과 운영을 잇는 다리" — 인테리어(공간)에서 끝나지 않고 포스·키오스크·CCTV·세무(운영)까지 연결한다는 이름 그대로의 약속</td></tr>
+      <tr><td><strong>슬로건 (안)</strong></td><td>① "창업 준비, 다섯 군데 알아보지 마세요. 공간브릿지 하나면 됩니다."<br>② "인테리어에서 오픈까지, 다리 하나만 건너세요."<br>③ "공간을 짓고, 운영을 잇다."</td></tr>
+      <tr><td><strong>타깃 페르소나</strong></td><td>주 타깃: 첫 매장을 여는 30~50대 예비 창업자 (카페·식당·미용실·소매점). 임대차 계약 직후, 시간에 쫓기고, 뭘 먼저 해야 할지 막막한 상태.<br>부 타깃: 리뉴얼·확장하는 기존 자영업자, 소형 프랜차이즈 본사.</td></tr>
+      <tr><td><strong>핵심 차별점 (RTB)</strong></td><td>① 견적·일정·책임의 단일 창구 (업체 5곳 조율 스트레스 제거)<br>② 인테리어 공사 일정에 설비 세팅을 맞춰 오픈일 단축<br>③ 패키지 계약 시 비용 혜택 (따로 할 때보다 싸다는 것을 숫자로 증명)</td></tr>
+      <tr><td><strong>브랜드 보이스</strong></td><td>전문가답게 정확하되, 사장님 눈높이의 쉬운 말. 허세·과장 없이 숫자와 사례로 말한다. "저희가 다 해드립니다"보다 "이 순서로 하면 됩니다, 여기까지 저희가 합니다."</td></tr>
+    </table>
+  </div>
+  <div class="callout">
+    <strong>대기업 에이전시가 반드시 하는 것:</strong> 모든 페이지·게시물을 만들기 전에 "이게 브랜드 에센스 한 문장에 부합하는가?"를 검수 기준으로 삼습니다. 예쁜 것보다 일관된 것이 브랜드를 만듭니다.
+  </div>
+</div>
+
+<div class="section" id="sitemap">
+  <h2><span class="num">2</span>사이트맵 (정보 구조)</h2>
+  <p>7개 메뉴, 2단계 깊이 이내. 창업자는 바쁩니다 — 어떤 페이지에서든 2클릭 안에 견적 문의에 도달해야 합니다.</p>
+  <div class="sitemap">
+    <div class="node hot"><div class="t">홈 (메인)</div><div class="d">전환 허브 — 아래 3장 상세 설계</div></div>
+    <div class="node"><div class="t">서비스</div><div class="d">인테리어 / 포스·키오스크 / CCTV·보안 / 세무기장 (4개 하위 페이지)</div></div>
+    <div class="node"><div class="t">패키지</div><div class="d">원스톱 묶음 상품·혜택 — 차별점의 증명</div></div>
+  </div>
+  <div class="sitemap">
+    <div class="node"><div class="t">포트폴리오</div><div class="d">업종별 필터 + 실비용 공개</div></div>
+    <div class="node"><div class="t">창업가이드</div><div class="d">블로그 연동 정보 콘텐츠 (SEO 엔진)</div></div>
+    <div class="node"><div class="t">회사소개</div><div class="d">대표·팀·보증·사업자정보 (신뢰)</div></div>
+    <div class="node hot"><div class="t">견적문의</div><div class="d">3칸 폼 + 카톡 채널 — 최종 목적지</div></div>
+  </div>
+  <div class="callout green">
+    <strong>설계 원칙:</strong> ① 모든 페이지 우하단에 카카오톡 채널 플로팅 버튼 고정 ② 모든 페이지 하단에 견적문의 섹션 반복 배치 ③ 메뉴는 7개를 넘기지 않음 (넘치면 "회사소개" 하위로 흡수).
+  </div>
+</div>
+
+<div class="section" id="wireframe">
+  <h2><span class="num">3</span>메인 페이지 설계 — 스크롤 시나리오 10단계</h2>
+  <p>메인 페이지는 "공감 → 해결책 → 증거 → 행동"의 설득 시나리오입니다. 각 섹션의 목적과 실제 사용할 카피 문구까지 제시합니다.</p>
+
+  <div class="wire">
+    <div class="wire-head"><span>① 히어로 (첫 화면)</span><span class="goal">목적: 3초 안에 "뭐 하는 곳인지 + 뭘 하면 되는지"</span></div>
+    <div class="wire-body">
+      <div class="copy"><span class="label">메인 카피</span><div class="h">창업 준비, 다섯 군데 알아보지 마세요.<br>인테리어부터 포스·CCTV·세무까지, 공간브릿지 하나면 됩니다.</div></div>
+      <div class="copy"><span class="label">서브 카피</span>임대차 계약하셨나요? 지금부터 오픈까지, 저희가 한 번에 챙깁니다.</div>
+      <ul>
+        <li>CTA 버튼 2개: <strong>[무료 견적 받기]</strong>(강조색) + [카카오톡 상담](보조)</li>
+        <li>배경: 시공 완료 매장 실사진 (스톡 이미지 금지 — 신뢰 하락 요인)</li>
+        <li>모바일에서 카피 2줄 + 버튼이 스크롤 없이 다 보여야 함</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wire">
+    <div class="wire-head"><span>② 신뢰 바</span><span class="goal">목적: 숫자로 첫 신뢰 형성</span></div>
+    <div class="wire-body">
+      <ul>
+        <li>"누적 시공 ○○건 · 대응 업종 ○종 · 평균 공사기간 ○주 · 시공 후 AS 보증 ○년" — 4개 숫자 가로 배치</li>
+        <li>초기에 건수가 적으면 "대표 시공 경력 ○년"으로 대체. 숫자를 부풀리지 말 것 — 들통나면 전부 무너짐</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wire">
+    <div class="wire-head"><span>③ 문제 공감</span><span class="goal">목적: "내 얘기네" — 이탈 방지의 핵심</span></div>
+    <div class="wire-body">
+      <div class="copy"><span class="label">헤드라인</span><div class="h">계약서에 도장 찍는 순간, 월세는 시작됩니다.<br>그런데 알아볼 곳은 왜 이렇게 많을까요?</div></div>
+      <ul>
+        <li>아이콘 5개 나열: 인테리어 업체 / 포스 대리점 / 키오스크 렌탈 / CCTV 설치 / 세무사 — 각각 "따로 견적, 따로 일정, 따로 책임"</li>
+        <li>마무리 한 줄: "업체 5곳과 통화하는 동안, 오픈은 늦어지고 월세만 나갑니다."</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wire">
+    <div class="wire-head"><span>④ 솔루션 (브릿지 다이어그램)</span><span class="goal">목적: 원스톱 구조를 그림 하나로 각인</span></div>
+    <div class="wire-body">
+      <div class="copy"><span class="label">헤드라인</span><div class="h">공간브릿지는 다리입니다.<br>공간(인테리어)에서 운영(포스·CCTV·세무)까지 한 번에 건너가세요.</div></div>
+      <ul>
+        <li>비주얼: 왼쪽 "빈 상가" → 다리(공간브릿지 로고) → 오른쪽 "오픈한 내 가게". 다리 위에 4개 서비스 아이콘</li>
+        <li>서비스 4개 카드: 각 카드에 "무엇을/언제/왜 함께가 유리한지" 2줄 + 상세 페이지 링크</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wire">
+    <div class="wire-head"><span>⑤ 포트폴리오 하이라이트</span><span class="goal">목적: 실력의 증거 — 전환의 핵심 섹션</span></div>
+    <div class="wire-body">
+      <ul>
+        <li>대표 사례 3건: 비포/애프터 사진 + <strong>"○○동 12평 카페 · 공사 3주 · 총 1,850만원 (인테리어+포스+CCTV 포함)"</strong> 형식의 실비용 캡션</li>
+        <li>비용 공개가 부담스러우면 "평당 ○○만원대"로라도 — 비용을 말하는 업체가 드물어서 그 자체가 차별화</li>
+        <li>[포트폴리오 전체 보기] 버튼</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wire">
+    <div class="wire-head"><span>⑥ 프로세스 6단계</span><span class="goal">목적: 막막함 제거 — "이 순서대로 하면 되는구나"</span></div>
+    <div class="wire-body">
+      <ul>
+        <li>①무료 상담·실측 → ②통합 견적 (인테리어+설비+세무 한 장) → ③디자인·계약 → ④시공 → ⑤설비 세팅 (포스·키오스크·CCTV, 공사 마무리 주간에 동시 진행) → ⑥오픈 &amp; 사후관리 (AS + 세무기장 개시)</li>
+        <li>각 단계에 소요 기간 표기. "통합 견적 한 장"과 "설비 동시 세팅"이 경쟁사와 다른 지점이므로 시각적으로 강조</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wire">
+    <div class="wire-head"><span>⑦ 패키지 혜택</span><span class="goal">목적: 원스톱을 돈으로 증명</span></div>
+    <div class="wire-body">
+      <div class="copy"><span class="label">헤드라인</span><div class="h">따로 하면 비쌉니다. 함께 하면 아낍니다.</div></div>
+      <ul>
+        <li>비교표: "따로 진행 시 예상 비용" vs "공간브릿지 패키지" — 절감액을 굵은 숫자로</li>
+        <li>혜택 예시: 인테리어 계약 시 포스 설치비 0원 / CCTV ○대 무상 / 첫 3개월 기장료 할인 등 (실제 조건으로 확정 후 기입)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wire">
+    <div class="wire-head"><span>⑧ 고객 후기</span><span class="goal">목적: 제3자의 목소리로 신뢰 완성</span></div>
+    <div class="wire-body">
+      <ul>
+        <li>실명·매장명·사진이 있는 후기 3건. "오픈일을 2주 앞당겼어요", "업체 조율 스트레스가 없었어요" 같은 원스톱 가치가 드러나는 후기 우선</li>
+        <li>네이버 플레이스 리뷰 위젯 연동 (가능 시)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wire">
+    <div class="wire-head"><span>⑨ FAQ</span><span class="goal">목적: 문의 전 마지막 불안 제거</span></div>
+    <div class="wire-body">
+      <ul>
+        <li>6문항: 견적 비용? (무료) / 공사 기간? / 지방도 되나? / 인테리어만 맡겨도 되나? (네 — 문턱 낮추기) / AS 기간? / 세무기장만 따로도 되나?</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wire">
+    <div class="wire-head"><span>⑩ 최종 CTA + 견적 폼</span><span class="goal">목적: 전환</span></div>
+    <div class="wire-body">
+      <div class="copy"><span class="label">헤드라인</span><div class="h">지금 상가 계약하셨다면, 가장 바쁜 사람은 사장님이 아니라 저희여야 합니다.</div></div>
+      <ul>
+        <li>폼은 딱 3칸: 연락처 / 지역 / 업종 (+ 선택: 평수). 칸이 하나 늘 때마다 이탈이 늘어남</li>
+        <li>폼 옆에 "보통 ○시간 내 연락드립니다" 응답 약속 명시</li>
+        <li>대안 경로 병기: 카카오톡 채널 / 전화번호 (클릭 시 바로 발신)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="subpage">
+  <h2><span class="num">4</span>서브 페이지 설계 요약</h2>
+  <table>
+    <tr><th style="width:150px">페이지</th><th>핵심 구성</th><th>전환 장치</th></tr>
+    <tr><td><strong>서비스 상세 ×4</strong></td><td>공통 템플릿: 이 단계에서 사장님이 겪는 문제 → 공간브릿지의 해결 방식 → 제공 범위·기간 → 관련 사례 2건 → FAQ 3문항. 포스·키오스크 페이지는 "렌탈 vs 구매" 비교표, 세무 페이지는 "오픈 첫 해 세무 일정표" 포함</td><td>페이지 하단 견적 폼 + "인테리어와 함께하면 ○○ 혜택" 배너</td></tr>
+    <tr><td><strong>패키지</strong></td><td>스타터(인테리어+포스) / 스탠다드(+CCTV·인터넷) / 올인원(+세무기장) 3단 구성. 각각 "이런 분께" 명시</td><td>패키지별 [이 구성으로 견적 받기] 버튼</td></tr>
+    <tr><td><strong>포트폴리오</strong></td><td>업종 필터(카페/식당/미용실/소매/사무실) + 카드마다 평수·기간·총비용·포함 설비 표기. 상세 페이지는 비포/애프터 + 공사 과정 + 사장님 한마디</td><td>각 사례 하단 "비슷한 매장 견적 받기"</td></tr>
+    <tr><td><strong>창업가이드</strong></td><td>블로그 콘텐츠 연동 (Part B). 카테고리: 비용 가이드 / 창업 순서 / 설비 선택 / 세무 기초</td><td>글 말미 고정 CTA 배너</td></tr>
+    <tr><td><strong>회사소개</strong></td><td>대표 인사·이력, 팀, 사업자등록번호, 시공 보증·보험, 오시는 길</td><td>—  (신뢰 전담 페이지)</td></tr>
+  </table>
+</div>
+
+<div class="section" id="tech">
+  <h2><span class="num">5</span>기술·SEO 요건 (개발 체크리스트)</h2>
+  <ul class="checklist">
+    <li><strong>모바일 우선:</strong> 창업자 검색의 대부분이 모바일. 모든 섹션을 모바일 화면 기준으로 먼저 설계</li>
+    <li><strong>속도:</strong> 시공 사진 WebP 변환·지연 로딩. 첫 화면 로딩 3초 초과 시 이탈 급증</li>
+    <li><strong>페이지별 title/meta:</strong> 메인 = "상가·매장 인테리어와 창업 준비 원스톱 | 공간브릿지" 형식으로 검색어를 앞에</li>
+    <li><strong>네이버 서치어드바이저 + 구글 서치콘솔</strong> 등록, 사이트맵 제출 (오픈 당일)</li>
+    <li><strong>스마트플레이스 연동:</strong> 홈페이지 ↔ 플레이스 상호 링크</li>
+    <li><strong>전환 추적:</strong> 폼 제출·카톡 클릭·전화 클릭 이벤트 측정 (네이버 애널리틱스/GA4) — 유입 채널별 성과 판단의 근거</li>
+    <li><strong>카카오톡 채널 플로팅 버튼</strong> 전 페이지 고정</li>
+    <li><strong>포트폴리오 1건 = 페이지 1개</strong> 구조 (사진 갤러리 팝업 금지) — 사례 페이지 하나하나가 검색 유입구가 됨</li>
+  </ul>
+</div>
+
+<!-- ============ PART B ============ -->
+
+<div class="section" id="pillars">
+  <h2><span class="num">6</span>콘텐츠 필러 전략 — 4개 기둥</h2>
+  <p>"고객이 궁금해하는 정보"를 체계로 만든 것이 콘텐츠 필러입니다. 모든 게시물은 이 4개 중 하나에 속해야 하며, 어디에도 속하지 않으면 만들지 않습니다.</p>
+  <div class="pillar">
+    <div class="p a"><div class="pct">40%</div><div class="t">① 시공 사례·비용 공개</div><div class="d2">"○○동 12평 카페, 총 1,850만원 내역 공개". 유입과 전환을 동시에 만드는 주력. 블로그=시공일지, 인스타=비포애프터 릴스</div></div>
+    <div class="p b"><div class="pct">30%</div><div class="t">② 원스톱 창업 정보</div><div class="d2">"창업 총비용 계산법", "키오스크 렌탈 vs 구매", "오픈 첫 달 세무 실수 3가지". 경쟁 인테리어 업체가 못 쓰는 공간브릿지만의 영역</div></div>
+    <div class="p c"><div class="pct">20%</div><div class="t">③ 현장·비하인드</div><div class="d2">공사 타임랩스, 실측 브이로그, 자재 고르는 기준. 사람 냄새 = 팔로우 유지 장치</div></div>
+    <div class="p d"><div class="pct">10%</div><div class="t">④ 후기·오픈 축하</div><div class="d2">사장님 인터뷰, 오픈 매장 방문기. 제3자 목소리의 신뢰 + 고객 매장 홍보로 소개 선순환</div></div>
+  </div>
+  <div class="callout">
+    <strong>운영 원칙 — 시공 1건 = 콘텐츠 세트 1개:</strong> 시공 한 건이 끝나면 자동으로 ① 블로그 시공일지 1편 ② 비포/애프터 릴스 1개 ③ 타임랩스 1개 ④ 플레이스 사진 업데이트 ⑤ (오픈 후) 사장님 후기 1편이 나옵니다. 콘텐츠를 따로 기획하는 게 아니라 <strong>시공 자체가 콘텐츠 공장</strong>이 되는 구조를 만드는 것이 핵심입니다. 현장 촬영 체크리스트(착공 전 전경 / 철거 / 골조 / 마감 / 설비 세팅 / 완공 10컷)를 시공 프로세스에 포함시키세요.
+  </div>
+</div>
+
+<div class="section" id="calendar">
+  <h2><span class="num">7</span>첫 4주 콘텐츠 캘린더 (제목 확정안)</h2>
+  <p>블로그 주 2회 (화·금), 인스타 주 3회 (월·수·토). 블로그 제목은 검색어를 그대로 품도록 설계했습니다.</p>
+
+  <h3>1주차 — "우리가 누군지" 기반 다지기</h3>
+  <table>
+    <tr><th style="width:90px">채널</th><th>제목 / 소재</th><th style="width:90px">필러</th></tr>
+    <tr><td>블로그 화</td><td>상가 계약 후 가장 먼저 할 일 5가지 — 순서 틀리면 월세만 나갑니다</td><td>② 정보</td></tr>
+    <tr><td>인스타 수</td><td>계정 오픈 릴스: "창업 준비하면서 통화해야 하는 업체 5곳 vs 공간브릿지 1곳" (15초)</td><td>② 정보</td></tr>
+    <tr><td>블로그 금</td><td>[시공일지] ○○동 ○평 ○○ 인테리어 — 철거부터 오픈까지 실비용 공개</td><td>① 사례</td></tr>
+    <tr><td>인스타 토</td><td>위 시공 건 비포/애프터 릴스 + 총비용 자막</td><td>① 사례</td></tr>
+  </table>
+
+  <h3>2주차 — 비용 콘텐츠로 검색 진입</h3>
+  <table>
+    <tr><th style="width:90px">채널</th><th>제목 / 소재</th><th style="width:90px">필러</th></tr>
+    <tr><td>인스타 월</td><td>카드뉴스: "10평 카페 창업, 실제로 얼마 들까?" (인테리어+포스+CCTV+세무 총합 분해)</td><td>② 정보</td></tr>
+    <tr><td>블로그 화</td><td>10평 카페 인테리어 비용, 항목별로 다 뜯어봤습니다 (2026년 기준)</td><td>② 정보</td></tr>
+    <tr><td>인스타 수</td><td>공사 현장 타임랩스 + "이번 주 현장" 스토리 시리즈 시작</td><td>③ 현장</td></tr>
+    <tr><td>블로그 금</td><td>[시공일지] 두 번째 사례 — 업종 다른 것으로 (예: 식당·미용실)</td><td>① 사례</td></tr>
+    <tr><td>인스타 토</td><td>두 번째 사례 비포/애프터</td><td>① 사례</td></tr>
+  </table>
+
+  <h3>3주차 — 원스톱 차별화 각인</h3>
+  <table>
+    <tr><th style="width:90px">채널</th><th>제목 / 소재</th><th style="width:90px">필러</th></tr>
+    <tr><td>인스타 월</td><td>릴스: "포스기 그냥 사면 손해인 이유" (렌탈 vs 구매 30초 요약)</td><td>② 정보</td></tr>
+    <tr><td>블로그 화</td><td>키오스크 렌탈 vs 구매, 사장님한테 유리한 쪽 계산해드립니다</td><td>② 정보</td></tr>
+    <tr><td>인스타 수</td><td>설비 세팅 데이 브이로그: 공사 끝나는 주에 포스·CCTV가 같이 설치되는 장면</td><td>③ 현장</td></tr>
+    <tr><td>블로그 금</td><td>사업자등록 하고 첫 달에 하는 세무 실수 3가지 (부가세 폭탄 피하기)</td><td>② 정보</td></tr>
+    <tr><td>인스타 토</td><td>카드뉴스: "임대차 계약 → 오픈까지 6주 일정표" (저장 유도형)</td><td>② 정보</td></tr>
+  </table>
+
+  <h3>4주차 — 후기·신뢰로 마무리, 첫 달 회고</h3>
+  <table>
+    <tr><th style="width:90px">채널</th><th>제목 / 소재</th><th style="width:90px">필러</th></tr>
+    <tr><td>인스타 월</td><td>사장님 인터뷰 릴스: "오픈까지 뭐가 제일 힘드셨어요?"</td><td>④ 후기</td></tr>
+    <tr><td>블로그 화</td><td>[오픈 스토리] ○○ 사장님의 창업 6주 기록 — 공간브릿지와 함께한 과정</td><td>④ 후기</td></tr>
+    <tr><td>인스타 수</td><td>Q&amp;A 스토리: 댓글·DM으로 받은 질문 답변 (다음 달 콘텐츠 소재 수집)</td><td>② 정보</td></tr>
+    <tr><td>블로그 금</td><td>[시공일지] 세 번째 사례</td><td>① 사례</td></tr>
+    <tr><td>인스타 토</td><td>세 번째 사례 비포/애프터 + "7월 시공 문의 마감 임박" 공지</td><td>① 사례</td></tr>
+  </table>
+
+  <div class="callout green">
+    <strong>시공 사례가 아직 부족하다면:</strong> 과거 시공 건(사진이 남아있는 것)을 소급해 시공일지로 만들고, 그래도 모자라면 1주차엔 정보성 비중을 높이되 <strong>"견적 상담 과정 공개"</strong>(실측 나가는 모습, 견적서 구성 설명)로 사례성 콘텐츠를 대체하세요. 없는 사례를 지어내는 것만은 절대 금물입니다.
+  </div>
+</div>
+
+<div class="section" id="tone">
+  <h2><span class="num">8</span>톤앤매너 · 운영 규칙</h2>
+  <div class="card">
+    <h4>글쓰기 규칙 (블로그)</h4>
+    <ul class="checklist">
+      <li>제목에 검색어를 그대로: "10평 카페 인테리어 비용"처럼 고객이 치는 말을 제목 앞쪽에</li>
+      <li>첫 문단에서 결론(총비용·기간)을 먼저 — 스크롤 유도용 뜸들이기 금지</li>
+      <li>모든 비용은 "만원 단위 실숫자"로. "합리적인 가격" 같은 말은 쓰지 않는다</li>
+      <li>글 말미 고정 문구: "상가 계약하셨나요? 무료 실측·통합 견적 받아보세요 → (링크/카톡)"</li>
+      <li>사진에 지역명·업종 포함한 파일명과 대체텍스트 (이미지 검색 유입)</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>인스타 규칙</h4>
+    <ul class="checklist">
+      <li>릴스 첫 1.5초에 비포 화면 또는 숫자("1,850만원")로 시선 고정</li>
+      <li>해시태그 세트 고정 운영: #상가인테리어 #매장인테리어 #카페인테리어 #카페창업 #식당창업 #창업준비 + 지역태그(#○○인테리어 #○○상가) 조합 10~15개</li>
+      <li>프로필 링크는 견적문의 페이지로 직결 (링크트리로 분산시키지 않음)</li>
+      <li>DM·댓글 문의는 당일 답변 — 응답 속도가 곧 후기가 됨</li>
+      <li>스토리 하이라이트 4개 고정: 시공사례 / 비용가이드 / 후기 / 견적문의</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>지속 가능성 규칙 (가장 중요)</h4>
+    <ul class="checklist">
+      <li>주간 콘텐츠 제작 시간을 캘린더에 고정 블록으로 (예: 월요일 오전 2시간 촬영분 정리, 목요일 오전 2시간 작성)</li>
+      <li>몰아서 만들지 말고 발행 주기를 지킨다 — 네이버는 지속성을 보고, 고객은 "최근 글이 있는 업체 = 지금도 영업 중"으로 읽는다</li>
+      <li>월말 30분 회고: 조회·문의 데이터 보고 다음 달 소재 교체 (반응 없는 필러 줄이고 반응 있는 쪽 늘리기)</li>
+      <li>모든 문의에 "어떻게 알고 연락 주셨어요?" 질문 — 채널별 성과 판단의 유일한 근거</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">
+  본 문서는 「공간브릿지 고객 유입·검색 경로 연구 보고서」(customer-research.html)의 후속 실행 설계 문서입니다. 홈페이지 실물 URL 확인 시 현재 페이지 대비 갭 분석을 추가할 수 있습니다.
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,974 @@
+/* SpaceBridge V50 responsive polish
+   Loaded after the consolidated v50 stylesheet. This file only corrects
+   hierarchy, responsive composition and low-noise interaction states. */
+
+:root {
+  --sb50-ink: #15253d;
+  --sb50-copy: #5b6f87;
+  --sb50-blue: #0b6fb8;
+  --sb50-blue-strong: #075f9c;
+  --sb50-sky: #f3f8fc;
+  --sb50-line: #d8e5ee;
+  --sb50-white: #fff;
+  --sb50-radius: 18px;
+  --sb50-ease: cubic-bezier(.22, 1, .36, 1);
+  --sb50-shadow: 0 12px 32px rgba(20, 62, 94, .08);
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  color: var(--sb50-ink);
+  font-weight:400;
+}
+
+/* Keep the background system to two calm surfaces. */
+.situation,
+.condition-lab,
+.process,
+.pricing,
+.insights,
+.faq,
+.partnership {
+  background: var(--sb50-white) !important;
+}
+
+.categories,
+.quote,
+.tools {
+  background: var(--sb50-sky) !important;
+}
+
+.section {
+  padding-block: clamp(76px, 8vw, 112px);
+}
+
+.section-head {
+  margin-bottom: clamp(32px, 4vw, 48px);
+}
+
+.section-head h2,
+.quote-intro h2,
+.partner-copy h2 {
+  color: var(--sb50-ink);
+  font-weight:700;
+  letter-spacing: -.035em;
+}
+
+.section-head > p,
+.split-head > p,
+.hero-lede,
+.service-card p,
+.sb46-category-output > p {
+  color: var(--sb50-copy);
+}
+
+.header-inner > .header-cta + .header-cta {
+  display: none;
+}
+
+/* One restrained connection stroke after the logo arrives. */
+.brand-type {
+  position: relative;
+}
+
+.brand-type::after {
+  position: absolute;
+  right: -46px;
+  bottom: -7px;
+  width: 40px;
+  height: 2px;
+  content: "";
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--sb50-blue), #39bde5 72%, transparent);
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+body.sb-v50-logo-linking .brand-type::after {
+  animation: sb50-logo-connect .82s .16s var(--sb50-ease) both;
+}
+
+/* Hero: copy and CTA remain the first decision, photo is supporting evidence. */
+.hero {
+  padding: 48px 0 64px;
+  background: linear-gradient(180deg, #fff 0%, var(--sb50-sky) 100%);
+}
+
+.hero-grid {
+  min-height: 600px;
+  border-color: rgba(216, 229, 238, .85);
+  border-radius: 22px;
+  box-shadow: 0 18px 52px rgba(20, 62, 94, .09);
+}
+
+.hero-copy {
+  width: 51%;
+  min-height: 600px;
+  padding: 52px 28px 52px 52px;
+}
+
+.hero h1 {
+  max-width: 610px;
+  font-size: clamp(42px, 4vw, 56px);
+  font-weight:700;
+  line-height: 1.12;
+}
+
+.hero-lede {
+  max-width: 570px;
+  margin-top: 22px;
+  font-size: 17px;
+  line-height: 1.72;
+}
+
+.hero-contact-actions {
+  grid-template-columns: minmax(148px, 1fr) minmax(170px, 1fr);
+  max-width: 410px;
+  gap: 12px;
+}
+
+.hero-contact-actions .button {
+  min-height: 50px;
+  border-radius: 10px;
+  font-weight:700;
+}
+
+.hero-category-link {
+  min-height: 44px;
+  align-items: center;
+}
+
+.hero-visual img {
+  object-position: 69% center;
+}
+
+.image-disclosure {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  z-index: 2;
+  max-width: calc(100% - 28px);
+  padding: 6px 9px;
+  border-radius: 7px;
+  background: rgba(15, 37, 61, .78);
+  color: #fff;
+  font-size: 11px;
+  font-weight:500;
+  line-height: 1.35;
+}
+
+.sb46-sheet {
+  right: 24px;
+  bottom: 24px;
+  width: min(336px, 31%);
+  padding: 18px;
+  border-color: rgba(216, 229, 238, .9);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .95);
+  box-shadow: var(--sb50-shadow);
+}
+
+.sb46-sheet dl > div {
+  padding: 10px 0;
+}
+
+.sb46-sheet h2 {
+  font-weight:600;
+}
+
+/* Journey reads as one continuous path, without boxed visual noise. */
+.sb45-journey ol {
+  padding: 18px 20px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.sb45-journey li {
+  border-color: var(--sb50-line);
+}
+
+/* Situation: equal-height choices and a quieter result panel. */
+.situation-layout {
+  grid-template-columns: minmax(320px, .8fr) minmax(0, 1.2fr);
+  gap: 40px;
+}
+
+.situation-tabs {
+  align-content: stretch;
+}
+
+.situation-tab {
+  min-height: 92px;
+  padding: 18px 8px;
+}
+
+.situation-tab:hover,
+.situation-tab.active {
+  padding-left: 14px;
+  background: var(--sb50-sky);
+}
+
+.situation-panel {
+  min-height: 416px;
+  border-radius: var(--sb50-radius);
+  box-shadow: none;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.97) 0%, rgba(255,255,255,.91) 38%, rgba(255,255,255,.14) 70%),
+    url('/assets/v42/situation-spacebridge-v42.webp') 68% center / cover no-repeat;
+}
+
+/* Category preview is the active detail; the 8-card grid stays uniform. */
+.sb46-category-switcher {
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.sb46-category-switcher button {
+  min-height: 46px;
+  border-radius: 12px;
+  font-weight:600;
+}
+
+.sb46-category-stage {
+  grid-template-columns: minmax(0, 1.25fr) minmax(330px, .75fr);
+  min-height: 400px;
+  margin-bottom: 40px;
+  border-color: var(--sb50-line);
+  border-radius: var(--sb50-radius);
+  box-shadow: var(--sb50-shadow);
+}
+
+.sb46-category-stage.is-switching .sb46-category-photo img,
+.sb46-category-stage.is-switching .sb46-category-output > * {
+  animation: sb50-stage-change .32s var(--sb50-ease) both;
+}
+
+.sb46-category-photo {
+  min-height: 400px;
+}
+
+.sb46-category-photo img {
+  object-position: center;
+}
+
+.sb46-category-photo figcaption {
+  left: 18px;
+  bottom: 18px;
+  max-width: calc(100% - 36px);
+  border-radius: 8px;
+  background: rgba(15, 37, 61, .78);
+  font-weight:500;
+}
+
+.sb46-category-output {
+  padding: 34px;
+}
+
+.sb46-category-output h3 {
+  font-weight:700;
+}
+
+.category-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  grid-auto-rows: 1fr;
+}
+
+.service-card {
+  height: 100%;
+  border-color: var(--sb50-line);
+  border-radius: 16px;
+  box-shadow: 0 5px 18px rgba(20, 62, 94, .055);
+}
+
+.service-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sb50-shadow);
+}
+
+.service-card figure {
+  aspect-ratio: 16 / 10;
+}
+
+.service-body {
+  min-height: 250px;
+  padding: 22px 20px 20px;
+}
+
+.service-card h3 {
+  min-height: 2.64em;
+  font-weight:600;
+}
+
+.service-card p {
+  min-height: 4.95em;
+}
+
+.service-links {
+  gap: 8px;
+  padding-top: 14px;
+}
+
+.service-links a,
+.service-links button {
+  min-height: 44px;
+  font-weight:600;
+}
+
+.extension-row {
+  border-top-color: var(--sb50-line);
+}
+
+.category-image-disclosure {
+  margin: 16px 0 0;
+  color: var(--sb50-copy);
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: right;
+}
+
+.image-disclosure,
+.quote-trust-photo figcaption,
+.partner-team-photo figcaption {
+  font-size: 12px;
+}
+
+.consent a,
+.third-party-later a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding-inline: 2px;
+}
+
+.third-party-later {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--sb50-line);
+  border-radius: 12px;
+  background: #f7fbfd;
+  color: #52677f;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.condition-questions summary,
+.faq-list summary {
+  min-height: 44px;
+}
+
+/* The consultation and partner sections use one purposeful photograph each.
+   Captions keep generated scenes distinguishable from real customer cases. */
+.quote-trust-photo,
+.partner-team-photo {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--sb50-line);
+  border-radius: 14px;
+  background: #eaf2f7;
+  box-shadow: 0 8px 24px rgba(20, 62, 94, .07);
+}
+
+.quote-trust-photo {
+  aspect-ratio: 16 / 6.2;
+  margin-top: 30px;
+}
+
+.partner-team-photo {
+  grid-column: 1 / -1;
+  aspect-ratio: 24 / 6.7;
+  margin-bottom: 4px;
+}
+
+.quote-trust-photo img,
+.partner-team-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.quote-trust-photo img {
+  object-position: 52% center;
+}
+
+.partner-team-photo img {
+  object-position: 64% center;
+}
+
+.quote-trust-photo figcaption,
+.partner-team-photo figcaption {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  max-width: calc(100% - 24px);
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: rgba(15, 37, 61, .8);
+  color: #fff;
+  font-size: 12px;
+  font-weight:500;
+  line-height: 1.35;
+}
+
+.partner-brief {
+  grid-column: 1 / -1;
+  padding: 26px 28px;
+  border: 1px solid var(--sb50-line);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.partner-brief > b {
+  font-size: 17px;
+  font-weight:700;
+}
+
+.partner-brief ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.partner-brief li {
+  display: grid;
+  min-height: 72px;
+  grid-template-columns: 34px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--sb50-sky);
+  color: var(--sb50-ink);
+  font-size: 14px;
+  font-weight:600;
+}
+
+.partner-brief li span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--sb50-blue);
+  font-size: 12px;
+  font-weight:700;
+}
+
+.partner-brief p {
+  margin-top: 16px;
+  color: var(--sb50-copy);
+  font-size: 13px;
+}
+
+/* Keep all interactive targets easy to hit. */
+:where(a, button, summary, input, select, textarea) {
+  touch-action: manipulation;
+}
+
+:where(.desktop-nav a, .mobile-menu a, .inline-link, .service-links a, .service-links button,
+  .sb46-category-output a, .footer-links a, .footer-contact a) {
+  min-height: 44px;
+}
+
+/* Card surfaces and forms should not visually compete with the content. */
+.condition-controls,
+.condition-sheet,
+.lead-form,
+.partner-card,
+.cost-case,
+.tool-card,
+.insight-card {
+  border-color: var(--sb50-line);
+  box-shadow: 0 7px 24px rgba(20, 62, 94, .065);
+}
+
+.condition-option,
+.choice-chips button,
+.lf-chip,
+.field input,
+.field select,
+.field textarea,
+.condition-field input,
+.condition-field select {
+  min-height: 48px;
+}
+
+/* Desktop rail: never covers the quote form. */
+body.sb-v50-quote-active .sb-rail {
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(calc(100% + 12px), -50%) !important;
+}
+
+/* Reveal is intentionally small: enough to guide attention, never a show reel. */
+.reveal,
+.sb45-reveal,
+.sb46-motion {
+  transform: translate3d(0, 16px, 0);
+  transition-duration: .44s;
+}
+
+@media (max-width: 1080px) {
+  .hero-copy {
+    width: 54%;
+    padding-left: 40px;
+  }
+
+  .hero h1 {
+    font-size: 44px;
+  }
+
+  .sb46-sheet {
+    width: 34%;
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .service-body {
+    padding-inline: 16px;
+  }
+}
+
+@media (max-width: 820px) {
+  :root {
+    --shell: calc(100% - 40px);
+  }
+
+  body {
+    padding-bottom: 0;
+  }
+
+  /* V51: 고정 하단 독 대신 헤더 상담요청을 사용해 본문을 가리지 않는다. */
+  .header-inner {
+    gap: 8px;
+  }
+
+  .header-inner > .brand {
+    margin-right: auto;
+  }
+
+  .header-inner > .header-cta {
+    display: inline-flex;
+    min-height: 44px;
+    padding-inline: 13px;
+    border-radius: 10px;
+    font-size: 13px;
+    box-shadow: none;
+  }
+
+  .menu-toggle {
+    margin-left: 0;
+  }
+
+  .section {
+    padding-block: 72px;
+  }
+
+  .hero {
+    padding: 32px 0 48px;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .hero-copy {
+    grid-row: 1;
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+  }
+
+  .hero-visual {
+    position: relative;
+    inset: auto;
+    grid-row: 2;
+    min-width: 0;
+    aspect-ratio: 4 / 3;
+    border-radius: 16px;
+    box-shadow: none;
+  }
+
+  .hero-visual img {
+    object-position: center;
+  }
+
+  .sb46-sheet {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    grid-row: 3;
+    width: 100%;
+    margin: 0;
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: none;
+  }
+
+  .hero-contact-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: none;
+  }
+
+  .situation-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .situation-panel {
+    min-height: 360px;
+  }
+
+  .sb46-category-stage {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .sb46-category-photo {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+  }
+
+  .category-grid {
+    display: flex;
+    gap: 12px;
+    margin-inline: -20px;
+    padding: 2px 20px 18px;
+    overflow-x: auto;
+    scroll-padding-inline: 20px;
+    scroll-snap-type: x mandatory;
+    scrollbar-color: var(--sb50-line) transparent;
+  }
+
+  .category-grid .service-card {
+    flex: 0 0 min(78vw, 304px);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .service-card figure {
+    aspect-ratio: 1 / 1;
+  }
+
+  .service-body {
+    min-height: 252px;
+    padding: 16px 12px 12px;
+  }
+
+  .service-card h3 {
+    min-height: 2.7em;
+    font-size: 17px;
+  }
+
+  .service-card p {
+    min-height: 6.1em;
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.52;
+  }
+
+  .service-links {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .service-links a,
+  .service-links button {
+    width: 100%;
+    justify-content: flex-start;
+    font-size: 13px;
+  }
+
+  .quote-trust-photo {
+    aspect-ratio: 16 / 7.4;
+    margin-top: 24px;
+  }
+
+  .partner-team-photo {
+    aspect-ratio: 16 / 7.4;
+  }
+
+  .sb-rail {
+    display: none !important;
+  }
+
+  .sb-contact-dock {
+    display: none !important;
+  }
+
+  body.sb-v50-dock-visible:not(.sb-v50-quote-active) .sb-contact-dock {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  body.sb-v50-quote-active .sb-contact-dock {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(18px);
+  }
+
+  body.sb-v50-inline-cta-active .sb-contact-dock {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(18px);
+  }
+
+  .sb-contact-dock .sb-contact-request {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  :root {
+    --shell: calc(100% - 40px);
+  }
+
+  .section {
+    padding-block: 64px;
+  }
+
+  .section-head h2 {
+    font-size: clamp(26px, 7vw, 31px);
+    font-weight:700;
+  }
+
+  .hero h1 {
+    font-size: clamp(34px, 9.4vw, 42px);
+    line-height: 1.13;
+  }
+
+  .hero-lede {
+    font-size: 16px;
+    line-height: 1.72;
+  }
+
+  .hero-contact-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-category-link {
+    justify-content: flex-start;
+  }
+
+  .trust-strip {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .hero-visual {
+    aspect-ratio: 4 / 3;
+  }
+
+  .quote-trust-photo,
+  .partner-team-photo {
+    aspect-ratio: 16 / 8.5;
+  }
+
+  .partner-brief {
+    padding: 22px 18px;
+  }
+
+  .partner-brief ol {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .quote-trust-photo figcaption,
+  .partner-team-photo figcaption {
+    right: 8px;
+    bottom: 8px;
+    max-width: calc(100% - 16px);
+  }
+
+  .sb45-journey ol {
+    grid-template-columns: 1fr 1fr;
+    padding-inline: 0;
+  }
+
+  .sb45-journey li {
+    min-width: 0;
+    padding-right: 8px;
+  }
+
+  .sb46-category-switcher {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .sb46-category-switcher button {
+    width: 100%;
+    padding-inline: 8px;
+    white-space: normal;
+  }
+
+  .sb46-category-output {
+    padding: 24px 20px;
+  }
+
+  /* V51: 8개 카드는 한 줄 탐색으로 압축해 긴 4단 전개를 줄인다. */
+  .category-grid {
+    display: flex;
+    gap: 12px;
+    margin-inline: -20px;
+    padding: 2px 20px 18px;
+    overflow-x: auto;
+    scroll-padding-inline: 20px;
+    scroll-snap-type: x mandatory;
+    scrollbar-color: var(--sb50-line) transparent;
+  }
+
+  .category-grid .service-card {
+    flex: 0 0 min(78vw, 304px);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .service-card figure {
+    aspect-ratio: 1 / 1;
+  }
+
+  .service-body {
+    min-height: 252px;
+    padding: 16px 12px 12px;
+  }
+
+  .service-no {
+    font-size: 12px;
+  }
+
+  .service-card h3 {
+    min-height: 2.7em;
+    font-size: 17px;
+  }
+
+  .service-card p {
+    min-height: 6.1em;
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.52;
+  }
+
+  .service-links {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .service-links a,
+  .service-links button {
+    width: 100%;
+    justify-content: flex-start;
+    font-size: 13px;
+  }
+
+  .extension-row {
+    gap: 8px;
+  }
+
+  .condition-controls,
+  .condition-sheet,
+  .lead-form {
+    padding-inline: 16px;
+  }
+
+  .condition-row {
+    grid-template-columns: 32px minmax(64px, 76px) minmax(0, 1fr);
+  }
+
+  .condition-row p {
+    overflow-wrap: anywhere;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    font-size: 16px;
+  }
+
+  .footer-bottom,
+  .footer-notice,
+  .footer-links,
+  .business-info,
+  .footer-contact {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 360px) {
+  .brand-type small {
+    display: none;
+  }
+
+  .header-inner > .header-cta {
+    padding-inline: 10px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .service-card:hover figure img {
+    transform: scale(1.025);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  .reveal,
+  .sb45-reveal,
+  .sb46-motion {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+@keyframes sb50-logo-connect {
+  0% { opacity: 0; transform: scaleX(0); }
+  35% { opacity: 1; }
+  70% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(1); }
+}
+
+@keyframes sb50-stage-change {
+  from { opacity: .38; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}

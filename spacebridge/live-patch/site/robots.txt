@@ -1,0 +1,11 @@
+# 공간브릿지 robots — 네이버(Yeti)·구글(Googlebot) 모두 허용
+User-agent: Yeti
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://gongganbridge.com/sitemap.xml

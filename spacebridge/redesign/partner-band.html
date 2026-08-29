@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Malgun Gothic','맑은 고딕',-apple-system,sans-serif;background:#F4F7FA;padding:56px 48px;width:1200px;word-break:keep-all;}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;border:1px solid #C9D8E8;background:#fff;color:#1D4E7A;font-size:12.5px;font-weight:800;border-radius:16px;padding:6px 14px;}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:#2E7CC4;}
+.wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;margin-top:22px;}
+h2{font-size:37px;font-weight:900;color:#14324F;line-height:1.32;letter-spacing:-.5px;}
+h2 .pt{color:#2E7CC4;}
+.sub{color:#5A6B7C;font-size:15.5px;margin-top:14px;line-height:1.75;}
+.benefits{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:24px;}
+.bnf{background:#fff;border:1px solid #E1E9F1;border-radius:12px;padding:14px 16px;}
+.bnf b{display:block;color:#14324F;font-size:14.5px;margin-bottom:4px;}
+.bnf span{color:#6B7C8D;font-size:12.5px;line-height:1.6;}
+.chips{margin-top:18px;display:flex;flex-wrap:wrap;gap:6px;}
+.chips em{font-style:normal;font-size:12px;font-weight:700;color:#4A5E72;background:#E9F0F7;border-radius:12px;padding:5px 11px;}
+.ctas{margin-top:22px;display:flex;gap:10px;align-items:center;}
+.cta{background:#14324F;color:#fff;font-weight:800;font-size:15px;border-radius:10px;padding:14px 26px;text-decoration:none;}
+.cta.ghost{background:#fff;color:#14324F;border:1.5px solid #C9D8E8;}
+.note{margin-top:12px;font-size:12.5px;color:#7A8B9C;}
+.note b{color:#B85C38;}
+/* 오른쪽: 상담 연결 카드 목업 */
+.mock{position:relative;}
+.mock .label{position:absolute;top:-14px;left:18px;background:#2E7CC4;color:#fff;font-size:12px;font-weight:800;border-radius:14px;padding:6px 14px;z-index:3;}
+.lead-card{background:#fff;border:1px solid #DCE6EF;border-radius:16px;box-shadow:0 18px 40px rgba(20,50,79,.14);padding:22px;position:relative;z-index:2;}
+.lead-card .top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dashed #E1E9F1;padding-bottom:12px;}
+.lead-card .no{font-size:12px;color:#7A8B9C;font-weight:700;}
+.lead-card .new{background:#EAF6EE;color:#1F7A3D;font-size:11.5px;font-weight:800;border-radius:10px;padding:3px 10px;}
+.rows{margin-top:14px;display:grid;gap:9px;}
+.row{display:flex;gap:10px;font-size:14px;}
+.row .k{width:86px;color:#7A8B9C;font-weight:700;flex-shrink:0;}
+.row .v{color:#22384E;font-weight:700;}
+.row .v .tagm{background:#E9F0F7;color:#1D4E7A;border-radius:8px;padding:1px 8px;font-size:12px;margin-left:6px;}
+.accept{margin-top:16px;display:flex;gap:8px;}
+.accept a{flex:1;text-align:center;border-radius:10px;padding:12px 0;font-size:14px;font-weight:800;text-decoration:none;}
+.accept .yes{background:#2E7CC4;color:#fff;}
+.accept .later{background:#F0F4F8;color:#5A6B7C;}
+.ghost-card{position:absolute;inset:auto 0 -14px 26px;height:52px;background:#fff;border:1px solid #E6EDF4;border-radius:14px;opacity:.65;z-index:1;}
+.ghost-card2{position:absolute;inset:auto 12px -26px 44px;height:52px;background:#fff;border:1px solid #ECF1F6;border-radius:14px;opacity:.35;z-index:0;}
+/* 3단계 */
+.steps{margin-top:46px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.step{background:#fff;border:1px solid #E1E9F1;border-radius:12px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;}
+.step .n{width:28px;height:28px;border-radius:9px;background:#14324F;color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step b{display:block;color:#14324F;font-size:14.5px;}
+.step span{color:#6B7C8D;font-size:12.5px;line-height:1.6;}
+</style>
+</head>
+<body>
+<span class="eyebrow"><i></i>업무 제휴 — 파트너 모집</span>
+<div class="wrap">
+  <div>
+    <h2>광고비 0원으로,<br><span class="pt">준비된 고객</span>을 만나세요</h2>
+    <p class="sub">공간브릿지는 상담 고객의 지역·업종·예산·희망 일정을 먼저 정리합니다.<br>
+    조건이 맞는 상담만 파트너에게 연결하고, 안 맞으면 보내지 않습니다.</p>
+    <div class="benefits">
+      <div class="bnf"><b>가입비·월회비 0원</b><span>등록과 유지에 돈이 들지 않습니다</span></div>
+      <div class="bnf"><b>조건 맞는 상담만</b><span>스팸성 문의 전달 없음 — 정리된 카드로 도착</span></div>
+      <div class="bnf"><b>파트너 실명 소개</b><span>사이트에 소개되어 홍보 효과까지</span></div>
+    </div>
+    <div class="chips">
+      <em>인테리어·건축</em><em>포스·CCTV·키오스크</em><em>세무기장</em><em>회계관리</em>
+      <em>보험</em><em>부동산 상담·개발 PM</em><em>홈페이지 개발</em><em>앱 개발</em>
+    </div>
+    <div class="ctas">
+      <a class="cta" href="#">1분 제휴 신청 →</a>
+      <a class="cta ghost" href="#">이메일로 문의</a>
+    </div>
+    <p class="note"><b>초기 파트너 우선권:</b> 분야·지역별 선착 파트너에게 해당 지역 상담을 우선 배정합니다.</p>
+  </div>
+  <div class="mock">
+    <span class="label">파트너에게 이렇게 도착합니다</span>
+    <div class="lead-card">
+      <div class="top"><span class="no">상담 연결 #2026-0187</span><span class="new">● 신규 상담</span></div>
+      <div class="rows">
+        <div class="row"><span class="k">분야</span><span class="v">인테리어 (상가)</span></div>
+        <div class="row"><span class="k">지역</span><span class="v">성남시 분당구</span></div>
+        <div class="row"><span class="k">조건</span><span class="v">카페 12평 <span class="tagm">예산 2,000만대</span></span></div>
+        <div class="row"><span class="k">일정</span><span class="v">8월 초 착공 희망 · 통화 7/25 14~16시</span></div>
+        <div class="row"><span class="k">준비도</span><span class="v">임대차 계약 완료 · 견적 비교 중</span></div>
+      </div>
+      <div class="accept"><a class="yes" href="#">이 상담 받기</a><a class="later" href="#">조건 안 맞음</a></div>
+    </div>
+    <div class="ghost-card"></div>
+    <div class="ghost-card2"></div>
+  </div>
+</div>
+<div class="steps">
+  <div class="step"><span class="n">1</span><div><b>1분 등록</b><span>업체명·분야·가능 지역만 — 포트폴리오는 이메일로</span></div></div>
+  <div class="step"><span class="n">2</span><div><b>검증</b><span>사업자·자격·시공 이력 확인 후 파트너 등록</span></div></div>
+  <div class="step"><span class="n">3</span><div><b>연결</b><span>조건 맞는 상담 카드가 도착 — 받을지 말지는 파트너가 결정</span></div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,295 @@
+/* SpaceBridge V57 — restrained neutral palette, separated media/content, measured responsive motion. */
+:root {
+  --sb57-ink: #142b40;
+  --sb57-copy: #526a7c;
+  --sb57-blue: #0876b7;
+  --sb57-blue-dark: #075f95;
+  --sb57-line: #d7e3ea;
+  --sb57-canvas: #f6f9fb;
+  --sb57-soft: #eef6fa;
+  --sb57-shadow: 0 18px 48px rgba(17, 55, 78, .09);
+  --sb57-ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+html body.sb-v57 {
+  color: var(--sb57-ink);
+  background: #fff;
+}
+
+/* 1. 현재 상황: 사진 위에 글을 얹지 않고 두 면을 물리적으로 분리한다. */
+html body.sb-v57 .situation { background: var(--sb57-canvas) !important; }
+html body.sb-v57 .situation-layout {
+  grid-template-columns: minmax(300px, .7fr) minmax(0, 1.3fr);
+  gap: 24px;
+}
+html body.sb-v57 .situation-tabs {
+  overflow: hidden;
+  align-self: stretch;
+  border: 1px solid var(--sb57-line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(17, 55, 78, .05);
+}
+html body.sb-v57 .situation-tab {
+  min-height: 92px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--sb57-line);
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+html body.sb-v57 .situation-tab:last-child { border-bottom: 0; }
+html body.sb-v57 .situation-tab:hover { padding-left: 22px; background: #f7fbfd; }
+html body.sb-v57 .situation-tab.active {
+  padding-left: 22px;
+  background: #edf7fb;
+  box-shadow: inset 4px 0 0 var(--sb57-blue);
+}
+html body.sb-v57 .situation-tab > span { background: #e8f4fa; color: var(--sb57-blue-dark); }
+html body.sb-v57 .situation-panel {
+  display: grid;
+  min-height: 430px;
+  grid-template-columns: minmax(0, .94fr) minmax(300px, 1.06fr);
+  align-items: stretch;
+  justify-content: initial;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--sb57-line);
+  border-radius: 20px;
+  background: #fff;
+  background-image: none !important;
+  box-shadow: var(--sb57-shadow);
+}
+html body.sb-v57 .situation-panel::after { display: none; }
+html body.sb-v57 .situation-content {
+  z-index: 1;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
+  width: auto;
+  padding: 44px;
+  border: 0;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: none;
+}
+html body.sb-v57 .situation-photo {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 430px;
+  margin: 0;
+  overflow: hidden;
+  background: #e8eef1;
+}
+html body.sb-v57 .situation-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 43% center;
+  transition: transform .65s var(--sb57-ease), filter .35s ease;
+}
+html body.sb-v57 .situation-panel:hover .situation-photo img { transform: scale(1.025); }
+html body.sb-v57 .situation-panel h3 { max-width: 440px; font-size: clamp(26px, 2.45vw, 34px); }
+html body.sb-v57 .situation-panel .panel-route { flex-wrap: wrap; gap: 8px 12px; }
+html body.sb-v57 .situation-panel .button { min-width: 132px; justify-content: center; }
+
+/* 2. 조건표: 어두운 벽을 없애고 입력/결과를 같은 밝기의 비교 표로 맞춘다. */
+html body.sb-v57 .condition-lab { background: #fff !important; }
+html body.sb-v57 .condition-builder {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #cbdde6;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: var(--sb57-shadow);
+}
+html body.sb-v57 .sb56-condition-guide { background: #f5f9fb; }
+html body.sb-v57 .sb56-condition-guide small,
+html body.sb-v57 .cost-title span { font-size: 12px; }
+html body.sb-v57 .condition-controls {
+  padding: 32px;
+  border-right: 1px solid var(--sb57-line);
+  background: #fbfcfd;
+}
+html body.sb-v57 .condition-step {
+  padding: 22px;
+  border: 1px solid var(--sb57-line);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: none;
+}
+html body.sb-v57 .condition-sheet {
+  padding: 32px;
+  background: #fff;
+  color: var(--sb57-ink);
+}
+html body.sb-v57 .condition-sheet::before { width: 4px; background: var(--sb57-blue); }
+html body.sb-v57 .condition-sheet :is(h3, b, p, span, summary, li) { color: inherit; }
+html body.sb-v57 .condition-sheet-kicker { color: var(--sb57-blue-dark) !important; }
+html body.sb-v57 .condition-sheet-state { display: none !important; }
+html body.sb-v57 .condition-sheet-head { padding-bottom: 20px; border-color: var(--sb57-line); }
+html body.sb-v57 .condition-row {
+  grid-template-columns: 38px 82px minmax(0, 1fr);
+  gap: 12px;
+  padding: 17px 0;
+  border-color: var(--sb57-line);
+}
+html body.sb-v57 .condition-row > span {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #e9f5fa;
+  color: var(--sb57-blue-dark) !important;
+}
+html body.sb-v57 .condition-row p { color: var(--sb57-copy) !important; }
+html body.sb-v57 .condition-sheet .condition-questions {
+  margin-top: 20px;
+  border: 1px solid var(--sb57-line);
+  background: #f7fafb;
+  color: var(--sb57-ink);
+}
+html body.sb-v57 .condition-sheet .condition-questions summary { color: var(--sb57-ink); }
+html body.sb-v57 .condition-sheet .condition-questions li { color: var(--sb57-copy); }
+html body.sb-v57 .condition-actions { margin-top: 20px; }
+html body.sb-v57 .condition-actions .button { width: 100%; justify-content: center; }
+html body.sb-v57 .condition-copy { display: none !important; }
+html body.sb-v57 .condition-disclaimer { margin-top: 14px; color: #334b60 !important; font-size: 13px; font-weight:500; }
+
+/* 3. FAQ: 빈 30/70 열을 없애고 한 축으로 훑게 한다. */
+html body.sb-v57 .faq { background: var(--sb57-canvas) !important; }
+html body.sb-v57 .faq-grid {
+  display: block;
+  width: min(920px, calc(100% - 32px));
+  margin-inline: auto;
+}
+html body.sb-v57 .faq-head {
+  position: static;
+  max-width: 700px;
+  margin-bottom: 30px;
+}
+html body.sb-v57 .faq-head h2 { font-size: clamp(30px, 3.2vw, 40px); }
+html body.sb-v57 .faq-head > p:not(.eyebrow) { margin: 14px 0 0; }
+html body.sb-v57 .faq-list {
+  overflow: hidden;
+  border: 1px solid var(--sb57-line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(17, 55, 78, .06);
+}
+html body.sb-v57 .faq-list details { padding-inline: 24px; border-bottom: 1px solid var(--sb57-line); }
+html body.sb-v57 .faq-list details:last-child { border-bottom: 0; }
+html body.sb-v57 .faq-list summary { min-height: 64px; padding: 16px 0; }
+html body.sb-v57 .faq-list details[open] { background: #fbfdfe; }
+html body.sb-v57 .faq-list details[open] p { animation: sb57-answer-in .25s var(--sb57-ease) both; }
+html body.sb-v57 .faq-list details p { padding: 0 42px 22px 0; }
+
+/* 4. 파트너: 바깥 여백, 1.05/.95 비율과 단계별 반응형 크롭을 고정한다. */
+html body.sb-v57 .partnership { background: #fff !important; }
+html body.sb-v57 .partner-shell {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: 40px 48px;
+  padding: 32px;
+  border: 1px solid var(--sb57-line);
+  border-radius: 24px;
+  background: var(--sb57-canvas);
+  box-shadow: var(--sb57-shadow);
+}
+html body.sb-v57 .partner-team-photo {
+  aspect-ratio: 24 / 6.7;
+  margin: 0;
+  border: 0;
+  border-radius: 16px;
+  box-shadow: none;
+}
+html body.sb-v57 .partner-copy { min-width: 0; padding: 24px 8px 16px 4px; }
+html body.sb-v57 .partner-copy h2 { max-width: 630px; }
+html body.sb-v57 .partner-copy > p:not(.eyebrow) { max-width: 620px; }
+html body.sb-v57 .partner-card {
+  min-width: 0;
+  justify-content: center;
+  padding: 32px;
+  border: 1px solid #c7dce7;
+  border-radius: 18px;
+  background: #edf6fa;
+  box-shadow: none;
+}
+html body.sb-v57 .partner-card > b { overflow-wrap: normal; word-break: normal; }
+html body.sb-v57 .partner-brief {
+  padding: 24px;
+  border: 1px solid var(--sb57-line);
+  background: #fff;
+}
+html body.sb-v57 .partner-brief li { background: #f4f8fa; }
+html body.sb-v57 .sb56-partner-consult { display: none !important; }
+
+/* 짧고 목적이 있는 움직임만 사용한다. */
+.sb57-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .42s var(--sb57-ease) calc(var(--sb57-order, 0) * 60ms),
+    transform .42s var(--sb57-ease) calc(var(--sb57-order, 0) * 60ms);
+}
+.sb57-reveal.is-visible { opacity: 1; transform: none; }
+html body.sb-v57 .situation-panel.is-switching .situation-content { animation: sb57-content-in .34s var(--sb57-ease) both; }
+html body.sb-v57 .situation-panel.is-switching .situation-photo img { animation: sb57-photo-in .45s var(--sb57-ease) both; }
+html body.sb-v57 :is(.situation-tab, .condition-option, .faq-list summary, .partner-card .button):hover { transform: translateY(-1px); }
+
+@keyframes sb57-content-in { from { opacity: .3; transform: translateY(8px); } }
+@keyframes sb57-photo-in { from { opacity: .82; transform: scale(1.035); } }
+@keyframes sb57-answer-in { from { opacity: 0; transform: translateY(-6px); } }
+
+@media (max-width: 1023px) {
+  html body.sb-v57 .situation-layout { grid-template-columns: 1fr; }
+  html body.sb-v57 .situation-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html body.sb-v57 .situation-tab { border-right: 1px solid var(--sb57-line); }
+  html body.sb-v57 .situation-tab:nth-child(even) { border-right: 0; }
+  html body.sb-v57 .situation-tab:nth-last-child(-n+2) { border-bottom: 0; }
+  html body.sb-v57 .condition-builder { grid-template-columns: 1fr; }
+  html body.sb-v57 .condition-controls { grid-column: 1; border-right: 0; border-bottom: 1px solid var(--sb57-line); }
+  html body.sb-v57 .condition-sheet { grid-column: 1; }
+  html body.sb-v57 .partner-shell { grid-template-columns: 1fr 1fr; gap: 32px; padding: 28px; }
+  html body.sb-v57 .partner-team-photo { aspect-ratio: 2.2 / 1; }
+  html body.sb-v57 .partner-brief ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  html body.sb-v57 .partner-shell { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px) {
+  html body.sb-v57 .situation-tabs { grid-template-columns: 1fr; }
+  html body.sb-v57 .situation-tab,
+  html body.sb-v57 .situation-tab:nth-child(even) { min-height: 78px; border-right: 0; border-bottom: 1px solid var(--sb57-line); }
+  html body.sb-v57 .situation-tab:last-child { border-bottom: 0; }
+  html body.sb-v57 .situation-panel { grid-template-columns: 1fr; min-height: 0; }
+  html body.sb-v57 .situation-photo { grid-column: 1; grid-row: 1; min-height: 0; aspect-ratio: 16 / 10; }
+  html body.sb-v57 .situation-content { grid-column: 1; grid-row: 2; padding: 28px 22px 30px; }
+  html body.sb-v57 .condition-controls,
+  html body.sb-v57 .condition-sheet { padding: 20px 16px; }
+  html body.sb-v57 .condition-step { padding: 18px 14px; }
+  html body.sb-v57 .condition-row { grid-template-columns: 34px 70px minmax(0, 1fr); gap: 8px; }
+  html body.sb-v57 .condition-row :is(b, p) { font-size: 12px; line-height: 1.5; }
+  html body.sb-v57 .faq-grid { width: 100%; }
+  html body.sb-v57 .faq-list details { padding-inline: 16px; }
+  html body.sb-v57 .faq-list summary { min-height: 56px; font-size: 14px; }
+  html body.sb-v57 .partner-shell { grid-template-columns: 1fr; gap: 24px; padding: 18px; }
+  html body.sb-v57 .partner-team-photo { aspect-ratio: 4 / 3; }
+  html body.sb-v57 .partner-team-photo img { object-position: center; }
+  html body.sb-v57 .partner-copy { padding: 8px 2px 4px; }
+  html body.sb-v57 .partner-card { padding: 24px 20px; }
+  html body.sb-v57 .partner-card > b { font-size: 19px; letter-spacing: -.02em; white-space: nowrap; }
+  html body.sb-v57 .partner-brief { padding: 20px 16px; }
+  html body.sb-v57 .partner-brief ol { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb57-reveal,
+  .sb57-reveal.is-visible,
+  html body.sb-v57 *,
+  html body.sb-v57 *::before,
+  html body.sb-v57 *::after {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

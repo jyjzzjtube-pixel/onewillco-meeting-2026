@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>무료 평수·좌석·간편 비용 계산기 | 공간브릿지</title>
+<script>window.SB_STATIC=true</script>
+<meta name="description" content="도면 평수와 카페·식당 좌석 조합을 계산하고, 주거·상업 인테리어·건축·시설·CCTV·세무회계의 공개 표본 비용을 조건과 함께 확인하세요.">
+<link rel="canonical" href="https://gongganbridge.com/calc.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="무료 평수·좌석·간편 비용 계산기 | 공간브릿지">
+<meta property="og:description" content="도면 면적, 주방·홀·좌석 조합, 공개 표본 비용과 실제 견적 총비용을 한 번에 확인합니다.">
+<meta property="og:url" content="https://gongganbridge.com/calc.html">
+<meta property="og:image" content="https://gongganbridge.com/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"공간브릿지 무료 평수·좌석·간편 비용 계산기","url":"https://gongganbridge.com/calc.html","applicationCategory":"BusinessApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},"description":"도면 면적과 좌석 조합을 계산하고, 공개 표본·정부 행정기준·공식 상품요금에 따른 간편 비용 가이드를 확인합니다."}</script>
+<style>
+:root{--ink:#16233a;--sub:#5c6b82;--bg:#f4faff;--panel:#fff;--blue:#0b96dc;--blue-dark:#0875ad;--mint:#12a77a;--yellow:#ffd84a;--coral:#f36f56;--line:#d7e5ef;--soft:#eaf6fd;--navy:#0f1b31;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg);color:var(--ink);line-height:1.58;word-break:keep-all;letter-spacing:0;padding-bottom:84px;}
+button,input,select{font:inherit;letter-spacing:0;}
+button,a{touch-action:manipulation;}
+header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(10px);}
+.header-inner{max-width:1180px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.logo{font-size:20px;font-weight:800;color:var(--navy);text-decoration:none;white-space:nowrap;}
+.logo b{color:var(--blue);}
+nav{display:flex;align-items:center;gap:22px;}
+nav a{color:var(--sub);font-size:14px;font-weight:800;text-decoration:none;}
+nav .cta{background:var(--blue);color:#fff;padding:9px 15px;border-radius:10px;}
+main{max-width:1180px;margin:0 auto;padding:38px 24px 96px;}
+.intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:end;margin-bottom:24px;}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;color:var(--blue-dark);font-size:12px;font-weight:800;text-transform:uppercase;margin-bottom:9px;}
+.eyebrow:before{content:'';width:24px;height:3px;background:var(--blue);border-radius:10px;}
+h1{max-width:780px;font-size:40px;line-height:1.14;font-weight:800;color:var(--navy);}
+.intro p{margin-top:12px;color:var(--sub);font-size:16px;max-width:760px;}
+.intro-badge{width:162px;background:var(--yellow);padding:16px;border:1px solid #efc727;border-radius:10px;color:var(--navy);}
+.intro-badge b{display:block;font-size:28px;line-height:1.05;}
+.intro-badge span{display:block;margin-top:6px;font-size:12px;font-weight:800;}
+.fact-strip{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);background:#fff;margin-bottom:18px;}
+.fact-item{padding:15px 18px;min-width:0;}
+.fact-item+.fact-item{border-left:1px solid var(--line);}
+.fact-item b{display:block;font-size:14px;color:var(--navy);}
+.fact-item span{display:block;margin-top:3px;color:var(--sub);font-size:12px;}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px;}
+.tabs button{min-height:62px;border:1px solid var(--line);background:#fff;color:var(--sub);font-weight:800;font-size:14px;padding:10px 12px;border-radius:10px;cursor:pointer;}
+.tabs button span{display:block;font-size:12px;font-weight:800;margin-top:2px;color:#2E7CC4;}
+.tabs button[aria-selected="true"]{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 8px 18px rgba(15,27,49,.12);}
+.tabs button[aria-selected="true"] span{color:#fff;}
+.quick-start{display:grid;grid-template-columns:minmax(190px,.72fr) minmax(0,2fr) auto;gap:18px;align-items:center;margin-bottom:18px;padding:18px 20px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:10px;}
+.quick-start-copy span{display:block;color:var(--blue-dark);font-size:12px;font-weight:800;}
+.quick-start-copy strong{display:block;margin-top:3px;color:var(--navy);font-size:16px;line-height:1.35;}
+.quick-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;list-style:none;}
+.quick-steps li{display:flex;align-items:center;gap:8px;min-width:0;padding:9px 10px;background:var(--soft);border-radius:10px;color:var(--sub);font-size:12px;font-weight:800;}
+.quick-steps b{width:22px;height:22px;display:grid;place-items:center;flex:none;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;}
+.quick-actions{display:flex;gap:7px;}
+.quick-actions button{min-width:92px;min-height:42px;padding:0 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--navy);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.quick-actions .example{border-color:var(--blue);background:var(--blue);color:#fff;}
+.quick-actions button:hover{transform:translateY(-1px);}
+.tool{display:none;}
+.tool.active{display:block;}
+.tool-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(330px,.65fr);gap:18px;align-items:start;}
+.workspace,.result-panel{background:#fff;border:1px solid var(--line);border-radius:10px;}
+.workspace{padding:0 24px;}
+.work-head{padding:23px 0 18px;border-bottom:1px solid var(--line);}
+.work-head h2{font-size:20px;line-height:1.25;color:var(--navy);}
+.work-head p{margin-top:7px;color:var(--sub);font-size:14px;}
+.step{padding:20px 0;border-bottom:1px solid var(--line);}
+.step:last-child{border-bottom:0;}
+.step-title{display:flex;align-items:center;gap:9px;margin-bottom:12px;font-size:14px;font-weight:800;color:var(--navy);}
+.step-num{width:25px;height:25px;display:grid;place-items:center;background:var(--blue);color:#fff;border-radius:10px;font-size:12px;flex:none;}
+.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.field-grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+.field label,.field-label{display:block;margin-bottom:6px;color:var(--sub);font-size:12px;font-weight:800;}
+.field input,.field select,.compact-input{width:100%;height:45px;border:1px solid #cbdbe7;background:#fff;color:var(--ink);border-radius:10px;padding:0 12px;outline:none;}
+.field input:focus,.field select:focus,.compact-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(11,150,220,.12);}
+.help{margin-top:8px;color:#2E7CC4;font-size:12px;}
+.zone-table{display:grid;gap:8px;}
+.zone-row{display:grid;grid-template-columns:minmax(92px,1.15fr) minmax(82px,1fr) 24px minmax(82px,1fr) 82px 38px;gap:8px;align-items:center;}
+.zone-row .times{text-align:center;color:#2E7CC4;font-weight:800;}
+.icon-btn{width:38px;height:42px;border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:10px;cursor:pointer;font-size:20px;line-height:1;}
+.icon-btn:hover{border-color:var(--coral);color:var(--coral);}
+.add-btn{display:inline-flex;align-items:center;gap:7px;margin-top:12px;border:1px solid var(--blue);background:#fff;color:var(--blue-dark);font-weight:800;padding:9px 13px;border-radius:10px;cursor:pointer;}
+.range-line{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:12px;align-items:center;}
+.range-line input[type=range]{width:100%;accent-color:var(--blue);}
+.segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.segmented button{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:10px;padding:10px 8px;font-size:14px;font-weight:800;cursor:pointer;}
+.segmented button.on{background:var(--soft);border-color:var(--blue);color:var(--blue-dark);}
+.budget-mode{grid-template-columns:repeat(2,minmax(0,1fr));max-width:440px;margin-bottom:14px;}
+.budget-entry[hidden]{display:none;}
+.mix-sum{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;font-size:12px;color:var(--sub);}
+.mix-sum b{color:var(--blue-dark);}
+.result-panel{position:sticky;top:84px;overflow:hidden;scroll-margin-top:74px;}
+.result-top{background:var(--navy);color:#fff;padding:22px;}
+.result-kicker{font-size:12px;color:#2E7CC4;font-weight:800;}
+.result-main{margin-top:7px;font-size:28px;line-height:1.15;font-weight:800;}
+.result-main small{font-size:14px;color:#fff;font-weight:800;}
+.result-read{margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.16);color:#fff;font-size:12px;line-height:1.5;font-weight:800;}
+.result-body{padding:6px 22px 20px;}
+.metric{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);}
+.metric:last-child{border-bottom:0;}
+.metric span{font-size:14px;color:var(--sub);}
+.metric b{text-align:right;font-size:14px;color:var(--navy);font-variant-numeric:tabular-nums;}
+.result-note{margin:4px 22px 20px;padding:12px 13px;background:#f3f8fc;border-left:3px solid var(--blue);font-size:12px;color:var(--sub);}
+.result-note.is-warning{background:#fff3ef;border-left-color:var(--coral);color:#3F5265;font-weight:800;}
+.seat-summary{display:grid;grid-template-columns:1fr;}
+.seat-line{display:grid;grid-template-columns:1fr auto;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);}
+.seat-line:last-child{border-bottom:0;}
+.seat-line b{font-size:16px;color:var(--navy);}
+.seat-line span{font-size:12px;color:var(--sub);}
+.source-list{display:grid;gap:10px;}
+.source{border-left:3px solid var(--mint);padding-left:11px;}
+.source b{display:block;color:var(--navy);font-size:14px;}
+.source p{margin-top:3px;color:var(--sub);font-size:12px;}
+.source a{color:var(--blue-dark);font-weight:800;}
+.estimate-group[hidden]{display:none;}
+.basis-box{margin-top:12px;padding:13px 14px;border:1px solid var(--line);border-radius:10px;background:#f8fbfd;}
+.basis-box b{display:block;font-size:12px;color:var(--navy);}
+.basis-box p{margin-top:4px;font-size:12px;color:var(--sub);}
+.basis-box strong{color:var(--blue-dark);}
+.detail-panel{margin:0;border-bottom:1px solid var(--line);}
+.detail-panel summary{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 2px;cursor:pointer;list-style:none;color:var(--navy);font-size:14px;font-weight:800;}
+.detail-panel summary::-webkit-details-marker{display:none;}
+.detail-panel summary:after{content:'+';width:26px;height:26px;display:grid;place-items:center;flex:none;border:1px solid var(--line);border-radius:10px;color:var(--blue-dark);font-size:16px;line-height:1;}
+.detail-panel[open] summary:after{content:'−';}
+.detail-panel summary span{margin-left:auto;color:var(--sub);font-size:12px;font-weight:800;text-align:right;}
+.detail-body{padding-bottom:18px;}
+.detail-body>.step{padding-top:4px;}
+.detail-body>.step:last-child{padding-bottom:0;}
+.easy-hint{margin-top:10px;display:flex;align-items:flex-start;gap:8px;padding:10px 11px;background:#f0fbf7;border-left:3px solid var(--mint);color:#3F5265;font-size:12px;font-weight:800;}
+.easy-hint b{color:var(--mint);white-space:nowrap;}
+.check-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.check-item{display:flex;align-items:flex-start;gap:8px;border:1px solid var(--line);padding:10px;border-radius:10px;cursor:pointer;}
+.check-item input{margin-top:3px;accent-color:var(--mint);}
+.check-item b{display:block;font-size:12px;color:var(--navy);}
+.check-item span{display:block;margin-top:2px;font-size:12px;color:var(--sub);}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:1180px;margin:18px auto 0;padding:0 24px;}
+.actions a,.actions button{min-height:48px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:10px;text-decoration:none;font-weight:800;font-size:14px;cursor:pointer;}
+.actions .primary{background:var(--blue);border-color:var(--blue);color:#fff;}
+.actions .sms{background:var(--navy);border-color:var(--navy);color:#fff;}
+.actions .kakao{background:#fee500;border-color:#f0d700;color:#14324F;}
+.copy-state{min-height:20px;max-width:1180px;margin:7px auto 0;padding:0 24px;color:var(--mint);font-size:12px;font-weight:800;text-align:right;}
+@media(max-width:850px){
+  .intro{grid-template-columns:1fr}.intro-badge{display:none}.fact-strip{grid-template-columns:1fr}.fact-item+.fact-item{border-left:0;border-top:1px solid var(--line)}
+  .tool-layout{grid-template-columns:1fr}.result-panel{position:static}.tabs{grid-template-columns:repeat(2,1fr)}
+  .quick-start{grid-template-columns:1fr;gap:12px}.quick-actions{justify-content:flex-start}
+}
+@media(max-width:620px){
+  body{padding-bottom:70px}.header-inner{padding:11px 16px}nav a:not(.cta){display:none}main{padding:26px 14px 70px}
+  .intro{margin-bottom:16px}.eyebrow{margin-bottom:7px}h1{font-size:28px}.intro p{font-size:14px;line-height:1.55}.fact-strip{display:none}
+  .tabs{display:flex;gap:7px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;margin:0 -14px 12px;padding:0 14px 5px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}.tabs button{min-width:142px;min-height:58px;scroll-snap-align:start;flex:none}
+  .quick-start{margin-bottom:12px;padding:14px;border-left-width:4px;gap:10px}
+  .quick-start-copy strong{font-size:14px}.quick-steps{grid-template-columns:1fr;gap:5px}.quick-steps li{padding:7px 8px;font-size:12px}
+  .quick-actions{display:grid;grid-template-columns:1fr 1fr}.quick-actions button{padding:0 8px;white-space:normal;line-height:1.25}
+  .workspace{padding:0 15px}.work-head{padding:18px 0 14px}.work-head h2{font-size:20px}.result-top,.result-body{padding-left:16px;padding-right:16px}
+  .field-grid,.field-grid.cols-3{grid-template-columns:1fr}.zone-row{grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr) 70px 34px;grid-template-areas:"name name name unit remove" "width times length unit remove";gap:6px}
+  .zone-row [data-field="name"]{grid-area:name}.zone-row [data-field="width"]{grid-area:width}.zone-row .times{grid-area:times}.zone-row [data-field="length"]{grid-area:length}.zone-row .zone-unit{grid-area:unit;height:100%}.zone-row .zone-remove{grid-area:remove;height:100%}
+  .zone-row input,.zone-row select{padding:0 7px;font-size:14px}.icon-btn{width:34px}.check-list{grid-template-columns:1fr}
+  .actions{position:fixed;left:0;right:0;bottom:0;z-index:50;grid-template-columns:1.18fr 1.18fr 1.18fr .82fr;gap:0;padding:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -5px 18px rgba(15,27,49,.1);margin:0;transition:transform .18s ease}
+  body.is-editing .actions{transform:translateY(105%)}
+  .actions a,.actions button{min-height:58px;border:0;border-radius:0;padding:4px;font-size:12px;line-height:1.25}.copy-state{display:none}
+}
+@media(max-width:390px){.tabs button{font-size:12px;padding:8px}.tabs button span{font-size:12px}.zone-row{grid-template-columns:minmax(0,1fr) 16px minmax(0,1fr) 62px 31px}.zone-row .compact-input{height:40px}.icon-btn{width:31px;height:40px}.segmented{grid-template-columns:1fr}.segmented button{font-size:12px}.detail-panel summary span{display:none}.actions a,.actions button{font-size:12px}}
+h1,h2,h3,h4,h5,h6,b,strong,th{font-weight:800;}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a class="logo" href="/">공간<b>브릿지</b></a>
+    <nav><a href="/guide.html">인테리어 가이드</a><a href="/#categories">서비스</a><a class="cta" href="/#quote">비교 기준표 받기</a></nav>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <div>
+      <div class="eyebrow">Free space planner</div>
+      <h1>무료 계산기, 숫자만 넣으면 바로 보여요</h1>
+      <p>원하는 도구를 고르고 숫자를 입력하세요. 회원가입이나 저장 없이 결과가 즉시 바뀝니다.</p>
+    </div>
+    <div class="intro-badge"><b>0원</b><span>회원가입 없이 바로 계산</span></div>
+  </section>
+
+  <div class="fact-strip" aria-label="계산 기준">
+    <div class="fact-item"><b>면적 환산</b><span>1평 ≈ 3.3058㎡, 도면 치수는 미터로 바꿔 합산</span></div>
+    <div class="fact-item"><b>주방·좌석</b><span>전국 공통 고정비율이 아니므로 모든 가정값을 직접 조정</span></div>
+    <div class="fact-item"><b>비용</b><span>공개 표본·행정기준·공식요금을 구분하고 실제 견적과 분리</span></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="무료 계산 도구">
+    <button type="button" id="tab-area" role="tab" aria-controls="tool-area" aria-selected="true" data-tool="area">도면 평수 계산<span>가로 × 세로 합산</span></button>
+    <button type="button" id="tab-seat" role="tab" aria-controls="tool-seat" aria-selected="false" data-tool="seat">주방·좌석 계산<span>다찌 · 2인 · 4인</span></button>
+    <button type="button" id="tab-estimate" role="tab" aria-controls="tool-estimate" aria-selected="false" data-tool="estimate">간편 비용 가이드<span>공개 표본 · 조건별</span></button>
+    <button type="button" id="tab-budget" role="tab" aria-controls="tool-budget" aria-selected="false" data-tool="budget">실견적 총비용<span>초기비 + 월비용</span></button>
+    <button type="button" id="tab-check" role="tab" aria-controls="tool-check" aria-selected="false" data-tool="check">견적서 체크<span>단가 환산 · 누락 확인</span></button>
+  </div>
+
+  <section class="quick-start" aria-labelledby="quickStartTitle">
+    <div class="quick-start-copy">
+      <span>처음 사용해도 괜찮아요</span>
+      <strong id="quickStartTitle">가로와 세로만 입력하세요</strong>
+    </div>
+    <ol class="quick-steps" id="quickSteps">
+      <li><b>1</b><span>도면 숫자 입력</span></li>
+      <li><b>2</b><span>㎡·평 자동 확인</span></li>
+      <li><b>3</b><span>결과 복사 또는 상담</span></li>
+    </ol>
+    <div class="quick-actions">
+      <button class="example" type="button" id="exampleAction">예시로 먼저 보기</button>
+      <button type="button" id="clearAction">내 값 입력하기</button>
+    </div>
+  </section>
+
+  <section class="tool active" id="tool-area" role="tabpanel" aria-labelledby="tab-area">
+    <div class="tool-layout">
+      <div class="workspace">
+        <div class="work-head"><h2>도면 가로·세로로 평수 계산</h2><p>ㄱ자나 분리된 공간은 직사각형 구역으로 나눠 각각 입력하면 자동으로 합산됩니다.</p></div>
+        <div class="step">
+          <div class="step-title"><span class="step-num">1</span>도면 구역 입력</div>
+          <div class="zone-table" id="zoneRows"></div>
+          <button class="add-btn" type="button" id="addZone" aria-label="계산 구역 추가"><span aria-hidden="true">+</span> 구역 추가</button>
+          <p class="help">예: 도면에 5,000 × 4,000이라고 적혀 있으면 단위를 mm로 선택하세요.</p>
+          <div class="easy-hint"><b>바로 확인</b><span>가로·세로를 바꾸면 오른쪽 결과가 자동으로 바뀝니다. 계산 버튼은 따로 누르지 않아도 됩니다.</span></div>
+        </div>
+        <details class="detail-panel">
+          <summary>계산 기준 알아보기 <span>필요할 때만 열어보세요</span></summary>
+          <div class="detail-body">
+            <div class="source-list">
+              <div class="source"><b>각 구역 면적 = 가로(m) × 세로(m)</b><p>cm는 100으로, mm는 1,000으로 나눠 미터로 바꾼 뒤 계산합니다.</p></div>
+              <div class="source"><b>평수 = 전체 면적(㎡) ÷ 3.305785</b><p>계약서·건축물대장은 ㎡ 기준을 우선 확인하고 평은 보조 환산값으로 보세요.</p></div>
+              <div class="source"><b>공식 서류는 법정단위 ㎡ 우선</b><p>평은 이해를 돕는 환산값입니다. <a href="https://kats.go.kr/content.do?cmsid=78" target="_blank" rel="noopener">국가기술표준원 법정단위 안내</a></p></div>
+            </div>
+          </div>
+        </details>
+      </div>
+      <aside class="result-panel" aria-live="polite">
+        <div class="result-top"><div class="result-kicker">전체 도면 면적</div><div class="result-main"><span id="areaSqm">0</span><small> ㎡</small></div><div class="result-read" id="areaRead">가로와 세로를 입력하면 결과가 바로 표시됩니다.</div></div>
+        <div class="result-body">
+          <div class="metric"><span>평수 환산</span><b id="areaPyeong">0평</b></div>
+          <div class="metric"><span>입력된 구역</span><b id="areaZoneCount">0개</b></div>
+          <div class="metric"><span>계산식</span><b id="areaFormula">값을 입력해 주세요</b></div>
+        </div>
+        <div class="result-note">벽체 두께, 공용면적, 서비스면적은 도면과 계약 조건에 따라 다릅니다. 현장 계약면적은 공식 서류로 다시 확인하세요.</div>
+        <div style="padding:0 22px 22px"><button class="add-btn" type="button" id="areaToSeat" style="width:100%;justify-content:center;background:var(--blue);color:#fff">이 면적으로 좌석 계산</button></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="tool" id="tool-seat" role="tabpanel" aria-labelledby="tab-seat" hidden>
+    <div class="tool-layout">
+      <div class="workspace">
+        <div class="work-head"><h2>주방을 빼고 좌석 조합 계산</h2><p>주방비율과 배치 효율은 법정 고정값이 아닙니다. 매장 조건에 맞게 직접 바꿔 비교하세요.</p></div>
+        <div class="step">
+          <div class="step-title"><span class="step-num">1</span>전체 면적과 시작 시나리오</div>
+          <div class="segmented" id="seatPreset"><button type="button" data-preset="lean" class="on">홀 중심 예시 20%</button><button type="button" data-preset="kitchen">주방 중심 예시 30%</button><button type="button" data-preset="custom">직접 입력</button></div>
+          <div class="field-grid" style="margin-top:12px">
+            <div class="field"><label for="seatTotalSqm">전체 면적 (㎡)</label><input id="seatTotalSqm" type="number" min="1" step="0.1" value="49.59" inputmode="decimal"></div>
+            <div class="field"><label for="seatTotalPyeong">전체 평수</label><input id="seatTotalPyeong" type="number" min="1" step="0.1" value="15" inputmode="decimal"></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-title"><span class="step-num">2</span>주방·기타 면적</div>
+          <div class="field-grid">
+            <div class="field"><label for="kitchenRatio">주방 비율 <b id="kitchenRatioLabel">20%</b></label><div class="range-line"><input id="kitchenRatio" type="range" min="10" max="55" value="20" step="1"><input class="compact-input" id="kitchenRatioNum" type="number" min="10" max="55" value="20"></div></div>
+            <div class="field"><label for="supportSqm">화장실·창고·카운터 등 (㎡)</label><input id="supportSqm" type="number" min="0" step="0.1" value="3.3" inputmode="decimal"></div>
+          </div>
+          <p class="help">20%와 30%는 기능을 시험하기 위한 편집 가능한 예시값입니다. 법정·업계 권장비율이 아니며 실제 주방은 메뉴, 장비, 급배수, 환기와 동선으로 정해야 합니다.</p>
+          <div class="easy-hint"><b>여기까지만</b><span>전체 면적과 주방 비율만 입력해도 예상 좌석이 나옵니다. 세부 배치는 아래 고급 설정에서만 조정하세요.</span></div>
+        </div>
+        <details class="detail-panel">
+          <summary>고급 설정 열기 <span>통로·좌석 비중·테이블 여유면적</span></summary>
+          <div class="detail-body">
+            <div class="step">
+              <div class="step-title"><span class="step-num">3</span>홀 배치 효율과 좌석 비중</div>
+              <div class="field"><label for="layoutEfficiency">기둥·통로를 제외하고 좌석 모듈에 쓰는 비율 <b id="layoutEfficiencyLabel">78%</b></label><div class="range-line"><input id="layoutEfficiency" type="range" min="45" max="95" value="78" step="1"><input class="compact-input" id="layoutEfficiencyNum" type="number" min="45" max="95" value="78"></div></div>
+              <div class="field-grid cols-3" style="margin-top:14px">
+                <div class="field"><label for="mixBar">다찌 비중</label><input id="mixBar" type="number" min="0" max="100" value="20"><span class="help">가중치 %</span></div>
+                <div class="field"><label for="mixTwo">2인 테이블 비중</label><input id="mixTwo" type="number" min="0" max="100" value="40"><span class="help">가중치 %</span></div>
+                <div class="field"><label for="mixFour">4인 테이블 비중</label><input id="mixFour" type="number" min="0" max="100" value="40"><span class="help">가중치 %</span></div>
+              </div>
+              <div class="mix-sum"><span>합계가 100이 아니어도 비율로 자동 환산합니다.</span><b id="mixSum">합계 100</b></div>
+            </div>
+            <div class="step">
+              <div class="step-title"><span class="step-num">4</span>좌석 모듈 면적 가정 <span style="font-size:11px;color:var(--coral)">수정 가능</span></div>
+              <div class="field-grid cols-3">
+                <div class="field"><label for="barModule">다찌 1석당 (㎡)</label><input id="barModule" type="number" min="0.5" step="0.1" value="1.2"></div>
+                <div class="field"><label for="twoModule">2인 테이블 1개당 (㎡)</label><input id="twoModule" type="number" min="1" step="0.1" value="3.2"></div>
+                <div class="field"><label for="fourModule">4인 테이블 1개당 (㎡)</label><input id="fourModule" type="number" min="1" step="0.1" value="5.2"></div>
+              </div>
+              <p class="help">테이블 자체 크기가 아니라 의자 사용공간과 주변 여유를 포함한 시뮬레이션 모듈입니다. 실제 도면에 맞게 수정하세요.</p>
+              <div class="source-list" style="margin-top:14px"><div class="source"><b>주방비율은 법정 고정값이 아닙니다</b><p>조리장 등 시설기준은 업종과 시설 조건에 맞춰 별도로 확인해야 합니다. <a href="https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%8B%9D%ED%92%88%EC%9C%84%EC%83%9D%EB%B2%95%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99" target="_blank" rel="noopener">식품위생법 시행규칙</a></p></div></div>
+            </div>
+          </div>
+        </details>
+      </div>
+      <aside class="result-panel" aria-live="polite">
+        <div class="result-top"><div class="result-kicker">예상 좌석 조합</div><div class="result-main"><span id="seatTotal">0</span><small> 석</small></div><div class="result-read" id="seatRead">면적과 주방 비율을 바꾸면 좌석 수가 즉시 바뀝니다.</div></div>
+        <div class="result-body">
+          <div class="metric"><span>주방</span><b id="seatKitchen">0㎡</b></div>
+          <div class="metric"><span>주방·기타 제외 홀</span><b id="seatHall">0㎡</b></div>
+          <div class="metric"><span>좌석 모듈 배정 면적</span><b id="seatUsable">0㎡</b></div>
+          <div class="seat-summary">
+            <div class="seat-line"><div><b>다찌 <span id="seatBar">0석</span></b><br><span>카운터 좌석</span></div><strong id="seatBarArea">0㎡</strong></div>
+            <div class="seat-line"><div><b>2인 테이블 <span id="seatTwo">0개 · 0석</span></b><br><span>2명 기준</span></div><strong id="seatTwoArea">0㎡</strong></div>
+            <div class="seat-line"><div><b>4인 테이블 <span id="seatFour">0개 · 0석</span></b><br><span>4명 기준</span></div><strong id="seatFourArea">0㎡</strong></div>
+          </div>
+        </div>
+        <div class="result-note" id="seatWarning">이 값은 면적 배분 시뮬레이션입니다. 출입구, 피난, 장애인 편의, 기둥, 설비, 테이블 실제 규격을 반영한 배치도와는 차이가 납니다.</div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="tool" id="tool-estimate" role="tabpanel" aria-labelledby="tab-estimate" hidden>
+    <div class="tool-layout">
+      <div class="workspace">
+        <div class="work-head"><h2>공개 자료로 먼저 보는 간편 비용 가이드</h2><p>표본 범위, 정부 행정기준, 공식 상품요금을 구분해 계산합니다. 결과는 계약 견적이 아니며 현장과 선택 조건에 따라 달라집니다.</p></div>
+        <div class="step">
+          <div class="step-title"><span class="step-num">1</span>확인할 분야 선택</div>
+          <div class="field"><label for="estimateType">서비스 분야</label><select id="estimateType"><option value="residential">아파트·빌라·단독주택 인테리어</option><option value="commercial">개인브랜드·프랜차이즈·상가 인테리어</option><option value="building">주택·상가·업무용 건축</option><option value="sports">축구장·풋살장 등 체육시설 조성</option><option value="equipment">POS·CCTV·키오스크</option><option value="accounting">세무기장·회계 관리</option></select></div>
+        </div>
+
+        <div class="step estimate-group" data-estimate-group="residential">
+          <div class="step-title"><span class="step-num">2</span>주거 인테리어 조건</div>
+          <div class="field-grid">
+            <div class="field"><label for="estimateResidentialPyeong">공사 면적 (평)</label><input id="estimateResidentialPyeong" type="number" min="10" max="100" step="1" value="30"></div>
+            <div class="field"><label for="estimateResidentialScope">공사 범위</label><select id="estimateResidentialScope"><option value="partial">부분 리모델링</option><option value="mid">주방·욕실 포함 중간급</option><option value="full" selected>전체 철거·올 리모델링</option></select></div>
+          </div>
+          <div class="basis-box"><b>공개 가이드의 20·30·40평 범위를 면적에 맞춰 단순 환산</b><p>철거·설비·마감재·맞춤가구·확장 여부가 달라지면 결과 범위를 벗어날 수 있습니다.</p></div>
+        </div>
+
+        <div class="step estimate-group" data-estimate-group="commercial" hidden>
+          <div class="step-title"><span class="step-num">2</span>상업공간 인테리어 조건</div>
+          <div class="field"><label for="estimateCommercialPyeong">공사 면적 (평)</label><input id="estimateCommercialPyeong" type="number" min="5" max="300" step="1" value="20"></div>
+          <div class="basis-box"><b>가맹 정보공개서 3건 표본: <strong>110~200만원/평, 산술평균 151만원/평</strong></b><p>10평·50평 점포의 서로 다른 브랜드 자료이며 간판 포함 여부도 다릅니다. 일반 시장 평균이 아닙니다.</p></div>
+        </div>
+
+        <div class="step estimate-group" data-estimate-group="building" hidden>
+          <div class="step-title"><span class="step-num">2</span>건축 면적</div>
+          <div class="field"><label for="estimateBuildingSqm">연면적 (㎡)</label><input id="estimateBuildingSqm" type="number" min="10" max="100000" step="1" value="100"></div>
+          <div class="basis-box"><b>2026년 국토교통부 과밀부담금 산정용 표준건축비: <strong>239만 2천원/㎡</strong></b><p>행정 목적의 기준을 면적에 곱한 참고액입니다. 주택·건물의 설계, 토지, 인허가, 구조, 설비를 반영한 공사 견적이 아닙니다.</p></div>
+        </div>
+
+        <div class="step estimate-group" data-estimate-group="sports" hidden>
+          <div class="step-title"><span class="step-num">2</span>체육시설 면적</div>
+          <div class="field"><label for="estimateSportsSqm">조성 면적 (㎡)</label><input id="estimateSportsSqm" type="number" min="100" max="100000" step="10" value="1500"></div>
+          <div class="basis-box"><b>2026년 거제시 공공발주 1건 면적비례 참고</b><p>풋살장·족구장 1,516.72㎡와 화장실 2개 등 부대시설을 포함한 예정금액 7억 8,580만 1천원 사례입니다. 표준 단가나 평균가가 아닙니다.</p></div>
+        </div>
+
+        <div class="step estimate-group" data-estimate-group="equipment" hidden>
+          <div class="step-title"><span class="step-num">2</span>매장 운영기기 조건</div>
+          <div class="field-grid">
+            <div class="field"><label for="estimateEquipmentPlan">공식 공개 항목</label><select id="estimateEquipmentPlan"><option value="cctv-view">KT CCTV 영상형 i-view</option><option value="cctv-pass">KT CCTV 출입형 i-pass</option><option value="pos-app">토스 포스 앱</option><option value="kiosk">POS·키오스크 장비</option></select></div>
+            <div class="field" id="estimateCameraField"><label for="estimateCameraCount">카메라 대수</label><select id="estimateCameraCount"><option value="1">1대</option><option value="2">2대</option><option value="3">3대</option><option value="4" selected>4대</option></select></div>
+          </div>
+          <div class="basis-box"><b>공식 공개요금만 자동 계산</b><p>CCTV는 VAT 포함·36개월 약정·인터넷 결합 조건입니다. POS 앱은 무료지만 결제단말기·프린터·설치·VAN·키오스크 장비는 별도 견적입니다.</p></div>
+        </div>
+
+        <div class="step estimate-group" data-estimate-group="accounting" hidden>
+          <div class="step-title"><span class="step-num">2</span>세무·회계 관리 조건</div>
+          <div class="field-grid">
+            <div class="field"><label for="estimateAccountingPlan">공식 공개 상품</label><select id="estimateAccountingPlan"><option value="ai">AI 경리</option><option value="tax" selected>세무대행 패키지</option></select></div>
+            <div class="field"><label for="estimateAccountingMonths">계산 기간 (개월)</label><input id="estimateAccountingMonths" type="number" min="1" max="60" step="1" value="12"></div>
+          </div>
+          <div class="basis-box"><b>자비스 공식요금: AI 경리 월 3.3만원, 세무대행 월 8만원부터 <strong>(VAT 별도)</strong></b><p>세무대행은 사업자 규모에 따라 달라지고 법인세·종합소득세 신고 등은 별도 과금될 수 있습니다.</p></div>
+        </div>
+
+        <div class="easy-hint"><b>바로 확인</b><span>분야와 면적만 고르면 결과가 자동으로 바뀝니다. 표시 금액은 계약 견적이 아니라 공개 자료를 단순 환산한 참고값입니다.</span></div>
+        <details class="detail-panel">
+          <summary>자료 기준과 주의사항 <span>출처 성격을 확인할 때 열어보세요</span></summary>
+          <div class="detail-body">
+            <div class="source-list">
+              <div class="source"><b>범위는 가능성의 경계가 아닙니다</b><p>지역, 철거, 구조, 설비, 자재, 인허가, 약정, 직원 수에 따라 더 낮거나 높을 수 있습니다.</p></div>
+              <div class="source"><b>표본·행정기준·공식요금은 서로 다릅니다</b><p>어떤 숫자인지 결과에 표시하며 실제 계약 전에는 동일 조건의 서면 견적을 다시 받아야 합니다.</p></div>
+              <div class="source"><b>확인 기준일 2026-07-15</b><p>출처와 계산 근거는 결과 설명과 홈페이지 비용 가이드에서 확인할 수 있습니다.</p></div>
+            </div>
+          </div>
+        </details>
+      </div>
+      <aside class="result-panel" aria-live="polite">
+        <div class="result-top"><div class="result-kicker" id="estimateKicker">공개 범위 단순 환산</div><div class="result-main"><span id="estimateMain">0</span><small id="estimateUnit"> 만원</small></div><div class="result-read" id="estimateRead">분야와 조건을 고르면 참고 범위가 바로 표시됩니다.</div></div>
+        <div class="result-body">
+          <div class="metric"><span>자료 성격</span><b id="estimateBasis">공개 표본</b></div>
+          <div class="metric"><span>단위·중심값</span><b id="estimateCenter">-</b></div>
+          <div class="metric"><span>계산 방식</span><b id="estimateFormula">-</b></div>
+          <div class="metric"><span>별도 확인</span><b id="estimateExcluded">현장·계약 조건</b></div>
+        </div>
+        <div class="result-note is-warning" id="estimateWarning">계약 견적이 아닙니다. 같은 면적이라도 공사 범위와 현장 조건에 따라 실제 비용은 달라집니다.</div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="tool" id="tool-budget" role="tabpanel" aria-labelledby="tab-budget" hidden>
+    <div class="tool-layout">
+      <div class="workspace">
+        <div class="work-head"><h2>실제로 받은 견적만 합산</h2><p>출처 없는 평당 평균 대신 담당자가 준 견적서의 초기비·월비용·약정기간을 그대로 넣어 총부담을 비교합니다.</p></div>
+        <div class="step">
+          <div class="step-title"><span class="step-num">1</span>입력 방법 선택</div>
+          <div class="segmented budget-mode" id="budgetMode">
+            <button type="button" class="on" data-budget-mode="quick" aria-pressed="true">합계만 빠르게</button>
+            <button type="button" data-budget-mode="detail" aria-pressed="false">항목별 자세히</button>
+          </div>
+          <div class="budget-entry" id="budgetQuick">
+            <div class="field-grid cols-3">
+              <div class="field"><label for="budgetQuickInitial">초기비 합계 (만원)</label><input class="budget-input" id="budgetQuickInitial" type="number" min="0" step="1" value="0" inputmode="decimal"></div>
+              <div class="field"><label for="budgetQuickMonthly">월비 합계 (만원)</label><input class="budget-input" id="budgetQuickMonthly" type="number" min="0" step=".1" value="0" inputmode="decimal"></div>
+              <div class="field"><label for="budgetMonths">비교기간 (개월)</label><input class="budget-input" id="budgetMonths" type="number" min="1" max="120" step="1" value="36" inputmode="numeric"></div>
+            </div>
+            <div class="easy-hint"><b>세 칸이면 끝</b><span>견적서의 초기비 합계와 매월 비용 합계만 넣으세요. 기간 총부담이 자동 계산됩니다.</span></div>
+          </div>
+        </div>
+        <div class="budget-entry" id="budgetDetailed" hidden>
+          <div class="step">
+            <div class="step-title"><span class="step-num">2</span>초기 1회 비용 <span style="font-size:11px;color:var(--sub)">단위: 만원</span></div>
+            <div class="field-grid cols-3">
+              <div class="field"><label for="budgetInterior">인테리어</label><input class="budget-input" id="budgetInterior" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="budgetPos">POS·단말기</label><input class="budget-input" id="budgetPos" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="budgetKiosk">키오스크</label><input class="budget-input" id="budgetKiosk" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="budgetCctv">CCTV 설치</label><input class="budget-input" id="budgetCctv" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="budgetOtherInitial">기타 초기비</label><input class="budget-input" id="budgetOtherInitial" type="number" min="0" step="1" value="0"></div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-title"><span class="step-num">3</span>매월 비용 <span style="font-size:11px;color:var(--sub)">단위: 만원</span></div>
+            <div class="field-grid cols-3">
+              <div class="field"><label for="budgetPosMonthly">POS·키오스크 월비</label><input class="budget-input" id="budgetPosMonthly" type="number" min="0" step=".1" value="0"></div>
+              <div class="field"><label for="budgetCctvMonthly">CCTV 월비</label><input class="budget-input" id="budgetCctvMonthly" type="number" min="0" step=".1" value="0"></div>
+              <div class="field"><label for="budgetTaxMonthly">세무·회계 월비</label><input class="budget-input" id="budgetTaxMonthly" type="number" min="0" step=".1" value="0"></div>
+              <div class="field"><label for="budgetOtherMonthly">기타 월비</label><input class="budget-input" id="budgetOtherMonthly" type="number" min="0" step=".1" value="0"></div>
+            </div>
+            <p class="help">VAT 포함/별도, 설치비, 위약금, 보증금, 결제수수료는 견적서에서 확인한 뒤 해당 칸에 포함해 입력하세요.</p>
+          </div>
+        </div>
+        <details class="detail-panel">
+          <summary>입력 기준과 공개정보 <span>비용 항목을 확인할 때 열어보세요</span></summary>
+          <div class="detail-body">
+            <div class="source-list">
+              <div class="source"><b>페이히어 공개 예시</b><p>기본 이용료 0원, 카드사 수수료 외 추가 수수료 0원, 단말기 39,000원부터. 스마트오더 등은 별도 수수료 가능. <a href="https://payhere.in/retail/grocery/" target="_blank" rel="noopener">공식 페이지</a></p></div>
+              <div class="source"><b>토스플레이스 공개 범위</b><p>토스포스 앱은 무료 다운로드로 안내되며 프론트 단말기는 공식 페이지에서 상담 확인이 필요합니다. <a href="https://tossplace.com/product/front" target="_blank" rel="noopener">공식 페이지</a></p></div>
+              <div class="source"><b>인테리어·건축·운영기기·세무회계</b><p>간편 가이드와 실제 견적은 분리합니다. 이 탭에는 장비·공사범위·약정·사업자 조건이 적힌 실제 견적만 입력하세요.</p></div>
+            </div>
+          </div>
+        </details>
+      </div>
+      <aside class="result-panel" aria-live="polite">
+        <div class="result-top"><div class="result-kicker"><span id="budgetPeriodLabel">36개월</span> 총부담</div><div class="result-main"><span id="budgetGrand">0</span><small> 만원</small></div><div class="result-read" id="budgetRead">초기비와 선택 기간의 월비를 더한 금액입니다.</div></div>
+        <div class="result-body">
+          <div class="metric"><span>초기 1회 비용</span><b id="budgetInitial">0만원</b></div>
+          <div class="metric"><span>월 고정비</span><b id="budgetMonthly">0만원</b></div>
+          <div class="metric"><span>기간 중 월비 합계</span><b id="budgetRecurring">0만원</b></div>
+        </div>
+        <div class="result-note">계산 결과는 입력값의 단순 합계입니다. 계약 전 VAT, 약정기간, 중도해지, 설치·철거·이전비, 소모품과 신고대행 범위를 반드시 별도로 확인하세요.</div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="tool" id="tool-check" role="tabpanel" aria-labelledby="tab-check" hidden>
+    <div class="tool-layout">
+      <div class="workspace">
+        <div class="work-head"><h2>견적 단가 환산과 누락항목 확인</h2><p>평당 금액만으로 적정가를 단정하지 않고, 받은 총액을 환산한 뒤 계약서에 필요한 범위를 체크합니다.</p></div>
+        <div class="step">
+          <div class="step-title"><span class="step-num">1</span>받은 견적 입력</div>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="checkAmount">받은 견적 총액 (만원)</label><input id="checkAmount" type="number" min="0" step="1" value="" placeholder="직접 입력"></div>
+            <div class="field"><label for="checkSqm">공사 면적 (㎡)</label><input id="checkSqm" type="number" min="0" step="0.1" value="" placeholder="직접 입력"></div>
+            <div class="field"><label for="checkPyeong">공사 면적 (평)</label><input id="checkPyeong" type="number" min="0" step="0.1" value="" placeholder="자동 환산"></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-title"><span class="step-num">2</span>견적서에 명시됐는지 체크</div>
+          <div class="check-list" id="quoteChecks">
+            <label class="check-item"><input type="checkbox" checked><span><b>VAT 포함 여부</b><span>총액에 부가세가 포함됐는지</span></span></label>
+            <label class="check-item"><input type="checkbox"><span><b>철거·폐기물</b><span>철거 범위와 반출 비용</span></span></label>
+            <label class="check-item"><input type="checkbox"><span><b>공종별 수량·단가</b><span>자재명·규격·수량·단가</span></span></label>
+            <label class="check-item"><input type="checkbox"><span><b>전기·설비 증설</b><span>전기용량·급배수·가스·덕트</span></span></label>
+            <label class="check-item"><input type="checkbox"><span><b>소방·인허가</b><span>별도인지 포함인지 담당 주체</span></span></label>
+            <label class="check-item"><input type="checkbox"><span><b>공사 기간·지연</b><span>착공·준공일과 지연 조건</span></span></label>
+            <label class="check-item"><input type="checkbox"><span><b>결제 일정</b><span>계약금·중도금·잔금 조건</span></span></label>
+            <label class="check-item"><input type="checkbox"><span><b>AS·하자보증</b><span>기간·범위·접수 연락처</span></span></label>
+          </div>
+          <div class="easy-hint"><b>확인 방법</b><span>견적서에 글로 적힌 항목만 체크하세요. 말로 들었지만 문서에 없으면 체크하지 않는 것이 안전합니다.</span></div>
+        </div>
+        <details class="detail-panel">
+          <summary>왜 이 항목을 확인하나요? <span>공식 소비자 안내 보기</span></summary>
+          <div class="detail-body"><div class="source-list"><div class="source"><b>계약서에 범위를 자세히 적어야 합니다</b><p>한국소비자원은 자재·마감재 등을 상세히 명시한 계약서 작성과 등록업체·하자보증 확인을 권고합니다. <a href="https://www.kca.go.kr/kca/sub.do?menukey=5293&mode=view&no=1002952671" target="_blank" rel="noopener">공식 안내</a></p></div></div></div>
+        </details>
+      </div>
+      <aside class="result-panel" aria-live="polite">
+        <div class="result-top"><div class="result-kicker">입력 견적 환산</div><div class="result-main"><span id="checkPerSqm">0</span><small> 만원/㎡</small></div><div class="result-read" id="checkRead">총액과 면적을 넣으면 단가와 누락 개수가 바로 표시됩니다.</div></div>
+        <div class="result-body">
+          <div class="metric"><span>평당 환산</span><b id="checkPerPyeong">0만원/평</b></div>
+          <div class="metric"><span>확인한 계약항목</span><b id="checkDone">0 / 8</b></div>
+          <div class="metric"><span>추가 확인 필요</span><b id="checkMissing">8개</b></div>
+        </div>
+        <div class="result-note">평당 환산은 비교를 위한 나눗셈일 뿐 적정가 판정이 아닙니다. 같은 금액이라도 철거·전기·설비·자재·VAT 범위가 다르면 실제 부담은 달라집니다.</div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<div class="actions" aria-label="상담 바로가기">
+  <a class="primary" href="/#quote" id="consultAction">상담 요청하기</a>
+  <a class="sms" href="sms:01084434756">문자접수하기</a>
+  <a class="kakao" href="https://pf.kakao.com/_xkpqIX/chat" target="_blank" rel="noopener">카톡상담하기</a>
+  <button type="button" id="copyAction">내용복사</button>
+</div>
+<div class="copy-state" id="copyState" role="status" aria-live="polite"></div>
+
+<script src="/track.js"></script>
+<script src="/calc-v2.js"></script>
+</body>
+</html>

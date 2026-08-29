@@ -1,0 +1,68 @@
+/* SpaceBridge header v20: proportion-correct, centered brand lockup */
+.site-header .inner {
+  width: 100%;
+  max-width: 1280px;
+  min-height: 80px;
+  height: 80px;
+  padding-inline: 28px;
+}
+
+.site-header .site-brand {
+  display: flex;
+  flex: 0 0 224px;
+  align-items: center;
+  width: 224px;
+  min-width: 224px;
+  min-height: 50px;
+  margin-right: 0;
+  line-height: 0;
+}
+
+.site-header .site-brand svg {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  aspect-ratio: 320 / 72;
+}
+
+@media (max-width: 1260px) {
+  .site-header .inner {
+    padding-inline: 24px;
+  }
+}
+
+@media (max-width: 700px) {
+  .site-header .inner {
+    min-height: 68px;
+    height: 68px;
+    gap: 8px;
+    padding-inline: 18px;
+  }
+
+  .site-header .site-brand {
+    flex-basis: 152px;
+    width: 152px;
+    min-width: 152px;
+    min-height: 44px;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 360px) {
+  .site-header .inner {
+    gap: 6px;
+    padding-inline: 14px;
+  }
+
+  .site-header .site-brand {
+    flex-basis: 136px;
+    width: 136px;
+    min-width: 136px;
+  }
+
+  .site-header .mobile-head-cta {
+    min-width: 56px;
+    padding-inline: 8px;
+  }
+}

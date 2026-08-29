@@ -1,0 +1,318 @@
+@font-face{font-family:Pretendard;src:url('/assets/fonts/PretendardVariable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
+:root{
+  --sb43-ink:#16233a;
+  --sb43-body:#50637c;
+  --sb43-blue:#075b94;
+  --sb43-blue-2:#0873b8;
+  --sb43-sky:#eaf4f9;
+  --sb43-canvas:#f7fafc;
+  --sb43-line:#dce6ef;
+  --sb43-white:#fff;
+  --sb43-radius:16px;
+  --sb43-shadow:0 18px 48px rgba(27,64,96,.10);
+  --sb43-shadow-hover:0 26px 62px rgba(27,64,96,.15);
+  --sb43-ease:cubic-bezier(.22,1,.36,1);
+  --sb43-fast:180ms;
+  --sb43-base:520ms;
+}
+
+html{scroll-padding-top:88px}
+body{font-family:Pretendard,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+body.sb-v43{background:var(--sb43-white);color:var(--sb43-ink)}
+body.sb-v43 img{max-width:100%}
+body.sb-v43 :where(.card,.tool-card,.service-card,.item,.faq,.check,.cost-case,.toc-card){box-sizing:border-box}
+
+/* Motion is opt-in. The script adds the attributes after the first paint. */
+body.sb-motion-ready [data-sb43-reveal]{opacity:0;transform:translate3d(0,20px,0);transition:opacity var(--sb43-base) var(--sb43-ease),transform var(--sb43-base) var(--sb43-ease);transition-delay:var(--sb43-delay,0ms)}
+body.sb-motion-ready [data-sb43-reveal="soft"]{transform:translate3d(0,12px,0)}
+body.sb-motion-ready [data-sb43-reveal="image"]{transform:scale(.985);transform-origin:center}
+body.sb-motion-ready [data-sb43-reveal].is-visible{opacity:1;transform:none}
+body.sb-v43 :where(a,button,.btn,.button,.card,.tool-card,.service-card,.item){transition-timing-function:var(--sb43-ease)}
+body.sb-v43 :where(.button,.btn,.cta a,.service-links a,.service-links button) span[aria-hidden="true"]{display:inline-block;transition:transform var(--sb43-fast) var(--sb43-ease)}
+body.sb-v43 :where(.button,.btn,.cta a,.service-links a,.service-links button):hover span[aria-hidden="true"]{transform:translateX(4px)}
+
+/* Consultation is the product's conversion path: request first, then SMS and Kakao. */
+.sb-contact-dock{display:none}
+body.sb-v43-home .hero-contact-actions{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(92px,.72fr) minmax(116px,.9fr);gap:10px}
+body.sb-v43-home .hero-contact-actions .button{width:100%;min-width:0;padding-inline:14px;white-space:nowrap}
+body.sb-v43-home .contact-sms{border:1px solid #b9cfdf;background:#fff;color:var(--sb43-blue);box-shadow:none}
+body.sb-v43-home .hero-category-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;color:var(--sb43-blue);font-size:14px;font-weight:800}
+body.sb-v43-service .btn.sms{border:1px solid #a9cede;background:#fff;color:#075985}
+body.sb-v43-service .hero-actions .btn{min-width:126px}
+body.sb-v43-service .closing .btn.sms{border-color:rgba(255,255,255,.45);background:transparent;color:#fff}
+
+/* Home: balanced areas, equal cards, images completely fill their slots. */
+body.sb-v43-home .section{overflow:clip}
+body.sb-v43-home .split-head{grid-template-columns:minmax(0,1fr) minmax(320px,1fr);gap:64px}
+body.sb-v43-home .situation-layout{grid-template-columns:minmax(340px,.9fr) minmax(0,1.1fr);gap:28px}
+body.sb-v43-home .situation-tabs{grid-template-rows:repeat(4,1fr)}
+body.sb-v43-home .situation-tab{height:100%;min-height:94px}
+body.sb-v43-home .situation-panel{min-height:416px;background-position:62% center}
+body.sb-v43-home .category-grid{grid-auto-rows:1fr;align-items:stretch}
+body.sb-v43-home .service-card{height:100%;border:1px solid rgba(220,230,239,.72)}
+body.sb-v43-home .service-card figure{width:100%;aspect-ratio:4/3;background:var(--sb43-sky)}
+body.sb-v43-home .service-card figure img{width:100%;height:100%;object-fit:cover;object-position:center 45%}
+body.sb-v43-home .service-card:nth-child(6) figure img{object-position:center 54%}
+body.sb-v43-home .service-body{min-height:262px}
+body.sb-v43-home .matching-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;align-items:stretch}
+body.sb-v43-home .matching-visual{height:100%;min-height:420px;aspect-ratio:auto}
+body.sb-v43-home .matching-visual img{width:100%;height:100%;object-fit:cover}
+body.sb-v43-home .criterion-list{align-self:stretch}
+body.sb-v43-home .process-grid{grid-auto-rows:1fr}
+body.sb-v43-home .process-grid li{height:100%}
+body.sb-v43-home .cost-board{align-items:stretch}
+body.sb-v43-home .cost-case{height:100%}
+body.sb-v43-home .tool-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:1fr}
+body.sb-v43-home .tool-card{height:100%;min-height:286px}
+body.sb-v43-home .insight-grid{grid-auto-rows:1fr}
+body.sb-v43-home .insight-card{height:100%}
+body.sb-v43-home .faq-grid{grid-template-columns:minmax(320px,.88fr) minmax(0,1.12fr);gap:64px}
+body.sb-v43-home .quote-shell{grid-template-columns:minmax(330px,.88fr) minmax(0,1.12fr);gap:48px}
+body.sb-v43-home .partner-shell{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}
+body.sb-v43-home .partner-copy,body.sb-v43-home .partner-card{height:100%}
+body.sb-v43-home .hero-visual img,body.sb-v43-home .matching-visual img{transition:transform 900ms var(--sb43-ease)}
+@media (hover:hover) and (pointer:fine){
+  body.sb-v43-home .hero-grid:hover .hero-visual img{transform:scale(1.012)}
+  body.sb-v43-home .matching-visual:hover img{transform:scale(1.025)}
+}
+
+/* Eleven service pages: one ratio system instead of eleven isolated layouts. */
+body.sb-v43-service{background:var(--sb43-white)!important;color:var(--sb43-ink)!important}
+body.sb-v43-service .wrap{width:min(1180px,calc(100% - 48px))}
+body.sb-v43-service header{background:rgba(255,255,255,.96);border-color:var(--sb43-line)}
+body.sb-v43-service .top{min-height:76px}
+body.sb-v43-service .hero{padding:48px 0 64px;background:linear-gradient(180deg,#fff 0%,#f7fafc 100%)}
+body.sb-v43-service .hero-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:44px;align-items:stretch}
+body.sb-v43-service .hero-grid>div:first-child{display:flex;min-height:470px;flex-direction:column;justify-content:center;padding:22px 0}
+body.sb-v43-service .visual{width:100%;height:100%;min-height:470px;margin:0;aspect-ratio:auto;border-radius:var(--sb43-radius);box-shadow:var(--sb43-shadow)}
+body.sb-v43-service .visual img{width:100%;height:100%;object-fit:cover;object-position:center}
+body.sb-v43-service .visual>figcaption{left:16px;right:16px;bottom:16px;padding:11px 14px;border-radius:10px;background:rgba(8,35,55,.78);font-size:12px}
+body.sb-v43-service .visual--diagram{min-height:470px;padding:36px;background:linear-gradient(145deg,#102b42 0%,#075b94 58%,#0b86bf 100%)}
+body.sb-v43-service .visual--diagram ol{margin:24px 0 52px;align-content:end}
+body.sb-v43-service .visual--diagram li{min-height:96px}
+body.sb-v43-service .answer{margin:-20px auto 64px;padding:24px 28px;border:1px solid #c9e1ed;border-left:4px solid var(--sb43-blue-2);border-radius:12px;background:#edf7fb}
+body.sb-v43-service .decision-map{margin:-28px auto 68px}
+body.sb-v43-service .decision-map ol{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:1fr}
+body.sb-v43-service .decision-map li{height:100%;min-height:104px}
+body.sb-v43-service .section{padding:80px 0;border-color:var(--sb43-line)}
+body.sb-v43-service .section:nth-of-type(odd){background:var(--sb43-canvas)}
+body.sb-v43-service .section.white{background:var(--sb43-white)}
+body.sb-v43-service .section-head{grid-template-columns:repeat(2,minmax(0,1fr));gap:56px;align-items:start}
+body.sb-v43-service .grid{grid-auto-rows:1fr;align-items:stretch}
+body.sb-v43-service .grid:has(>.faq){grid-template-columns:repeat(3,minmax(0,1fr))}
+body.sb-v43-service .card,body.sb-v43-service .faq{height:100%;border-color:#d8e5ed;border-radius:14px;box-shadow:0 10px 28px rgba(19,67,98,.05)}
+body.sb-v43-service .check-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+body.sb-v43-service .check{height:100%;border-radius:14px}
+body.sb-v43-service .check.light{border:1px solid #cae1eb}
+body.sb-v43-service .closing{background:#102b42}
+body.sb-v43-service .closing-inner>div{max-width:680px}
+body.sb-v43-service .service-index a{display:inline-flex;min-height:44px;align-items:center;padding:8px 13px}
+
+/* Editorial articles: keep the reading focus but return to the main brand palette. */
+body.sb-v43-editorial{background:var(--sb43-canvas)!important;color:var(--sb43-ink)!important}
+body.sb-v43-editorial header{border-color:var(--sb43-line)!important}
+body.sb-v43-editorial .logo,body.sb-v43-editorial h1,body.sb-v43-editorial .body h2{color:var(--sb43-ink)!important}
+body.sb-v43-editorial .logo b{color:var(--sb43-blue-2)!important}
+body.sb-v43-editorial .wrap{max-width:920px!important}
+body.sb-v43-editorial .post-hero{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:var(--sb43-radius)!important;box-shadow:var(--sb43-shadow)}
+body.sb-v43-editorial .body{border-color:var(--sb43-line)!important;border-radius:var(--sb43-radius)!important;padding:clamp(24px,4vw,44px)!important;box-shadow:0 12px 36px rgba(27,64,96,.06)}
+body.sb-v43-editorial .cta-band{background:#102b42!important;border-radius:var(--sb43-radius)!important}
+body.sb-v43-editorial .cta-band a:not(.ghost){background:var(--sb43-blue)!important}
+
+/* Guide, calculator and standards room: equal cards and non-overlapping actions. */
+body.sb-v43-utility{background:var(--sb43-canvas)!important}
+body.sb-v43-utility .intro .lead{color:#3f5068!important}
+body.sb-v43-utility main,body.sb-v43-utility .workspace,body.sb-v43-utility .inner{position:relative}
+body.sb-v43-utility :where(.toc-grid,.quick-steps,.field-grid,.row2){align-items:stretch}
+body.sb-v43-utility :where(.toc-card,.article,.card,.tool,.step,.result-panel,.detail-panel){border-radius:14px!important}
+body.sb-v43-utility :where(.toc-card,.card,.step){height:100%}
+body.sb-v43-utility :where(.sb-kfab,.kakao-float){bottom:max(18px,env(safe-area-inset-bottom));min-height:48px}
+body.sb-v43-utility .sb-fcta{margin-bottom:88px}
+body.sb-v43-utility:has(.kakao-float) .sb-kfab{display:none!important}
+body.sb-v43-utility footer~.sb-fcta{display:none}
+body.sb-v43-utility .result-panel,body.sb-v43-utility .detail-panel{overflow:hidden}
+
+/* Link, kit and saved checklist use the same width and equal row geometry. */
+body.sb-v43-hub{background:var(--sb43-canvas)!important;color:var(--sb43-ink)!important}
+body.sb-v43-hub>.wrap,body.sb-v43-hub .wrap{width:min(760px,100% - 32px);max-width:760px;margin-inline:auto}
+body.sb-v43-hub :where(.card,.item,.total,.note,.follow,.kitcta,.sheet){border-color:var(--sb43-line)!important;border-radius:14px!important}
+body.sb-v43-hub :where(.row,.ih,.follow a){min-height:56px}
+body.sb-v43-hub .rowwrap{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch}
+body.sb-v43-hub .rowwrap>a,body.sb-v43-hub .rowwrap>button{height:100%;min-height:48px}
+body.sb-v43-hub .grid{align-items:stretch}
+
+/* Policies are calm and symmetric, without creating another visual system. */
+body.sb-v43-policy{background:var(--sb43-canvas)!important;color:var(--sb43-ink)!important}
+body.sb-v43-policy .wrap{width:min(940px,calc(100% - 40px));margin-inline:auto}
+body.sb-v43-policy .card,body.sb-v43-policy .notice,body.sb-v43-policy .summary{border-radius:14px!important;border-color:var(--sb43-line)!important}
+
+@media(max-width:900px){
+  body.sb-v43-home .split-head,body.sb-v43-home .situation-layout,body.sb-v43-home .matching-grid,body.sb-v43-home .faq-grid,body.sb-v43-home .quote-shell,body.sb-v43-home .partner-shell{grid-template-columns:1fr;gap:28px}
+  body.sb-v43-home .situation-tabs{grid-template-rows:none}
+  body.sb-v43-home .situation-panel{min-height:380px}
+  body.sb-v43-home .matching-visual{min-height:0;aspect-ratio:16/10}
+  body.sb-v43-home .tool-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  body.sb-v43-service .hero-grid,body.sb-v43-service .section-head,body.sb-v43-service .check-grid{grid-template-columns:1fr}
+  body.sb-v43-service .hero-grid>div:first-child{min-height:0;padding:0}
+  body.sb-v43-service .visual{min-height:0;aspect-ratio:16/10}
+  body.sb-v43-service .visual--diagram{min-height:360px;aspect-ratio:auto}
+}
+
+@media(max-width:560px){
+  body.sb-v43-home,body.sb-v43-service{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+  .sb-contact-dock{position:fixed;z-index:1200;right:10px;bottom:10px;left:10px;display:grid;grid-template-columns:1.12fr .88fr .88fr;gap:1px;min-height:58px;padding:4px;border:1px solid rgba(22,35,58,.12);border-radius:16px;background:rgba(255,255,255,.96);box-shadow:0 18px 46px rgba(17,45,71,.22);backdrop-filter:blur(18px)}
+  .sb-contact-dock a{display:flex;min-width:0;min-height:50px;align-items:center;justify-content:center;flex-direction:column;padding:5px 7px;border-radius:12px;color:var(--sb43-ink);line-height:1.15;text-align:center}
+  .sb-contact-dock b{font-size:13px;font-weight:800;white-space:nowrap}
+  .sb-contact-dock small{display:block;max-width:100%;margin-top:3px;overflow:hidden;color:#65768a;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+  .sb-contact-dock .sb-contact-request{background:var(--sb43-blue);color:#fff}
+  .sb-contact-dock .sb-contact-request small{color:#dceefa}
+  .sb-contact-dock .sb-contact-kakao{background:#fee500;color:#191919}
+  .sb-contact-dock .sb-contact-kakao small{color:#514900}
+  body.sb-v43-home .hero-grid{display:flex;flex-direction:column;gap:24px}
+  body.sb-v43-home .hero-copy{order:1}
+  body.sb-v43-home .hero-visual{order:2;aspect-ratio:4/3}
+  body.sb-v43-home .category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0;padding:0;overflow:visible}
+  body.sb-v43-home .service-card{min-width:0;max-width:none;scroll-snap-align:none}
+  body.sb-v43-home .service-card figure{aspect-ratio:4/3}
+  body.sb-v43-home .service-body{min-height:238px;padding:18px 14px 16px}
+  body.sb-v43-home .service-no{font-size:12px}
+  body.sb-v43-home .service-card h3{font-size:17px;line-height:1.32;word-break:keep-all}
+  body.sb-v43-home .service-card p{font-size:12px;line-height:1.55}
+  body.sb-v43-home .service-links{align-items:stretch;flex-direction:column;gap:2px;padding-top:12px}
+  body.sb-v43-home .service-links a,body.sb-v43-home .service-links button{width:100%;min-height:44px;justify-content:flex-start;font-size:12px}
+  body.sb-v43-home .tool-grid{grid-template-columns:1fr}
+  body.sb-v43-home .tool-card{min-height:224px}
+  body.sb-v43-home .situation-panel{min-height:390px;padding:26px;background-position:58% center}
+  body.sb-v43-home .lead-form{padding:24px 18px}
+  body.sb-v43-home .hero-contact-actions{grid-template-columns:1fr 1fr;gap:10px}
+  body.sb-v43-home .hero-contact-actions .button:first-child{grid-column:1/-1}
+  body.sb-v43-home .hero-category-link{justify-content:center}
+
+  body.sb-v43-service .wrap{width:min(100% - 28px,1180px)}
+  body.sb-v43-service .hero{padding:32px 0 48px}
+  body.sb-v43-service .hero-grid{display:flex;flex-direction:column;gap:24px}
+  body.sb-v43-service .hero-grid>div:first-child{order:1}
+  body.sb-v43-service .visual{order:2;width:100%;aspect-ratio:4/3;border-radius:14px}
+  body.sb-v43-service .visual--diagram{min-height:410px;aspect-ratio:auto;padding:24px}
+  body.sb-v43-service .visual--diagram ol{gap:12px;margin:20px 0 52px}
+  body.sb-v43-service .visual--diagram li{min-height:84px;padding:13px}
+  body.sb-v43-service .answer{margin:0 auto 48px;padding:20px 18px;font-size:17px}
+  body.sb-v43-service .decision-map{margin:0 auto 48px}
+  body.sb-v43-service .decision-map ol{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  body.sb-v43-service .decision-map li{min-height:88px;padding:16px}
+  body.sb-v43-service .section{padding:56px 0}
+  body.sb-v43-service .section-head{gap:20px}
+  body.sb-v43-service .grid{grid-template-columns:1fr}
+  body.sb-v43-service .grid:has(>.faq){grid-template-columns:1fr}
+  body.sb-v43-service .card,body.sb-v43-service .faq{min-height:auto}
+  body.sb-v43-service .check-grid{gap:16px}
+  body.sb-v43-service .service-index a{min-height:44px}
+  body.sb-v43-service .hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+  body.sb-v43-service .hero-actions .btn{width:100%;min-width:0;padding-inline:10px;text-align:center}
+  body.sb-v43-service .hero-actions .btn:first-child{grid-column:1/-1}
+
+  body.sb-v43-editorial .wrap{padding-inline:16px!important}
+  body.sb-v43-editorial .post-hero{aspect-ratio:4/3}
+  body.sb-v43-editorial .body{padding:24px 20px!important}
+  body.sb-v43-editorial .cta-band a{display:flex!important;min-height:48px;align-items:center;justify-content:center;margin:8px 0!important}
+
+  body.sb-v43-utility :where(.sb-kfab,.kakao-float){right:12px;bottom:12px;max-width:calc(100vw - 24px);white-space:nowrap}
+  body.sb-v43-utility .sb-kfab{width:52px;height:52px;min-height:52px;padding:0!important;justify-content:center;overflow:hidden;border-radius:50%!important}
+  body.sb-v43-utility .sb-kfab>span{display:none!important}
+  body.sb-v43-utility .sb-kfab-sub{display:none!important}
+  body.sb-v43-hub>.wrap,body.sb-v43-hub .wrap{width:min(100% - 24px,760px)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.sb-motion-ready [data-sb43-reveal]{opacity:1!important;transform:none!important;transition:none!important}
+  body.sb-v43 *,body.sb-v43 *:before,body.sb-v43 *:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+@media print{
+  [data-sb43-reveal]{opacity:1!important;transform:none!important}
+}
+
+/* ══════════ 우측 고정 상담 패널 (2026-08-14 사장님 지시) ══════════
+   사장님: "상담요청하기 → 상담신청하기. 카톡·문자접수·상담내용복사 빼고
+            상담신청하기로만. 버튼이랑 칸은 오른쪽 테두리쪽에 고객이 움직여도 따라다니게"
+
+   원리: 플랫폼에서 "요청" 은 부탁하는 쪽으로 읽힌다. "신청" 이 접수 창구다.
+   채널을 셋으로 흩으면 어디로 가야 할지 고르는 부담이 생긴다. 창구는 하나여야 한다.
+   그 하나를 화면 오른쪽에 붙여두면 어느 위치에서 마음이 생겨도 바로 쓴다. */
+
+.sb-rail{
+  position:fixed; right:0; top:50%; transform:translate(calc(100% + 8px), -50%);
+  z-index:960; width:296px;
+  display:flex; align-items:stretch;
+  transition:transform .42s cubic-bezier(.16,1,.3,1);
+  font-family:inherit;
+}
+.sb-rail.is-in{ transform:translate(0,-50%); }
+.sb-rail.is-in.is-folded{ transform:translate(calc(100% - 44px), -50%); }
+
+/* 접기 손잡이 — 패널 왼쪽에 붙는다 */
+.sb-rail-toggle{
+  flex:0 0 44px; width:44px; border:0; cursor:pointer; padding:0;
+  background:linear-gradient(135deg,#0A76C0 0%,#075F9C 100%);
+  color:#FFFFFF; border-radius:14px 0 0 14px;
+  box-shadow:-6px 0 18px rgba(8,26,45,.16);
+  display:flex; align-items:center; justify-content:center;
+}
+.sb-rail-chev{ font-size:22px; line-height:1; transition:transform .42s cubic-bezier(.16,1,.3,1); }
+.sb-rail.is-folded .sb-rail-chev{ transform:rotate(180deg); }
+.sb-rail-toggle::after{
+  content:"상담신청"; position:absolute; writing-mode:vertical-rl;
+  font-size:13px; font-weight:800; letter-spacing:.06em; margin-top:74px;
+  opacity:0; transition:opacity .3s ease;
+}
+.sb-rail.is-folded .sb-rail-toggle::after{ opacity:1; }
+.sb-rail.is-folded .sb-rail-chev{ margin-bottom:64px; }
+
+.sb-rail-body{
+  flex:1 1 auto; min-width:0;
+  background:linear-gradient(180deg,#FFFFFF 0%,#F7FAFC 100%);
+  border:1px solid #DDE6EF; border-right:0; border-radius:0 0 0 0;
+  box-shadow:-10px 0 32px rgba(8,26,45,.14);
+  padding:18px 16px 16px;
+}
+.sb-rail-title{ margin:0 0 4px; font-size:16px; font-weight:800; color:#16233A; letter-spacing:-.01em; }
+.sb-rail-sub{ margin:0 0 12px; font-size:12px; line-height:1.5; color:#5A6B84; }
+.sb-rail-f{ display:block; margin-bottom:8px; }
+.sb-rail-f input{
+  width:100%; height:42px; padding:0 12px; box-sizing:border-box;
+  font-family:inherit; font-size:14px; font-weight:600; color:#16233A;
+  background:#FFFFFF; border:1px solid #C3D6E6; border-radius:9px;
+}
+.sb-rail-f input::placeholder{ color:#5A6B84; font-weight:500; }
+.sb-rail-f input:focus{ outline:2px solid #0A76C0; outline-offset:1px; }
+.sb-rail-agree{
+  display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  margin:10px 0 12px; font-size:12px; color:#5A6B84;
+}
+.sb-rail-agree input{ width:18px; height:18px; accent-color:#0A76C0; flex:0 0 auto; }
+.sb-rail-agree a{ color:#075F9C; text-decoration:underline; }
+.sb-rail-go{
+  width:100%; min-height:46px; border:0; border-radius:10px; cursor:pointer;
+  background:linear-gradient(135deg,#0A76C0 0%,#075F9C 100%);
+  color:#FFFFFF; font-family:inherit; font-size:15px; font-weight:800;
+  box-shadow:0 6px 16px rgba(10,118,192,.26);
+  transition:transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s ease;
+}
+.sb-rail-go:hover{ transform:translateY(-1px); box-shadow:0 10px 22px rgba(10,118,192,.32); }
+.sb-rail-go:active{ transform:translateY(0); }
+.sb-rail-note{ margin:9px 0 0; font-size:12px; color:#5A6B84; text-align:center; }
+
+/* 태블릿 아래로는 화면을 가린다. 손잡이만 남기고 접어 둔다 */
+@media (max-width:1180px){
+  .sb-rail{ width:268px; }
+  .sb-rail.is-in{ transform:translate(calc(100% - 44px), -50%); }
+  .sb-rail.is-in:not(.is-folded){ transform:translate(0,-50%); }
+}
+/* 모바일은 우측 고정이 화면을 먹는다. 숨긴다 — 페이지 안 상담 폼으로 간다 */
+@media (max-width:760px){ .sb-rail{ display:none !important; } }
+
+@media (prefers-reduced-motion:reduce){
+  .sb-rail, .sb-rail-chev, .sb-rail-go{ transition:none !important; }
+  .sb-rail-go:hover{ transform:none !important; }
+}

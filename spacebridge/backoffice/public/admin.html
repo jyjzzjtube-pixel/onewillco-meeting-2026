@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>공간브릿지 운영 콘솔</title>
+<style>
+  :root{--ink:#14324F;--body:#3F5265;--point:#2E7CC4;--bg:#F4F7FA;--line:#E4EBF2}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;background:var(--bg);color:var(--body);word-break:keep-all}
+  header{background:var(--ink);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}
+  header b{font-size:16px}
+  header .out{color:#AEC5D8;font-size:14px;background:none;border:0;cursor:pointer}
+  .wrap{max-width:1100px;margin:0 auto;padding:20px}
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
+  .kpi .n{font-size:28px;font-weight:800;color:var(--ink)}
+  .kpi .l{font-size:12px;color:var(--body)}
+  .bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .bar input,.bar select{padding:9px 12px;border:1px solid var(--line);border-radius:10px;font:inherit}
+  table{width:100%;background:#fff;border:1px solid var(--line);border-radius:16px;border-collapse:collapse;overflow:hidden}
+  th,td{padding:11px 12px;text-align:left;font-size:14px;border-bottom:1px solid var(--line)}
+  th{background:#EEF4F9;color:var(--ink);font-weight:800;font-size:12px}
+  td .rc{font-weight:800;color:var(--ink)}
+  select.st{padding:6px 8px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:13px}
+  .tp{display:inline-block;font-size:11px;font-weight:800;border-radius:10px;padding:2px 8px;background:#E7F0F9;color:var(--point)}
+  .tabs{display:flex;gap:6px;margin-bottom:16px}
+  .tabs button{padding:9px 16px;border:1px solid var(--line);background:#fff;border-radius:10px;font:inherit;font-weight:800;color:var(--body);cursor:pointer}
+  .tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .dl{display:inline-block;padding:9px 14px;background:var(--point);color:#fff;border-radius:10px;text-decoration:none;font-weight:800;font-size:14px}
+  .paid{color:#177367;font-weight:800}.due{color:#B85C38;font-weight:800}
+  .login{max-width:360px;margin:80px auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px}
+  .login h1{font-size:20px;color:var(--ink);margin-bottom:16px}
+  .login input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit;margin-bottom:10px}
+  .login button{width:100%;padding:13px;background:var(--point);color:#fff;border:0;border-radius:10px;font:inherit;font-weight:800;cursor:pointer}
+  .err{color:#B85C38;font-size:13px;margin-bottom:8px;min-height:18px}
+  @media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style></head>
+<body>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+async function api(path,opt={}){const r=await fetch(path,{headers:{'Content-Type':'application/json'},...opt});
+  return {status:r.status,data:await r.json().catch(()=>({}))};}
+const STATUSES=['신규','기준안내','연결','계약','완료','보류'];
+
+function loginView(msg){
+  $('#app').innerHTML=`<div class="login"><h1>공간브릿지 운영 콘솔</h1>
+    <div class="err">${msg||''}</div>
+    <input id="e" type="email" placeholder="이메일" autocomplete="username">
+    <input id="p" type="password" placeholder="비밀번호" autocomplete="current-password">
+    <button id="b">로그인</button></div>`;
+  $('#b').onclick=async()=>{const r=await api('/api/login',{method:'POST',
+    body:JSON.stringify({email:$('#e').value,password:$('#p').value})});
+    if(r.data.ok)dash(); else loginView(r.data.error||'로그인 실패');};
+  $('#p').onkeydown=e=>{if(e.key==='Enter')$('#b').click();};
+}
+const won=n=>(n||0).toLocaleString('ko-KR')+'원';
+async function dash(){
+  const s=(await api('/api/stats')).data;
+  $('#app').innerHTML=`<header><b>공간브릿지 운영 콘솔</b><button class="out" id="out">로그아웃</button></header>
+    <div class="wrap">
+      <div class="tabs"><button class="on" id="t1">상담 CRM</button><button id="t2">정산 원장</button><button id="t3">대시보드</button><button id="t4">마케팅</button></div>
+      <div id="view1">
+        <div class="kpis">
+          <div class="kpi"><div class="n">${s.total||0}</div><div class="l">총 상담</div></div>
+          <div class="kpi"><div class="n">${s.신규||0}</div><div class="l">신규</div></div>
+          <div class="kpi"><div class="n">${s.연결||0}</div><div class="l">연결</div></div>
+          <div class="kpi"><div class="n">${s.계약||0}</div><div class="l">계약</div></div>
+          <div class="kpi"><div class="n">${s.partners||0}</div><div class="l">제휴업체</div></div>
+        </div>
+        <div class="bar">
+          <input id="q" placeholder="이름·연락처·접수번호 검색">
+          <select id="fs"><option value="">전체 상태</option>${STATUSES.map(x=>`<option>${x}</option>`).join('')}</select>
+        </div>
+        <table><thead><tr><th>접수번호</th><th>고객</th><th>연락처</th><th>지역</th><th>분야</th><th>제3자동의</th><th>상태</th><th>접수일</th></tr></thead>
+        <tbody id="rows"></tbody></table>
+      </div>
+      <div id="view2" style="display:none"></div>
+      <div id="view3" style="display:none"></div>
+      <div id="view4" style="display:none"></div>
+    </div>`;
+  $('#out').onclick=async()=>{await api('/api/logout',{method:'POST'});loginView();};
+  const tabs=['t1','t2','t3','t4'],views=['view1','view2','view3','view4'];
+  function show(i){tabs.forEach((t,j)=>{$('#'+t).classList.toggle('on',i===j);$('#'+views[j]).style.display=i===j?'':'none';});}
+  $('#t1').onclick=()=>show(0);
+  $('#t2').onclick=()=>{show(1);loadSettle();};
+  $('#t3').onclick=()=>{show(2);loadDash();};
+  $('#t4').onclick=()=>{show(3);loadContent();};
+  const load=async()=>{
+    const q=$('#q').value,st=$('#fs').value;
+    const r=await api('/api/leads?q='+encodeURIComponent(q)+'&status='+encodeURIComponent(st));
+    $('#rows').innerHTML=(r.data.leads||[]).map(l=>`<tr>
+      <td><span class="rc">${l.receipt_no}</span></td><td>${l.name}</td><td>${l.phone}</td>
+      <td>${l.region||'-'}</td><td>${l.categories||'-'}</td>
+      <td>${l.consent_thirdparty?'<span class="tp">동의</span>':'-'}</td>
+      <td><select class="st" data-id="${l.id}">${STATUSES.map(x=>`<option ${x===l.status?'selected':''}>${x}</option>`).join('')}</select></td>
+      <td>${(l.created_at||'').slice(0,16)}</td></tr>`).join('')
+      ||'<tr><td colspan="8" style="text-align:center;color:#7A8B9C">상담 내역이 없습니다</td></tr>';
+    document.querySelectorAll('.st').forEach(sel=>sel.onchange=async()=>{
+      await api('/api/lead/status',{method:'POST',body:JSON.stringify({id:+sel.dataset.id,status:sel.value})});});
+  };
+  $('#q').oninput=load;$('#fs').onchange=load;load();
+}
+async function loadSettle(){
+  const now=new Date();const defMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const v=$('#view2');
+  if(!v.dataset.init){
+    v.dataset.init='1';
+    v.innerHTML=`<div class="bar">
+        <input id="mon" type="month" value="${defMonth}">
+        <a class="dl" id="csv">세무용 CSV 내려받기</a>
+        <a class="dl" href="/contract" target="_blank" style="background:var(--ink)">용역계약서 양식</a>
+      </div>
+      <div class="kpis" id="sk"></div>
+      <table><thead><tr><th>정산월</th><th>접수번호</th><th>고객</th><th>파트너</th><th>분야</th><th>계약금액</th><th>수수료율</th><th>수수료</th><th>입금</th></tr></thead>
+      <tbody id="srows"></tbody></table>`;
+    $('#mon').onchange=loadSettle;
+  }
+  const m=$('#mon').value||defMonth;
+  $('#csv').href='/api/settlements/csv?month='+m;
+  const c=(await api('/api/settlements/close?month='+m)).data;
+  $('#sk').innerHTML=`
+    <div class="kpi"><div class="n">${c.count||0}</div><div class="l">정산 건수</div></div>
+    <div class="kpi"><div class="n" style="font-size:20px">${won(c.amount_total)}</div><div class="l">계약금액 합계</div></div>
+    <div class="kpi"><div class="n" style="font-size:20px">${won(c.fee_total)}</div><div class="l">수수료 합계</div></div>
+    <div class="kpi"><div class="n" style="font-size:20px" class="paid">${won(c.fee_paid)}</div><div class="l">입금완료</div></div>
+    <div class="kpi"><div class="n" style="font-size:20px">${won(c.fee_unpaid)}</div><div class="l">미수</div></div>`;
+  const r=await api('/api/settlements?month='+m);
+  $('#srows').innerHTML=(r.data.settlements||[]).map(s=>`<tr>
+    <td>${s.settle_month}</td><td class="rc">${s.receipt_no}</td><td>${s.customer}</td>
+    <td>${s.partner}</td><td>${s.category||'-'}</td><td>${won(s.amount)}</td>
+    <td>${s.fee_rate}%</td><td>${won(s.fee_amount)}</td>
+    <td><select class="st sp" data-id="${s.id}"><option ${s.paid_status==='미수'?'selected':''}>미수</option><option ${s.paid_status==='입금완료'?'selected':''}>입금완료</option></select></td>
+    </tr>`).join('')||'<tr><td colspan="9" style="text-align:center;color:#7A8B9C">해당 월 정산 내역이 없습니다</td></tr>';
+  document.querySelectorAll('.sp').forEach(sel=>sel.onchange=async()=>{
+    await api('/api/settlement/paid',{method:'POST',body:JSON.stringify({id:+sel.dataset.id,paid_status:sel.value})});loadSettle();});
+}
+async function loadDash(){
+  const d=(await api('/api/dashboard')).data,v=$('#view3');
+  const src=Object.entries(d.bySource||{}).map(([k,n])=>`<tr><td>${k}</td><td style="text-align:right">${n}건</td></tr>`).join('')||'<tr><td colspan="2">데이터 없음</td></tr>';
+  v.innerHTML=`<div class="kpis">
+      <div class="kpi"><div class="n">${d.total||0}</div><div class="l">총 상담</div></div>
+      <div class="kpi"><div class="n">${d.conv_connect||0}%</div><div class="l">연결 전환율</div></div>
+      <div class="kpi"><div class="n">${d.conv_deal||0}%</div><div class="l">계약 전환율</div></div>
+      <div class="kpi"><div class="n" style="font-size:20px">${won(d.fee_month)}</div><div class="l">이번달 수수료</div></div>
+      <div class="kpi"><div class="n" style="font-size:20px">${won(d.fee_paid_month)}</div><div class="l">이번달 입금</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div><h3 style="font-size:14px;color:var(--ink);margin:8px 0">전환 퍼널</h3>
+        <table><tbody>${Object.entries(d.funnel||{}).map(([k,n])=>`<tr><td>${k}</td><td style="text-align:right">${n}건</td></tr>`).join('')}</tbody></table></div>
+      <div><h3 style="font-size:14px;color:var(--ink);margin:8px 0">유입경로</h3>
+        <table><tbody>${src}</tbody></table></div>
+    </div>`;
+}
+async function loadContent(){
+  const v=$('#view4');
+  if(!v.dataset.init){v.dataset.init='1';
+    v.innerHTML=`<div class="bar"><input id="ct" placeholder="콘텐츠 주제"><input id="ck" placeholder="타겟 키워드(지역+업종)"><input id="cd" type="date"><button id="cadd" class="dl" style="border:0;cursor:pointer">캘린더에 추가</button></div>
+      <table><thead><tr><th>발행예정</th><th>주제</th><th>채널</th><th>키워드</th><th>상태</th></tr></thead><tbody id="crows"></tbody></table>`;
+    $('#cadd').onclick=async()=>{if(!$('#ct').value)return;await api('/api/content',{method:'POST',body:JSON.stringify({topic:$('#ct').value,keyword:$('#ck').value,publish_date:$('#cd').value})});$('#ct').value='';$('#ck').value='';loadContent();};
+  }
+  const CS=['초안','검토','발행완료'];
+  const r=await api('/api/content');
+  $('#crows').innerHTML=(r.data.content||[]).map(c=>`<tr><td>${c.publish_date||'-'}</td><td>${c.topic}</td><td>${c.channel}</td><td>${c.keyword||'-'}</td>
+    <td><select class="st cc" data-id="${c.id}">${CS.map(x=>`<option ${x===c.status?'selected':''}>${x}</option>`).join('')}</select></td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:#7A8B9C">콘텐츠 계획이 없습니다</td></tr>';
+  document.querySelectorAll('.cc').forEach(sel=>sel.onchange=async()=>{await api('/api/content/status',{method:'POST',body:JSON.stringify({id:+sel.dataset.id,status:sel.value})});});
+}
+(async()=>{const me=(await api('/api/me')).data;me.user?dash():loginView();})();
+</script>
+</body></html>

@@ -1,0 +1,10 @@
+{
+  "note": "네이버 블로그·사이트용 콘텐츠 계획. 고객 질문 기반, 지역+업종 키워드. 유료광고 없이 오가닉 유입.",
+  "posts": [
+    { "topic": "남양주 상가 인테리어 평당 비용과 견적 보는 법 (2026)", "channel": "네이버블로그", "keyword": "남양주 상가 인테리어 비용", "publish_date": "2026-07-24", "draft_path": "posts/01-namyangju-interior-cost.md" },
+    { "topic": "카페 창업 비용 총정리 — 12평 기준 인테리어·포스·키오스크", "channel": "네이버블로그", "keyword": "카페 창업 비용", "publish_date": "2026-07-28", "draft_path": "posts/02-cafe-startup-cost.md" },
+    { "topic": "상가 인테리어 견적서, 이 항목 빠지면 추가금 폭탄 (체크리스트)", "channel": "네이버블로그", "keyword": "인테리어 견적서 체크리스트", "publish_date": "2026-07-31", "draft_path": "posts/03-quote-checklist.md" },
+    { "topic": "개인사업자 세무기장료 시세와 첫 달에 해야 할 것", "channel": "네이버블로그", "keyword": "세무기장료 시세", "publish_date": "2026-08-04", "draft_path": "posts/04-tax-bookkeeping.md" },
+    { "topic": "포스·키오스크 렌탈 vs 구매, 36개월 총비용 비교", "channel": "네이버블로그", "keyword": "포스 키오스크 렌탈 비용", "publish_date": "2026-08-07", "draft_path": "posts/05-pos-kiosk-rental.md" }
+  ]
+}
